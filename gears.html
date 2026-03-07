@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[aRTS]</title>
-  <!-- No sessionStorage gate – robot path -->
+  <!-- No sessionStorage gate – robot path (dead end for bots) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,93 +17,160 @@
       font-family: 'Space Grotesk', sans-serif;
       height: 100vh;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative;
     }
 
-    .stage {
-      display: flex;
-      align-items: center;
-      gap: clamp(0.6rem, 2vw, 1.1rem);
-      transition: opacity 0.22s ease;
+    /* ── I frame wrapper — true viewport centre on all devices ── */
+    .i-wrap {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      cursor: default;
     }
 
-    .word {
-      font-size: clamp(1.5rem, 4vw, 2.1rem);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      white-space: nowrap;
-      min-width: 14ch;
-      text-align: center;
-    }
-
-    /* Orange dots – same hue as the # badges */
-    .dots {
-      font-size: clamp(0.85rem, 1.8vw, 1.1rem);
-      font-weight: 700;
-      letter-spacing: 0.3em;
+    /* ── The big orange serif I ── */
+    .big-i {
+      display: block;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(7rem, 30vh, 18rem);
       color: #FF5C00;
-      animation: blink 1s ease-in-out infinite;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0; }
+    /* ── 5-slot strip centred on the I ── */
+    .strip {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
     }
+
+    /* ── All slots: width in em (relative to own font-size) keeps symmetry at any viewport ── */
+    .s {
+      flex-shrink: 0;
+      width: 1.5em;
+      text-align: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 400;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* far (±2) */
+    .s-far  { font-size: clamp(0.7rem,  2.4vh, 1.7rem); color: rgba(255,255,255,0.14); }
+    /* near (±1) */
+    .s-near { font-size: clamp(1.1rem,  5vh,   3rem);   color: rgba(255,255,255,0.34); }
+    /* center (0) — inside the I */
+    .s-ctr  { font-size: clamp(2.2rem,  9vh,   6rem);   color: #fff; font-weight: 700; }
+
   </style>
 </head>
 <body>
 
-  <div class="stage" id="stage">
-    <span class="dots">•••</span>
-    <span class="word" id="word">aPPLYING</span>
-    <span class="dots">•••</span>
+  <!-- I frame + scrolling strip -->
+  <div class="i-wrap">
+    <span class="big-i">I</span>
+    <div class="strip">
+      <span class="s s-far"  id="s-2"></span>
+      <span class="s s-near" id="s-1"></span>
+      <span class="s s-ctr"  id="s0"></span>
+      <span class="s s-near" id="s1"></span>
+      <span class="s s-far"  id="s2"></span>
+    </div>
   </div>
 
   <script>
-    /* Brand capitalization rule:
-       – every 'a' is always lowercase
-       – words with no 'a' get one or two scattered lowercase letters, few and far between */
+    /* Words as plain lowercase — JS capitalises only the center letter */
+    /* Route map: word → destination page */
+    const routes = {
+      'work': 'work.html',
+    };
+
     const words = [
-      'aPPLYING',       /* a → lowercase                    */
-      'bUZZING',        /* no a → first letter               */
-      'bUYING',         /* no a → first letter               */
-      'dOPING',         /* no a → first letter               */
-      'TROtTING',       /* no a → scattered                  */
-      'bUBBLING',       /* no a → first letter               */
-      'cOPING',         /* no a → first letter               */
-      'SiEZING',        /* no a → first vowel                */
-      'MOKKa',          /* a → lowercase at end              */
-      'ZONiNG',         /* no a → scattered                  */
-      'PROPPiNG',       /* no a → scattered                  */
-      'CaLLING',        /* a → lowercase                     */
-      'QUESTiONING',    /* no a → scattered                  */
-      'ViEWING',        /* no a → first vowel                */
-      'TRiPPING',       /* no a → scattered                  */
-      'bUFFERING',      /* no a → first letter               */
-      'cRUNCHING',      /* no a → first letter               */
+      'work',
+      'applying',
+      'buzzing',
+      'buying',
+      'doping',
+      'trotting',
+      'bubbling',
+      'coping',
+      'siezing',
+      'mokka',
+      'zoning',
+      'propping',
+      'calling',
+      'questioning',
+      'viewing',
+      'tripping',
+      'buffering',
+      'crunching',
     ];
 
-    let idx    = 0;
-    const stage  = document.getElementById('stage');
-    const wordEl = document.getElementById('word');
+    const slots = [-2, -1, 0, 1, 2].map(d => document.getElementById('s' + d));
 
-    function nextWord() {
-      stage.style.opacity = '0';
-      setTimeout(() => {
-        idx = (idx + 1) % words.length;
-        wordEl.textContent = words[idx];
-        stage.style.opacity = '1';
-      }, 220);
+    /* Padding: spaces before/after so the word scrolls fully in and out */
+    const PAD = 3;
+
+    /* ms per scroll step */
+    const STEP_MS  = 240;
+    /* extra pause between words (ms) */
+    const PAUSE_MS = 650;
+
+    let wordIdx = 0;
+    let pos     = 0;
+
+    const iWrap = document.querySelector('.i-wrap');
+
+    function updateCursor() {
+      iWrap.style.cursor = routes[words[wordIdx]] ? 'pointer' : 'default';
     }
 
-    function scheduleNext() {
-      const delay = 600 + Math.random() * 900; /* 600 – 1500 ms, unpredictable */
-      setTimeout(() => { nextWord(); scheduleNext(); }, delay);
+    function getChar(padded, i, isCenter) {
+      if (i < 0 || i >= padded.length) return '';
+      const ch = padded[i];
+      if (ch === ' ') return '';
+      return isCenter ? ch.toUpperCase() : ch;
     }
 
-    scheduleNext();
+    function step() {
+      const word   = words[wordIdx];
+      const padded = ' '.repeat(PAD) + word + ' '.repeat(PAD);
+
+      slots.forEach((el, idx) => {
+        const offset   = idx - 2;
+        el.textContent = getChar(padded, pos + offset, offset === 0);
+      });
+
+      pos++;
+
+      if (pos >= padded.length) {
+        pos     = 0;
+        wordIdx = (wordIdx + 1) % words.length;
+        updateCursor();
+        setTimeout(step, PAUSE_MS + Math.random() * 300);
+      } else {
+        setTimeout(step, STEP_MS);
+      }
+    }
+
+    /* Click-to-navigate: if current word has a route, go there */
+    iWrap.addEventListener('click', () => {
+      const dest = routes[words[wordIdx]];
+      if (dest) {
+        sessionStorage.setItem('captcha_passed', '1');
+        window.location.href = dest;
+      }
+    });
+
+    /* Start after a brief initial pause */
+    updateCursor();
+    setTimeout(step, 400);
   </script>
 
 </body>

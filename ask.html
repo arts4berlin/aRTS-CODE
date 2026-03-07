@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>[aRTS] — aSK</title>
+  <title>[aRTS] — aCT</title>
   <script>
     if (!sessionStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
@@ -19,100 +19,80 @@
       background: #000;
       color: #fff;
       font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-    }
-
-    .logo {
-      position: fixed;
-      top: 28px;
-      left: 32px;
-      z-index: 100;
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
+      align-items: center;
+      justify-content: center;
     }
 
     .tagline {
-      padding: 90px 0 0 26vw;
-      font-size: 0.92rem;
+      position: fixed;
+      top: clamp(18px, 3.5vh, 36px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.82rem;
       font-weight: 300;
-      letter-spacing: 0.08em;
-      opacity: 0.9;
+      letter-spacing: 0.13em;
+      opacity: 0.6;
+      white-space: nowrap;
     }
 
-    main {
-      flex: 1;
+    .stack {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 0 24px 80px;
+      gap: clamp(0.9rem, 2.2vh, 1.6rem);
     }
 
-    .question {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .question .small {
-      font-size: 0.85rem;
-      font-weight: 300;
-      letter-spacing: 0.12em;
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
-    .question .large {
-      font-size: clamp(1.8rem, 4vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      display: block;
-    }
-
-    .buttons { display: flex; align-items: stretch; }
-
-    .btn {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      cursor: pointer;
-      padding: 0.85rem 2.8rem;
-      border: 2px solid #fff;
-      transition: background 0.15s, color 0.15s;
-      text-decoration: none;
+    /* Big orange-bordered aCT button */
+    .btn-act {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: clamp(220px, 46vw, 430px);
+      height: clamp(80px, 14vh, 140px);
+      border: 2.5px solid #FF5C00;
+      background: transparent;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5.5vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-decoration: none;
+      transition: background 0.18s, color 0.18s;
     }
+    .btn-act:hover { background: #FF5C00; color: #000; }
 
-    .btn-socials { background: #fff; color: #000; }
-    .btn-socials:hover { background: #ddd; border-color: #ddd; }
-    .btn-work { background: transparent; color: #fff; }
-    .btn-work:hover { background: #fff; color: #000; }
+    /* Smaller white-filled BaCK button */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(150px, 30vw, 270px);
+      height: clamp(46px, 8vh, 70px);
+      background: #fff;
+      border: 2px solid #fff;
+      color: #000;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.9rem, 2.3vw, 1.3rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      transition: background 0.18s;
+    }
+    .btn-back:hover { background: #e0e0e0; border-color: #e0e0e0; }
   </style>
 </head>
 <body>
 
-  <a href="home.html" class="logo">[aRTS]</a>
+  <span class="tagline">... aND aNSWERS aPPEAR ...</span>
 
-  <p class="tagline">...aSK aND aNSWERS aPPEAR...</p>
-
-  <main>
-    <div class="question">
-      <span class="small">aRE YOU</span>
-      <span class="large">LOOKING FOR:</span>
-    </div>
-    <div class="buttons">
-      <a href="socials.html" class="btn btn-socials">SOCIALS</a>
-      <a href="work.html"    class="btn btn-work">WORK</a>
-    </div>
-  </main>
+  <div class="stack">
+    <a href="act.html" class="btn-act">aSK</a>
+    <a href="home.html" class="btn-back">BaCK</a>
+  </div>
 
 </body>
 </html>

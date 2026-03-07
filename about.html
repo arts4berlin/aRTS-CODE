@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[aRTS] — aBOUT</title>
+  <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
     if (!sessionStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
@@ -19,275 +20,81 @@
       background: #000;
       color: #fff;
       font-family: 'Space Grotesk', sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
+      min-height: 100vh;
     }
 
-    /* ── Back-link logo ── */
-    .logo {
+    /* ── Fixed header (matches home.html) ── */
+    header {
       position: fixed;
-      top: 28px; left: 32px;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 26px 32px;
       z-index: 100;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 60%, transparent);
+    }
+
+    .logo {
       text-decoration: none;
       color: #fff;
       font-size: 1rem;
       font-weight: 300;
       letter-spacing: 0.05em;
+      line-height: 1;
     }
 
-    /* ── Header ── */
-    .hdr {
-      position: absolute;
-      top: 7vh;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    .hdr-sub  { font-size: 0.82rem; font-weight: 300; letter-spacing: 0.18em; opacity: 0.7; }
-    .hdr-main { font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 700; letter-spacing: 0.05em; margin-top: 4px; }
-
-    /* ──────────────────────────────────────
-       CLOUD UNIT  =  SVG cloud + rain below
-    ────────────────────────────────────── */
-    .cu { position: absolute; }
-
-    /* SVG wraps the cloud silhouette */
-    .cloud-wrap {
-      position: relative;
-      display: inline-block;
-    }
-
-    .cloud-svg {
-      display: block;
-      width: clamp(170px, 20vw, 240px);
-      height: auto;
-      /* Milky soft glow — gives the "fluffy cloud" feel */
-      filter: drop-shadow(0 3px 14px rgba(255,255,255,0.22))
-              drop-shadow(0 0px  6px rgba(255,255,255,0.12));
-    }
-
-    /* Text label centred in the flat base area of the cloud */
-    .cloud-label {
-      position: absolute;
-      bottom: 15%;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #000;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: clamp(1rem, 1.6vw, 1.35rem);
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* Cloud positions */
-    #cu-connect { top: 24%; left:  8%; }
-    #cu-combine { top: 50%; left: 62%; }
-    #cu-create  { top: 64%; left:  7%; }
-
-    /* ──────────────────────────────────────
-       SIMPLE RAIN DROPS
-       Tiny oval dashes — no thread, no stem.
-    ────────────────────────────────────── */
-    .rain {
+    nav {
       display: flex;
-      justify-content: space-evenly;
-      padding: 6px 22% 0;
+      align-items: center;
+      gap: 2.4rem;
     }
 
-    .drop {
-      width: 2.5px;
-      height: 8px;
-      background: rgba(255,255,255,0.78);
-      border-radius: 2px;
-      opacity: 0;
-      animation: rain-fall 2.2s linear infinite;
-    }
-
-    .drop:nth-child(2) { animation-delay: 0.73s; }
-    .drop:nth-child(3) { animation-delay: 1.46s; }
-
-    @keyframes rain-fall {
-      0%   { opacity: 0;   transform: translateY(0); }
-      10%  { opacity: 0.85; }
-      80%  { opacity: 0.5; }
-      100% { opacity: 0;   transform: translateY(30px); }
-    }
-
-    /* ──────────────────────────────────────
-       REaCH — orange centre button
-    ────────────────────────────────────── */
-    .reach {
-      position: absolute;
-      top: 46%; left: 37%;
-      transform: translate(-50%, -50%);
-      background: #FF5C00;
-      color: #000;
+    nav a {
       text-decoration: none;
-      border-radius: 8px;
-      padding: 13px 34px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.85rem, 1.3vw, 1rem);
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      white-space: nowrap;
-      transition: transform 0.18s, box-shadow 0.18s;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.85;
+      transition: opacity 0.15s;
     }
-    .reach:hover {
-      transform: translate(-50%, -50%) scale(1.07);
-      box-shadow: 0 0 0 3px rgba(255,92,0,0.35);
-    }
+    nav a:hover { opacity: 1; }
+    nav a.active { opacity: 1; font-weight: 600; }
 
-    /* ──────────────────────────────────────
-       ARROW TRIANGLES
-       Spread well away from cloud edges.
-    ────────────────────────────────────── */
-    .arr {
-      position: absolute;
-      width: 12px;
-      height: 15px;
-      background: #fff;
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
-      pointer-events: none;
+    /* ── Scrollable photo gallery ── */
+    main {
+      padding-top: clamp(86px, 13vh, 120px);
+      padding-bottom: clamp(60px, 8vh, 100px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(48px, 7vw, 110px);
     }
 
-    /* Arc 1 — CoNNECT (upper-left) → COMBiNE (right)  ≈ 100–115° */
-    .a1a { top:  9%; left: 40%; transform: rotate(113deg); }
-    .a1b { top: 13%; left: 51%; transform: rotate(107deg); }
-    .a1c { top: 21%; left: 61%; transform: rotate( 98deg); }
+    /* Each photo fills most of the viewport width, max 1000px */
+    .photo {
+      display: block;
+      width: min(92vw, 1000px);
+      height: auto;
+    }
 
-    /* Arc 2 — COMBiNE (right) → CREaTE (lower-left)  ≈ 185–215° */
-    .a2a { top: 72%; left: 62%; transform: rotate(212deg); }
-    .a2b { top: 79%; left: 50%; transform: rotate(200deg); }
-    .a2c { top: 81%; left: 37%; transform: rotate(188deg); }
-
-    /* Arc 3 — CREaTE (lower-left) → CoNNECT (upper-left)  ≈ 265–282° */
-    .a3a { top: 61%; left:  3%; transform: rotate(279deg); }
-    .a3b { top: 49%; left:  1%; transform: rotate(273deg); }
-    .a3c { top: 37%; left:  2%; transform: rotate(267deg); }
   </style>
 </head>
 <body>
 
-  <a href="home.html" class="logo">[aRTS]</a>
+  <header>
+    <a href="home.html" class="logo">[aRTS]</a>
+    <nav>
+      <a href="about.html" class="active">aBOUT</a>
+      <a href="ask.html">aCT</a>
+    </nav>
+  </header>
 
-  <div class="hdr">
-    <div class="hdr-sub">aRE YOU</div>
-    <div class="hdr-main">LOOKING TO:</div>
-  </div>
-
-  <!--
-    Cloud SVG silhouette — five rounded bumps + wide flat base.
-    viewBox 0 0 240 90: base sits y≈55–82, bumps peak at y≈0–20.
-    Same path reused for all three clouds; only the label changes.
-  -->
-
-  <!-- Cloud: CoNNECT -->
-  <div class="cu" id="cu-connect">
-    <div class="cloud-wrap">
-      <svg class="cloud-svg" viewBox="0 0 240 90" xmlns="http://www.w3.org/2000/svg">
-        <path fill="white" d="
-          M 18,80
-          C  2,80   0,66   0,54
-          C  0,42   8,33  20,33
-          C 17,16  30, 5  48, 9
-          C 54,-4  74, 1  78,18
-          C 86, 3 105, 1 110,17
-          C 118, 4 137, 5 142,21
-          C 152,10 170,14 175,30
-          C 188,25 202,38 200,52
-          C 211,53 222,64 220,73
-          C 220,84 207,90 192,80
-          Z
-        "/>
-      </svg>
-      <span class="cloud-label">CoNNECT</span>
-    </div>
-    <div class="rain">
-      <span class="drop"></span>
-      <span class="drop"></span>
-      <span class="drop"></span>
-    </div>
-  </div>
-
-  <!-- Cloud: COMBiNE -->
-  <div class="cu" id="cu-combine">
-    <div class="cloud-wrap">
-      <svg class="cloud-svg" viewBox="0 0 240 90" xmlns="http://www.w3.org/2000/svg">
-        <path fill="white" d="
-          M 18,80
-          C  2,80   0,66   0,54
-          C  0,42   8,33  20,33
-          C 17,16  30, 5  48, 9
-          C 54,-4  74, 1  78,18
-          C 86, 3 105, 1 110,17
-          C 118, 4 137, 5 142,21
-          C 152,10 170,14 175,30
-          C 188,25 202,38 200,52
-          C 211,53 222,64 220,73
-          C 220,84 207,90 192,80
-          Z
-        "/>
-      </svg>
-      <span class="cloud-label">COMBiNE</span>
-    </div>
-    <div class="rain">
-      <span class="drop"></span>
-      <span class="drop"></span>
-      <span class="drop"></span>
-    </div>
-  </div>
-
-  <!-- Cloud: CREaTE -->
-  <div class="cu" id="cu-create">
-    <div class="cloud-wrap">
-      <svg class="cloud-svg" viewBox="0 0 240 90" xmlns="http://www.w3.org/2000/svg">
-        <path fill="white" d="
-          M 18,80
-          C  2,80   0,66   0,54
-          C  0,42   8,33  20,33
-          C 17,16  30, 5  48, 9
-          C 54,-4  74, 1  78,18
-          C 86, 3 105, 1 110,17
-          C 118, 4 137, 5 142,21
-          C 152,10 170,14 175,30
-          C 188,25 202,38 200,52
-          C 211,53 222,64 220,73
-          C 220,84 207,90 192,80
-          Z
-        "/>
-      </svg>
-      <span class="cloud-label">CREaTE</span>
-    </div>
-    <div class="rain">
-      <span class="drop"></span>
-      <span class="drop"></span>
-      <span class="drop"></span>
-    </div>
-  </div>
-
-  <!-- Centre REaCH button → contact page -->
-  <a href="work.html" class="reach">REaCH</a>
-
-  <!-- Arc 1 arrows: CoNNECT → COMBiNE -->
-  <div class="arr a1a"></div>
-  <div class="arr a1b"></div>
-  <div class="arr a1c"></div>
-
-  <!-- Arc 2 arrows: COMBiNE → CREaTE -->
-  <div class="arr a2a"></div>
-  <div class="arr a2b"></div>
-  <div class="arr a2c"></div>
-
-  <!-- Arc 3 arrows: CREaTE → CoNNECT -->
-  <div class="arr a3a"></div>
-  <div class="arr a3b"></div>
-  <div class="arr a3c"></div>
+  <main>
+    <img class="photo" src="assets/about-2.jpg" alt="">
+    <img class="photo" src="assets/about-1.jpg" alt="">
+  </main>
 
 </body>
 </html>

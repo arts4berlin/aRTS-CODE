@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS] — aCT</title>
+  <script>
+    if (!sessionStorage.getItem('captcha_passed')) {
+      window.location.replace('index.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .question {
+      text-align: center;
+      margin-bottom: clamp(1.4rem, 3vh, 2.2rem);
+    }
+
+    .small {
+      font-size: 0.82rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      opacity: 0.65;
+      display: block;
+      margin-bottom: 0.28rem;
+    }
+
+    .large {
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      display: block;
+    }
+
+    .buttons { display: flex; }
+
+    .btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.9rem, 2.2vw, 1.25rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      padding: clamp(0.8rem, 1.6vh, 1.1rem) clamp(1.8rem, 4vw, 3.2rem);
+      border: 2px solid #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-fill  { background: #fff; color: #000; }
+    .btn-fill:hover  { background: #e2e2e2; border-color: #e2e2e2; }
+    .btn-ghost { background: transparent; color: #fff; }
+    .btn-ghost:hover { background: #fff; color: #000; }
+  </style>
+</head>
+<body>
+
+  <div class="question">
+    <span class="small">aRE YOU</span>
+    <span class="large">aIMING TO:</span>
+  </div>
+
+  <div class="buttons">
+    <a href="connect.html" class="btn btn-fill">CoNNECT</a>
+    <a href="work.html"    class="btn btn-ghost">WORK</a>
+  </div>
+
+</body>
+</html>
