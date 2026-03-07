@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS]</title>
+  <!-- No sessionStorage gate – robot path -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.6rem, 2vw, 1.1rem);
+      transition: opacity 0.22s ease;
+    }
+
+    .word {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      min-width: 14ch;
+      text-align: center;
+    }
+
+    /* Orange dots – same hue as the # badges */
+    .dots {
+      font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: #FF5C00;
+      animation: blink 1s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage" id="stage">
+    <span class="dots">•••</span>
+    <span class="word" id="word">aPPLYING</span>
+    <span class="dots">•••</span>
+  </div>
+
+  <script>
+    /* Brand capitalization rule:
+       – every 'a' is always lowercase
+       – words with no 'a' get one or two scattered lowercase letters, few and far between */
+    const words = [
+      'aPPLYING',       /* a → lowercase                    */
+      'bUZZING',        /* no a → first letter               */
+      'bUYING',         /* no a → first letter               */
+      'dOPING',         /* no a → first letter               */
+      'TROtTING',       /* no a → scattered                  */
+      'bUBBLING',       /* no a → first letter               */
+      'cOPING',         /* no a → first letter               */
+      'SiEZING',        /* no a → first vowel                */
+      'MOKKa',          /* a → lowercase at end              */
+      'ZONiNG',         /* no a → scattered                  */
+      'PROPPiNG',       /* no a → scattered                  */
+      'CaLLING',        /* a → lowercase                     */
+      'QUESTiONING',    /* no a → scattered                  */
+      'ViEWING',        /* no a → first vowel                */
+      'TRiPPING',       /* no a → scattered                  */
+      'bUFFERING',      /* no a → first letter               */
+      'cRUNCHING',      /* no a → first letter               */
+    ];
+
+    let idx    = 0;
+    const stage  = document.getElementById('stage');
+    const wordEl = document.getElementById('word');
+
+    function nextWord() {
+      stage.style.opacity = '0';
+      setTimeout(() => {
+        idx = (idx + 1) % words.length;
+        wordEl.textContent = words[idx];
+        stage.style.opacity = '1';
+      }, 220);
+    }
+
+    function scheduleNext() {
+      const delay = 600 + Math.random() * 900; /* 600 – 1500 ms, unpredictable */
+      setTimeout(() => { nextWord(); scheduleNext(); }, delay);
+    }
+
+    scheduleNext();
+  </script>
+
+</body>
+</html>

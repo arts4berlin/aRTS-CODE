@@ -1,0 +1,20 @@
+# Local dev server
+serve.py
+
+# Claude Code project data
+.claude/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp / build artefacts
+/tmp/
+node_modules/

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS] — born in BERLIN</title>
+  <!-- Gate: redirect to CAPTCHA if not verified -->
+  <script>
+    if (!sessionStorage.getItem('captcha_passed')) {
+      window.location.replace('index.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 26px 32px;
+      z-index: 100;
+    }
+
+    .logo {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.85;
+      transition: opacity 0.15s;
+    }
+    nav a:hover { opacity: 1; }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 60px;
+    }
+
+    .bear {
+      width: clamp(160px, 28vw, 280px);
+      display: block;
+      margin-bottom: 1.8rem;
+    }
+
+    .tagline { text-align: center; }
+
+    .born {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      margin-bottom: 0.15rem;
+    }
+
+    .berlin {
+      display: block;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.25em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="#">aBOUT</a>
+      <a href="ask.html">aSK</a>
+      <a href="#">aCT</a>
+    </nav>
+  </header>
+
+  <main>
+    <img src="assets/bear.png" alt="aRTS bear" class="bear">
+    <div class="tagline">
+      <span class="born">born in</span>
+      <span class="berlin">BERLIN</span>
+    </div>
+  </main>
+
+</body>
+</html>

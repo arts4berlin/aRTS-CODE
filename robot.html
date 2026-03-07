@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS]</title>
+  <!-- No sessionStorage gate – this is the robot path -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      height: 100vh;
+      overflow: hidden;
+      transition: opacity 0.55s ease;
+    }
+
+    /* ── Four bears peaking from corners ── */
+    .bear-corner {
+      position: fixed;
+      width: clamp(100px, 18vw, 200px);
+      pointer-events: none;
+    }
+
+    .bear-tl {
+      top:    -2vw;
+      left:   -2vw;
+      transform: rotate(-18deg);
+      transform-origin: top left;
+    }
+    .bear-tr {
+      top:    -2vw;
+      right:  -2vw;
+      transform: scaleX(-1) rotate(-18deg);
+      transform-origin: top right;
+    }
+    .bear-bl {
+      bottom: -2vw;
+      left:   -2vw;
+      transform: rotate(18deg);
+      transform-origin: bottom left;
+    }
+    .bear-br {
+      bottom: -2vw;
+      right:  -2vw;
+      transform: scaleX(-1) rotate(18deg);
+      transform-origin: bottom right;
+    }
+
+    /* ── Centred π ── */
+    .pi-center {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #FF5C00;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(5rem, 12vw, 10rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      user-select: none;
+      opacity: 0;
+      animation: pi-appear 0.6s ease 0.3s forwards;
+    }
+
+    @keyframes pi-appear {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <img src="assets/bear.png" class="bear-corner bear-tl" alt="">
+  <img src="assets/bear.png" class="bear-corner bear-tr" alt="">
+  <img src="assets/bear.png" class="bear-corner bear-bl" alt="">
+  <img src="assets/bear.png" class="bear-corner bear-br" alt="">
+
+  <div class="pi-center">π</div>
+
+  <script>
+    /* After 2.8 s → fade out → navigate to the gears page */
+    setTimeout(() => {
+      document.body.style.opacity = '0';
+      setTimeout(() => { window.location.href = 'gears.html'; }, 580);
+    }, 2800);
+  </script>
+
+</body>
+</html>

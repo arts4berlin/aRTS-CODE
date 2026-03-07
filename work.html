@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS] — WORK</title>
+  <script>
+    if (!sessionStorage.getItem('captcha_passed')) {
+      window.location.replace('index.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      position: fixed;
+      top: 28px;
+      left: 32px;
+      z-index: 100;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Bear ── */
+    .bear-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      /* vertical breathing room so the ears appear ~10% from top */
+      padding-top: clamp(16px, 5vh, 48px);
+      flex-shrink: 0;
+    }
+
+    .bear-img {
+      /* Logo at natural proportion — not page-filling */
+      width: clamp(200px, 38vw, 360px);
+      display: block;
+      pointer-events: none;
+      /* Render at best quality — no sub-pixel smear */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: high-quality;
+    }
+
+    /* ── Form ── */
+    .form-zone {
+      /* ~60% of the bear width → narrower block centred below the face */
+      width: clamp(200px, 52vw, 440px);
+      margin-top: 14px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 60px;
+    }
+
+    /* Field wrappers (for # badge positioning) */
+    .field-wrap {
+      position: relative;
+    }
+
+    /* Orange # badge — right-centre inside each box */
+    .hash {
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      z-index: 3;
+      color: #FF5C00;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1;
+      pointer-events: none;
+      animation: hash-pulse 2.2s ease-in-out infinite;
+    }
+
+    /* animation-delay variants only (positioning is shared) */
+    .hash-tr { /* first FiRST/LaST — no extra delay */ }
+    .hash-tl { animation-delay: 0.7s; }
+
+    @keyframes hash-pulse {
+      /* translateY(-50%) kept in every frame so scale() doesn't reset it */
+      0%, 100% { transform: translateY(-50%) scale(1);    opacity: 1;   }
+      50%       { transform: translateY(-50%) scale(1.22); opacity: 0.8; }
+    }
+
+    /* Extra right padding so placeholder text never slides under the # */
+    .row .field-wrap .field { padding-right: 42px; }
+    .pill-row               { padding-right: 42px; }
+
+    /* Shared field style */
+    .field {
+      width: 100%;
+      background: #fff;
+      border: none;
+      border-radius: 100px;
+      padding: 15px 26px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #000;
+      outline: none;
+      resize: none;
+      overflow: hidden;
+      display: block;
+      line-height: 1.5;
+    }
+
+    .field::placeholder {
+      color: rgba(0, 0, 0, 0.45);
+      letter-spacing: 0.1em;
+    }
+
+    .field:focus {
+      box-shadow: 0 0 0 2px rgba(255, 92, 0, 0.4);
+    }
+
+    /* Two-column row */
+    .row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .row .field-wrap { flex: 1; }
+
+    /* Combined email + phone pill */
+    .pill-row {
+      background: #fff;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      padding: 15px 26px;
+      gap: 0;
+    }
+
+    .pill-row:focus-within {
+      box-shadow: 0 0 0 2px rgba(255, 92, 0, 0.4);
+    }
+
+    .pill-row input {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #000;
+      min-width: 0;
+    }
+
+    .pill-row input::placeholder {
+      color: rgba(0, 0, 0, 0.45);
+      letter-spacing: 0.08em;
+    }
+
+    .pill-row .email-input { flex: 1.1; }
+    .pill-row .sep         { color: rgba(0,0,0,0.2); padding: 0 10px; font-weight: 300; }
+    .pill-row .phone-input { flex: 1; }
+
+    /* Send button */
+    .send-btn {
+      align-self: center;
+      margin-top: 4px;
+      background: none;
+      border: 2px solid #fff;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      padding: 0.75rem 2.4rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .send-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="ask.html" class="logo">[aRTS]</a>
+
+  <!-- Bear peeks from top — black body blends with background -->
+  <div class="bear-wrap">
+    <img src="assets/bear.png" class="bear-img" alt="">
+  </div>
+
+  <!-- Contact form -->
+  <div class="form-zone">
+
+    <!-- I CHOSE TO... (auto-expanding textarea) -->
+    <div class="field-wrap">
+      <textarea class="field auto-expand" rows="1" placeholder="I CHOSE TO..."></textarea>
+    </div>
+
+    <!-- FiRST + LaST -->
+    <div class="row">
+      <div class="field-wrap">
+        <span class="hash hash-tr">#</span>
+        <input class="field" type="text" placeholder="FiRST">
+      </div>
+      <div class="field-wrap">
+        <span class="hash hash-tr" style="animation-delay:1.1s">#</span>
+        <input class="field" type="text" placeholder="LaST">
+      </div>
+    </div>
+
+    <!-- Email + phone in one pill -->
+    <div class="field-wrap">
+      <span class="hash hash-tl">#</span>
+      <div class="pill-row">
+        <input class="email-input" type="email" placeholder="@email.com">
+        <span class="sep">|</span>
+        <input class="phone-input" type="tel" placeholder="+00 000 000">
+      </div>
+    </div>
+
+    <button class="send-btn">SEND →</button>
+
+  </div>
+
+  <script>
+    /* Auto-expand textareas */
+    document.querySelectorAll('textarea.auto-expand').forEach(ta => {
+      ta.addEventListener('input', () => {
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
+      });
+    });
+  </script>
+
+</body>
+</html>
