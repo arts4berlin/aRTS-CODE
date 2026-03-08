@@ -152,10 +152,10 @@
   </div>
 
   <form class="contact-form" id="work-form" onsubmit="handleSend(event)">
-    <input class="field" type="text"  placeholder="COMPaNY" autocomplete="organization">
-    <input class="field" type="text"  placeholder="INSTa"   autocomplete="url">
+    <input class="field" type="text"  placeholder="" data-ph="COMPaNY" autocomplete="organization">
+    <input class="field" type="text"  placeholder="" data-ph="INSTa"   autocomplete="url">
     <div class="send-row">
-      <input class="field" type="email" placeholder="E-MaIL" autocomplete="email">
+      <input class="field" type="email" placeholder="" data-ph="E-MaIL" autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
         <img src="assets/bear.png" alt="">
         <span class="bear-check">✓</span>
@@ -163,6 +163,34 @@
     </div>
   </form>
 
+  <script>
+    /* ── Placeholder scramble — left-to-right reveal, staggered ── */
+    (function () {
+      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES = 22, RATE = 44;
+
+      function scramblePh(input, text, delay) {
+        setTimeout(function () {
+          var step = 0;
+          var t = setInterval(function () {
+            var out = '';
+            for (var i = 0; i < text.length; i++) {
+              out += (i < Math.floor(step * text.length / FRAMES))
+                ? text[i]
+                : POOL[Math.floor(Math.random() * POOL.length)];
+            }
+            input.placeholder = out;
+            if (++step > FRAMES) { clearInterval(t); input.placeholder = text; }
+          }, RATE);
+        }, delay);
+      }
+
+      var fields = document.querySelectorAll('.field[data-ph]');
+      fields.forEach(function (f, i) {
+        scramblePh(f, f.dataset.ph, 280 + i * 220);
+      });
+    })();
+  </script>
   <script>
     function handleSend(e) {
       e.preventDefault();
