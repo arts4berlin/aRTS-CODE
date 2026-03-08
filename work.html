@@ -128,19 +128,19 @@
 
   <form class="contact-form" id="face-form" onsubmit="handleSend(event)">
 
-    <!-- Row 1: company -->
-    <input class="pill pill-full" type="text" placeholder="COMPaNY" autocomplete="organization">
+    <!-- Row 1: name + last name -->
+    <div class="row">
+      <input class="pill" type="text" placeholder="NaME" autocomplete="given-name">
+      <input class="pill" type="text" placeholder="LaST" autocomplete="family-name">
+    </div>
 
-    <!-- Row 3: email + bear submit -->
+    <!-- Row 2: email + bear submit -->
     <div class="row">
       <input class="pill pill-email" type="email" placeholder="@E-MaIL" autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
         <img src="assets/bear.png" alt="">
       </button>
     </div>
-
-    <!-- Row 4: instagram -->
-    <input class="pill pill-full" type="text" placeholder="INSTa" autocomplete="off">
 
   </form>
 

@@ -47,12 +47,18 @@
       pointer-events: none;
       opacity: 0;
       z-index: 5;
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      animation: caFadeIn 0.7s ease-out forwards;
     }
-    .ca-tl { top: 1.1rem;    left: 1.4rem;  }
-    .ca-tr { top: 1.1rem;    right: 1.4rem; }
-    .ca-bl { bottom: 1.1rem; left: 1.4rem;  }
-    .ca-br { bottom: 1.1rem; right: 1.4rem; }
+    .ca-tl { top: 1.1rem;    left: 1.4rem;  animation-delay: 0.10s; }
+    .ca-tr { top: 1.1rem;    right: 1.4rem; animation-delay: 0.22s; }
+    .ca-bl { bottom: 1.1rem; left: 1.4rem;  animation-delay: 0.34s; }
+    .ca-br { bottom: 1.1rem; right: 1.4rem; animation-delay: 0.46s; }
+
+    @keyframes caFadeIn {
+      0%   { opacity: 0;    transform: scale(0.72); }
+      65%  { opacity: 0.32; transform: scale(1.05); }
+      100% { opacity: 0.28; transform: scale(1);    }
+    }
 
     /* ── Top-centre logo ── */
     #pi-logo {
@@ -111,15 +117,6 @@
     const VEIL_MS = 750;   // veil fade duration
     const DEST    = 'index.html';
 
-    /* ── Stagger-in the corner A's ── */
-    corners.forEach((el, i) => {
-      el.style.transform = 'scale(0.65)';
-      setTimeout(() => {
-        el.style.opacity   = '0.28';
-        el.style.transform = 'scale(1)';
-      }, 80 + i * 120);
-    });
-
     /* ── Fade in logo ── */
     setTimeout(() => { logo.style.opacity = '0.65'; }, 220);
 
@@ -163,6 +160,20 @@
       const a  = canvasAlpha;
 
       ctx.clearRect(0, 0, W, H);
+
+      /* ── Bounce-in scale (spring, same feel as the I) ── */
+      const BOUNCE_DUR = 900;
+      const bt  = clamp(0, elapsed / BOUNCE_DUR, 1);
+      const scl = bt < 0.55
+        ? (bt / 0.55) * 1.14
+        : bt < 0.80
+          ? 1.14 - 0.20 * ((bt - 0.55) / 0.25)
+          : 0.94 + 0.06 * ((bt - 0.80) / 0.20);
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(scl, scl);
+      ctx.translate(-cx, -cy);
 
       /* ── Concentric faint rings ── */
       [0.58, 1.0, 1.46].forEach((s, i) => {
@@ -266,6 +277,8 @@
         cx,
         cy + r + clamp(30, r * 0.16, 48)
       );
+
+      ctx.restore();
 
       /* ── Loop or exit ── */
       if (elapsed < SHOW_MS) {
