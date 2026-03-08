@@ -69,6 +69,7 @@
       font-weight: 400;
       user-select: none;
       pointer-events: none;
+      transition: opacity 0.13s ease;
     }
 
     /* far (±2) */
@@ -135,10 +136,12 @@
     /* Padding: spaces before/after so the word scrolls fully in and out */
     const PAD = 3;
 
-    /* ms per scroll step */
-    const STEP_MS  = 240;
+    /* ms per scroll step (includes fade-out + update + fade-in) */
+    const STEP_MS  = 320;
+    /* delay before swapping text (mid-fade) */
+    const SWAP_MS  = 120;
     /* extra pause between words (ms) */
-    const PAUSE_MS = 650;
+    const PAUSE_MS = 900;
 
     let wordIdx = 0;
     let pos     = 0;
@@ -160,21 +163,28 @@
       const word   = words[wordIdx];
       const padded = ' '.repeat(PAD) + word + ' '.repeat(PAD);
 
-      slots.forEach((el, idx) => {
-        const offset   = idx - 2;
-        el.textContent = getChar(padded, pos + offset, offset === 0);
-      });
+      /* Fade out */
+      slots.forEach(el => { el.style.opacity = '0'; });
 
-      pos++;
+      setTimeout(() => {
+        /* Swap text mid-fade */
+        slots.forEach((el, idx) => {
+          const offset   = idx - 2;
+          el.textContent = getChar(padded, pos + offset, offset === 0);
+          el.style.opacity = '';
+        });
 
-      if (pos >= padded.length) {
-        pos     = 0;
-        wordIdx = (wordIdx + 1) % words.length;
-        updateCursor();
-        setTimeout(step, PAUSE_MS + Math.random() * 300);
-      } else {
-        setTimeout(step, STEP_MS);
-      }
+        pos++;
+
+        if (pos >= padded.length) {
+          pos     = 0;
+          wordIdx = (wordIdx + 1) % words.length;
+          updateCursor();
+          setTimeout(step, PAUSE_MS + Math.random() * 400);
+        } else {
+          setTimeout(step, STEP_MS);
+        }
+      }, SWAP_MS);
     }
 
     /* Click-to-navigate: if current word has a route, flash green then go */

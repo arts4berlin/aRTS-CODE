@@ -17,14 +17,17 @@
       position: relative;
     }
 
+    /* ── Background polygon canvas ── */
     canvas {
       position: fixed;
       inset: 0;
       display: block;
-      transition: opacity 0.45s ease;
+      opacity: 0.38;
+      transition: opacity 0.5s ease;
     }
+    canvas.fade { opacity: 0; }
 
-    /* ── Full-screen black veil (fades in on exit) ── */
+    /* ── Full-screen black veil ── */
     #veil {
       position: fixed;
       inset: 0;
@@ -32,7 +35,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.75s ease;
-      z-index: 20;
+      z-index: 30;
     }
     #veil.out { opacity: 1; }
 
@@ -55,68 +58,114 @@
       transition: opacity 0.8s ease;
     }
 
-    /* ── Morph target: the big serif I ── */
-    #big-i {
+    /* ── Shared centre stage ── */
+    #stage {
       position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0);
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── π and I share the same size/style ── */
+    .glyph {
+      position: absolute;
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: clamp(7rem, 30vh, 18rem);
+      font-size: clamp(7rem, 28vh, 17rem);
       color: #FF5C00;
       line-height: 1;
       user-select: none;
       pointer-events: none;
+    }
+
+    /* π bounces in */
+    @keyframes piBounce {
+      0%   { opacity: 0; transform: scale(0);    }
+      60%  { opacity: 1; transform: scale(1.12); }
+      80%  { opacity: 1; transform: scale(0.94); }
+      100% { opacity: 1; transform: scale(1);    }
+    }
+    #pi-char {
       opacity: 0;
-      z-index: 10;
+      animation: piBounce 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+      transition: opacity 0.4s ease;
     }
+    #pi-char.fade { opacity: 0 !important; animation: none; }
 
+    /* I bounces in */
     @keyframes iBounce {
-      0%   { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
-      60%  { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
-      80%  { transform: translate(-50%, -50%) scale(0.94); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
+      0%   { opacity: 0; transform: scale(0);    }
+      60%  { opacity: 1; transform: scale(1.12); }
+      80%  { opacity: 1; transform: scale(0.94); }
+      100% { opacity: 1; transform: scale(1);    }
     }
-
+    #big-i {
+      opacity: 0;
+      transform: scale(0);
+    }
     #big-i.show {
       animation: iBounce 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* ── Floating π digits ── */
+    .pi-digit {
+      position: fixed;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 300;
+      color: rgba(255, 92, 0, 0.7);
+      pointer-events: none;
+      z-index: 15;
+      opacity: 0;
+      animation: digitFloat var(--dur) ease-out var(--delay) forwards;
+    }
+
+    @keyframes digitFloat {
+      0%   { opacity: 0;    transform: translate(0, 0)       scale(1); }
+      20%  { opacity: 1; }
+      100% { opacity: 0;    transform: translate(var(--tx), var(--ty)) scale(0.6); }
     }
   </style>
 </head>
 <body>
 
   <canvas id="c"></canvas>
-
-  <!-- Logo -->
   <div id="pi-logo">[aRTS]</div>
 
-  <!-- Morph target -->
-  <span id="big-i">I</span>
+  <div id="stage">
+    <span class="glyph" id="pi-char">π</span>
+    <span class="glyph" id="big-i">I</span>
+  </div>
 
-  <!-- Exit veil -->
   <div id="veil"></div>
 
   <script>
   (function () {
     'use strict';
 
-    const canvas = document.getElementById('c');
-    const ctx    = canvas.getContext('2d');
-    const veil   = document.getElementById('veil');
-    const logo   = document.getElementById('pi-logo');
-    const bigI   = document.getElementById('big-i');
+    const canvas  = document.getElementById('c');
+    const ctx     = canvas.getContext('2d');
+    const veil    = document.getElementById('veil');
+    const logo    = document.getElementById('pi-logo');
+    const piChar  = document.getElementById('pi-char');
+    const bigI    = document.getElementById('big-i');
 
-    /* ── Timing (ms) ── */
-    const MORPH_START = 2400;  // canvas + logo fade out
-    const I_DELAY     = 350;   // I bounces in after canvas is gone
-    const SHOW_MS     = 5200;  // total time before redirect veil
-    const VEIL_MS     = 750;   // veil fade duration
+    /* ── Timing ── */
+    const MORPH_START = 2600;   // π fades, digits scatter, I bounces
+    const I_DELAY     = 320;    // I starts after π begins fading
+    const SHOW_MS     = 5400;   // total before redirect
+    const VEIL_MS     = 750;
     const DEST        = 'index.html';
+
+    /* ── Pi digits (first 60 decimal places) ── */
+    const PI_DIGITS = '3.14159265358979323846264338327950288419716939937510';
 
     let morphed = false;
 
-    /* ── Fade in logo ── */
-    setTimeout(() => { logo.style.opacity = '0.65'; }, 220);
+    /* Fade in logo */
+    setTimeout(() => { logo.style.opacity = '0.65'; }, 300);
 
     /* ── Canvas resize ── */
     function resize() {
@@ -126,13 +175,43 @@
     window.addEventListener('resize', resize);
     resize();
 
-    /* ── Easing ── */
     function easeInOutCubic(t) {
       return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
     }
+    function clamp(min, val, max) { return Math.max(min, Math.min(max, val)); }
 
-    function clamp(min, val, max) {
-      return Math.max(min, Math.min(max, val));
+    /* ── Spawn pi digit particles ── */
+    function spawnDigits() {
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2;
+      const chars = PI_DIGITS.split('').filter(c => c !== '.');
+
+      chars.forEach((ch, i) => {
+        const el  = document.createElement('span');
+        el.className = 'pi-digit';
+        el.textContent = ch;
+
+        const angle  = (Math.random() * 2 * Math.PI);
+        const dist   = 80 + Math.random() * 220;
+        const tx     = Math.cos(angle) * dist;
+        const ty     = Math.sin(angle) * dist;
+        const size   = 0.65 + Math.random() * 0.9;
+        const dur    = 0.9 + Math.random() * 0.8;
+        const delay  = (i * 0.022) + Math.random() * 0.06;
+
+        el.style.cssText = `
+          left: ${cx}px;
+          top:  ${cy}px;
+          font-size: ${size}rem;
+          --tx: ${tx.toFixed(0)}px;
+          --ty: ${ty.toFixed(0)}px;
+          --dur: ${dur.toFixed(2)}s;
+          --delay: ${delay.toFixed(3)}s;
+        `;
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), (dur + delay + 0.1) * 1000);
+      });
     }
 
     let startTs = null;
@@ -142,77 +221,60 @@
       if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
-      /* Progress 0→1 for polygon growth over MORPH_START */
-      const t     = clamp(0, elapsed / MORPH_START, 1);
-      const sides = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
-      const rot   = elapsed * 0.00015; // very slow drift
-
-      /* Canvas opacity: quick fade-in */
-      const canvasAlpha = clamp(0, elapsed / 380, 1);
+      const growDur = MORPH_START;
+      const t       = clamp(0, elapsed / growDur, 1);
+      const sides   = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
+      const rot     = elapsed * 0.00012;
 
       const W  = canvas.width;
       const H  = canvas.height;
       const cx = W / 2;
       const cy = H / 2;
-      const r  = Math.min(W, H) * 0.285;
-      const a  = canvasAlpha;
+      const r  = Math.min(W, H) * 0.30;
+      const a  = clamp(0, elapsed / 500, 1);
 
       ctx.clearRect(0, 0, W, H);
 
-      /* ── Bounce-in scale (spring, same feel as the I) ── */
-      const BOUNCE_DUR = 900;
-      const bt  = clamp(0, elapsed / BOUNCE_DUR, 1);
-      const scl = bt < 0.55
-        ? (bt / 0.55) * 1.14
-        : bt < 0.80
-          ? 1.14 - 0.20 * ((bt - 0.55) / 0.25)
-          : 0.94 + 0.06 * ((bt - 0.80) / 0.20);
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.scale(scl, scl);
-      ctx.translate(-cx, -cy);
-
-      /* ── Concentric faint rings ── */
-      [0.58, 1.0, 1.46].forEach((s, i) => {
+      /* Concentric rings */
+      [0.55, 1.0, 1.5].forEach((s, i) => {
         ctx.beginPath();
         ctx.arc(cx, cy, r * s, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255,255,255,${(0.05 - i * 0.013) * a})`;
+        ctx.strokeStyle = `rgba(255,255,255,${(0.06 - i * 0.015) * a})`;
         ctx.lineWidth = 0.5;
         ctx.stroke();
       });
 
-      /* ── Dashed rotating radius line ── */
+      /* Dashed radius */
       ctx.save();
-      ctx.setLineDash([6, 9]);
+      ctx.setLineDash([5, 8]);
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + r * Math.cos(rot), cy + r * Math.sin(rot));
-      ctx.strokeStyle = `rgba(255,255,255,${0.11 * a})`;
-      ctx.lineWidth = 0.7;
+      ctx.strokeStyle = `rgba(255,255,255,${0.10 * a})`;
+      ctx.lineWidth = 0.6;
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.restore();
 
-      /* ── Main circle ── */
+      /* Outer circle */
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255,255,255,${0.18 * a})`;
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(255,255,255,${0.12 * a})`;
+      ctx.lineWidth = 0.8;
       ctx.stroke();
 
-      /* ── Spoke lines (center → each vertex) ── */
+      /* Spokes */
       for (let i = 0; i < sides; i++) {
         const ang = (2 * Math.PI * i / sides) + rot;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + r * Math.cos(ang), cy + r * Math.sin(ang));
-        ctx.strokeStyle = `rgba(255,92,0,${0.07 * a})`;
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = `rgba(255,92,0,${0.06 * a})`;
+        ctx.lineWidth = 0.4;
         ctx.stroke();
       }
 
-      /* ── Inscribed polygon ── */
+      /* Polygon */
       ctx.beginPath();
       for (let i = 0; i <= sides; i++) {
         const ang = (2 * Math.PI * i / sides) + rot;
@@ -220,69 +282,40 @@
         const y   = cy + r * Math.sin(ang);
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = `rgba(255,92,0,${0.94 * a})`;
-      ctx.lineWidth = 1.8;
+      ctx.strokeStyle = `rgba(255,92,0,${0.85 * a})`;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      /* ── Vertex dots + coordinate labels (shown only for small n) ── */
-      const showCoords = sides <= 8;
+      /* Vertex dots */
       for (let i = 0; i < sides; i++) {
-        const ang  = (2 * Math.PI * i / sides) + rot;
-        const x    = cx + r * Math.cos(ang);
-        const y    = cy + r * Math.sin(ang);
-
-        /* Soft glow halo */
-        const grd = ctx.createRadialGradient(x, y, 0, x, y, 7);
-        grd.addColorStop(0, `rgba(255,92,0,${0.55 * a})`);
-        grd.addColorStop(1,  'rgba(255,92,0,0)');
+        const ang = (2 * Math.PI * i / sides) + rot;
+        const x   = cx + r * Math.cos(ang);
+        const y   = cy + r * Math.sin(ang);
         ctx.beginPath();
-        ctx.arc(x, y, 7, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
-        ctx.fill();
-
-        /* Solid core dot */
-        ctx.beginPath();
-        ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255,92,0,${a})`;
         ctx.fill();
-
-        /* Coordinate label */
-        if (showCoords) {
-          const pureAng = 2 * Math.PI * i / sides;
-          const nx = Math.cos(pureAng).toFixed(3);
-          const ny = (-Math.sin(pureAng)).toFixed(3);
-          const labelR = r + clamp(20, r * 0.15, 36);
-          const lx = cx + labelR * Math.cos(ang);
-          const ly = cy + labelR * Math.sin(ang);
-          const fs = clamp(8.5, W * 0.009, 11);
-          ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
-          ctx.fillStyle    = `rgba(255,255,255,${0.30 * a})`;
-          ctx.textAlign    = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(`(${nx}, ${ny})`, lx, ly);
-        }
       }
 
-      /* ── π approximation label ── */
+      /* π approximation — shown during morph too */
       const piApprox = sides * Math.sin(Math.PI / sides);
       const fs = clamp(10, W * 0.011, 13);
       ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
-      ctx.fillStyle    = `rgba(255,255,255,${0.42 * a})`;
+      ctx.fillStyle    = `rgba(255,255,255,${0.38 * a})`;
       ctx.textAlign    = 'center';
       ctx.textBaseline = 'alphabetic';
       ctx.fillText(
         `π  ≈  ${piApprox.toFixed(8)}     n = ${sides}`,
-        cx,
-        cy + r + clamp(30, r * 0.16, 48)
+        cx, cy + r + clamp(28, r * 0.16, 46)
       );
 
-      ctx.restore();
-
-      /* ── Trigger morph: canvas + logo fade, then I bounces in ── */
+      /* ── Morph trigger ── */
       if (!morphed && elapsed >= MORPH_START) {
         morphed = true;
-        canvas.style.opacity = '0';
-        logo.style.opacity   = '0';
+        canvas.classList.add('fade');
+        logo.style.opacity  = '0';
+        piChar.classList.add('fade');
+        spawnDigits();
         setTimeout(() => bigI.classList.add('show'), I_DELAY);
       }
 
