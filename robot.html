@@ -112,10 +112,11 @@
     const slots       = [-2,-1,0,1,2].map(d => document.getElementById('s' + d));
 
     /* ── Timing ── */
-    const BOUNCE_DUR  = 900;   // π spring-in
-    const MORPH_START = 1700;  // geometric morph begins
-    const MORPH_DUR   = 700;   // morph duration
-    const WORDS_DELAY = 380;   // strip fade-in delay after morph
+    const BOUNCE_DUR  = 900;    // π spring-in
+    const MORPH_START = 1700;   // geometric morph begins
+    const MORPH_DUR   = 700;    // morph duration
+    const SETTLE_DUR  = 420;    // glow + scale settle after morph
+    const WORDS_DELAY = 500;    // strip fade-in after morph+settle
 
     /* ── Resize glyph canvas ── */
     let lastMorphT = 0, lastScale = 0;
@@ -144,34 +145,32 @@
     }
 
     /* ── Geometric glyph renderer ──────────────────────────────────────
-       morphT = 0  →  π  (top bar + two wide-set legs)
-       morphT = 1  →  I  (top serif + merged centre stroke + bottom serif)
+       morphT = 0  →  π  (top bar + two wide-set legs, no bottom bar)
+       morphT = 1  →  I  (top serif + single centre stroke + bottom serif)
 
-       Geometry that moves:
-         Top bar   : width lerps piTopW → iSerifW
-         Left leg  : x-centre slides  −legOff → −sw/2  (inward)
-         Right leg : x-centre slides  +legOff → +sw/2  (inward)
-         Leg height: shortens slightly to leave room for bottom serif
-         Bottom bar: width grows 0 → iSerifW  (starts at morphT ≈ 0.28)
+       FIX: both legs converge to x = 0 (fully overlapping at t=1),
+       so they render as ONE solid centre stroke — no black gap.
+
+       glow (0-20): canvas shadowBlur for the pizzazz settle bloom.
        ─────────────────────────────────────────────────────────────────── */
-    function drawGlyph(morphT, scale) {
+    function drawGlyph(morphT, scale, glow) {
       lastMorphT = morphT;
       lastScale  = scale;
 
       const W = glyphCanvas.width, H = glyphCanvas.height;
-      const cx = W / 2, cy = H / 2;
+      const cx = Math.round(W / 2), cy = Math.round(H / 2);
 
       gCtx.clearRect(0, 0, W, H);
       if (scale <= 0.004) return;
 
-      /* Proportions relative to glyph height */
-      const gh      = H * 0.74;
-      const sw      = gh * 0.090;    // stroke weight
-      const piTopW  = gh * 0.84;     // π top-bar width
-      const iSerifW = gh * 0.52;     // I serif width
-      const legOff  = gh * 0.222;    // π: leg x-offset from centre line
+      /* Proportions — tuned for a well-balanced geometric serif */
+      const gh      = H * 0.72;      // glyph height
+      const sw      = gh * 0.110;    // stroke weight  (~11% of height)
+      const piTopW  = gh * 0.80;     // π: top-bar width
+      const iSerifW = gh * 0.46;     // I: serif width
+      const legOff  = gh * 0.210;    // π: leg x-offset from centre
 
-      const et   = smoothstep(morphT); // eased morph progress
+      const et   = smoothstep(morphT);
       const gTop = cy - gh / 2;
       const gBot = cy + gh / 2;
 
@@ -179,30 +178,40 @@
       gCtx.translate(cx, cy);
       gCtx.scale(scale, scale);
       gCtx.translate(-cx, -cy);
+
+      /* Glow bloom: warms the I as it settles */
+      if (glow > 0) {
+        gCtx.shadowColor = '#FF8C40';
+        gCtx.shadowBlur  = glow;
+      }
+
       gCtx.fillStyle = '#FF5C00';
 
-      /* TOP BAR */
+      /* TOP BAR — narrows from π-width → I serif */
       const tbW = lerp(piTopW, iSerifW, et);
-      gCtx.fillRect(cx - tbW / 2, gTop, tbW, sw);
+      gCtx.fillRect(Math.round(cx - tbW / 2), Math.round(gTop), Math.round(tbW), Math.round(sw));
 
-      /* BOTTOM SERIF — grows from morphT ≈ 0.28 */
+      /* BOTTOM SERIF — grows in after morphT ≈ 0.28 */
       const bbT = smoothstep(clamp(0, (morphT - 0.28) / 0.72, 1));
       const bbW = lerp(0, iSerifW, bbT);
 
-      /* Leg base-y shortens as bottom serif grows */
-      const legBotY = lerp(gBot, gBot - sw * 0.95, et);
+      /* Leg bottom: shortens to make room for bottom serif */
+      const legBotY = lerp(gBot, gBot - sw * 0.96, et);
 
-      /* LEFT LEG */
-      const lx = lerp(-legOff, -sw / 2, et);
-      gCtx.fillRect(cx + lx - sw / 2, gTop + sw, sw, legBotY - gTop - sw);
+      /* LEFT LEG → converges to x = 0 (fully overlaps right at t=1) */
+      const lx = lerp(-legOff, 0, et);
+      gCtx.fillRect(Math.round(cx + lx - sw / 2), Math.round(gTop + sw),
+                    Math.round(sw), Math.round(legBotY - gTop - sw));
 
-      /* RIGHT LEG */
-      const rx = lerp(+legOff, +sw / 2, et);
-      gCtx.fillRect(cx + rx - sw / 2, gTop + sw, sw, legBotY - gTop - sw);
+      /* RIGHT LEG → converges to x = 0 (fully overlaps left at t=1) */
+      const rx = lerp(+legOff, 0, et);
+      gCtx.fillRect(Math.round(cx + rx - sw / 2), Math.round(gTop + sw),
+                    Math.round(sw), Math.round(legBotY - gTop - sw));
 
       /* BOTTOM BAR */
       if (bbW > 0.5) {
-        gCtx.fillRect(cx - bbW / 2, gBot - sw, bbW, sw);
+        gCtx.fillRect(Math.round(cx - bbW / 2), Math.round(gBot - sw),
+                      Math.round(bbW), Math.round(sw));
       }
 
       gCtx.restore();
@@ -268,27 +277,37 @@
       if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
-      /* Determine morph state */
-      let morphT, scale;
+      /* Determine morph + settle state */
+      const SETTLE_START = MORPH_START + MORPH_DUR;
+      let morphT, scale, glow;
 
       if (elapsed < BOUNCE_DUR) {
-        morphT = 0;
-        scale  = bounceScale(elapsed / BOUNCE_DUR);
+        morphT = 0; scale = bounceScale(elapsed / BOUNCE_DUR); glow = 0;
+
       } else if (elapsed < MORPH_START) {
-        morphT = 0;
-        scale  = 1;
-      } else if (elapsed < MORPH_START + MORPH_DUR) {
-        morphT = (elapsed - MORPH_START) / MORPH_DUR;
-        scale  = 1;
-      } else {
+        morphT = 0; scale = 1; glow = 0;
+
+      } else if (elapsed < SETTLE_START) {
+        morphT = (elapsed - MORPH_START) / MORPH_DUR; scale = 1; glow = 0;
+
+      } else if (elapsed < SETTLE_START + SETTLE_DUR) {
+        /* Pizzazz: I snaps into place with a scale pulse + glow bloom */
+        const st = (elapsed - SETTLE_START) / SETTLE_DUR;
         morphT = 1;
-        scale  = 1;
+        /* Scale: 1 → 1.055 → 1 (crisp overshoot) */
+        scale = st < 0.38 ? lerp(1, 1.055, st / 0.38)
+                           : lerp(1.055, 1.0,  (st - 0.38) / 0.62);
+        /* Glow blooms in quickly, then eases to steady */
+        glow = lerp(0, 22, smoothstep(Math.min(st * 2.5, 1)));
+
+      } else {
+        morphT = 1; scale = 1; glow = 16; // steady warm glow on I
       }
 
-      drawGlyph(morphT, scale);
+      drawGlyph(morphT, scale, glow);
 
-      /* Trigger word strip after morph completes */
-      if (!morphDone && elapsed >= MORPH_START + MORPH_DUR) {
+      /* Trigger word strip after settle completes */
+      if (!morphDone && elapsed >= SETTLE_START + SETTLE_DUR) {
         morphDone = true;
         setTimeout(() => {
           strip.style.opacity = '1';
@@ -297,11 +316,11 @@
         }, WORDS_DELAY);
       }
 
-      /* Loop only while morph is in progress */
-      if (elapsed < MORPH_START + MORPH_DUR + 100) {
+      /* Loop through settle + a beat to hold the glow, then stop */
+      if (elapsed < SETTLE_START + SETTLE_DUR + 200) {
         requestAnimationFrame(mainFrame);
       }
-      /* Canvas holds last frame (I) — no further redraw needed */
+      /* Canvas retains the final I frame — glow stays rendered */
     }
 
     requestAnimationFrame(mainFrame);
