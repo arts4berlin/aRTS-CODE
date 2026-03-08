@@ -60,6 +60,7 @@
       transition: background 0.18s, color 0.18s;
     }
     .btn-act:hover { background: #FF5C00; color: #000; }
+    .btn-act { font-variant-numeric: tabular-nums; }
 
     /* Smaller white-filled aBOUT button */
     .btn-back {
@@ -89,5 +90,39 @@
     <a href="about.html" class="btn-back">aBOUT</a>
   </div>
 
+  <script>
+    (function () {
+      const TARGET = 'aSK';
+      const POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
+      const btn    = document.querySelector('.btn-act');
+      let timer    = null;
+      let frame    = 0;
+      const FRAMES = 18;   // total scramble frames
+      const RATE   = 45;   // ms per frame
+
+      function rand() { return POOL[Math.floor(Math.random() * POOL.length)]; }
+
+      btn.addEventListener('mouseenter', () => {
+        clearInterval(timer);
+        frame = 0;
+        timer = setInterval(() => {
+          const settled = Math.floor((frame / FRAMES) * TARGET.length);
+          btn.textContent = TARGET.split('').map((ch, i) =>
+            i < settled ? ch : rand()
+          ).join('');
+          frame++;
+          if (frame > FRAMES) {
+            clearInterval(timer);
+            btn.textContent = TARGET;
+          }
+        }, RATE);
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        clearInterval(timer);
+        btn.textContent = TARGET;
+      });
+    })();
+  </script>
 </body>
 </html>
