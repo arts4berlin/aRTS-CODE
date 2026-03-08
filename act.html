@@ -77,20 +77,6 @@
     .btn-ghost { background: transparent; color: #fff; }
     .btn-ghost:hover { background: #fff; color: #000; }
 
-    /* CoNNECT — 3 thunderbolts appear above text on hover */
-    .btn-connect { flex-direction: column; gap: 0.1em; }
-    .btn-bolts {
-      display: block;
-      font-size: 0.58em;
-      letter-spacing: 0.28em;
-      padding-left: 0.28em; /* optical centre for letter-spacing */
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.14s ease;
-      color: #000;
-      line-height: 1;
-    }
-    .btn-connect:hover .btn-bolts { visibility: visible; opacity: 1; }
   </style>
 </head>
 <body>
@@ -101,9 +87,41 @@
   </div>
 
   <div class="buttons">
-    <a href="connect.html" class="btn btn-fill btn-connect"><span class="btn-bolts">⚡ ⚡ ⚡</span>CoNNECT</a>
+    <a href="connect.html" class="btn btn-fill btn-connect">CoNNECT</a>
     <a href="work.html"    class="btn btn-ghost btn-work">WORK</a>
   </div>
+
+  <script>
+    /* CoNNECT — typewriter scramble on hover (desktop) / auto (touch) */
+    (function () {
+      var btn    = document.querySelector('.btn-connect');
+      var TARGET = 'CoNNECT';
+      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES = 18, RATE = 45;
+      var timer  = null;
+      function runScramble() {
+        clearInterval(timer);
+        var step = 0;
+        timer = setInterval(function () {
+          var out = '';
+          for (var i = 0; i < TARGET.length; i++) {
+            out += (i < Math.floor(step * TARGET.length / FRAMES))
+              ? TARGET[i]
+              : POOL[Math.floor(Math.random() * POOL.length)];
+          }
+          btn.textContent = out;
+          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
+        }, RATE);
+      }
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(runScramble, 700);
+        setInterval(runScramble, 3500);
+      } else {
+        btn.addEventListener('mouseenter', runScramble);
+        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
+      }
+    })();
+  </script>
 
   <script>
     /* WORK — typewriter scramble on hover (desktop) / auto (touch) */
