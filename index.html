@@ -19,6 +19,43 @@
       flex-direction: column;
     }
 
+    /* ── CRT turn-on overlay ── */
+    #crt {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      background: #000;
+    }
+
+    /* Horizontal bloom line */
+    #crt-line {
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 2px;
+      background: #fff;
+      transform: translateY(-50%);
+      box-shadow: 0 0 18px 6px rgba(255,255,255,0.85);
+      opacity: 0;
+    }
+
+    /* Scanline overlay — subtle horizontal lines */
+    #crt::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.18) 3px,
+        rgba(0,0,0,0.18) 4px
+      );
+      opacity: 0;
+      pointer-events: none;
+    }
+
     .logo {
       position: fixed;
       top: 28px;
@@ -283,6 +320,9 @@
     </div>
   </div>
 
+  <!-- CRT turn-on overlay -->
+  <div id="crt"><div id="crt-line"></div></div>
+
   <!-- ── CAPTCHA logic ───────────────────────────────────────────── -->
   <script>
   (function () {
@@ -455,6 +495,67 @@
       if (e.key === 'Escape') closeOverlay();
     });
 
+  })();
+  </script>
+
+  <!-- ── CRT turn-on animation ── -->
+  <script>
+  (function () {
+    const crt  = document.getElementById('crt');
+    const line = document.getElementById('crt-line');
+
+    // Phase 1 (0–80ms):  line flashes on
+    // Phase 2 (80–380ms): line expands vertically to fill screen (scaleY)
+    // Phase 3 (380–620ms): whole overlay fades out, scanlines appear briefly
+    // Phase 4 (620ms+): overlay removed
+
+    const T1 = 80, T2 = 380, T3 = 620;
+
+    let start = null;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    function tick(ts) {
+      if (!start) start = ts;
+      const e = ts - start;
+
+      if (e < T1) {
+        // Flash line on
+        const t = e / T1;
+        line.style.opacity     = String(lerp(0, 1, ease(t)));
+        line.style.transform   = `translateY(-50%) scaleY(1)`;
+        crt.style.background   = '#000';
+        crt.style.opacity      = '1';
+
+      } else if (e < T2) {
+        // Expand line vertically to fill screen
+        const t   = (e - T1) / (T2 - T1);
+        const scl = lerp(1, window.innerHeight / 2, ease(t));
+        line.style.opacity   = '1';
+        line.style.transform = `translateY(-50%) scaleY(${scl})`;
+        // Fade black bg out as line expands
+        const bgAlpha = lerp(1, 0, ease(t));
+        crt.style.background = `rgba(0,0,0,${bgAlpha})`;
+
+      } else if (e < T3) {
+        // Whole overlay fades out + scanlines flash
+        const t = (e - T2) / (T3 - T2);
+        line.style.opacity = String(lerp(1, 0, ease(t)));
+        crt.style.opacity  = String(lerp(1, 0, ease(t)));
+        crt.style.background = 'transparent';
+        // Scanlines flicker during this phase
+        crt.style.setProperty('--scan-opacity', String(lerp(0.8, 0, t)));
+        // Apply scanlines via after pseudo with opacity on crt
+      } else {
+        crt.remove();
+        return;
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
   })();
   </script>
 </body>
