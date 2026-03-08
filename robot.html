@@ -16,74 +16,33 @@
       background: #000;
       height: 100vh;
       overflow: hidden;
-      position: relative;
     }
 
-    /* ── Background polygon canvas ── */
-    canvas {
-      position: fixed;
-      inset: 0;
-      display: block;
-      opacity: 0.38;
-      transition: opacity 0.65s ease;
-    }
-    canvas.fade { opacity: 0; }
-
-    /* ── Centre stage ── */
-    #stage {
+    /* ── Geometric glyph canvas — centred ── */
+    #glyph-canvas {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      image-rendering: crisp-edges;
     }
 
-    /* π and I share size / style */
-    .glyph {
-      position: absolute;
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: clamp(7rem, 28vh, 17rem);
-      color: #FF5C00;
-      line-height: 1;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    /* π bounces in */
-    @keyframes piBounce {
-      0%   { opacity: 0; transform: scale(0);    }
-      60%  { opacity: 1; transform: scale(1.12); }
-      80%  { opacity: 1; transform: scale(0.94); }
-      100% { opacity: 1; transform: scale(1);    }
-    }
-    #pi-char {
-      opacity: 0;
-      animation: piBounce 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
-    }
-    /* Lock: hand control to JS for blur-morph */
-    #pi-char.lock {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: scale(1) !important;
-    }
-
-    /* I: invisible until JS reveals it */
-    #big-i {
-      opacity: 0;
-    }
-
-    /* ── 5-slot word strip — centred over the I ── */
-    .strip {
-      position: absolute;
+    /* ── Word scroll strip — in front of glyph ── */
+    #stage {
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
       align-items: center;
+      justify-content: center;
       z-index: 11;
+    }
+
+    .strip {
+      display: flex;
+      align-items: center;
       opacity: 0;
       transition: opacity 0.65s ease;
     }
@@ -105,13 +64,9 @@
 </head>
 <body>
 
-  <canvas id="c"></canvas>
+  <canvas id="glyph-canvas"></canvas>
 
   <div id="stage">
-    <span class="glyph" id="pi-char">π</span>
-    <span class="glyph" id="big-i">I</span>
-
-    <!-- word scroll strip -->
     <div class="strip" id="strip">
       <span class="s s-far"  id="s-2"></span>
       <span class="s s-near" id="s-1"></span>
@@ -125,18 +80,15 @@
   (function () {
     'use strict';
 
-    /* ── Route map ── */
+    /* ── Routes & words ── */
     const routes = { work: 'work.html' };
-
-    /* ── Word list ── */
-    const words = [
+    const words  = [
       'work',
       'applying', 'buzzing', 'buying', 'doping', 'trotting',
       'bubbling', 'coping', 'siezing', 'mokka', 'zoning',
       'propping', 'calling', 'questioning', 'viewing',
       'tripping', 'buffering', 'crunching',
     ];
-    /* Shuffle */
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [words[i], words[j]] = [words[j], words[i]];
@@ -144,8 +96,7 @@
 
     /* ── Flat character stream ── */
     const PAD = 5, GAP = 6;
-    const streamChars  = [];
-    const streamWordOf = [];
+    const streamChars = [], streamWordOf = [];
     words.forEach((word, wi) => {
       for (let i = 0; i < PAD; i++) { streamChars.push(' '); streamWordOf.push(-1); }
       for (const ch of word)        { streamChars.push(ch);  streamWordOf.push(wi); }
@@ -153,71 +104,115 @@
     });
     const SLEN = streamChars.length;
 
-    /* ── DOM refs ── */
-    const canvas  = document.getElementById('c');
-    const ctx     = canvas.getContext('2d');
-    const piChar  = document.getElementById('pi-char');
-    const bigI    = document.getElementById('big-i');
-    const strip   = document.getElementById('strip');
-    const stage   = document.getElementById('stage');
-    const slots   = [-2, -1, 0, 1, 2].map(d => document.getElementById('s' + d));
+    /* ── DOM ── */
+    const glyphCanvas = document.getElementById('glyph-canvas');
+    const gCtx        = glyphCanvas.getContext('2d');
+    const strip       = document.getElementById('strip');
+    const stage       = document.getElementById('stage');
+    const slots       = [-2,-1,0,1,2].map(d => document.getElementById('s' + d));
 
     /* ── Timing ── */
-    const MORPH_START = 1700;
-    const MORPH_DUR   = 580;
-    const WORDS_DELAY = 320;   // ms after morph ends before words appear
+    const BOUNCE_DUR  = 900;   // π spring-in
+    const MORPH_START = 1700;  // geometric morph begins
+    const MORPH_DUR   = 700;   // morph duration
+    const WORDS_DELAY = 380;   // strip fade-in delay after morph
 
-    /* ── Canvas resize ── */
+    /* ── Resize glyph canvas ── */
+    let lastMorphT = 0, lastScale = 0;
+
     function resize() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dim = Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.54);
+      glyphCanvas.width  = dim;
+      glyphCanvas.height = dim;
+      drawGlyph(lastMorphT, lastScale);
     }
     window.addEventListener('resize', resize);
     resize();
 
     /* ── Helpers ── */
-    function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
-    function easeOut2(t)       { return 1 - (1 - t) * (1 - t); }
-    function smoothstep(t)     { return t * t * (3 - 2 * t); }
-    function clamp(mn, v, mx)  { return Math.max(mn, Math.min(mx, v)); }
+    function lerp(a, b, t)    { return a + (b - a) * t; }
+    function clamp(mn, v, mx) { return Math.max(mn, Math.min(mx, v)); }
+    function smoothstep(t)    { return t * t * (3 - 2 * t); }
 
-    /* ── Blur-crossfade morph: π → I ── */
-    function morphPiToI(dur, onDone) {
-      piChar.classList.add('lock');
-      void piChar.offsetHeight; // flush
+    /* π spring bounce: scale 0 → 1.12 → 0.94 → 1 */
+    function bounceScale(t) {
+      if (t <= 0) return 0;
+      if (t >= 1) return 1;
+      if (t < 0.60) return lerp(0,    1.12, t / 0.60);
+      if (t < 0.80) return lerp(1.12, 0.94, (t - 0.60) / 0.20);
+                    return lerp(0.94, 1.00, (t - 0.80) / 0.20);
+    }
 
-      const t0 = performance.now();
-      function step(now) {
-        const p  = clamp(0, (now - t0) / dur, 1);
+    /* ── Geometric glyph renderer ──────────────────────────────────────
+       morphT = 0  →  π  (top bar + two wide-set legs)
+       morphT = 1  →  I  (top serif + merged centre stroke + bottom serif)
 
-        const fp = easeOut2(p);
-        piChar.style.opacity = (1 - fp).toFixed(4);
-        piChar.style.filter  = `blur(${(fp * 18).toFixed(1)}px)`;
+       Geometry that moves:
+         Top bar   : width lerps piTopW → iSerifW
+         Left leg  : x-centre slides  −legOff → −sw/2  (inward)
+         Right leg : x-centre slides  +legOff → +sw/2  (inward)
+         Leg height: shortens slightly to leave room for bottom serif
+         Bottom bar: width grows 0 → iSerifW  (starts at morphT ≈ 0.28)
+       ─────────────────────────────────────────────────────────────────── */
+    function drawGlyph(morphT, scale) {
+      lastMorphT = morphT;
+      lastScale  = scale;
 
-        const pI = clamp(0, (p - 0.18) / 0.82, 1);
-        const fi = smoothstep(pI);
-        bigI.style.opacity = fi.toFixed(4);
-        bigI.style.filter  = `blur(${((1 - fi) * 18).toFixed(1)}px)`;
+      const W = glyphCanvas.width, H = glyphCanvas.height;
+      const cx = W / 2, cy = H / 2;
 
-        if (p < 1) {
-          requestAnimationFrame(step);
-        } else {
-          piChar.style.display = 'none';
-          bigI.style.filter    = '';
-          bigI.style.opacity   = '1';
-          if (onDone) onDone();
-        }
+      gCtx.clearRect(0, 0, W, H);
+      if (scale <= 0.004) return;
+
+      /* Proportions relative to glyph height */
+      const gh      = H * 0.74;
+      const sw      = gh * 0.090;    // stroke weight
+      const piTopW  = gh * 0.84;     // π top-bar width
+      const iSerifW = gh * 0.52;     // I serif width
+      const legOff  = gh * 0.222;    // π: leg x-offset from centre line
+
+      const et   = smoothstep(morphT); // eased morph progress
+      const gTop = cy - gh / 2;
+      const gBot = cy + gh / 2;
+
+      gCtx.save();
+      gCtx.translate(cx, cy);
+      gCtx.scale(scale, scale);
+      gCtx.translate(-cx, -cy);
+      gCtx.fillStyle = '#FF5C00';
+
+      /* TOP BAR */
+      const tbW = lerp(piTopW, iSerifW, et);
+      gCtx.fillRect(cx - tbW / 2, gTop, tbW, sw);
+
+      /* BOTTOM SERIF — grows from morphT ≈ 0.28 */
+      const bbT = smoothstep(clamp(0, (morphT - 0.28) / 0.72, 1));
+      const bbW = lerp(0, iSerifW, bbT);
+
+      /* Leg base-y shortens as bottom serif grows */
+      const legBotY = lerp(gBot, gBot - sw * 0.95, et);
+
+      /* LEFT LEG */
+      const lx = lerp(-legOff, -sw / 2, et);
+      gCtx.fillRect(cx + lx - sw / 2, gTop + sw, sw, legBotY - gTop - sw);
+
+      /* RIGHT LEG */
+      const rx = lerp(+legOff, +sw / 2, et);
+      gCtx.fillRect(cx + rx - sw / 2, gTop + sw, sw, legBotY - gTop - sw);
+
+      /* BOTTOM BAR */
+      if (bbW > 0.5) {
+        gCtx.fillRect(cx - bbW / 2, gBot - sw, bbW, sw);
       }
-      requestAnimationFrame(step);
+
+      gCtx.restore();
     }
 
     /* ── Word scroll ── */
-    const shown  = ['', '', '', '', ''];
-    const fading = [false, false, false, false, false];
-    let scrollPos = 0;
-    let lastTs    = null;
-    let running   = false;
-    const SPEED   = 2.2;
+    const shown  = ['','','','',''];
+    const fading = [false,false,false,false,false];
+    let scrollPos = 0, lastTs = null, running = false;
+    const SPEED = 2.2;
 
     function charAt(idx) { return streamChars[(idx % SLEN + SLEN) % SLEN]; }
     function wordAt(idx)  { return streamWordOf[(idx % SLEN + SLEN) % SLEN]; }
@@ -227,7 +222,6 @@
       if (lastTs === null) lastTs = ts;
       const dt = Math.min(ts - lastTs, 50);
       lastTs = ts;
-
       scrollPos = (scrollPos + SPEED * dt / 1000) % SLEN;
       const ipos = Math.floor(scrollPos);
 
@@ -235,28 +229,23 @@
         const offset   = si - 2;
         const ch       = charAt(ipos + offset);
         const isCenter = offset === 0;
-        const next     = (ch === ' ') ? '' : (isCenter ? ch.toUpperCase() : ch);
-
+        const next     = ch === ' ' ? '' : (isCenter ? ch.toUpperCase() : ch);
         if (next !== shown[si] && !fading[si]) {
           fading[si] = true;
           el.style.opacity = '0';
           setTimeout(() => {
-            el.textContent = next;
-            shown[si] = next;
-            el.style.opacity = '';
-            fading[si] = false;
+            el.textContent = next; shown[si] = next;
+            el.style.opacity = ''; fading[si] = false;
           }, 90);
         }
       });
 
-      const wi          = wordAt(ipos);
-      const currentWord = wi >= 0 ? words[wi] : null;
-      stage.style.cursor = (currentWord && routes[currentWord]) ? 'pointer' : 'default';
-
+      const wi   = wordAt(ipos);
+      const word = wi >= 0 ? words[wi] : null;
+      stage.style.cursor = (word && routes[word]) ? 'pointer' : 'default';
       requestAnimationFrame(scrollFrame);
     }
 
-    /* Click to navigate */
     stage.addEventListener('click', () => {
       const ipos = Math.floor(scrollPos);
       const wi   = wordAt(ipos);
@@ -272,110 +261,50 @@
       setTimeout(() => { window.location.href = dest; }, 480);
     });
 
-    /* ── Main canvas loop ── */
-    let startTs = null;
-    let morphed = false;
+    /* ── Main animation loop ── */
+    let startTs = null, morphDone = false;
 
-    function canvasFrame(now) {
+    function mainFrame(now) {
       if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
-      const t     = clamp(0, elapsed / MORPH_START, 1);
-      const sides = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
-      const rot   = elapsed * 0.00012;
+      /* Determine morph state */
+      let morphT, scale;
 
-      const W  = canvas.width, H  = canvas.height;
-      const cx = W / 2,        cy = H / 2;
-      const r  = Math.min(W, H) * 0.30;
-      const a  = clamp(0, elapsed / 500, 1);
-
-      ctx.clearRect(0, 0, W, H);
-
-      [0.55, 1.0, 1.5].forEach((s, i) => {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * s, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255,255,255,${(0.06 - i * 0.015) * a})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      });
-
-      ctx.save();
-      ctx.setLineDash([5, 8]);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + r * Math.cos(rot), cy + r * Math.sin(rot));
-      ctx.strokeStyle = `rgba(255,255,255,${0.10 * a})`;
-      ctx.lineWidth = 0.6;
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255,255,255,${0.12 * a})`;
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      for (let i = 0; i < sides; i++) {
-        const ang = (2 * Math.PI * i / sides) + rot;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + r * Math.cos(ang), cy + r * Math.sin(ang));
-        ctx.strokeStyle = `rgba(255,92,0,${0.06 * a})`;
-        ctx.lineWidth = 0.4;
-        ctx.stroke();
+      if (elapsed < BOUNCE_DUR) {
+        morphT = 0;
+        scale  = bounceScale(elapsed / BOUNCE_DUR);
+      } else if (elapsed < MORPH_START) {
+        morphT = 0;
+        scale  = 1;
+      } else if (elapsed < MORPH_START + MORPH_DUR) {
+        morphT = (elapsed - MORPH_START) / MORPH_DUR;
+        scale  = 1;
+      } else {
+        morphT = 1;
+        scale  = 1;
       }
 
-      ctx.beginPath();
-      for (let i = 0; i <= sides; i++) {
-        const ang = (2 * Math.PI * i / sides) + rot;
-        const x = cx + r * Math.cos(ang), y = cy + r * Math.sin(ang);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = `rgba(255,92,0,${0.85 * a})`;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+      drawGlyph(morphT, scale);
 
-      for (let i = 0; i < sides; i++) {
-        const ang = (2 * Math.PI * i / sides) + rot;
-        ctx.beginPath();
-        ctx.arc(cx + r * Math.cos(ang), cy + r * Math.sin(ang), 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,92,0,${a})`;
-        ctx.fill();
+      /* Trigger word strip after morph completes */
+      if (!morphDone && elapsed >= MORPH_START + MORPH_DUR) {
+        morphDone = true;
+        setTimeout(() => {
+          strip.style.opacity = '1';
+          running = true;
+          requestAnimationFrame(scrollFrame);
+        }, WORDS_DELAY);
       }
 
-      const piApprox = sides * Math.sin(Math.PI / sides);
-      const fs = clamp(10, W * 0.011, 13);
-      ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
-      ctx.fillStyle    = `rgba(255,255,255,${0.38 * a})`;
-      ctx.textAlign    = 'center';
-      ctx.textBaseline = 'alphabetic';
-      ctx.fillText(
-        `π  ≈  ${piApprox.toFixed(8)}     n = ${sides}`,
-        cx, cy + r + clamp(28, r * 0.16, 46)
-      );
-
-      /* Trigger morph */
-      if (!morphed && elapsed >= MORPH_START) {
-        morphed = true;
-        canvas.classList.add('fade');
-        morphPiToI(MORPH_DUR, () => {
-          /* After morph: fade in word strip and start scrolling */
-          setTimeout(() => {
-            strip.style.opacity = '1';
-            running = true;
-            requestAnimationFrame(scrollFrame);
-          }, WORDS_DELAY);
-        });
+      /* Loop only while morph is in progress */
+      if (elapsed < MORPH_START + MORPH_DUR + 100) {
+        requestAnimationFrame(mainFrame);
       }
-
-      /* Canvas only needed through morph */
-      if (elapsed < MORPH_START + MORPH_DUR + 200) {
-        requestAnimationFrame(canvasFrame);
-      }
+      /* Canvas holds last frame (I) — no further redraw needed */
     }
 
-    requestAnimationFrame(canvasFrame);
+    requestAnimationFrame(mainFrame);
   })();
   </script>
 
