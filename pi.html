@@ -14,56 +14,16 @@
       background: #000;
       height: 100vh;
       overflow: hidden;
-      position: relative;
-      cursor: none; /* I replaces the cursor */
     }
 
-    /* ── Subtle polygon backdrop ── */
-    canvas {
-      position: fixed;
-      inset: 0;
-      display: block;
-      opacity: 0.18;
-    }
-
-    /* ── RSVP letter row ── */
-    #word {
+    /* ── The I — decryption gate, fixed centre ── */
+    #big-i {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(1rem, 5vw, 3.5rem);
-      z-index: 10;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .letter {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(3.5rem, 11vw, 8rem);
-      font-weight: 700;
-      color: rgba(255,255,255,0.55);
-      line-height: 1;
-      min-width: 1ch;
-      text-align: center;
-      display: inline-block;
-      transition: color 0.35s ease;
-    }
-
-    .letter.settled {
-      color: #FF5C00;
-    }
-
-    /* ── Large I — follows mouse / touch ── */
-    #big-i {
-      position: fixed;
-      top: -300px;
-      left: -300px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(6rem, 18vw, 12rem);
+      font-size: clamp(7rem, 20vw, 13rem);
       font-weight: 700;
       color: #FF5C00;
       line-height: 1;
@@ -71,236 +31,201 @@
       pointer-events: none;
       z-index: 20;
       opacity: 0;
-      transform: translate(-50%, -50%) scale(1);
-      will-change: transform, top, left;
+      transition: opacity 0.28s ease;
+      text-shadow: 0 0 70px rgba(255,92,0,0.30);
+    }
+
+    /* ── Scrolling word row ── */
+    #word-wrap {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Individual letters — undecrypted = dim uppercase scramble */
+    .letter {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      line-height: 1;
+      padding: 0 0.10em;
+      user-select: none;
+    }
+
+    /* Decrypted = bright lowercase */
+    .letter.done {
+      color: rgba(255,255,255,0.92);
     }
   </style>
 </head>
 <body>
 
-  <canvas id="c"></canvas>
-
-  <div id="word">
-    <span class="letter" data-char="R"></span>
-    <span class="letter" data-char="S"></span>
-    <span class="letter" data-char="V"></span>
-    <span class="letter" data-char="P"></span>
-  </div>
-
-  <span id="big-i">I</span>
+  <span id="big-i">?</span>
+  <div id="word-wrap"></div>
 
   <script>
   (function () {
     'use strict';
 
-    const canvas  = document.getElementById('c');
-    const ctx     = canvas.getContext('2d');
-    const bigI    = document.getElementById('big-i');
-    const letters = Array.from(document.querySelectorAll('.letter'));
+    const bigI     = document.getElementById('big-i');
+    const wordWrap = document.getElementById('word-wrap');
 
     const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-    const SCRAMBLE_MS = 55;   // ms between scramble frames
-    const SETTLE_STEPS = 12;  // frames in settle animation
-    const SETTLE_MS    = 40;  // ms per settle frame
+    const WORDS       = ['rsvp','connect','berlin','art','create','join','reveal','open','meet'];
+    const WORD_SPEED  = 150;  // px / second
+    const SCRAMBLE_MS = 58;   // letter scramble interval
 
-    /* ── I state ── */
-    let iScale  = 1.0;
-    let iActive = false;
+    let wordIdx  = 0;
+    let wordX    = 0;
+    let exited   = false;   // current word has left the screen
+    let spans    = [];
+    let decrypted= [];
+    let sTimers  = [];
+    let lastTs   = null;
+    let streaming= false;
 
-    /* ── Letter states ── */
-    const state = letters.map(el => ({
-      el,
-      char:     el.dataset.char,
-      settled:  false,
-      settling: false,
-      timer:    null
-    }));
+    /* ══════════════════════════════════════════════
+       PHASE 1 — single char scrambles → settles to I
+    ══════════════════════════════════════════════ */
+    function runIntro() {
+      bigI.style.opacity = '1';
+      bigI.textContent   = POOL[Math.floor(Math.random() * POOL.length)];
 
-    /* ── Continuous scramble ── */
-    function startScramble(s) {
-      if (s.timer || s.settled) return;
-      s.timer = setInterval(() => {
-        if (!s.settled && !s.settling) {
-          s.el.textContent = POOL[Math.floor(Math.random() * POOL.length)];
-        }
-      }, SCRAMBLE_MS);
+      // Fast scramble burst
+      let alive = true;
+      const fast = setInterval(() => {
+        if (alive) bigI.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+      }, 55);
+
+      // After 1.1 s, slow-settle to 'I'
+      setTimeout(() => {
+        alive = false;
+        clearInterval(fast);
+
+        let step = 0;
+        const settle = setInterval(() => {
+          if (step < 20) {
+            bigI.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+          } else {
+            clearInterval(settle);
+            bigI.textContent = 'I';
+            setTimeout(beginStream, 440);
+          }
+          step++;
+        }, 55);
+      }, 1100);
     }
 
-    function stopScramble(s) {
-      clearInterval(s.timer);
-      s.timer = null;
+    /* ══════════════════════════════════════════════
+       PHASE 2 — word stream
+    ══════════════════════════════════════════════ */
+    function beginStream() {
+      streaming = true;
+      loadWord(WORDS[wordIdx]);
+      requestAnimationFrame(tick);
     }
 
-    /* ── Settle: flicker then snap ── */
-    function settle(s) {
-      if (s.settled || s.settling) return;
-      s.settling = true;
-      stopScramble(s);
-      let step = 0;
-      const sTimer = setInterval(() => {
-        if (step < SETTLE_STEPS - 2) {
-          s.el.textContent = POOL[Math.floor(Math.random() * POOL.length)];
-        } else {
-          clearInterval(sTimer);
-          s.el.textContent = s.char;
-          s.settled  = true;
-          s.settling = false;
-          s.el.classList.add('settled');
-        }
-        step++;
-      }, SETTLE_MS);
-    }
+    function loadWord(word) {
+      wordWrap.innerHTML = '';
+      sTimers.forEach(clearInterval);
+      spans     = [];
+      decrypted = [];
+      sTimers   = [];
+      exited    = false;
 
-    /* ── Move I to cursor / touch position ── */
-    function moveI(x, y) {
-      bigI.style.left = x + 'px';
-      bigI.style.top  = y + 'px';
-      if (!iActive) {
-        iActive = true;
-        bigI.style.transition = 'opacity 0.18s ease';
-        bigI.style.opacity    = '1';
+      for (let i = 0; i < word.length; i++) {
+        const span       = document.createElement('span');
+        span.className   = 'letter';
+        span.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+        wordWrap.appendChild(span);
+        spans.push(span);
+        decrypted.push(false);
+
+        /* Capture index for interval closure */
+        (function (idx) {
+          const t = setInterval(() => {
+            if (!decrypted[idx]) {
+              spans[idx].textContent = POOL[Math.floor(Math.random() * POOL.length)];
+            }
+          }, SCRAMBLE_MS);
+          sTimers.push(t);
+        })(i);
       }
+
+      /* Start word off-screen right */
+      wordX = window.innerWidth + 60;
+      wordWrap.style.left = wordX + 'px';
     }
 
-    document.addEventListener('mousemove', e => moveI(e.clientX, e.clientY));
+    /* ══════════════════════════════════════════════
+       RAF LOOP
+    ══════════════════════════════════════════════ */
+    function tick(ts) {
+      if (!lastTs) lastTs = ts;
+      const dt = Math.min((ts - lastTs) / 1000, 0.05); // cap at 50 ms
+      lastTs = ts;
 
-    document.addEventListener('touchmove', e => {
-      e.preventDefault();
-      moveI(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: false });
+      if (streaming && spans.length && !exited) {
+        /* Move word left */
+        wordX -= WORD_SPEED * dt;
+        wordWrap.style.left = wordX + 'px';
 
-    document.addEventListener('touchstart', e => {
-      moveI(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: true });
+        /* I centre X */
+        const iRect = bigI.getBoundingClientRect();
+        const iCX   = iRect.left + iRect.width / 2;
 
-    /* ── Main loop: proximity check + I magnify ── */
-    function loop() {
-      if (iActive) {
-        const iR  = bigI.getBoundingClientRect();
-        let near  = false;
+        /* Check each letter for crossing */
+        spans.forEach((span, i) => {
+          if (decrypted[i]) return;
+          const lr  = span.getBoundingClientRect();
+          const lcx = lr.left + lr.width / 2;
 
-        state.forEach(s => {
-          if (s.settled || s.settling) return;
-          const lr = s.el.getBoundingClientRect();
-          const overlaps =
-            iR.left   < lr.right  &&
-            iR.right  > lr.left   &&
-            iR.top    < lr.bottom &&
-            iR.bottom > lr.top;
-          if (overlaps) {
-            near = true;
-            settle(s);
+          if (lcx < iCX) {
+            decrypted[i] = true;
+            clearInterval(sTimers[i]);
+
+            /* Capture correct char before any async delay */
+            const correctChar = WORDS[wordIdx][i].toLowerCase();
+
+            /* Brief flicker → lowercase */
+            let flk = 0;
+            const fTimer = setInterval(() => {
+              if (flk < 3) {
+                span.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+              } else {
+                clearInterval(fTimer);
+                span.textContent = correctChar;
+                span.classList.add('done');
+              }
+              flk++;
+            }, 40);
           }
         });
 
-        /* Smooth magnify — 1.0 → 1.3 when touching a letter */
-        const target = near ? 1.30 : 1.0;
-        iScale += (target - iScale) * 0.14;
-        bigI.style.transform = `translate(-50%, -50%) scale(${iScale.toFixed(4)})`;
+        /* Advance to next word once last letter exits left */
+        const last = spans[spans.length - 1];
+        if (last && last.getBoundingClientRect().right < 0) {
+          exited = true;
+          sTimers.forEach(clearInterval);
+          setTimeout(() => {
+            wordIdx = (wordIdx + 1) % WORDS.length;
+            loadWord(WORDS[wordIdx]);
+          }, 480);
+        }
       }
 
-      requestAnimationFrame(loop);
+      requestAnimationFrame(tick);
     }
 
-    /* ── Bootstrap ── */
-    state.forEach(startScramble);
-    loop();
-
-    /* ── Canvas backdrop ── */
-    function resize() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    function easeInOutCubic(t) {
-      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
-    }
-    function clamp(mn, v, mx) { return Math.max(mn, Math.min(mx, v)); }
-
-    let startTs = null;
-
-    function canvasFrame(now) {
-      if (startTs === null) startTs = now;
-      const elapsed = now - startTs;
-
-      const t     = clamp(0, elapsed / 3000, 1);
-      const sides = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
-      const rot   = elapsed * 0.00012;
-      const W  = canvas.width,  H  = canvas.height;
-      const cx = W / 2,         cy = H / 2;
-      const r  = Math.min(W, H) * 0.28;
-      const a  = clamp(0, elapsed / 500, 1);
-
-      ctx.clearRect(0, 0, W, H);
-
-      /* Concentric rings */
-      [0.55, 1.0, 1.5].forEach((s, i) => {
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * s, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255,255,255,${(0.06 - i * 0.015) * a})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      });
-
-      /* Dashed radius */
-      ctx.save();
-      ctx.setLineDash([5, 8]);
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + r * Math.cos(rot), cy + r * Math.sin(rot));
-      ctx.strokeStyle = `rgba(255,255,255,${0.10 * a})`;
-      ctx.lineWidth = 0.6;
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-
-      /* Outer circle */
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255,255,255,${0.12 * a})`;
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      /* Spokes */
-      for (let i = 0; i < sides; i++) {
-        const ang = (2 * Math.PI * i / sides) + rot;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + r * Math.cos(ang), cy + r * Math.sin(ang));
-        ctx.strokeStyle = `rgba(255,92,0,${0.06 * a})`;
-        ctx.lineWidth = 0.4;
-        ctx.stroke();
-      }
-
-      /* Polygon */
-      ctx.beginPath();
-      for (let i = 0; i <= sides; i++) {
-        const ang = (2 * Math.PI * i / sides) + rot;
-        const x = cx + r * Math.cos(ang);
-        const y = cy + r * Math.sin(ang);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = `rgba(255,92,0,${0.85 * a})`;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      /* Vertex dots */
-      for (let i = 0; i < sides; i++) {
-        const ang = (2 * Math.PI * i / sides) + rot;
-        const x = cx + r * Math.cos(ang);
-        const y = cy + r * Math.sin(ang);
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,92,0,${a})`;
-        ctx.fill();
-      }
-
-      requestAnimationFrame(canvasFrame);
-    }
-
-    requestAnimationFrame(canvasFrame);
+    /* ── Go ── */
+    runIntro();
   })();
   </script>
 
