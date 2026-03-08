@@ -35,6 +35,15 @@
       text-shadow: 0 0 70px rgba(255,92,0,0.30);
     }
 
+    /* Blink while no letters are passing through */
+    @keyframes iBlink {
+      0%, 100% { color: #FF5C00; text-shadow: 0 0 70px rgba(255,92,0,0.30); }
+      50%       { color: rgba(255,92,0,0.12); text-shadow: none; }
+    }
+    #big-i.idle {
+      animation: iBlink 1.3s ease-in-out infinite;
+    }
+
     /* ── Scrolling word row ── */
     #word-wrap {
       position: fixed;
@@ -57,9 +66,10 @@
       line-height: 1;
       padding: 0 0.10em;
       user-select: none;
+      transition: color 0.22s ease;
     }
 
-    /* Decrypted = bright lowercase */
+    /* Decrypted = bright lowercase — colour fades in smoothly */
     .letter.done {
       color: rgba(255,255,255,0.92);
     }
@@ -79,8 +89,8 @@
 
     const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
     const WORDS       = ['rsvp','connect','berlin','art','create','join','reveal','open','meet'];
-    const WORD_SPEED  = 150;  // px / second
-    const SCRAMBLE_MS = 58;   // letter scramble interval
+    const WORD_SPEED  = 100;  // px / second
+    const SCRAMBLE_MS = 80;   // letter scramble interval
 
     let wordIdx  = 0;
     let wordX    = 0;
@@ -128,6 +138,7 @@
     ══════════════════════════════════════════════ */
     function beginStream() {
       streaming = true;
+      bigI.classList.add('idle'); // blink until first letter arrives
       loadWord(WORDS[wordIdx]);
       requestAnimationFrame(tick);
     }
@@ -181,33 +192,33 @@
         const iRect = bigI.getBoundingClientRect();
         const iCX   = iRect.left + iRect.width / 2;
 
-        /* Check each letter for crossing */
+        /* Check each letter for crossing + idle detection */
+        let anyNear = false;
+        const NEAR  = Math.max(70, iRect.width);
+
         spans.forEach((span, i) => {
           if (decrypted[i]) return;
           const lr  = span.getBoundingClientRect();
           const lcx = lr.left + lr.width / 2;
 
+          /* Mark I as active when a letter is close */
+          if (Math.abs(lcx - iCX) < NEAR) anyNear = true;
+
           if (lcx < iCX) {
             decrypted[i] = true;
             clearInterval(sTimers[i]);
-
-            /* Capture correct char before any async delay */
-            const correctChar = WORDS[wordIdx][i].toLowerCase();
-
-            /* Brief flicker → lowercase */
-            let flk = 0;
-            const fTimer = setInterval(() => {
-              if (flk < 3) {
-                span.textContent = POOL[Math.floor(Math.random() * POOL.length)];
-              } else {
-                clearInterval(fTimer);
-                span.textContent = correctChar;
-                span.classList.add('done');
-              }
-              flk++;
-            }, 40);
+            /* Snap immediately — colour transition in CSS makes it seamless */
+            span.textContent = WORDS[wordIdx][i].toLowerCase();
+            span.classList.add('done');
           }
         });
+
+        /* Blink I when idle, solid when a letter is passing through */
+        if (anyNear) {
+          bigI.classList.remove('idle');
+        } else {
+          bigI.classList.add('idle');
+        }
 
         /* Advance to next word once last letter exits left */
         const last = spans[spans.length - 1];
