@@ -467,6 +467,78 @@
       el.className = 'c-msg' + (cls ? ' ' + cls : '');
     }
 
+    function runCRTCollapse(onDone) {
+      const wrap = document.getElementById('crt-wrap');
+
+      /* Recreate scan/vignette (removed by boot animation) */
+      const scan = document.createElement('div');
+      scan.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0;' +
+        'background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);';
+      document.body.appendChild(scan);
+
+      const vig = document.createElement('div');
+      vig.style.cssText = 'position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:0;' +
+        'background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);';
+      document.body.appendChild(vig);
+
+      const T_RAMP    = 200;  // scanlines + RGB build up
+      const T_SQUEEZE = 880;  // clip-path squeezes to center line
+      const T_HOLD    = 980;  // hold at line, then navigate
+
+      function lerpC(a, b, t)     { return a + (b - a) * t; }
+      function easeInC(t)         { return t * t * t; }
+      function smoothstepC(t)     { return t * t * (3 - 2 * t); }
+
+      function setRGBC(px, alpha) {
+        if (alpha < 0.01 || px < 0.1) { wrap.style.filter = ''; return; }
+        const p = px.toFixed(1), a = alpha.toFixed(3), b = (px * 0.5).toFixed(1);
+        wrap.style.filter =
+          `drop-shadow(-${p}px 0 ${b}px rgba(255,20,20,${a})) ` +
+          `drop-shadow(${p}px 0 ${b}px rgba(20,30,255,${a})) ` +
+          `drop-shadow(0 -${b}px ${b}px rgba(20,255,20,${(alpha * 0.4).toFixed(3)}))`;
+      }
+
+      let startTs = null, done = false;
+
+      function tickC(ts) {
+        if (!startTs) startTs = ts;
+        const e = ts - startTs;
+
+        if (e < T_RAMP) {
+          /* Phase 1 — ramp up scanlines + RGB, no clip change yet */
+          const t = e / T_RAMP;
+          scan.style.opacity = String(lerpC(0, 1, t));
+          vig.style.opacity  = String(lerpC(0, 0.85, t));
+          setRGBC(lerpC(0, 9, smoothstepC(t)), lerpC(0, 0.75, smoothstepC(t)));
+
+        } else if (e < T_SQUEEZE) {
+          /* Phase 2 — squeeze: clip-path collapses 0% → 50%, RGB intensifies */
+          const t   = (e - T_RAMP) / (T_SQUEEZE - T_RAMP);
+          const et  = easeInC(t);
+          const pct = lerpC(0, 50, et);
+          wrap.style.clipPath = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
+          scan.style.opacity  = '1.0';
+          vig.style.opacity   = String(lerpC(0.85, 0.97, t));
+          setRGBC(lerpC(9, 12, t), lerpC(0.75, 0.9, t));
+
+        } else if (e < T_HOLD) {
+          /* Phase 3 — hold at center line */
+          wrap.style.clipPath = 'inset(50% 0 50% 0)';
+          scan.style.opacity  = '1.0';
+          vig.style.opacity   = '0.97';
+          setRGBC(12, 0.9);
+
+        } else {
+          if (!done) { done = true; onDone(); }
+          return;
+        }
+
+        requestAnimationFrame(tickC);
+      }
+
+      requestAnimationFrame(tickC);
+    }
+
     function tryVerify() {
       if (selected.size < N_BEARS)              return;
       if (document.getElementById('hp').value)  return;
@@ -479,24 +551,16 @@
 
       setMsg('VeRIFIED  ✓', 'ok');
       sessionStorage.setItem('captcha_passed', '1');
+      sessionStorage.setItem('crt_transition', '1');
 
-      // — Simple splash: modal punches out, instant black cut, navigate —
+      /* TV turn-off: fade modal, collapse page to center line, navigate */
       setTimeout(() => {
-        const ov    = document.getElementById('c-overlay');
-        const modal = document.querySelector('.c-modal');
-
-        // Quick scale punch
-        modal.style.transition = 'transform 0.13s cubic-bezier(0.22,1,0.36,1)';
-        modal.style.transform  = 'scale(1.18)';
-
-        // Instant black cut + navigate
-        setTimeout(() => {
-          ov.style.transition = 'none';
-          ov.style.background = '#000';
-          modal.style.opacity = '0';
-          setTimeout(() => { window.location.href = 'home.html'; }, 160);
-        }, 130);
-      }, 480);
+        const ov = document.getElementById('c-overlay');
+        ov.style.transition    = 'opacity 0.25s ease';
+        ov.style.opacity       = '0';
+        ov.style.pointerEvents = 'none';
+        runCRTCollapse(function () { window.location.href = 'home.html'; });
+      }, 520);
     }
 
     function openOverlay() {

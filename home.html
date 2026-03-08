@@ -28,6 +28,37 @@
       flex-direction: column;
     }
 
+    /* ── CRT wrapper — receives clipPath + filter on channel-change ── */
+    #crt-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Phosphor scanlines ── */
+    #crt-scan {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,14,0,0.50) 3px, rgba(0,14,0,0.50) 4px
+      );
+      opacity: 0;
+      z-index: 9998;
+      pointer-events: none;
+    }
+
+    /* ── CRT vignette — dark corners ── */
+    #crt-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.88) 100%);
+      opacity: 0;
+      z-index: 9997;
+      pointer-events: none;
+    }
+
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -99,6 +130,7 @@
 </head>
 <body>
 
+  <div id="crt-wrap">
   <header>
     <nav>
       <a href="about.html">aBOUT</a>
@@ -113,12 +145,93 @@
       <span class="berlin">BERLIN</span>
     </div>
   </main>
+  </div><!-- /crt-wrap -->
+
+  <!-- CRT overlays — outside wrapper so filters don't break fixed positioning -->
+  <div id="crt-scan"></div>
+  <div id="crt-vignette"></div>
 
   <script>
-    /* Page-reveal animation — plays on load and on back-navigation */
-    (function () {
-      function reveal() {
-        var c = document.createElement('div');
+  (function () {
+    const scan     = document.getElementById('crt-scan');
+    const vignette = document.getElementById('crt-vignette');
+    const wrap     = document.getElementById('crt-wrap');
+
+    const T_FLICKER  =  130;
+    const T_EXPAND   =  780;
+    const T_FADE_END = 1150;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function easeOut(t)    { return 1 - Math.pow(1 - t, 3); }
+    function smoothstep(t) { return t * t * (3 - 2 * t); }
+
+    function setRGB(px, alpha) {
+      if (alpha < 0.01 || px < 0.1) { wrap.style.filter = ''; return; }
+      const p = px.toFixed(1), a = alpha.toFixed(3), b = (px * 0.5).toFixed(1);
+      wrap.style.filter =
+        `drop-shadow(-${p}px 0 ${b}px rgba(255,20,20,${a})) ` +
+        `drop-shadow(${p}px 0 ${b}px rgba(20,30,255,${a})) ` +
+        `drop-shadow(0 -${b}px ${b}px rgba(20,255,20,${(alpha * 0.4).toFixed(3)}))`;
+    }
+
+    function bootCRT() {
+      /* Start collapsed to a center line — expands as the tube warms up */
+      wrap.style.clipPath = 'inset(50% 0 50% 0)';
+
+      let start = null;
+      function tick(ts) {
+        if (!start) start = ts;
+        const e = ts - start;
+
+        if (e < T_FLICKER) {
+          // Flicker burst: strong RGB + scanlines, clip stays at center line
+          scan.style.opacity     = String(lerp(0, 1.0, e / T_FLICKER));
+          vignette.style.opacity = '0.95';
+          setRGB(9, 0.75);
+
+        } else if (e < T_EXPAND) {
+          // Tube warms up: clip expands, RGB fades out
+          const t   = (e - T_FLICKER) / (T_EXPAND - T_FLICKER);
+          const et  = easeOut(t);
+          const pct = lerp(50, 0, et);
+          wrap.style.clipPath    = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
+          setRGB(lerp(9, 0, smoothstep(t)), lerp(0.75, 0, smoothstep(t)));
+          scan.style.opacity     = '1.0';
+          vignette.style.opacity = String(lerp(0.95, 0.55, et));
+
+        } else if (e < T_FADE_END) {
+          // Afterglow: scanlines + vignette dissolve
+          const t  = (e - T_EXPAND) / (T_FADE_END - T_EXPAND);
+          const et = smoothstep(t);
+          wrap.style.clipPath    = '';
+          wrap.style.filter      = '';
+          scan.style.opacity     = String(lerp(1.0, 0, et));
+          vignette.style.opacity = String(lerp(0.55, 0, et));
+
+        } else {
+          // Done — clean up
+          wrap.style.clipPath    = '';
+          wrap.style.filter      = '';
+          scan.remove();
+          vignette.remove();
+          return;
+        }
+
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    /* Play the CRT boot when arriving from captcha verification */
+    if (sessionStorage.getItem('crt_transition')) {
+      sessionStorage.removeItem('crt_transition');
+      bootCRT();
+    }
+
+    /* Bfcache restore — simple fade-in */
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) {
+        const c = document.createElement('div');
         c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
         document.body.appendChild(c);
         requestAnimationFrame(function () {
@@ -129,8 +242,8 @@
           });
         });
       }
-      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
-    })();
+    });
+  })();
   </script>
 </body>
 </html>
