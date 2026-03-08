@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>[aRTS] — WoRK</title>
+  <title>[aRTS] — TaLK</title>
   <script>
     if (!sessionStorage.getItem('captcha_passed')) {
       window.location.replace('tail.html');
@@ -88,6 +88,10 @@
     .field::placeholder { color: rgba(255,255,255,0.38); }
     .field:focus        { border-color: #FF5C00; }
 
+    /* ── NaME + LaST side by side ── */
+    .name-row        { display: flex; gap: clamp(8px, 1.4vw, 14px); }
+    .name-row .field { flex: 1; }
+
     /* ── Bottom row: E-MaIL + bear side by side ── */
     .send-row        { display: flex; gap: clamp(8px, 1.4vw, 14px); }
     .send-row .field { flex: 1; }
@@ -148,12 +152,14 @@
 
   <div class="heading">
     <span class="small">LET'S</span>
-    <span class="large">WoRK.</span>
+    <span class="large">TaLK.</span>
   </div>
 
-  <form class="contact-form" id="work-form" onsubmit="handleSend(event)">
-    <input class="field" type="text"  placeholder="COMPaNY" autocomplete="organization">
-    <input class="field" type="text"  placeholder="INSTa"   autocomplete="url">
+  <form class="contact-form" id="mail-form" onsubmit="handleSend(event)">
+    <div class="name-row">
+      <input class="field" type="text"  placeholder="NaME" autocomplete="given-name">
+      <input class="field" type="text"  placeholder="LaST" autocomplete="family-name">
+    </div>
     <div class="send-row">
       <input class="field" type="email" placeholder="E-MaIL" autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
