@@ -263,5 +263,64 @@
     },true);
   })();
   </script>
+
+  <!-- Nav & logo hover -->
+  <script>
+  (function(){
+    var DELAY = 40;
+
+    /* Nav links — lowercase left→right on enter, recapitalise right→left on leave */
+    function navHover(el){
+      var orig = el.textContent;
+      var timers=[], state=0;
+      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      function render(n){
+        var s=orig[0];
+        for(var i=1;i<orig.length;i++) s+=(i<=n ? orig[i].toLowerCase() : orig[i]);
+        el.textContent=s;
+      }
+      el.addEventListener('mouseenter',function(){
+        clr();
+        var from=state;
+        for(var i=0;i<orig.length-1-from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));
+        })(i);
+      });
+      el.addEventListener('mouseleave',function(){
+        clr();
+        var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    }
+    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
+
+    /* Logo [aXXX] — collapse to [a] by default, expand on hover */
+    document.querySelectorAll('a.logo').forEach(function(logo){
+      var m=logo.textContent.match(/^\[a([^\]]+)\]$/);
+      if(!m) return;
+      var inner=m[1];
+      logo.textContent='[a]';
+      var timers=[], state=0;
+      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
+      logo.addEventListener('mouseenter',function(){
+        clr();
+        var from=state;
+        for(var i=from;i<inner.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave',function(){
+        clr();
+        var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    });
+  })();
+  </script>
 </body>
 </html>
