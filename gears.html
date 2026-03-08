@@ -177,12 +177,17 @@
       }
     }
 
-    /* Click-to-navigate: if current word has a route, go there */
+    /* Click-to-navigate: if current word has a route, flash green then go */
     iWrap.addEventListener('click', () => {
       const dest = routes[words[wordIdx]];
       if (dest) {
+        /* Flash the three center slots green */
+        [slots[1], slots[2], slots[3]].forEach(el => {
+          el.style.transition = 'color 0.15s ease';
+          el.style.color = '#00e676';
+        });
         sessionStorage.setItem('captcha_passed', '1');
-        window.location.href = dest;
+        setTimeout(() => { window.location.href = dest; }, 480);
       }
     });
 

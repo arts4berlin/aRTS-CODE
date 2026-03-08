@@ -80,35 +80,43 @@
       aspect-ratio: 1 / 1;
       width: clamp(58px, 11vw, 100px);
       padding: 0;
-      transition: transform 0.18s, box-shadow 0.18s;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s;
     }
 
-    .bear-btn:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 0 3px rgba(255,92,0,0.4);
-    }
+    .bear-btn:hover { transform: scale(1.06); box-shadow: 0 0 0 3px rgba(255,92,0,0.4); }
+    .bear-btn.sent  { transform: scale(1.14); }
 
     .bear-btn img {
       width: 62%;
       height: auto;
       filter: brightness(0);
+      transition: opacity 0.18s, transform 0.18s;
     }
 
-    /* ── Sent confirmation ── */
-    .sent-msg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: clamp(1rem, 3vw, 1.6rem);
-      font-weight: 700;
-      letter-spacing: 0.2em;
+    .bear-btn.sent img {
       opacity: 0;
-      transition: opacity 0.4s;
-      pointer-events: none;
-      z-index: 10;
+      transform: scale(0);
     }
-    .sent-msg.show { opacity: 1; }
+
+    /* ── Check mark that pops in ── */
+    .bear-check {
+      position: absolute;
+      color: #000;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 700;
+      opacity: 0;
+      transform: scale(0);
+      transition: opacity 0.18s, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .bear-btn.sent .bear-check {
+      opacity: 1;
+      transform: scale(1);
+    }
   </style>
 </head>
 <body>
@@ -119,19 +127,18 @@
       <input class="pill" type="email" placeholder="@E-MaIL" autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
         <img src="assets/bear.png" alt="">
+        <span class="bear-check">✓</span>
       </button>
     </div>
     <input class="pill" type="text" placeholder="INSTa" autocomplete="url">
   </form>
 
-  <p class="sent-msg" id="sent-msg">SENT ✓</p>
-
   <script>
     function handleSend(e) {
       e.preventDefault();
-      const msg = document.getElementById('sent-msg');
-      msg.classList.add('show');
-      setTimeout(() => msg.classList.remove('show'), 2200);
+      const btn = document.querySelector('.bear-btn');
+      btn.classList.add('sent');
+      setTimeout(() => btn.classList.remove('sent'), 2000);
     }
   </script>
 
