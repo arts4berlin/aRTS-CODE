@@ -23,7 +23,7 @@
       inset: 0;
       display: block;
       opacity: 0.38;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.65s ease;
     }
     canvas.fade { opacity: 0; }
 
@@ -70,7 +70,7 @@
       justify-content: center;
     }
 
-    /* ── π and I share the same size/style ── */
+    /* ── π and I share the same size / style ── */
     .glyph {
       position: absolute;
       font-family: Georgia, 'Times New Roman', serif;
@@ -91,41 +91,17 @@
     #pi-char {
       opacity: 0;
       animation: piBounce 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
-      transition: opacity 0.4s ease;
     }
-    #pi-char.fade { opacity: 0 !important; animation: none; }
+    /* Lock class: CSS animation removed so JS can drive opacity/filter */
+    #pi-char.lock {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: scale(1) !important;
+    }
 
-    /* I bounces in */
-    @keyframes iBounce {
-      0%   { opacity: 0; transform: scale(0);    }
-      60%  { opacity: 1; transform: scale(1.12); }
-      80%  { opacity: 1; transform: scale(0.94); }
-      100% { opacity: 1; transform: scale(1);    }
-    }
+    /* I starts invisible; JS drives the entire appearance */
     #big-i {
       opacity: 0;
-      transform: scale(0);
-    }
-    #big-i.show {
-      animation: iBounce 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    /* ── Floating π digits ── */
-    .pi-digit {
-      position: fixed;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 300;
-      color: rgba(255, 92, 0, 0.7);
-      pointer-events: none;
-      z-index: 15;
-      opacity: 0;
-      animation: digitFloat var(--dur) ease-out var(--delay) forwards;
-    }
-
-    @keyframes digitFloat {
-      0%   { opacity: 0;    transform: translate(0, 0)       scale(1); }
-      20%  { opacity: 1; }
-      100% { opacity: 0;    transform: translate(var(--tx), var(--ty)) scale(0.6); }
     }
   </style>
 </head>
@@ -145,22 +121,19 @@
   (function () {
     'use strict';
 
-    const canvas  = document.getElementById('c');
-    const ctx     = canvas.getContext('2d');
-    const veil    = document.getElementById('veil');
-    const logo    = document.getElementById('pi-logo');
-    const piChar  = document.getElementById('pi-char');
-    const bigI    = document.getElementById('big-i');
+    const canvas = document.getElementById('c');
+    const ctx    = canvas.getContext('2d');
+    const veil   = document.getElementById('veil');
+    const logo   = document.getElementById('pi-logo');
+    const piChar = document.getElementById('pi-char');
+    const bigI   = document.getElementById('big-i');
 
     /* ── Timing ── */
-    const MORPH_START = 2600;   // π fades, digits scatter, I bounces
-    const I_DELAY     = 320;    // I starts after π begins fading
-    const SHOW_MS     = 5400;   // total before redirect
-    const VEIL_MS     = 750;
+    const MORPH_START = 1700;   // ms after load when π→I begins
+    const MORPH_DUR   = 580;    // blur-crossfade duration (ms)
+    const SHOW_MS     = 4000;   // total time before redirect
+    const VEIL_MS     = 750;    // veil fade before navigate
     const DEST        = 'index.html';
-
-    /* ── Pi digits (first 60 decimal places) ── */
-    const PI_DIGITS = '3.14159265358979323846264338327950288419716939937510';
 
     let morphed = false;
 
@@ -175,56 +148,69 @@
     window.addEventListener('resize', resize);
     resize();
 
+    /* ── Easing helpers ── */
     function easeInOutCubic(t) {
       return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
     }
-    function clamp(min, val, max) { return Math.max(min, Math.min(max, val)); }
+    function easeOut2(t) { return 1 - (1 - t) * (1 - t); }
+    function smoothstep(t) { return t * t * (3 - 2 * t); }
+    function clamp(mn, v, mx) { return Math.max(mn, Math.min(mx, v)); }
 
-    /* ── Spawn pi digit particles ── */
-    function spawnDigits() {
-      const cx = window.innerWidth  / 2;
-      const cy = window.innerHeight / 2;
-      const chars = PI_DIGITS.split('').filter(c => c !== '.');
+    /* ── Blur-crossfade: π dissolves → I emerges ──────────────────────
+       π  : easeOut fade-out + blur grows   (starts immediately)
+       I  : smoothstep fade-in + blur shrinks (delayed 18% of duration)
+       The two glyphs pass through each other in a shared blur-peak. ── */
+    function morphPiToI(dur) {
+      // Stabilise π so JS can drive opacity/filter freely
+      piChar.classList.add('lock');
+      // Force a reflow so the lock class is applied before we touch style
+      void piChar.offsetHeight;
 
-      chars.forEach((ch, i) => {
-        const el  = document.createElement('span');
-        el.className = 'pi-digit';
-        el.textContent = ch;
+      const t0 = performance.now();
 
-        const angle  = (Math.random() * 2 * Math.PI);
-        const dist   = 80 + Math.random() * 220;
-        const tx     = Math.cos(angle) * dist;
-        const ty     = Math.sin(angle) * dist;
-        const size   = 0.65 + Math.random() * 0.9;
-        const dur    = 0.9 + Math.random() * 0.8;
-        const delay  = (i * 0.022) + Math.random() * 0.06;
+      function step(now) {
+        const p = clamp(0, (now - t0) / dur, 1);
 
-        el.style.cssText = `
-          left: ${cx}px;
-          top:  ${cy}px;
-          font-size: ${size}rem;
-          --tx: ${tx.toFixed(0)}px;
-          --ty: ${ty.toFixed(0)}px;
-          --dur: ${dur.toFixed(2)}s;
-          --delay: ${delay.toFixed(3)}s;
-        `;
+        /* π fades out */
+        const fp = easeOut2(p);
+        piChar.style.opacity = (1 - fp).toFixed(4);
+        piChar.style.filter  = `blur(${(fp * 18).toFixed(1)}px)`;
 
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), (dur + delay + 0.1) * 1000);
-      });
+        /* I fades in — delayed 18% so the blur peaks overlap */
+        const pI = clamp(0, (p - 0.18) / 0.82, 1);
+        const fi = smoothstep(pI);
+        bigI.style.opacity = fi.toFixed(4);
+        bigI.style.filter  = `blur(${((1 - fi) * 18).toFixed(1)}px)`;
+
+        if (p < 1) {
+          requestAnimationFrame(step);
+        } else {
+          /* Clean up */
+          piChar.style.display = 'none';
+          bigI.style.filter    = '';
+          bigI.style.opacity   = '1';
+        }
+      }
+
+      requestAnimationFrame(step);
     }
 
+    /* ── Exit: schedule veil + navigation ── */
+    setTimeout(() => {
+      veil.classList.add('out');
+      setTimeout(() => { window.location.href = DEST; }, VEIL_MS + 80);
+    }, SHOW_MS);
+
+    /* ── Canvas render loop (runs until morph is complete) ── */
     let startTs = null;
 
-    /* ── Main render loop ── */
     function frame(now) {
       if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
-      const growDur = MORPH_START;
-      const t       = clamp(0, elapsed / growDur, 1);
-      const sides   = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
-      const rot     = elapsed * 0.00012;
+      const t     = clamp(0, elapsed / MORPH_START, 1);
+      const sides = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
+      const rot   = elapsed * 0.00012;
 
       const W  = canvas.width;
       const H  = canvas.height;
@@ -297,7 +283,7 @@
         ctx.fill();
       }
 
-      /* π approximation — shown during morph too */
+      /* π approximation label */
       const piApprox = sides * Math.sin(Math.PI / sides);
       const fs = clamp(10, W * 0.011, 13);
       ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
@@ -309,22 +295,17 @@
         cx, cy + r + clamp(28, r * 0.16, 46)
       );
 
-      /* ── Morph trigger ── */
+      /* ── Trigger morph ── */
       if (!morphed && elapsed >= MORPH_START) {
         morphed = true;
         canvas.classList.add('fade');
-        logo.style.opacity  = '0';
-        piChar.classList.add('fade');
-        spawnDigits();
-        setTimeout(() => bigI.classList.add('show'), I_DELAY);
+        logo.style.opacity = '0';
+        morphPiToI(MORPH_DUR);
       }
 
-      /* ── Loop or exit ── */
-      if (elapsed < SHOW_MS) {
+      /* Keep canvas loop alive through morph, then stop */
+      if (elapsed < MORPH_START + MORPH_DUR + 200) {
         requestAnimationFrame(frame);
-      } else {
-        veil.classList.add('out');
-        setTimeout(() => { window.location.href = DEST; }, VEIL_MS + 80);
       }
     }
 
