@@ -96,7 +96,7 @@
     (function () {
       var POOL    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
       var FRAMES  = 18, RATE = 45;
-      var IDLE_MS = 4000;
+      var IDLE_MS = 7000;
 
       var buttons = [
         { sel: '.btn-connect', target: 'CoNNECT', delay: 0   },
@@ -129,7 +129,7 @@
         if (isTouch) {
           /* Touch: auto-fire with stagger */
           setTimeout(function () { scramble(btn, b.target); }, b.delay || 700);
-          setInterval(function () { scramble(btn, b.target); }, 3500);
+          setInterval(function () { scramble(btn, b.target); }, 7000);
         } else {
           /* Desktop: hover scramble */
           btn.addEventListener('mouseenter', function () { scramble(btn, b.target); });
