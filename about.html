@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="assets/favicon.png?v=4" sizes="32x32" type="image/png">
-  <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
@@ -96,6 +98,13 @@
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
+
+    /* ── Mobile nav: compress on small screens ── */
+    @media (max-width: 520px) {
+      header  { padding: 18px 16px; }
+      nav     { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
+      nav a   { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+    }
   </style>
 </head>
 <body>

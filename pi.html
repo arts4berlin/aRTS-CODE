@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="assets/favicon.png?v=4" sizes="32x32" type="image/png">
-  <link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/favicon-180.png?v=4">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
@@ -59,14 +61,14 @@
     /* Stamp/kick when a letter passes through */
     @keyframes iPress {
       0%   { transform: translate(-50%, -50%) scaleY(1); }
-      28%  { transform: translate(-50%, -50%) scaleY(0.70); }
-      65%  { transform: translate(-50%, -50%) scaleY(1.14); }
+      28%  { transform: translate(-50%, -50%) scaleY(0.86); }
+      65%  { transform: translate(-50%, -50%) scaleY(1.06); }
       100% { transform: translate(-50%, -50%) scaleY(1); }
     }
     #big-i.press {
-      animation: iPress 0.26s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+      animation: iPress 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
       color: #FF5C00 !important;
-      text-shadow: 0 0 100px rgba(255,92,0,0.7) !important;
+      text-shadow: 0 0 80px rgba(255,92,0,0.5) !important;
     }
 
     /* ── Scrolling word row ── */
@@ -122,7 +124,7 @@
     const wordWrap = document.getElementById('word-wrap');
 
     const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-    const WORDS       = ['rsvp','connect','berlin','art','create','join','reveal','open','meet'];
+    const WORDS       = ['sense','shift','signal','build','hold','move','speak','open','draw'];
     const WORD_SPEED  = 100;  // px / second
     const SCRAMBLE_MS = 80;   // letter scramble interval
 

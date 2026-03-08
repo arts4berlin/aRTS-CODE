@@ -17,11 +17,7 @@
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="aRT · aSSETS · aID — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
-  <title>[aRTS] — TaIL EnD</title>
-  <script>
-    /* Clear any pass so the user must restart from scratch */
-    sessionStorage.removeItem('captcha_passed');
-  </script>
+  <title>[aRTS] — W.I.P.</title>
   <link rel="preload" as="image" href="assets/bear.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,10 +37,10 @@
       justify-content: center;
     }
 
-    /* ── Label row: TaIL  ·  EnD ── */
+    /* ── Label row: W.I.P. ── */
     .label-row {
       display: flex;
-      gap: clamp(3rem, 12vw, 9rem);
+      gap: clamp(0.6rem, 2vw, 1.2rem);
       align-items: baseline;
       margin-bottom: clamp(2rem, 5vh, 4rem);
       opacity: 0;
@@ -83,8 +79,8 @@
       animation: fadeUp 0.6s ease 0.55s forwards;
     }
 
-    /* ── Restart button ── */
-    .btn-restart {
+    /* ── Back button ── */
+    .btn-back {
       margin-top: clamp(1.6rem, 3.5vh, 3rem);
       display: inline-flex;
       align-items: center;
@@ -106,7 +102,7 @@
       opacity: 0;
       animation: fadeUp 0.6s ease 0.8s forwards;
     }
-    .btn-restart:hover { background: #FF5C00; color: #000; }
+    .btn-back:hover { background: #FF5C00; color: #000; }
 
     @keyframes fadeUp {
       0%   { opacity: 0; transform: translateY(12px); }
@@ -119,29 +115,48 @@
     }
     /* ── Mobile: safe area + text-size ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>
 
   <div class="label-row">
-    <span class="label">TaIL</span>
-    <span class="label">EnD</span>
+    <span class="label">W.</span>
+    <span class="label">I.</span>
+    <span class="label">P.</span>
   </div>
 
   <div class="bear-wrap">
     <img src="assets/bear.png" alt="">
   </div>
 
-  <p class="hint">... sOMETHING WENT WRONG ...</p>
+  <p class="hint">... cOMING SOON ...</p>
 
-  <a href="index.html" class="btn-restart">rESTART</a>
+  <a href="home.html" class="btn-back">gO bACK</a>
 
   <!-- CRT channel-change transition -->
   <script>
   (function(){
     var wrap = document.documentElement;
+
+    /* Arrival */
+    if(sessionStorage.getItem('crt_transition')){
+      wrap.style.clipPath='inset(50% 0 50% 0)';
+    }
+
+    function doEnter(){
+      sessionStorage.removeItem('crt_transition');
+      var t0=null, DUR=380;
+      function run(ts){
+        if(!t0) t0=ts;
+        var pct=Math.min((ts-t0)/DUR,1);
+        var p=(1-pct)*50;
+        wrap.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
+        if(pct<1) requestAnimationFrame(run);
+        else wrap.style.clipPath='';
+      }
+      requestAnimationFrame(run);
+    }
 
     function doExit(dest){
       var scan=document.createElement('div');
@@ -164,6 +179,10 @@
         requestAnimationFrame(run);
       }
       requestAnimationFrame(run);
+    }
+
+    if(sessionStorage.getItem('crt_transition')){
+      doEnter();
     }
 
     /* Exit interceptor */
