@@ -82,6 +82,7 @@
     }
 
     /* ── Box-style inputs — mirrors button aesthetic ── */
+    .field { text-transform: uppercase; }
     .field {
       width: 100%;
       background: transparent;
@@ -260,6 +261,15 @@
     document.querySelectorAll('.field').forEach(function (f) {
       f.addEventListener('input', function () {
         this.classList.toggle('has-value', this.value.length > 0);
+      });
+    });
+
+    /* Auto-uppercase typed text in name/subject fields */
+    document.querySelectorAll('.field[type="text"]').forEach(function (f) {
+      f.addEventListener('input', function () {
+        var pos = f.selectionStart;
+        f.value = f.value.toUpperCase();
+        f.setSelectionRange(pos, pos);
       });
     });
   </script>

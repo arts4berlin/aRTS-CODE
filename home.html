@@ -27,6 +27,7 @@
   <link rel="prefetch" href="ask.html">
   <link rel="prefetch" href="aid.html">
   <link rel="prefetch" href="assets.html">
+  <link rel="prefetch" href="audience.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
@@ -156,6 +157,7 @@
       <a href="ask.html">aCT</a>
       <a href="aid.html">aID</a>
       <a href="assets.html">aSSETS</a>
+      <a href="audience.html">aUDIENCE</a>
     </nav>
   </header>
 
@@ -262,6 +264,112 @@
             setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
           });
         });
+      }
+    });
+  })();
+  </script>
+
+  <!-- Easter egg: bear × 7 → 77% off -->
+  <script>
+  (function () {
+    var bear  = document.querySelector('.bear');
+    var clicks = 0;
+    var MAGIC  = 7;
+    var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+
+    function rand() { return POOL[Math.floor(Math.random() * POOL.length)]; }
+
+    function scrambleTo(el, target, cb) {
+      var FRAMES = 22, RATE = 40, step = 0;
+      var t = setInterval(function () {
+        var settled = Math.floor((step / FRAMES) * target.length);
+        el.textContent = target.split('').map(function (ch, i) {
+          return i < settled ? ch : rand();
+        }).join('');
+        step++;
+        if (step > FRAMES) { clearInterval(t); el.textContent = target; if (cb) cb(); }
+      }, RATE);
+    }
+
+    function showEgg() {
+      /* Overlay */
+      var ov = document.createElement('div');
+      ov.style.cssText = [
+        'position:fixed;inset:0;z-index:99999;background:#000;',
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;',
+        'cursor:pointer;opacity:0;transition:opacity 0.25s ease;',
+        'font-family:"Space Grotesk",sans-serif;',
+      ].join('');
+
+      /* Scanlines over overlay */
+      var sl = document.createElement('div');
+      sl.style.cssText = 'position:absolute;inset:0;pointer-events:none;' +
+        'background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.45) 3px,rgba(0,14,0,0.45) 4px);';
+      ov.appendChild(sl);
+
+      /* Big number */
+      var num = document.createElement('div');
+      num.style.cssText = 'font-size:clamp(5rem,22vw,14rem);font-weight:700;color:#FF5C00;line-height:1;letter-spacing:0.05em;';
+      num.textContent   = '??';
+      ov.appendChild(num);
+
+      /* "// OFF" label */
+      var off = document.createElement('div');
+      off.style.cssText = 'font-size:clamp(1rem,3vw,1.6rem);font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3em;';
+      off.textContent   = '// OFF';
+      ov.appendChild(off);
+
+      /* Divider */
+      var hr = document.createElement('div');
+      hr.style.cssText = 'width:clamp(180px,30vw,340px);height:1px;background:rgba(255,92,0,0.3);margin:0.5rem 0;';
+      ov.appendChild(hr);
+
+      /* Code */
+      var code = document.createElement('div');
+      code.style.cssText = 'font-size:clamp(1.1rem,3.5vw,2rem);font-weight:700;color:#FF5C00;letter-spacing:0.22em;opacity:0;transition:opacity 0.4s ease 0.2s;';
+      code.textContent   = '[aRTS-77]';
+      ov.appendChild(code);
+
+      /* Dismiss hint */
+      var hint = document.createElement('div');
+      hint.style.cssText = 'font-size:0.72rem;font-weight:300;color:rgba(255,255,255,0.25);letter-spacing:0.18em;margin-top:1.4rem;opacity:0;transition:opacity 0.4s ease 0.5s;';
+      hint.textContent   = 'tap anywhere to close';
+      ov.appendChild(hint);
+
+      document.body.appendChild(ov);
+
+      /* Fade overlay in */
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          ov.style.opacity = '1';
+          /* Scramble "??" → "77" */
+          setTimeout(function () {
+            scrambleTo(num, '77', function () {
+              /* Reveal % */
+              setTimeout(function () {
+                scrambleTo(num, '77%', function () {
+                  code.style.opacity = '1';
+                  hint.style.opacity = '1';
+                });
+              }, 180);
+            });
+          }, 200);
+        });
+      });
+
+      /* Dismiss */
+      ov.addEventListener('click', function () {
+        ov.style.opacity = '0';
+        setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 300);
+      });
+    }
+
+    if (!bear) return;
+    bear.addEventListener('click', function () {
+      clicks++;
+      if (clicks === MAGIC) {
+        clicks = 0;
+        showEgg();
       }
     });
   })();

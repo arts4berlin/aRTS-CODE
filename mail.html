@@ -82,6 +82,7 @@
     }
 
     /* ── Box-style inputs — white fill, black text ── */
+    .field { text-transform: uppercase; }
     .field {
       width: 100%;
       background: #fff;
@@ -260,6 +261,15 @@
         btn.disabled = false;
       }
     }
+
+    /* Auto-uppercase typed text in name fields */
+    document.querySelectorAll('.field[type="text"]').forEach(function (f) {
+      f.addEventListener('input', function () {
+        var pos = f.selectionStart;
+        f.value = f.value.toUpperCase();
+        f.setSelectionRange(pos, pos);
+      });
+    });
   </script>
   <script>
     (function () {

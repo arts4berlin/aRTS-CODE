@@ -296,6 +296,15 @@
     .c-msg.ok  { color: #00e676; }
     .c-msg.err { color: rgba(255,70,70,0.9); }
   
+    /* ── Question mark hover ── */
+    #q-mark {
+      cursor: default;
+      display: inline;
+      color: inherit;
+      transition: color 0.18s;
+    }
+    #q-mark:hover { color: #FF5C00; }
+
     /* ── Mobile: safe area + text-size ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     .logo, .nav-about, header { touch-action: manipulation; }
@@ -311,7 +320,7 @@
     <img src="assets/bear.png" alt="aRTS bear" class="bear" fetchpriority="high">
     <div class="question">
       <span class="small">aRE YOU</span>
-      <span class="large">a ROBOT ¿</span>
+      <span class="large">a ROBOT <span id="q-mark">¿</span></span>
     </div>
     <div class="buttons">
       <button class="btn btn-yes" onclick="window.location.href='pi.html'">YES</button>
@@ -625,6 +634,22 @@
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeOverlay();
     });
+
+    /* ── ¿ hover scramble ── */
+    (function () {
+      var qm    = document.getElementById('q-mark');
+      var POOL  = '?!@#%&ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var timer = null;
+      qm.addEventListener('mouseenter', function () {
+        timer = setInterval(function () {
+          qm.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+        }, 55);
+      });
+      qm.addEventListener('mouseleave', function () {
+        clearInterval(timer);
+        qm.textContent = '¿';
+      });
+    })();
 
   })();
   </script>

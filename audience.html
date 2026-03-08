@@ -15,7 +15,7 @@
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="aRT · aSSETS · aID — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
-  <title>[aRTS] — aCT</title>
+  <title>[aRTS] — aUDIENCE</title>
   <script>
     if (!sessionStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
@@ -54,8 +54,8 @@
       white-space: nowrap;
     }
 
-    /* Big orange-bordered aCT button */
-    .btn-act {
+    /* Big orange-bordered INSTa button */
+    .btn-insta {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -72,8 +72,8 @@
       text-decoration: none;
       transition: background 0.18s, color 0.18s;
     }
-    .btn-act:hover { background: #FF5C00; color: #000; }
-    .btn-act { font-variant-numeric: tabular-nums; }
+    .btn-insta:hover { background: #FF5C00; color: #000; }
+    .btn-insta { font-variant-numeric: tabular-nums; }
 
     .logo {
       position: fixed;
@@ -87,7 +87,6 @@
       line-height: 1;
     }
 
-    /* aBOUT — subtle top-right nav link */
     .nav-about {
       position: fixed;
       top: 28px;
@@ -101,7 +100,7 @@
       transition: opacity 0.15s;
     }
     .nav-about:hover { opacity: 1; }
-  
+
     /* ── dvh fix: excludes iOS Safari address bar ── */
     @supports (height: 100dvh) {
       body { height: 100dvh; }
@@ -120,15 +119,15 @@
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="stack">
-    <a href="act.html" class="btn-act">aSK</a>
-    <span class="tagline">... aND aNSWERS aPPEAR ...</span>
+    <a href="socials.html" class="btn-insta">INSTa</a>
+    <span class="tagline">... JOIN THE SIGNAL ...</span>
   </div>
 
   <script>
     (function () {
-      const TARGET = 'aSK';
+      const TARGET = 'INSTa';
       const POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
-      const btn    = document.querySelector('.btn-act');
+      const btn    = document.querySelector('.btn-insta');
       let timer    = null;
       let frame    = 0;
       const FRAMES = 18;
@@ -152,14 +151,12 @@
         }, RATE);
       }
 
-      /* Always scramble immediately on load — no static "aSK" preview */
+      /* Always scramble immediately on load — no static preview */
       runScramble();
 
       if (window.matchMedia('(hover: none)').matches) {
-        /* Touch: repeat every 3.5 s */
         setInterval(runScramble, 3500);
       } else {
-        /* Desktop: re-scramble on hover; reset on leave */
         btn.addEventListener('mouseenter', runScramble);
         btn.addEventListener('mouseleave', () => {
           clearInterval(timer);
