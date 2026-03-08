@@ -115,6 +115,15 @@
       transition: opacity 0.15s;
     }
     .nav-about:hover { opacity: 1; }
+  
+    /* ── dvh fix: excludes iOS Safari address bar ── */
+    @supports (height: 100dvh) {
+      body { height: 100dvh; }
+    }
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>
@@ -128,7 +137,7 @@
   </div>
 
   <div class="buttons">
-    <a href="gate.html?to=insta" class="btn btn-fill btn-insta">INSTa</a>
+    <a href="socials.html" class="btn btn-fill btn-insta">INSTa</a>
     <a href="mail.html"          class="btn btn-ghost btn-email">E-MaIL</a>
     <a href="work.html"          class="btn btn-ghost btn-work">WoRK</a>
   </div>

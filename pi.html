@@ -56,6 +56,19 @@
       animation: iBlink 1s linear infinite;
     }
 
+    /* Stamp/kick when a letter passes through */
+    @keyframes iPress {
+      0%   { transform: translate(-50%, -50%) scaleY(1); }
+      28%  { transform: translate(-50%, -50%) scaleY(0.70); }
+      65%  { transform: translate(-50%, -50%) scaleY(1.14); }
+      100% { transform: translate(-50%, -50%) scaleY(1); }
+    }
+    #big-i.press {
+      animation: iPress 0.26s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+      color: #FF5C00 !important;
+      text-shadow: 0 0 100px rgba(255,92,0,0.7) !important;
+    }
+
     /* ── Scrolling word row ── */
     #word-wrap {
       position: fixed;
@@ -85,6 +98,15 @@
     .letter.done {
       color: rgba(255,255,255,0.92);
     }
+  
+    /* ── dvh fix: excludes iOS Safari address bar ── */
+    @supports (height: 100dvh) {
+      body { height: 100dvh; }
+    }
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>
@@ -222,6 +244,12 @@
             /* Snap immediately — colour transition in CSS makes it seamless */
             span.textContent = WORDS[wordIdx][i].toLowerCase();
             span.classList.add('done');
+
+            /* Press / stamp animation on the I caret */
+            bigI.classList.remove('idle', 'press');
+            void bigI.offsetWidth; // force reflow to restart animation
+            bigI.classList.add('press');
+            setTimeout(() => bigI.classList.remove('press'), 300);
           }
         });
 

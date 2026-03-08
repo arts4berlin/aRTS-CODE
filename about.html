@@ -91,6 +91,11 @@
       height: auto;
     }
 
+  
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>

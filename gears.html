@@ -86,6 +86,15 @@
     .s-far  { font-size: clamp(0.7rem,  2.4vh, 1.7rem); color: rgba(255,255,255,0.14); }
     .s-near { font-size: clamp(1.1rem,  5vh,   3rem);   color: rgba(255,255,255,0.34); }
     .s-ctr  { font-size: clamp(2.2rem,  9vh,   6rem);   color: #fff; font-weight: 700; }
+  
+    /* ── dvh fix: excludes iOS Safari address bar ── */
+    @supports (height: 100dvh) {
+      body { height: 100dvh; }
+    }
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>

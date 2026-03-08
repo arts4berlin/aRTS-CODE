@@ -295,6 +295,11 @@
     }
     .c-msg.ok  { color: #00e676; }
     .c-msg.err { color: rgba(255,70,70,0.9); }
+  
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>

@@ -89,7 +89,7 @@
       border-radius: 4px;
       padding: clamp(0.75rem, 1.5vh, 1.05rem) clamp(1.2rem, 2vw, 1.8rem);
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.88rem, 2vw, 1.1rem);
+      font-size: clamp(1rem, 2vw, 1.1rem);
       font-weight: 700;
       letter-spacing: 0.18em;
       color: #000;
@@ -169,6 +169,15 @@
     .bear-btn.sent .bear-check {
       animation: checkBounce 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
+  
+    /* ── dvh fix: excludes iOS Safari address bar ── */
+    @supports (height: 100dvh) {
+      body { height: 100dvh; }
+    }
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>

@@ -70,6 +70,15 @@
       z-index: 12;
       cursor: default;
     }
+  
+    /* ── dvh fix: excludes iOS Safari address bar ── */
+    @supports (height: 100dvh) {
+      body { height: 100dvh; }
+    }
+    /* ── Mobile: safe area + text-size ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    .logo, .nav-about, header { touch-action: manipulation; }
+    .btn, button, a { touch-action: manipulation; }
   </style>
 </head>
 <body>
