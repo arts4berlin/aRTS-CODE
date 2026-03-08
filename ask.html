@@ -63,33 +63,29 @@
     .btn-act:hover { background: #FF5C00; color: #000; }
     .btn-act { font-variant-numeric: tabular-nums; }
 
-    /* Smaller white-filled aBOUT button */
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: clamp(150px, 30vw, 270px);
-      height: clamp(46px, 8vh, 70px);
-      background: #fff;
-      border: 2px solid #fff;
-      border-radius: 4px;
-      color: #000;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.9rem, 2.3vw, 1.3rem);
-      font-weight: 700;
-      letter-spacing: 0.2em;
+    /* aBOUT — subtle top-right nav link */
+    .nav-about {
+      position: fixed;
+      top: 28px;
+      right: 32px;
       text-decoration: none;
-      transition: background 0.18s;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+      transition: opacity 0.15s;
     }
-    .btn-back:hover { background: #e0e0e0; border-color: #e0e0e0; }
+    .nav-about:hover { opacity: 1; }
   </style>
 </head>
 <body>
 
+  <a href="about.html" class="nav-about">aBOUT</a>
+
   <div class="stack">
     <a href="act.html" class="btn-act">aSK</a>
     <span class="tagline">... aND aNSWERS aPPEAR ...</span>
-    <a href="about.html" class="btn-back">aBOUT</a>
   </div>
 
   <script>
