@@ -144,16 +144,74 @@
       letter-spacing: 0.25em;
     }
   
+    /* ── Hamburger button ── */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      background: none;
+      border: none;
+      z-index: 200;
+      touch-action: manipulation;
+    }
+    .burger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.is-open span:nth-child(2) { opacity: 0; }
+    .burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Mobile full-screen overlay ── */
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 150;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(1.4rem, 4vh, 2.4rem);
+      opacity: 0;
+      transition: opacity 0.22s ease;
+    }
+    .nav-overlay.is-open { opacity: 1; }
+    .nav-overlay a {
+      text-decoration: none;
+      color: #fff;
+      font-size: clamp(1.3rem, 7vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      opacity: 0.85;
+      line-height: 1;
+      padding: 0.2em 0;
+      transition: opacity 0.12s, color 0.12s;
+      touch-action: manipulation;
+    }
+    .nav-overlay a:active,
+    .nav-overlay a:hover { opacity: 1; color: #FF5C00; }
+    .nav-overlay .overlay-close {
+      position: absolute;
+      top: 18px; right: 16px;
+    }
+
     /* ── Mobile: safe area + text-size ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
 
-    /* ── Mobile nav: compress on small screens ── */
+    /* ── Mobile nav: switch to hamburger ── */
     @media (max-width: 520px) {
       header  { padding: 18px 16px; }
-      nav     { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
-      nav a   { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+      nav     { display: none; }
+      .burger { display: flex; }
     }
   </style>
 </head>
@@ -168,7 +226,22 @@
       <a href="assets.html">aSSETS</a>
       <a href="audience.html">aUDIENCE</a>
     </nav>
+    <button class="burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+    </button>
   </header>
+
+  <!-- Mobile overlay menu -->
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="burger is-open overlay-close" id="burger-close" aria-label="close menu">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="about.html">aBOUT</a>
+    <a href="ask.html">aCT</a>
+    <a href="aid.html">aID</a>
+    <a href="assets.html">aSSETS</a>
+    <a href="audience.html">aUDIENCE</a>
+  </div>
 
   <main>
     <img src="assets/bear.png" alt="aRTS bear" class="bear" fetchpriority="high">
@@ -488,6 +561,36 @@
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
       });
+    });
+  })();
+  </script>
+
+  <!-- Hamburger toggle -->
+  <script>
+  (function(){
+    var burger  = document.getElementById('burger');
+    var overlay = document.getElementById('nav-overlay');
+    var closer  = document.getElementById('burger-close');
+
+    function openMenu(){
+      overlay.style.display = 'flex';
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ overlay.classList.add('is-open'); });
+      });
+      burger.classList.add('is-open');
+    }
+    function closeMenu(){
+      overlay.classList.remove('is-open');
+      burger.classList.remove('is-open');
+      setTimeout(function(){ overlay.style.display = 'none'; }, 230);
+    }
+
+    burger.addEventListener('click', openMenu);
+    closer.addEventListener('click', closeMenu);
+
+    /* Also close if user taps outside a link in the overlay */
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeMenu();
     });
   })();
   </script>

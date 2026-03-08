@@ -6,7 +6,6 @@
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
-
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
@@ -17,16 +16,16 @@
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="aRT · aSSETS · aID — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
-  <title>[aRTS] — SOCIALS</title>
+  <title>[aRTS] — aRTICLES</title>
+  <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
     if (!sessionStorage.getItem('captcha_passed')) {
-      window.location.replace('tail.html');
+      window.location.replace('index.html');
     }
   </script>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -35,17 +34,21 @@
       color: #fff;
       font-family: 'Space Grotesk', sans-serif;
       min-height: 100vh;
+    }
+
+    /* ── Fixed header ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      padding: 26px 32px;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 60%, transparent);
     }
 
     .logo {
-      position: fixed;
-      top: 28px;
-      left: 32px;
-      z-index: 100;
       text-decoration: none;
       color: #fff;
       font-size: 1rem;
@@ -54,149 +57,124 @@
       line-height: 1;
     }
 
-    /* SVG output — clip to rounded corners on the wrapper */
-    #qr {
-      border-radius: 14px;
-      overflow: hidden;
-      line-height: 0;
-      cursor: pointer;
-      touch-action: manipulation;
-      position: relative;
-    }
-    @keyframes qrBreath {
-      0%, 100% { opacity: 1;     transform: scale(1); }
-      50%       { opacity: 0.82; transform: scale(0.984); }
-    }
-    #qr svg {
-      display: block;
-      animation: qrBreath 3.5s ease-in-out infinite;
-      transform-origin: center;
-      transition: filter 0.25s ease;
-    }
-    /* Hover: white dots → orange via multiply overlay */
-    #qr::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: #FF5C00;
-      mix-blend-mode: multiply;
-      opacity: 0;
-      border-radius: 14px;
-      transition: opacity 0.25s ease;
-      pointer-events: none;
-    }
-    #qr:hover::after { opacity: 1; }
-
-    .handle {
-      margin-top: 1.2rem;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #FF5C00;
-      cursor: pointer;
-      touch-action: manipulation;
-      text-align: center;
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
     }
 
-    .bear-corner {
-      position: fixed;
-      bottom: 60px;
-      right: 50px;
-      width: clamp(80px, 10vw, 120px);
-      pointer-events: none;
-    }
-
-    .nav-about {
-      position: fixed;
-      top: 28px; right: 32px;
+    nav a {
       text-decoration: none;
       color: #fff;
       font-size: 0.9rem;
       font-weight: 300;
       letter-spacing: 0.1em;
-      opacity: 0.7;
+      opacity: 0.85;
       transition: opacity 0.15s;
     }
-    .nav-about:hover { opacity: 1; }
-  
-    /* ── Mobile: safe area + text-size ── */
+    nav a:hover { opacity: 1; }
+    nav a.active { opacity: 1; font-weight: 600; }
+
+    /* ── Article list ── */
+    main {
+      padding-top: clamp(100px, 14vh, 130px);
+      padding-bottom: clamp(60px, 8vh, 100px);
+      padding-left: clamp(24px, 8vw, 120px);
+      padding-right: clamp(24px, 8vw, 120px);
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 5vw, 56px);
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-bottom: clamp(16px, 3vh, 28px);
+    }
+
+    .article-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .article-item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: clamp(16px, 2.5vh, 22px) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-decoration: none;
+      color: #fff;
+      transition: color 0.15s;
+      cursor: default;
+    }
+    .article-item:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-item.linked { cursor: pointer; }
+    .article-item.linked:hover .article-title { color: #FF5C00; }
+
+    .article-title {
+      font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      transition: color 0.15s;
+      flex: 1;
+    }
+
+    .article-meta {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.28);
+      white-space: nowrap;
+    }
+
+    /* Placeholder state */
+    .article-item.wip .article-title { color: rgba(255,255,255,0.22); }
+    .article-item.wip .article-meta  { color: rgba(255,255,255,0.12); }
+
+    /* ── dvh fix ── */
+    @supports (height: 100dvh) { body { min-height: 100dvh; } }
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
+
+    @media (max-width: 520px) {
+      header  { padding: 18px 16px; }
+      nav     { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
+      nav a   { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+    }
   </style>
 </head>
 <body>
   <!-- CRT: prevent flash on arrival -->
   <script>(function(){if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
-  <a href="connect.html" class="logo">[sEEK]</a>
-  <a href="about.html" class="nav-about">aBOUT</a>
+  <header>
+    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+    <nav>
+      <a href="about.html">aBOUT</a>
+      <a href="articles.html" class="active">aRTICLES</a>
+      <a href="ask.html">aCT</a>
+    </nav>
+  </header>
 
-  <div id="qr"></div>
-  <p class="handle">rts.berlin</p>
+  <main>
+    <p class="section-label">aRTICLES &amp; wRITINGS</p>
+    <div class="article-list">
+      <div class="article-item wip">
+        <span class="article-title">— cOMING SOON —</span>
+        <span class="article-meta">2026</span>
+      </div>
+    </div>
+  </main>
 
-  <script>
-    document.getElementById('qr').addEventListener('click', function(){
-      window.open('https://www.instagram.com/rts.berlin/', '_blank', 'noopener');
-    });
-  </script>
-
-
-  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-  <script>
-    new QRCodeStyling({
-      width: 300,
-      height: 300,
-      type: 'svg',
-      data: 'https://www.instagram.com/rts.berlin/',
-      image: 'assets/bear.png',
-      dotsOptions:          { color: '#ffffff', type: 'dots' },
-      backgroundOptions:    { color: '#000000' },
-      cornersSquareOptions: { color: '#ffffff', type: 'extra-rounded' },
-      cornersDotOptions:    { color: '#ffffff', type: 'dot' },
-      imageOptions: {
-        crossOrigin: 'anonymous',
-        margin: 4,
-        hideBackgroundDots: true,
-        imageSize: 0.28
-      },
-      qrOptions: { errorCorrectionLevel: 'H' }
-    }).append(document.getElementById('qr'));
-  </script>
-  <script>
-    /* rts.berlin — scramble on load, periodic auto-scramble, click→Instagram */
-    (function () {
-      var el   = document.querySelector('.handle');
-      var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#!?.';
-      var FRAMES = 22, RATE = 45;
-      var timer  = null;
-
-      function scramble() {
-        clearInterval(timer);
-        var target = 'rts.berlin';
-        var step = 0;
-        timer = setInterval(function () {
-          var out = '';
-          for (var i = 0; i < target.length; i++) {
-            out += (i < Math.floor(step * target.length / FRAMES))
-              ? target[i]
-              : POOL[Math.floor(Math.random() * POOL.length)];
-          }
-          el.textContent = out;
-          if (++step > FRAMES) { clearInterval(timer); el.textContent = target; }
-        }, RATE);
-      }
-
-      /* Click → open Instagram */
-      el.addEventListener('click', function () {
-        window.open('https://www.instagram.com/rts.berlin/', '_blank', 'noopener');
-      });
-
-      /* Scramble on load + every 11 s */
-      scramble();
-      setInterval(scramble, 11000);
-    })();
-  </script>
   <script>
     (function () {
       function reveal() {
@@ -214,7 +192,6 @@
       window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
     })();
   </script>
-
 
   <!-- CRT channel-change transition -->
   <script>
@@ -289,13 +266,11 @@
       requestAnimationFrame(run);
     }
 
-    /* Arrival */
     if(sessionStorage.getItem('crt_transition')){
       sessionStorage.removeItem('crt_transition');
       doEnter();
     }
 
-    /* Exit interceptor */
     document.addEventListener('click',function(ev){
       var a=ev.target.closest('a[href]');
       if(!a)return;
@@ -312,8 +287,6 @@
   <script>
   (function(){
     var DELAY = 40;
-
-    /* Nav links — lowercase left→right on enter, recapitalise right→left on leave */
     function navHover(el){
       var orig = el.textContent;
       var timers=[], state=0;
@@ -324,38 +297,32 @@
         el.textContent=s;
       }
       el.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=0;i<orig.length-1-from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));
         })(i);
       });
       el.addEventListener('mouseleave',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
     document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
       var inner=logo.dataset.inner;
       var timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
       logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=from;i<inner.length;i++)(function(i){
           timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
         })(i);
       });
       logo.addEventListener('mouseleave',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
