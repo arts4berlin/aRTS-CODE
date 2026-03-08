@@ -20,14 +20,6 @@
       position: relative;
     }
 
-    /* ── Particle canvas — behind everything ── */
-    #orb-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-
     /* ── I frame wrapper — true viewport centre on all devices ── */
     .i-wrap {
       position: fixed;
@@ -47,31 +39,13 @@
       line-height: 1;
       user-select: none;
       pointer-events: none;
-      /* Spring bounce in, then fade-glow forever */
-      animation:
-        iBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-        iPulse  4s ease-in-out 0.9s infinite;
+      /* Spring bounce in — one shot */
+      animation: iBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    /* ── Bounce-in entrance (runs once on load) ── */
     @keyframes iBounce {
-      0%   { transform: scale(0);    opacity: 0; }
-      100% { transform: scale(1);    opacity: 1; }
-    }
-
-    /* ── Continuous glow pulse (starts after bounce) ── */
-    @keyframes iPulse {
-      0%, 100% {
-        text-shadow:
-          0 0 18px rgba(255,92,0,0.25),
-          0 0 45px rgba(255,92,0,0.08);
-      }
-      50% {
-        text-shadow:
-          0 0 40px rgba(255,92,0,0.65),
-          0 0 90px rgba(255,92,0,0.22),
-          0 0 160px rgba(255,92,0,0.07);
-      }
+      0%   { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     /* ── 5-slot strip centred on the I ── */
@@ -82,6 +56,8 @@
       transform: translate(-50%, -50%);
       display: flex;
       align-items: center;
+      opacity: 0;
+      transition: opacity 0.65s ease;
     }
 
     /* ── All slots: width in em (relative to own font-size) keeps symmetry at any viewport ── */
@@ -105,9 +81,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Orbital particle canvas -->
-  <canvas id="orb-bg"></canvas>
 
   <!-- I frame + scrolling strip -->
   <div class="i-wrap">
@@ -148,6 +121,14 @@
       'buffering',
       'crunching',
     ];
+
+    /* Shuffle words so every visit is unique */
+    (function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+    })(words);
 
     const slots = [-2, -1, 0, 1, 2].map(d => document.getElementById('s' + d));
 
@@ -205,80 +186,13 @@
       }
     });
 
-    /* Start after bounce completes (~900ms) */
+    /* Strip fades in as bounce lands — I and text arrive together */
+    const strip = document.querySelector('.strip');
     updateCursor();
-    setTimeout(step, 1000);
-
-    /* ── Orbital particle system ─────────────────────────────────────
-       Particles orbit the centre (where the I lives) in elliptical
-       paths at varying radii, speeds and sizes — leaving comet trails.
-    ──────────────────────────────────────────────────────────────── */
-    (function () {
-      const canvas = document.getElementById('orb-bg');
-      const ctx    = canvas.getContext('2d');
-
-      function resize() {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      /* Build particles — mix of tight inner orbit and wide outer orbit */
-      const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
-        rFactor : 0.08 + Math.random() * 0.26,   // orbit radius as fraction of min(W,H)
-        angle   : (Math.PI * 2 / 18) * i + Math.random() * 0.8,
-        speed   : (0.12 + Math.random() * 0.22) * (Math.random() < 0.5 ? 1 : -1),
-        size    : 1.2 + Math.random() * 2.2,
-        opacity : 0.20 + Math.random() * 0.50,
-        tilt    : 0.55 + Math.random() * 0.45,   // vertical squish → ellipse
-      }));
-
-      let lastTs = null;
-
-      function frame(ts) {
-        if (!lastTs) lastTs = ts;
-        const dt = Math.min((ts - lastTs) / 1000, 0.05);
-        lastTs = ts;
-
-        const W  = canvas.width;
-        const H  = canvas.height;
-        const cx = W / 2;
-        const cy = H / 2;
-        const R  = Math.min(W, H);
-
-        /* Trail: semi-transparent black fade instead of full clear */
-        ctx.fillStyle = 'rgba(0,0,0,0.18)';
-        ctx.fillRect(0, 0, W, H);
-
-        PARTICLES.forEach(p => {
-          p.angle += p.speed * dt;
-
-          const r = R * p.rFactor;
-          const x = cx + r * Math.cos(p.angle);
-          const y = cy + r * Math.sin(p.angle) * p.tilt;
-
-          /* Outer glow */
-          const grd = ctx.createRadialGradient(x, y, 0, x, y, p.size * 4);
-          grd.addColorStop(0, `rgba(255,92,0,${p.opacity * 0.8})`);
-          grd.addColorStop(1, 'rgba(255,92,0,0)');
-          ctx.beginPath();
-          ctx.arc(x, y, p.size * 4, 0, Math.PI * 2);
-          ctx.fillStyle = grd;
-          ctx.fill();
-
-          /* Solid core */
-          ctx.beginPath();
-          ctx.arc(x, y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,92,0,${p.opacity})`;
-          ctx.fill();
-        });
-
-        requestAnimationFrame(frame);
-      }
-
-      requestAnimationFrame(frame);
-    })();
+    setTimeout(() => {
+      strip.style.opacity = '1';
+      step();
+    }, 820);
   </script>
 
 </body>
