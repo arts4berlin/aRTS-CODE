@@ -18,63 +18,57 @@
       overflow: hidden;
     }
 
-    /* ── Geometric glyph canvas — centred ── */
-    #glyph-canvas {
+    /* ── Glyph stage — full-screen flex centre ── */
+    #glyph-stage {
       position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-      image-rendering: crisp-edges;
-    }
-
-    /* ── Word scroll strip — in front of glyph ── */
-    #stage {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 11;
+      z-index: 10;
+      pointer-events: none;
     }
 
-    .strip {
-      display: flex;
-      align-items: center;
+    .glyph {
+      position: absolute;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(7rem, 30vh, 18rem);
+      color: #FF5C00;
+      line-height: 1;
+      opacity: 0;
+      transform: scale(0);
+      will-change: transform, opacity;
+      user-select: none;
+    }
+
+    /* ── Word canvas — transparent, floats above glyph ── */
+    #word-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 11;
       opacity: 0;
       transition: opacity 0.65s ease;
+      pointer-events: none;
     }
 
-    .s {
-      flex-shrink: 0;
-      width: 1.5em;
-      text-align: center;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 400;
-      user-select: none;
-      pointer-events: none;
-      transition: opacity 0.11s ease;
+    /* ── Invisible click capture overlay ── */
+    #word-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 12;
+      cursor: default;
     }
-    .s-far  { font-size: clamp(0.7rem,  2.4vh, 1.7rem); color: rgba(255,255,255,0.14); }
-    .s-near { font-size: clamp(1.1rem,  5vh,   3rem);   color: rgba(255,255,255,0.34); }
-    .s-ctr  { font-size: clamp(2.2rem,  9vh,   6rem);   color: #fff; font-weight: 700; }
   </style>
 </head>
 <body>
 
-  <canvas id="glyph-canvas"></canvas>
-
-  <div id="stage">
-    <div class="strip" id="strip">
-      <span class="s s-far"  id="s-2"></span>
-      <span class="s s-near" id="s-1"></span>
-      <span class="s s-ctr"  id="s0"></span>
-      <span class="s s-near" id="s1"></span>
-      <span class="s s-far"  id="s2"></span>
-    </div>
+  <div id="glyph-stage">
+    <div class="glyph" id="pi-el">π</div>
+    <div class="glyph" id="i-el">I</div>
   </div>
+
+  <canvas id="word-canvas"></canvas>
+  <div id="word-overlay"></div>
 
   <script>
   (function () {
@@ -89,53 +83,42 @@
       'propping', 'calling', 'questioning', 'viewing',
       'tripping', 'buffering', 'crunching',
     ];
+    /* Shuffle */
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [words[i], words[j]] = [words[j], words[i]];
     }
 
     /* ── Flat character stream ── */
-    const PAD = 5, GAP = 6;
+    const GAP = 7;
     const streamChars = [], streamWordOf = [];
     words.forEach((word, wi) => {
-      for (let i = 0; i < PAD; i++) { streamChars.push(' '); streamWordOf.push(-1); }
-      for (const ch of word)        { streamChars.push(ch);  streamWordOf.push(wi); }
       for (let i = 0; i < GAP; i++) { streamChars.push(' '); streamWordOf.push(-1); }
+      for (const ch of word)         { streamChars.push(ch);  streamWordOf.push(wi); }
     });
     const SLEN = streamChars.length;
 
-    /* ── DOM ── */
-    const glyphCanvas = document.getElementById('glyph-canvas');
-    const gCtx        = glyphCanvas.getContext('2d');
-    const strip       = document.getElementById('strip');
-    const stage       = document.getElementById('stage');
-    const slots       = [-2,-1,0,1,2].map(d => document.getElementById('s' + d));
+    /* ── DOM refs ── */
+    const piEl       = document.getElementById('pi-el');
+    const iEl        = document.getElementById('i-el');
+    const wordCanvas = document.getElementById('word-canvas');
+    const wCtx       = wordCanvas.getContext('2d');
+    const overlay    = document.getElementById('word-overlay');
 
-    /* ── Timing ── */
-    const BOUNCE_DUR  = 900;    // π spring-in
-    const MORPH_START = 1700;   // geometric morph begins
-    const MORPH_DUR   = 700;    // morph duration
-    const SETTLE_DUR  = 420;    // glow + scale settle after morph
-    const WORDS_DELAY = 500;    // strip fade-in after morph+settle
-
-    /* ── Resize glyph canvas ── */
-    let lastMorphT = 0, lastScale = 0;
-
-    function resize() {
-      const dim = Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.54);
-      glyphCanvas.width  = dim;
-      glyphCanvas.height = dim;
-      drawGlyph(lastMorphT, lastScale);
-    }
-    window.addEventListener('resize', resize);
-    resize();
+    /* ── Timing (ms) ── */
+    const BOUNCE_DUR  = 900;
+    const MORPH_START = 1700;
+    const MORPH_DUR   = 700;
+    const MORPH_END   = MORPH_START + MORPH_DUR;
+    const WORDS_DELAY = 500;
 
     /* ── Helpers ── */
-    function lerp(a, b, t)    { return a + (b - a) * t; }
-    function clamp(mn, v, mx) { return Math.max(mn, Math.min(mx, v)); }
-    function smoothstep(t)    { return t * t * (3 - 2 * t); }
+    function lerp(a, b, t)  { return a + (b - a) * t; }
+    function clamp01(v)     { return Math.max(0, Math.min(1, v)); }
+    function smoothstep(t)  { const c = clamp01(t); return c * c * (3 - 2 * c); }
+    function easeOut2(t)    { return 1 - (1 - clamp01(t)) * (1 - clamp01(t)); }
 
-    /* π spring bounce: scale 0 → 1.12 → 0.94 → 1 */
+    /* π spring bounce: 0 → 1.12 → 0.94 → 1 */
     function bounceScale(t) {
       if (t <= 0) return 0;
       if (t >= 1) return 1;
@@ -144,130 +127,121 @@
                     return lerp(0.94, 1.00, (t - 0.80) / 0.20);
     }
 
-    /* ── Geometric glyph renderer ──────────────────────────────────────
-       morphT = 0  →  π  (top bar + two wide-set legs, no bottom bar)
-       morphT = 1  →  I  (top serif + single centre stroke + bottom serif)
-
-       FIX: both legs converge to x = 0 (fully overlapping at t=1),
-       so they render as ONE solid centre stroke — no black gap.
-
-       glow (0-20): canvas shadowBlur for the pizzazz settle bloom.
-       ─────────────────────────────────────────────────────────────────── */
-    function drawGlyph(morphT, scale, glow) {
-      lastMorphT = morphT;
-      lastScale  = scale;
-
-      const W = glyphCanvas.width, H = glyphCanvas.height;
-      const cx = Math.round(W / 2), cy = Math.round(H / 2);
-
-      gCtx.clearRect(0, 0, W, H);
-      if (scale <= 0.004) return;
-
-      /* Proportions — tuned for a well-balanced geometric serif */
-      const gh      = H * 0.72;      // glyph height
-      const sw      = gh * 0.110;    // stroke weight  (~11% of height)
-      const piTopW  = gh * 0.80;     // π: top-bar width
-      const iSerifW = gh * 0.46;     // I: serif width
-      const legOff  = gh * 0.210;    // π: leg x-offset from centre
-
-      const et   = smoothstep(morphT);
-      const gTop = cy - gh / 2;
-      const gBot = cy + gh / 2;
-
-      gCtx.save();
-      gCtx.translate(cx, cy);
-      gCtx.scale(scale, scale);
-      gCtx.translate(-cx, -cy);
-
-      /* Glow bloom: warms the I as it settles */
-      if (glow > 0) {
-        gCtx.shadowColor = '#FF8C40';
-        gCtx.shadowBlur  = glow;
-      }
-
-      gCtx.fillStyle = '#FF5C00';
-
-      /* TOP BAR — narrows from π-width → I serif */
-      const tbW = lerp(piTopW, iSerifW, et);
-      gCtx.fillRect(Math.round(cx - tbW / 2), Math.round(gTop), Math.round(tbW), Math.round(sw));
-
-      /* BOTTOM SERIF — grows in after morphT ≈ 0.28 */
-      const bbT = smoothstep(clamp(0, (morphT - 0.28) / 0.72, 1));
-      const bbW = lerp(0, iSerifW, bbT);
-
-      /* Leg bottom: shortens to make room for bottom serif */
-      const legBotY = lerp(gBot, gBot - sw * 0.96, et);
-
-      /* LEFT LEG → converges to x = 0 (fully overlaps right at t=1) */
-      const lx = lerp(-legOff, 0, et);
-      gCtx.fillRect(Math.round(cx + lx - sw / 2), Math.round(gTop + sw),
-                    Math.round(sw), Math.round(legBotY - gTop - sw));
-
-      /* RIGHT LEG → converges to x = 0 (fully overlaps left at t=1) */
-      const rx = lerp(+legOff, 0, et);
-      gCtx.fillRect(Math.round(cx + rx - sw / 2), Math.round(gTop + sw),
-                    Math.round(sw), Math.round(legBotY - gTop - sw));
-
-      /* BOTTOM BAR */
-      if (bbW > 0.5) {
-        gCtx.fillRect(Math.round(cx - bbW / 2), Math.round(gBot - sw),
-                      Math.round(bbW), Math.round(sw));
-      }
-
-      gCtx.restore();
+    /* Apply transform + opacity to a glyph element */
+    function setGlyph(el, scale, opacity) {
+      el.style.transform = `scale(${scale.toFixed(4)})`;
+      el.style.opacity   = opacity.toFixed(4);
     }
 
-    /* ── Word scroll ── */
-    const shown  = ['','','','',''];
-    const fading = [false,false,false,false,false];
-    let scrollPos = 0, lastTs = null, running = false;
-    const SPEED = 2.2;
+    /* ── Word canvas ── */
+    let CHAR_SLOT          = 56;   /* px per character slot — updated on resize */
+    const SCROLL_PX_PER_SEC = 110; /* pixels/sec, right → left                  */
 
-    function charAt(idx) { return streamChars[(idx % SLEN + SLEN) % SLEN]; }
-    function wordAt(idx)  { return streamWordOf[(idx % SLEN + SLEN) % SLEN]; }
-
-    function scrollFrame(ts) {
-      if (!running) return;
-      if (lastTs === null) lastTs = ts;
-      const dt = Math.min(ts - lastTs, 50);
-      lastTs = ts;
-      scrollPos = (scrollPos + SPEED * dt / 1000) % SLEN;
-      const ipos = Math.floor(scrollPos);
-
-      slots.forEach((el, si) => {
-        const offset   = si - 2;
-        const ch       = charAt(ipos + offset);
-        const isCenter = offset === 0;
-        const next     = ch === ' ' ? '' : (isCenter ? ch.toUpperCase() : ch);
-        if (next !== shown[si] && !fading[si]) {
-          fading[si] = true;
-          el.style.opacity = '0';
-          setTimeout(() => {
-            el.textContent = next; shown[si] = next;
-            el.style.opacity = ''; fading[si] = false;
-          }, 90);
-        }
-      });
-
-      const wi   = wordAt(ipos);
-      const word = wi >= 0 ? words[wi] : null;
-      stage.style.cursor = (word && routes[word]) ? 'pointer' : 'default';
-      requestAnimationFrame(scrollFrame);
+    function updateCharSlot() {
+      CHAR_SLOT = Math.max(38, Math.min(70, window.innerWidth * 0.044));
     }
 
-    stage.addEventListener('click', () => {
-      const ipos = Math.floor(scrollPos);
-      const wi   = wordAt(ipos);
-      const word = wi >= 0 ? words[wi] : null;
-      const dest = word && routes[word];
+    function resizeWordCanvas() {
+      wordCanvas.width  = window.innerWidth;
+      wordCanvas.height = window.innerHeight;
+      updateCharSlot();
+    }
+    window.addEventListener('resize', resizeWordCanvas);
+    resizeWordCanvas();
+
+    let wordScrollPx   = 0;
+    let wordLastTs     = null;
+    let wordRunning    = false;
+    let currentWordIdx = -1;
+
+    /* Mouse proximity to the I — drives hover magnification */
+    let mouseX = -9999, mouseY = -9999;
+    overlay.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+    overlay.addEventListener('mouseleave', ()  => { mouseX = -9999; mouseY = -9999; });
+
+    function drawWords() {
+      const W = wordCanvas.width, H = wordCanvas.height;
+      const cx = W / 2, cy = H / 2;
+
+      wCtx.clearRect(0, 0, W, H);
+
+      const totalPx      = SLEN * CHAR_SLOT;
+      const scrolled     = ((wordScrollPx % totalPx) + totalPx) % totalPx;
+      const centerCFloat = scrolled / CHAR_SLOT; /* float char-index at centre */
+      const FADE_DIST    = W * 0.28;             /* tight fade — words hug the I */
+
+      /* Font size range */
+      const MAX_FONT = Math.max(48, Math.min(88, H * 0.10));
+      const MIN_FONT = MAX_FONT * 0.18;
+
+      /* Hover-magnification: mouse proximity to I centre */
+      const I_RADIUS  = Math.min(W, H) * 0.14;
+      const mDist     = Math.hypot(mouseX - cx, mouseY - cy);
+      const hoverFrac = Math.max(0, 1 - mDist / I_RADIUS);
+      const ctrBoost  = 1 + 1.0 * hoverFrac * hoverFrac; /* up to 2× at centre */
+
+      /* Slots visible on each side of centre */
+      const halfSlots = Math.ceil(FADE_DIST / CHAR_SLOT) + 1;
+      const startCi   = Math.floor(centerCFloat) - halfSlots;
+      const endCi     = Math.floor(centerCFloat) + halfSlots;
+      const exactCi   = Math.round(centerCFloat); /* the one character at centre */
+
+      /* Track the word whose first letter is closest to centre */
+      const cSIdx = ((exactCi % SLEN) + SLEN) % SLEN;
+      currentWordIdx = streamWordOf[cSIdx];
+
+      for (let ci = startCi; ci <= endCi; ci++) {
+        const sIdx = ((ci % SLEN) + SLEN) % SLEN;
+        const ch   = streamChars[sIdx];
+        if (ch === ' ') continue;
+
+        /* x position relative to viewport centre */
+        const charX = cx + (ci - centerCFloat) * CHAR_SLOT;
+        const dist  = Math.abs(charX - cx);
+        if (dist >= FADE_DIST) continue;
+
+        const frac     = 1 - dist / FADE_DIST;
+        const frac2    = frac * frac;
+        const isCtr    = (ci === exactCi);
+        /* Only the centre character is uppercase; others keep natural case */
+        const glyph    = isCtr ? ch.toUpperCase() : ch;
+        const boost    = isCtr ? ctrBoost : 1;
+        const fontSize = (MIN_FONT + (MAX_FONT - MIN_FONT) * frac2) * boost;
+        const opacity  = 0.07 + 0.93 * frac2;
+        const weight   = frac > 0.82 ? 700 : 400;
+
+        wCtx.save();
+        wCtx.font         = `${weight} ${fontSize.toFixed(1)}px 'Space Grotesk', sans-serif`;
+        wCtx.fillStyle    = `rgba(255,255,255,${opacity.toFixed(3)})`;
+        wCtx.textAlign    = 'center';
+        wCtx.textBaseline = 'middle';
+        wCtx.fillText(glyph, charX, cy);
+        wCtx.restore();
+      }
+
+      overlay.style.cursor = (currentWordIdx >= 0 && routes[words[currentWordIdx]])
+        ? 'pointer' : 'default';
+    }
+
+    function wordFrame(ts) {
+      if (!wordRunning) return;
+      if (wordLastTs === null) wordLastTs = ts;
+      const dt   = Math.min(ts - wordLastTs, 50);
+      wordLastTs = ts;
+
+      wordScrollPx += SCROLL_PX_PER_SEC * dt / 1000;
+      drawWords();
+      requestAnimationFrame(wordFrame);
+    }
+
+    overlay.addEventListener('click', () => {
+      if (currentWordIdx < 0) return;
+      const word = words[currentWordIdx];
+      const dest = routes[word];
       if (!dest) return;
-      running = false;
-      [slots[1], slots[2], slots[3]].forEach(el => {
-        el.style.transition = 'color 0.15s ease';
-        el.style.color = '#00e676';
-      });
+      wordRunning = false;
       sessionStorage.setItem('captcha_passed', '1');
-      setTimeout(() => { window.location.href = dest; }, 480);
+      setTimeout(() => { window.location.href = dest; }, 160);
     });
 
     /* ── Main animation loop ── */
@@ -277,50 +251,40 @@
       if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
-      /* Determine morph + settle state */
-      const SETTLE_START = MORPH_START + MORPH_DUR;
-      let morphT, scale, glow;
-
       if (elapsed < BOUNCE_DUR) {
-        morphT = 0; scale = bounceScale(elapsed / BOUNCE_DUR); glow = 0;
+        /* Phase 1: π springs in */
+        setGlyph(piEl, bounceScale(elapsed / BOUNCE_DUR), 1);
+        setGlyph(iEl,  0, 0);
 
       } else if (elapsed < MORPH_START) {
-        morphT = 0; scale = 1; glow = 0;
+        /* Phase 2: π held steady */
+        setGlyph(piEl, 1, 1);
+        setGlyph(iEl,  0, 0);
 
-      } else if (elapsed < SETTLE_START) {
-        morphT = (elapsed - MORPH_START) / MORPH_DUR; scale = 1; glow = 0;
-
-      } else if (elapsed < SETTLE_START + SETTLE_DUR) {
-        /* Pizzazz: I snaps into place with a scale pulse + glow bloom */
-        const st = (elapsed - SETTLE_START) / SETTLE_DUR;
-        morphT = 1;
-        /* Scale: 1 → 1.055 → 1 (crisp overshoot) */
-        scale = st < 0.38 ? lerp(1, 1.055, st / 0.38)
-                           : lerp(1.055, 1.0,  (st - 0.38) / 0.62);
-        /* Glow blooms in quickly, then eases to steady */
-        glow = lerp(0, 22, smoothstep(Math.min(st * 2.5, 1)));
+      } else if (elapsed < MORPH_END) {
+        /* Phase 3: crossfade π → I (no blur, no glow) */
+        const t  = (elapsed - MORPH_START) / MORPH_DUR;
+        const et = smoothstep(t);
+        setGlyph(piEl, 1,                          1 - et);
+        setGlyph(iEl,  lerp(0.82, 1, easeOut2(t)), et);
 
       } else {
-        morphT = 1; scale = 1; glow = 16; // steady warm glow on I
+        /* Phase 4: I settled — trigger word strip */
+        setGlyph(piEl, 1, 0);
+        setGlyph(iEl,  1, 1);
+
+        if (!morphDone) {
+          morphDone = true;
+          setTimeout(() => {
+            wordCanvas.style.opacity = '1';
+            wordRunning = true;
+            requestAnimationFrame(wordFrame);
+          }, WORDS_DELAY);
+        }
+        return; /* stop main loop */
       }
 
-      drawGlyph(morphT, scale, glow);
-
-      /* Trigger word strip after settle completes */
-      if (!morphDone && elapsed >= SETTLE_START + SETTLE_DUR) {
-        morphDone = true;
-        setTimeout(() => {
-          strip.style.opacity = '1';
-          running = true;
-          requestAnimationFrame(scrollFrame);
-        }, WORDS_DELAY);
-      }
-
-      /* Loop through settle + a beat to hold the glow, then stop */
-      if (elapsed < SETTLE_START + SETTLE_DUR + 200) {
-        requestAnimationFrame(mainFrame);
-      }
-      /* Canvas retains the final I frame — glow stays rendered */
+      requestAnimationFrame(mainFrame);
     }
 
     requestAnimationFrame(mainFrame);

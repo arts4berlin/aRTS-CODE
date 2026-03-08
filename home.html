@@ -10,6 +10,8 @@
       window.location.replace('index.html');
     }
   </script>
+  <link rel="prefetch" href="about.html">
+  <link rel="prefetch" href="ask.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -111,5 +113,23 @@
     </div>
   </main>
 
+  <script>
+    /* Page-reveal animation — plays on load and on back-navigation */
+    (function () {
+      function reveal() {
+        var c = document.createElement('div');
+        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        document.body.appendChild(c);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            c.style.transition = 'opacity 0.22s ease';
+            c.style.opacity    = '0';
+            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
+          });
+        });
+      }
+      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
+    })();
+  </script>
 </body>
 </html>

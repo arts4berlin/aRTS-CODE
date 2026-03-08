@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[aRTS]</title>
+  <link rel="prefetch" href="home.html">
+  <link rel="prefetch" href="robot.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -96,6 +98,10 @@
     }
 
     .buttons { display: flex; align-items: stretch; }
+
+    /* Adjacent buttons form one unified box */
+    .buttons .btn:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
+    .buttons .btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
 
     .btn {
       font-family: 'Space Grotesk', sans-serif;
@@ -465,22 +471,22 @@
       setMsg('VeRIFIED  ✓', 'ok');
       sessionStorage.setItem('captcha_passed', '1');
 
-      // — Splash transition: captcha blooms open into the page —
+      // — Simple splash: modal punches out, instant black cut, navigate —
       setTimeout(() => {
         const ov    = document.getElementById('c-overlay');
         const modal = document.querySelector('.c-modal');
 
-        // Modal expands and dissolves (portal-open feel)
-        modal.style.transition = 'transform 0.42s cubic-bezier(0.22,1,0.36,1), opacity 0.42s ease';
-        modal.style.transform  = 'scale(1.6)';
-        modal.style.opacity    = '0';
+        // Quick scale punch
+        modal.style.transition = 'transform 0.13s cubic-bezier(0.22,1,0.36,1)';
+        modal.style.transform  = 'scale(1.18)';
 
-        // Overlay fills solid black (absorbing the page)
-        ov.style.transition  = 'background 0.42s ease';
-        ov.style.background  = 'rgba(0,0,0,1)';
-
-        // Navigate once animation settles
-        setTimeout(() => { window.location.href = 'home.html'; }, 460);
+        // Instant black cut + navigate
+        setTimeout(() => {
+          ov.style.transition = 'none';
+          ov.style.background = '#000';
+          modal.style.opacity = '0';
+          setTimeout(() => { window.location.href = 'home.html'; }, 160);
+        }, 130);
       }, 480);
     }
 

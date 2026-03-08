@@ -96,5 +96,22 @@
     <img class="photo" src="assets/about-1.jpg" alt="">
   </main>
 
+  <script>
+    (function () {
+      function reveal() {
+        var c = document.createElement('div');
+        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        document.body.appendChild(c);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            c.style.transition = 'opacity 0.22s ease';
+            c.style.opacity    = '0';
+            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
+          });
+        });
+      }
+      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
+    })();
+  </script>
 </body>
 </html>

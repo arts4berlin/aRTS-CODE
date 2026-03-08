@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS]</title>
+  <script>
+    if (!sessionStorage.getItem('captcha_passed')) {
+      window.location.replace('tail.html');
+    }
+    var _to      = new URLSearchParams(location.search).get('to');
+    var DEST_URL = _to === 'insta' ? 'socials.html'
+                 : _to === 'email' ? 'work.html'
+                 : 'home.html';
+    var DEST_LABEL = _to === 'insta' ? 'INSTa'
+                   : _to === 'email' ? 'E-MaIL'
+                   : '→';
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gate-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.4rem, 8vw, 5rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: #FF5C00;
+      opacity: 0;
+      transform: scale(0.86);
+      animation: gIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+    }
+
+    @keyframes gIn  { to { opacity: 1; transform: scale(1); } }
+    @keyframes gOut { to { opacity: 0; transform: scale(1.1); } }
+    .gate-out { animation: gOut 0.22s ease forwards; }
+  </style>
+</head>
+<body>
+  <div id="gate-label" class="gate-label"></div>
+
+  <script>
+    document.getElementById('gate-label').textContent = DEST_LABEL;
+
+    setTimeout(function () {
+      document.getElementById('gate-label').classList.add('gate-out');
+      setTimeout(function () { window.location.href = DEST_URL; }, 160);
+    }, 550);
+  </script>
+</body>
+</html>

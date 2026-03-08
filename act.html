@@ -9,6 +9,8 @@
       window.location.replace('index.html');
     }
   </script>
+  <link rel="prefetch" href="connect.html">
+  <link rel="prefetch" href="work.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -50,6 +52,10 @@
 
     .buttons { display: flex; }
 
+    /* Adjacent buttons form one unified box */
+    .buttons .btn:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
+    .buttons .btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
+
     .btn {
       font-family: 'Space Grotesk', sans-serif;
       font-size: clamp(0.9rem, 2.2vw, 1.25rem);
@@ -70,6 +76,21 @@
     .btn-fill:hover  { background: #e2e2e2; border-color: #e2e2e2; }
     .btn-ghost { background: transparent; color: #fff; }
     .btn-ghost:hover { background: #fff; color: #000; }
+
+    /* CoNNECT — 3 thunderbolts appear above text on hover */
+    .btn-connect { flex-direction: column; gap: 0.1em; }
+    .btn-bolts {
+      display: block;
+      font-size: 0.58em;
+      letter-spacing: 0.28em;
+      padding-left: 0.28em; /* optical centre for letter-spacing */
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.14s ease;
+      color: #000;
+      line-height: 1;
+    }
+    .btn-connect:hover .btn-bolts { visibility: visible; opacity: 1; }
   </style>
 </head>
 <body>
@@ -80,9 +101,58 @@
   </div>
 
   <div class="buttons">
-    <a href="connect.html" class="btn btn-fill">CoNNECT</a>
-    <a href="work.html"    class="btn btn-ghost">WORK</a>
+    <a href="connect.html" class="btn btn-fill btn-connect"><span class="btn-bolts">⚡ ⚡ ⚡</span>CoNNECT</a>
+    <a href="work.html"    class="btn btn-ghost btn-work">WORK</a>
   </div>
 
+  <script>
+    /* WORK — typewriter scramble on hover (desktop) / auto (touch) */
+    (function () {
+      var btn    = document.querySelector('.btn-work');
+      var TARGET = 'WORK';
+      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES = 18, RATE = 45;
+      var timer  = null;
+      function runScramble() {
+        clearInterval(timer);
+        var step = 0;
+        timer = setInterval(function () {
+          var out = '';
+          for (var i = 0; i < TARGET.length; i++) {
+            out += (i < Math.floor(step * TARGET.length / FRAMES))
+              ? TARGET[i]
+              : POOL[Math.floor(Math.random() * POOL.length)];
+          }
+          btn.textContent = out;
+          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
+        }, RATE);
+      }
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(runScramble, 700);
+        setInterval(runScramble, 3500);
+      } else {
+        btn.addEventListener('mouseenter', runScramble);
+        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      function reveal() {
+        var c = document.createElement('div');
+        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        document.body.appendChild(c);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            c.style.transition = 'opacity 0.22s ease';
+            c.style.opacity    = '0';
+            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
+          });
+        });
+      }
+      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
+    })();
+  </script>
 </body>
 </html>
