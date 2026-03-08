@@ -17,33 +17,49 @@
       color: #fff;
       font-family: 'Space Grotesk', sans-serif;
       min-height: 100vh;
+    }
+
+    /* ── CRT content wrapper — receives clipPath + filter ── */
+    #crt-wrap {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* ── CRT: content starts clipped via JS inline style ── */
-
-    /* White flash overlay */
-    #crt-flash {
+    /* ── TV static noise canvas ── */
+    #crt-noise {
       position: fixed;
       inset: 0;
-      background: #fff;
+      width: 100%;
+      height: 100%;
       opacity: 0;
       z-index: 9999;
       pointer-events: none;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
-    /* Scanline overlay */
+    /* ── Phosphor scanlines — green tint, strong ── */
     #crt-scan {
       position: fixed;
       inset: 0;
       background: repeating-linear-gradient(
         to bottom,
         transparent 0px, transparent 3px,
-        rgba(8,2,0,0.20) 3px, rgba(8,2,0,0.20) 4px
+        rgba(0,14,0,0.50) 3px, rgba(0,14,0,0.50) 4px
       );
       opacity: 0;
       z-index: 9998;
+      pointer-events: none;
+    }
+
+    /* ── CRT vignette — dark corners ── */
+    #crt-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.88) 100%);
+      opacity: 0;
+      z-index: 9997;
       pointer-events: none;
     }
 
@@ -283,6 +299,9 @@
 </head>
 <body>
 
+  <!-- CRT content wrapper — clipPath + filter applied here -->
+  <div id="crt-wrap">
+
   <main class="captcha-wrap">
     <img src="assets/bear.png" alt="aRTS bear" class="bear">
     <div class="question">
@@ -317,9 +336,12 @@
     </div>
   </div>
 
-  <!-- CRT turn-on overlays -->
-  <div id="crt-flash"></div>
+  </div><!-- /crt-wrap -->
+
+  <!-- CRT overlays — outside wrapper so filters don't break fixed positioning -->
+  <canvas id="crt-noise"></canvas>
   <div id="crt-scan"></div>
+  <div id="crt-vignette"></div>
 
   <!-- ── CAPTCHA logic ───────────────────────────────────────────── -->
   <script>
@@ -516,76 +538,110 @@
   <!-- ── CRT turn-on animation ── -->
   <script>
   (function () {
-    const flash = document.getElementById('crt-flash');
-    const scan  = document.getElementById('crt-scan');
-    const body  = document.body;
+    const noise    = document.getElementById('crt-noise');
+    const scan     = document.getElementById('crt-scan');
+    const vignette = document.getElementById('crt-vignette');
+    const wrap     = document.getElementById('crt-wrap');
+    const ctx      = noise.getContext('2d');
 
-    // Boot: clip content to a center horizontal line
-    body.style.clipPath = 'inset(50% 0 50% 0)';
+    // Low-res canvas scaled up → chunky CRT static pixels
+    const SCALE = 4;
+    noise.width  = Math.ceil(window.innerWidth  / SCALE);
+    noise.height = Math.ceil(window.innerHeight / SCALE);
+    noise.style.width  = window.innerWidth  + 'px';
+    noise.style.height = window.innerHeight + 'px';
+    ctx.imageSmoothingEnabled = false;
 
-    // Phases (ms) — slightly slower for that warm analog feel:
-    // 0   – 150 : white flash blooms in
-    // 150 – 220 : flash peak (full white)
-    // 220 – 950 : clip expands; flash dissolves slowly into page colors
-    // 950 – 1300: scanlines fade out (phosphor afterglow)
-    // 1300+     : done
+    // Boot: collapse content to a single horizontal center line
+    wrap.style.clipPath = 'inset(50% 0 50% 0)';
 
-    const T_FLASH_IN  = 150;
-    const T_FLASH_OUT = 220;
-    const T_EXPAND    = 950;
-    const T_SCAN_OUT  = 1300;
+    // ── Phases (ms) ──────────────────────────────────────────────
+    // 0   – 130 : flicker burst — static + strong RGB, no expansion
+    // 130 – 780 : tube warms up — clip expands, RGB fades, static clears
+    // 780 – 1150: afterglow — scanlines + vignette dissolve smoothly
+    // 1150+     : done
+
+    const T_FLICKER  =  130;
+    const T_EXPAND   =  780;
+    const T_FADE_END = 1150;
 
     let start = null;
     function lerp(a, b, t) { return a + (b - a) * t; }
-    function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
-    // S-curve that starts slow, peaks, and ends slow — good for a gentle dissolve
+    function easeOut(t)    { return 1 - Math.pow(1 - t, 3); }
+    function easeOut2(t)   { return 1 - (1 - t) * (1 - t); }
     function smoothstep(t) { return t * t * (3 - 2 * t); }
+
+    // Draw pixelated TV static; alpha 0-1
+    function drawNoise(alpha) {
+      noise.style.opacity = alpha < 0.01 ? '0' : String(alpha.toFixed(3));
+      if (alpha < 0.01) return;
+      const img = ctx.createImageData(noise.width, noise.height);
+      const d   = img.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const v  = Math.random() * 220 | 0;
+        d[i]   = Math.min(255, v + (Math.random() * 40 | 0)); // R — warm
+        d[i+1] = v;
+        d[i+2] = Math.max(0,   v - (Math.random() * 40 | 0)); // B — cool
+        d[i+3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+
+    // Apply RGB chromatic aberration via CSS drop-shadow on the content wrap
+    function setRGB(px, alpha) {
+      if (alpha < 0.01 || px < 0.1) { wrap.style.filter = ''; return; }
+      const p = px.toFixed(1), a = alpha.toFixed(3), b = (px * 0.5).toFixed(1);
+      wrap.style.filter =
+        `drop-shadow(-${p}px 0 ${b}px rgba(255,20,20,${a})) ` +
+        `drop-shadow(${p}px 0 ${b}px rgba(20,30,255,${a})) ` +
+        `drop-shadow(0 -${b}px ${b}px rgba(20,255,20,${(alpha * 0.4).toFixed(3)}))`;
+    }
 
     function tick(ts) {
       if (!start) start = ts;
       const e = ts - start;
 
-      if (e < T_FLASH_IN) {
-        // Flash blooms in — content still at center line
-        const t = e / T_FLASH_IN;
-        flash.style.background = '#fff';
-        flash.style.opacity = String(lerp(0, 1, ease(t)));
-        body.style.clipPath = 'inset(50% 0 50% 0)';
-
-      } else if (e < T_FLASH_OUT) {
-        // Brief peak — pure white
-        flash.style.background = '#fff';
-        flash.style.opacity = '1';
-        body.style.clipPath = 'inset(50% 0 50% 0)';
+      if (e < T_FLICKER) {
+        // ── Flicker burst: random brightness pulses, clip stays at center line
+        const loud = Math.random() > 0.35;
+        drawNoise(loud ? lerp(0.75, 1.0, Math.random()) : lerp(0.2, 0.55, Math.random()));
+        scan.style.opacity     = String(lerp(0, 1.0, e / T_FLICKER));
+        vignette.style.opacity = '0.95';
+        setRGB(9, 0.75);
 
       } else if (e < T_EXPAND) {
-        // Clip expands; flash dissolves slowly into dark page colors with warm phosphor tint
-        const t   = (e - T_FLASH_OUT) / (T_EXPAND - T_FLASH_OUT);
-        const pct = lerp(50, 0, easeOut(t));
-        body.style.clipPath = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
+        // ── Tube warms up: clip expands, RGB fades, static clears
+        const t  = (e - T_FLICKER) / (T_EXPAND - T_FLICKER);
+        const et = easeOut(t);
+        const pct = lerp(50, 0, et);
+        wrap.style.clipPath = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
 
-        // Dissolve with S-curve: lingers bright, then melts away
-        const fd = smoothstep(t);
-        // Shift flash color white → warm cream as it fades (phosphor afterglow)
-        const wG = Math.round(lerp(255, 238, fd));
-        const wB = Math.round(lerp(255, 210, fd));
-        flash.style.background = `rgb(255,${wG},${wB})`;
-        flash.style.opacity    = String(lerp(1, 0, fd));
-        scan.style.opacity     = String(lerp(0, 0.85, ease(Math.min(t * 2, 1))));
+        // RGB strongest at start, gone by end of expansion
+        setRGB(lerp(9, 0, smoothstep(t)), lerp(0.75, 0, smoothstep(t)));
 
-      } else if (e < T_SCAN_OUT) {
-        // Fully revealed — scanlines fade out like phosphor glow dying
-        const t = (e - T_EXPAND) / (T_SCAN_OUT - T_EXPAND);
-        body.style.clipPath = '';
-        flash.style.opacity = '0';
-        scan.style.opacity  = String(lerp(0.85, 0, ease(t)));
+        // Static fades fast — gone by 60% of expansion
+        drawNoise(lerp(0.9, 0, easeOut2(Math.min(t / 0.6, 1))));
+
+        scan.style.opacity     = '1.0';
+        vignette.style.opacity = String(lerp(0.95, 0.55, et));
+
+      } else if (e < T_FADE_END) {
+        // ── Afterglow: scanlines + vignette dissolve, reveal clean page
+        const t  = (e - T_EXPAND) / (T_FADE_END - T_EXPAND);
+        const et = smoothstep(t);
+        wrap.style.clipPath    = '';
+        wrap.style.filter      = '';
+        drawNoise(0);
+        scan.style.opacity     = String(lerp(1.0, 0, et));
+        vignette.style.opacity = String(lerp(0.55, 0, et));
 
       } else {
-        body.style.clipPath = '';
-        body.classList.remove('crt-boot');
-        flash.remove();
+        // ── Done — clean up
+        wrap.style.clipPath    = '';
+        wrap.style.filter      = '';
+        noise.remove();
         scan.remove();
+        vignette.remove();
         return;
       }
 
