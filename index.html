@@ -19,40 +19,29 @@
       flex-direction: column;
     }
 
-    /* ── CRT turn-on overlay ── */
-    #crt {
+    /* ── CRT: content starts clipped via JS inline style ── */
+
+    /* White flash overlay */
+    #crt-flash {
       position: fixed;
       inset: 0;
-      z-index: 999;
-      pointer-events: none;
-      background: #000;
-    }
-
-    /* Horizontal bloom line */
-    #crt-line {
-      position: absolute;
-      left: 0; right: 0;
-      top: 50%;
-      height: 2px;
       background: #fff;
-      transform: translateY(-50%);
-      box-shadow: 0 0 18px 6px rgba(255,255,255,0.85);
       opacity: 0;
+      z-index: 9999;
+      pointer-events: none;
     }
 
-    /* Scanline overlay — subtle horizontal lines */
-    #crt::after {
-      content: '';
-      position: absolute;
+    /* Scanline overlay */
+    #crt-scan {
+      position: fixed;
       inset: 0;
       background: repeating-linear-gradient(
         to bottom,
-        transparent 0px,
-        transparent 3px,
-        rgba(0,0,0,0.18) 3px,
-        rgba(0,0,0,0.18) 4px
+        transparent 0px, transparent 3px,
+        rgba(8,2,0,0.20) 3px, rgba(8,2,0,0.20) 4px
       );
       opacity: 0;
+      z-index: 9998;
       pointer-events: none;
     }
 
@@ -280,7 +269,7 @@
       min-height: 1.4em;
       margin-top: 0.6rem;
     }
-    .c-msg.ok  { color: #fff; }
+    .c-msg.ok  { color: #00e676; }
     .c-msg.err { color: rgba(255,70,70,0.9); }
   </style>
 </head>
@@ -320,8 +309,9 @@
     </div>
   </div>
 
-  <!-- CRT turn-on overlay -->
-  <div id="crt"><div id="crt-line"></div></div>
+  <!-- CRT turn-on overlays -->
+  <div id="crt-flash"></div>
+  <div id="crt-scan"></div>
 
   <!-- ── CAPTCHA logic ───────────────────────────────────────────── -->
   <script>
@@ -472,7 +462,24 @@
 
       setMsg('VeRIFIED  ✓', 'ok');
       sessionStorage.setItem('captcha_passed', '1');
-      setTimeout(() => { window.location.href = 'home.html'; }, 900);
+
+      // — Splash transition: captcha blooms open into the page —
+      setTimeout(() => {
+        const ov    = document.getElementById('c-overlay');
+        const modal = document.querySelector('.c-modal');
+
+        // Modal expands and dissolves (portal-open feel)
+        modal.style.transition = 'transform 0.42s cubic-bezier(0.22,1,0.36,1), opacity 0.42s ease';
+        modal.style.transform  = 'scale(1.6)';
+        modal.style.opacity    = '0';
+
+        // Overlay fills solid black (absorbing the page)
+        ov.style.transition  = 'background 0.42s ease';
+        ov.style.background  = 'rgba(0,0,0,1)';
+
+        // Navigate once animation settles
+        setTimeout(() => { window.location.href = 'home.html'; }, 460);
+      }, 480);
     }
 
     function openOverlay() {
@@ -501,54 +508,76 @@
   <!-- ── CRT turn-on animation ── -->
   <script>
   (function () {
-    const crt  = document.getElementById('crt');
-    const line = document.getElementById('crt-line');
+    const flash = document.getElementById('crt-flash');
+    const scan  = document.getElementById('crt-scan');
+    const body  = document.body;
 
-    // Phase 1 (0–80ms):  line flashes on
-    // Phase 2 (80–380ms): line expands vertically to fill screen (scaleY)
-    // Phase 3 (380–620ms): whole overlay fades out, scanlines appear briefly
-    // Phase 4 (620ms+): overlay removed
+    // Boot: clip content to a center horizontal line
+    body.style.clipPath = 'inset(50% 0 50% 0)';
 
-    const T1 = 80, T2 = 380, T3 = 620;
+    // Phases (ms) — slightly slower for that warm analog feel:
+    // 0   – 150 : white flash blooms in
+    // 150 – 220 : flash peak (full white)
+    // 220 – 950 : clip expands; flash dissolves slowly into page colors
+    // 950 – 1300: scanlines fade out (phosphor afterglow)
+    // 1300+     : done
+
+    const T_FLASH_IN  = 150;
+    const T_FLASH_OUT = 220;
+    const T_EXPAND    = 950;
+    const T_SCAN_OUT  = 1300;
 
     let start = null;
-
     function lerp(a, b, t) { return a + (b - a) * t; }
     function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    // S-curve that starts slow, peaks, and ends slow — good for a gentle dissolve
+    function smoothstep(t) { return t * t * (3 - 2 * t); }
 
     function tick(ts) {
       if (!start) start = ts;
       const e = ts - start;
 
-      if (e < T1) {
-        // Flash line on
-        const t = e / T1;
-        line.style.opacity     = String(lerp(0, 1, ease(t)));
-        line.style.transform   = `translateY(-50%) scaleY(1)`;
-        crt.style.background   = '#000';
-        crt.style.opacity      = '1';
+      if (e < T_FLASH_IN) {
+        // Flash blooms in — content still at center line
+        const t = e / T_FLASH_IN;
+        flash.style.background = '#fff';
+        flash.style.opacity = String(lerp(0, 1, ease(t)));
+        body.style.clipPath = 'inset(50% 0 50% 0)';
 
-      } else if (e < T2) {
-        // Expand line vertically to fill screen
-        const t   = (e - T1) / (T2 - T1);
-        const scl = lerp(1, window.innerHeight / 2, ease(t));
-        line.style.opacity   = '1';
-        line.style.transform = `translateY(-50%) scaleY(${scl})`;
-        // Fade black bg out as line expands
-        const bgAlpha = lerp(1, 0, ease(t));
-        crt.style.background = `rgba(0,0,0,${bgAlpha})`;
+      } else if (e < T_FLASH_OUT) {
+        // Brief peak — pure white
+        flash.style.background = '#fff';
+        flash.style.opacity = '1';
+        body.style.clipPath = 'inset(50% 0 50% 0)';
 
-      } else if (e < T3) {
-        // Whole overlay fades out + scanlines flash
-        const t = (e - T2) / (T3 - T2);
-        line.style.opacity = String(lerp(1, 0, ease(t)));
-        crt.style.opacity  = String(lerp(1, 0, ease(t)));
-        crt.style.background = 'transparent';
-        // Scanlines flicker during this phase
-        crt.style.setProperty('--scan-opacity', String(lerp(0.8, 0, t)));
-        // Apply scanlines via after pseudo with opacity on crt
+      } else if (e < T_EXPAND) {
+        // Clip expands; flash dissolves slowly into dark page colors with warm phosphor tint
+        const t   = (e - T_FLASH_OUT) / (T_EXPAND - T_FLASH_OUT);
+        const pct = lerp(50, 0, easeOut(t));
+        body.style.clipPath = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
+
+        // Dissolve with S-curve: lingers bright, then melts away
+        const fd = smoothstep(t);
+        // Shift flash color white → warm cream as it fades (phosphor afterglow)
+        const wG = Math.round(lerp(255, 238, fd));
+        const wB = Math.round(lerp(255, 210, fd));
+        flash.style.background = `rgb(255,${wG},${wB})`;
+        flash.style.opacity    = String(lerp(1, 0, fd));
+        scan.style.opacity     = String(lerp(0, 0.85, ease(Math.min(t * 2, 1))));
+
+      } else if (e < T_SCAN_OUT) {
+        // Fully revealed — scanlines fade out like phosphor glow dying
+        const t = (e - T_EXPAND) / (T_SCAN_OUT - T_EXPAND);
+        body.style.clipPath = '';
+        flash.style.opacity = '0';
+        scan.style.opacity  = String(lerp(0.85, 0, ease(t)));
+
       } else {
-        crt.remove();
+        body.style.clipPath = '';
+        body.classList.remove('crt-boot');
+        flash.remove();
+        scan.remove();
         return;
       }
 
