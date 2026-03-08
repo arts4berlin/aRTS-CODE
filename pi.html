@@ -15,132 +15,198 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
+      cursor: none; /* I replaces the cursor */
     }
 
-    /* ── Background polygon canvas ── */
+    /* ── Subtle polygon backdrop ── */
     canvas {
       position: fixed;
       inset: 0;
       display: block;
-      opacity: 0.38;
-      transition: opacity 0.65s ease;
-    }
-    canvas.fade { opacity: 0; }
-
-    /* ── Full-screen black veil ── */
-    #veil {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.75s ease;
-      z-index: 30;
-    }
-    #veil.out { opacity: 1; }
-
-    /* ── Top-centre logo ── */
-    #pi-logo {
-      position: fixed;
-      top: 2.2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.85rem, 2.2vw, 1.4rem);
-      font-weight: 300;
-      letter-spacing: 0.24em;
-      color: #fff;
-      white-space: nowrap;
-      pointer-events: none;
-      user-select: none;
-      z-index: 5;
-      opacity: 0;
-      transition: opacity 0.8s ease;
+      opacity: 0.18;
     }
 
-    /* ── Shared centre stage ── */
-    #stage {
+    /* ── RSVP letter row ── */
+    #word {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: clamp(1rem, 5vw, 3.5rem);
+      z-index: 10;
+      pointer-events: none;
+      user-select: none;
     }
 
-    /* ── π and I share the same size / style ── */
-    .glyph {
-      position: absolute;
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: clamp(7rem, 28vh, 17rem);
+    .letter {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3.5rem, 11vw, 8rem);
+      font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      line-height: 1;
+      min-width: 1ch;
+      text-align: center;
+      display: inline-block;
+      transition: color 0.35s ease;
+    }
+
+    .letter.settled {
+      color: #FF5C00;
+    }
+
+    /* ── Large I — follows mouse / touch ── */
+    #big-i {
+      position: fixed;
+      top: -300px;
+      left: -300px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(6rem, 18vw, 12rem);
+      font-weight: 700;
       color: #FF5C00;
       line-height: 1;
       user-select: none;
       pointer-events: none;
-    }
-
-    /* π bounces in */
-    @keyframes piBounce {
-      0%   { opacity: 0; transform: scale(0);    }
-      60%  { opacity: 1; transform: scale(1.12); }
-      80%  { opacity: 1; transform: scale(0.94); }
-      100% { opacity: 1; transform: scale(1);    }
-    }
-    #pi-char {
+      z-index: 20;
       opacity: 0;
-      animation: piBounce 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
-    }
-    /* Lock class: CSS animation removed so JS can drive opacity/filter */
-    #pi-char.lock {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: scale(1) !important;
-    }
-
-    /* I starts invisible; JS drives the entire appearance */
-    #big-i {
-      opacity: 0;
+      transform: translate(-50%, -50%) scale(1);
+      will-change: transform, top, left;
     }
   </style>
 </head>
 <body>
 
   <canvas id="c"></canvas>
-  <div id="pi-logo">[aRTS]</div>
 
-  <div id="stage">
-    <span class="glyph" id="pi-char">π</span>
-    <span class="glyph" id="big-i">I</span>
+  <div id="word">
+    <span class="letter" data-char="R"></span>
+    <span class="letter" data-char="S"></span>
+    <span class="letter" data-char="V"></span>
+    <span class="letter" data-char="P"></span>
   </div>
 
-  <div id="veil"></div>
+  <span id="big-i">I</span>
 
   <script>
   (function () {
     'use strict';
 
-    const canvas = document.getElementById('c');
-    const ctx    = canvas.getContext('2d');
-    const veil   = document.getElementById('veil');
-    const logo   = document.getElementById('pi-logo');
-    const piChar = document.getElementById('pi-char');
-    const bigI   = document.getElementById('big-i');
+    const canvas  = document.getElementById('c');
+    const ctx     = canvas.getContext('2d');
+    const bigI    = document.getElementById('big-i');
+    const letters = Array.from(document.querySelectorAll('.letter'));
 
-    /* ── Timing ── */
-    const MORPH_START = 1700;   // ms after load when π→I begins
-    const MORPH_DUR   = 580;    // blur-crossfade duration (ms)
-    const SHOW_MS     = 4000;   // total time before redirect
-    const VEIL_MS     = 750;    // veil fade before navigate
-    const DEST        = 'index.html';
+    const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+    const SCRAMBLE_MS = 55;   // ms between scramble frames
+    const SETTLE_STEPS = 12;  // frames in settle animation
+    const SETTLE_MS    = 40;  // ms per settle frame
 
-    let morphed = false;
+    /* ── I state ── */
+    let iScale  = 1.0;
+    let iActive = false;
 
-    /* Fade in logo */
-    setTimeout(() => { logo.style.opacity = '0.65'; }, 300);
+    /* ── Letter states ── */
+    const state = letters.map(el => ({
+      el,
+      char:     el.dataset.char,
+      settled:  false,
+      settling: false,
+      timer:    null
+    }));
 
-    /* ── Canvas resize ── */
+    /* ── Continuous scramble ── */
+    function startScramble(s) {
+      if (s.timer || s.settled) return;
+      s.timer = setInterval(() => {
+        if (!s.settled && !s.settling) {
+          s.el.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+        }
+      }, SCRAMBLE_MS);
+    }
+
+    function stopScramble(s) {
+      clearInterval(s.timer);
+      s.timer = null;
+    }
+
+    /* ── Settle: flicker then snap ── */
+    function settle(s) {
+      if (s.settled || s.settling) return;
+      s.settling = true;
+      stopScramble(s);
+      let step = 0;
+      const sTimer = setInterval(() => {
+        if (step < SETTLE_STEPS - 2) {
+          s.el.textContent = POOL[Math.floor(Math.random() * POOL.length)];
+        } else {
+          clearInterval(sTimer);
+          s.el.textContent = s.char;
+          s.settled  = true;
+          s.settling = false;
+          s.el.classList.add('settled');
+        }
+        step++;
+      }, SETTLE_MS);
+    }
+
+    /* ── Move I to cursor / touch position ── */
+    function moveI(x, y) {
+      bigI.style.left = x + 'px';
+      bigI.style.top  = y + 'px';
+      if (!iActive) {
+        iActive = true;
+        bigI.style.transition = 'opacity 0.18s ease';
+        bigI.style.opacity    = '1';
+      }
+    }
+
+    document.addEventListener('mousemove', e => moveI(e.clientX, e.clientY));
+
+    document.addEventListener('touchmove', e => {
+      e.preventDefault();
+      moveI(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    document.addEventListener('touchstart', e => {
+      moveI(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    /* ── Main loop: proximity check + I magnify ── */
+    function loop() {
+      if (iActive) {
+        const iR  = bigI.getBoundingClientRect();
+        let near  = false;
+
+        state.forEach(s => {
+          if (s.settled || s.settling) return;
+          const lr = s.el.getBoundingClientRect();
+          const overlaps =
+            iR.left   < lr.right  &&
+            iR.right  > lr.left   &&
+            iR.top    < lr.bottom &&
+            iR.bottom > lr.top;
+          if (overlaps) {
+            near = true;
+            settle(s);
+          }
+        });
+
+        /* Smooth magnify — 1.0 → 1.3 when touching a letter */
+        const target = near ? 1.30 : 1.0;
+        iScale += (target - iScale) * 0.14;
+        bigI.style.transform = `translate(-50%, -50%) scale(${iScale.toFixed(4)})`;
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    /* ── Bootstrap ── */
+    state.forEach(startScramble);
+    loop();
+
+    /* ── Canvas backdrop ── */
     function resize() {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -148,75 +214,23 @@
     window.addEventListener('resize', resize);
     resize();
 
-    /* ── Easing helpers ── */
     function easeInOutCubic(t) {
       return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
     }
-    function easeOut2(t) { return 1 - (1 - t) * (1 - t); }
-    function smoothstep(t) { return t * t * (3 - 2 * t); }
     function clamp(mn, v, mx) { return Math.max(mn, Math.min(mx, v)); }
 
-    /* ── Blur-crossfade: π dissolves → I emerges ──────────────────────
-       π  : easeOut fade-out + blur grows   (starts immediately)
-       I  : smoothstep fade-in + blur shrinks (delayed 18% of duration)
-       The two glyphs pass through each other in a shared blur-peak. ── */
-    function morphPiToI(dur) {
-      // Stabilise π so JS can drive opacity/filter freely
-      piChar.classList.add('lock');
-      // Force a reflow so the lock class is applied before we touch style
-      void piChar.offsetHeight;
-
-      const t0 = performance.now();
-
-      function step(now) {
-        const p = clamp(0, (now - t0) / dur, 1);
-
-        /* π fades out */
-        const fp = easeOut2(p);
-        piChar.style.opacity = (1 - fp).toFixed(4);
-        piChar.style.filter  = `blur(${(fp * 18).toFixed(1)}px)`;
-
-        /* I fades in — delayed 18% so the blur peaks overlap */
-        const pI = clamp(0, (p - 0.18) / 0.82, 1);
-        const fi = smoothstep(pI);
-        bigI.style.opacity = fi.toFixed(4);
-        bigI.style.filter  = `blur(${((1 - fi) * 18).toFixed(1)}px)`;
-
-        if (p < 1) {
-          requestAnimationFrame(step);
-        } else {
-          /* Clean up */
-          piChar.style.display = 'none';
-          bigI.style.filter    = '';
-          bigI.style.opacity   = '1';
-        }
-      }
-
-      requestAnimationFrame(step);
-    }
-
-    /* ── Exit: schedule veil + navigation ── */
-    setTimeout(() => {
-      veil.classList.add('out');
-      setTimeout(() => { window.location.href = DEST; }, VEIL_MS + 80);
-    }, SHOW_MS);
-
-    /* ── Canvas render loop (runs until morph is complete) ── */
     let startTs = null;
 
-    function frame(now) {
+    function canvasFrame(now) {
       if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
-      const t     = clamp(0, elapsed / MORPH_START, 1);
+      const t     = clamp(0, elapsed / 3000, 1);
       const sides = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
       const rot   = elapsed * 0.00012;
-
-      const W  = canvas.width;
-      const H  = canvas.height;
-      const cx = W / 2;
-      const cy = H / 2;
-      const r  = Math.min(W, H) * 0.30;
+      const W  = canvas.width,  H  = canvas.height;
+      const cx = W / 2,         cy = H / 2;
+      const r  = Math.min(W, H) * 0.28;
       const a  = clamp(0, elapsed / 500, 1);
 
       ctx.clearRect(0, 0, W, H);
@@ -264,8 +278,8 @@
       ctx.beginPath();
       for (let i = 0; i <= sides; i++) {
         const ang = (2 * Math.PI * i / sides) + rot;
-        const x   = cx + r * Math.cos(ang);
-        const y   = cy + r * Math.sin(ang);
+        const x = cx + r * Math.cos(ang);
+        const y = cy + r * Math.sin(ang);
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.strokeStyle = `rgba(255,92,0,${0.85 * a})`;
@@ -275,41 +289,18 @@
       /* Vertex dots */
       for (let i = 0; i < sides; i++) {
         const ang = (2 * Math.PI * i / sides) + rot;
-        const x   = cx + r * Math.cos(ang);
-        const y   = cy + r * Math.sin(ang);
+        const x = cx + r * Math.cos(ang);
+        const y = cy + r * Math.sin(ang);
         ctx.beginPath();
         ctx.arc(x, y, 2, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255,92,0,${a})`;
         ctx.fill();
       }
 
-      /* π approximation label */
-      const piApprox = sides * Math.sin(Math.PI / sides);
-      const fs = clamp(10, W * 0.011, 13);
-      ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
-      ctx.fillStyle    = `rgba(255,255,255,${0.38 * a})`;
-      ctx.textAlign    = 'center';
-      ctx.textBaseline = 'alphabetic';
-      ctx.fillText(
-        `π  ≈  ${piApprox.toFixed(8)}     n = ${sides}`,
-        cx, cy + r + clamp(28, r * 0.16, 46)
-      );
-
-      /* ── Trigger morph ── */
-      if (!morphed && elapsed >= MORPH_START) {
-        morphed = true;
-        canvas.classList.add('fade');
-        logo.style.opacity = '0';
-        morphPiToI(MORPH_DUR);
-      }
-
-      /* Keep canvas loop alive through morph, then stop */
-      if (elapsed < MORPH_START + MORPH_DUR + 200) {
-        requestAnimationFrame(frame);
-      }
+      requestAnimationFrame(canvasFrame);
     }
 
-    requestAnimationFrame(frame);
+    requestAnimationFrame(canvasFrame);
   })();
   </script>
 
