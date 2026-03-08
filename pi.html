@@ -137,10 +137,11 @@
       return Math.max(min, Math.min(max, val));
     }
 
-    const startTs = performance.now();
+    let startTs = null;
 
     /* ── Main render loop ── */
     function frame(now) {
+      if (startTs === null) startTs = now;
       const elapsed = now - startTs;
 
       /* Progress 0→1 for polygon growth over (SHOW_MS - 500ms) */

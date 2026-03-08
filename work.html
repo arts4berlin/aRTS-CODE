@@ -21,32 +21,22 @@
       font-family: 'Space Grotesk', sans-serif;
       height: 100vh;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* ── Form card — true viewport centre ── */
+    /* ── Column of pills ── */
     .contact-form {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
-      gap: clamp(10px, 1.8vh, 22px);
-      width: clamp(280px, 68vw, 560px);
-    }
-
-    /* ── Each row ── */
-    .row {
-      display: flex;
-      gap: clamp(10px, 1.6vw, 18px);
-      align-items: stretch;
-      margin-top: clamp(8px, 1.8vh, 22px);
-      margin-bottom: clamp(8px, 1.8vh, 22px);
+      gap: clamp(10px, 1.8vh, 20px);
+      width: clamp(260px, 52vw, 480px);
     }
 
     /* ── White pill inputs ── */
     .pill {
-      flex: 1;
+      width: 100%;
       background: #fff;
       border: none;
       border-radius: clamp(18px, 3.5vw, 30px);
@@ -56,7 +46,7 @@
       font-weight: 700;
       color: #000;
       outline: none;
-      min-width: 0;
+      text-align: center;
     }
 
     .pill::placeholder {
@@ -68,17 +58,14 @@
       box-shadow: 0 0 0 2.5px rgba(255,92,0,0.55);
     }
 
-    /* Full-width pill (company, insta) */
-    .pill-full {
-      width: 100%;
-      text-align: center;
+    /* ── Email row: pill + bear side by side ── */
+    .email-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.6vw, 16px);
     }
 
-    /* Email pill */
-    .pill-email {
-      font-size: clamp(1.15rem, 2.6vw, 1.65rem);
-      text-align: center;
-    }
+    .email-row .pill { flex: 1; }
 
     /* ── Orange bear submit button ── */
     .bear-btn {
@@ -127,21 +114,14 @@
 <body>
 
   <form class="contact-form" id="face-form" onsubmit="handleSend(event)">
-
-    <!-- Row 1: name + last name -->
-    <div class="row">
-      <input class="pill" type="text" placeholder="NaME" autocomplete="given-name">
-      <input class="pill" type="text" placeholder="LaST" autocomplete="family-name">
-    </div>
-
-    <!-- Row 2: email + bear submit -->
-    <div class="row">
-      <input class="pill pill-email" type="email" placeholder="@E-MaIL" autocomplete="email">
+    <input class="pill" type="text" placeholder="COMPaNY" autocomplete="organization">
+    <div class="email-row">
+      <input class="pill" type="email" placeholder="@E-MaIL" autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
         <img src="assets/bear.png" alt="">
       </button>
     </div>
-
+    <input class="pill" type="text" placeholder="INSTa" autocomplete="url">
   </form>
 
   <p class="sent-msg" id="sent-msg">SENT ✓</p>
