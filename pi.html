@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS]</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      display: block;
+    }
+
+    /* ── Full-screen black veil (fades in on exit) ── */
+    #veil {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.75s ease;
+      z-index: 20;
+    }
+    #veil.out { opacity: 1; }
+
+    /* ── Four corner A's ── */
+    .ca {
+      position: fixed;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(2.4rem, 5.5vw, 4.8rem);
+      font-weight: 700;
+      color: #FF5C00;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 5;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .ca-tl { top: 1.1rem;    left: 1.4rem;  }
+    .ca-tr { top: 1.1rem;    right: 1.4rem; }
+    .ca-bl { bottom: 1.1rem; left: 1.4rem;  }
+    .ca-br { bottom: 1.1rem; right: 1.4rem; }
+
+    /* ── Top-centre logo ── */
+    #pi-logo {
+      position: fixed;
+      top: 2.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.85rem, 2.2vw, 1.4rem);
+      font-weight: 300;
+      letter-spacing: 0.24em;
+      color: #fff;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="c"></canvas>
+
+  <!-- Four corner A's -->
+  <span class="ca ca-tl" id="ca-tl">A</span>
+  <span class="ca ca-tr" id="ca-tr">A</span>
+  <span class="ca ca-bl" id="ca-bl">A</span>
+  <span class="ca ca-br" id="ca-br">A</span>
+
+  <!-- Logo -->
+  <div id="pi-logo">[aRTS]</div>
+
+  <!-- Exit veil -->
+  <div id="veil"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const canvas = document.getElementById('c');
+    const ctx    = canvas.getContext('2d');
+    const veil   = document.getElementById('veil');
+    const logo   = document.getElementById('pi-logo');
+
+    const corners = [
+      document.getElementById('ca-tl'),
+      document.getElementById('ca-tr'),
+      document.getElementById('ca-bl'),
+      document.getElementById('ca-br'),
+    ];
+
+    /* ── Timing (ms) ── */
+    const SHOW_MS = 3200;  // total canvas time before veil starts
+    const VEIL_MS = 750;   // veil fade duration
+    const DEST    = 'index.html';
+
+    /* ── Stagger-in the corner A's ── */
+    corners.forEach((el, i) => {
+      el.style.transform = 'scale(0.65)';
+      setTimeout(() => {
+        el.style.opacity   = '0.28';
+        el.style.transform = 'scale(1)';
+      }, 80 + i * 120);
+    });
+
+    /* ── Fade in logo ── */
+    setTimeout(() => { logo.style.opacity = '0.65'; }, 220);
+
+    /* ── Canvas resize ── */
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    /* ── Easing ── */
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    }
+
+    function clamp(min, val, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    const startTs = performance.now();
+
+    /* ── Main render loop ── */
+    function frame(now) {
+      const elapsed = now - startTs;
+
+      /* Progress 0→1 for polygon growth over (SHOW_MS - 500ms) */
+      const growDur = SHOW_MS - 500;
+      const t       = clamp(0, elapsed / growDur, 1);
+      const sides   = Math.max(3, Math.floor(3 + 57 * easeInOutCubic(t)));
+      const rot     = elapsed * 0.00015; // very slow drift
+
+      /* Canvas opacity: quick fade-in */
+      const canvasAlpha = clamp(0, elapsed / 380, 1);
+
+      const W  = canvas.width;
+      const H  = canvas.height;
+      const cx = W / 2;
+      const cy = H / 2;
+      const r  = Math.min(W, H) * 0.285;
+      const a  = canvasAlpha;
+
+      ctx.clearRect(0, 0, W, H);
+
+      /* ── Concentric faint rings ── */
+      [0.58, 1.0, 1.46].forEach((s, i) => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * s, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255,255,255,${(0.05 - i * 0.013) * a})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      });
+
+      /* ── Dashed rotating radius line ── */
+      ctx.save();
+      ctx.setLineDash([6, 9]);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + r * Math.cos(rot), cy + r * Math.sin(rot));
+      ctx.strokeStyle = `rgba(255,255,255,${0.11 * a})`;
+      ctx.lineWidth = 0.7;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      /* ── Main circle ── */
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(255,255,255,${0.18 * a})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      /* ── Spoke lines (center → each vertex) ── */
+      for (let i = 0; i < sides; i++) {
+        const ang = (2 * Math.PI * i / sides) + rot;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + r * Math.cos(ang), cy + r * Math.sin(ang));
+        ctx.strokeStyle = `rgba(255,92,0,${0.07 * a})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      /* ── Inscribed polygon ── */
+      ctx.beginPath();
+      for (let i = 0; i <= sides; i++) {
+        const ang = (2 * Math.PI * i / sides) + rot;
+        const x   = cx + r * Math.cos(ang);
+        const y   = cy + r * Math.sin(ang);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = `rgba(255,92,0,${0.94 * a})`;
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+
+      /* ── Vertex dots + coordinate labels (shown only for small n) ── */
+      const showCoords = sides <= 8;
+      for (let i = 0; i < sides; i++) {
+        const ang  = (2 * Math.PI * i / sides) + rot;
+        const x    = cx + r * Math.cos(ang);
+        const y    = cy + r * Math.sin(ang);
+
+        /* Soft glow halo */
+        const grd = ctx.createRadialGradient(x, y, 0, x, y, 7);
+        grd.addColorStop(0, `rgba(255,92,0,${0.55 * a})`);
+        grd.addColorStop(1,  'rgba(255,92,0,0)');
+        ctx.beginPath();
+        ctx.arc(x, y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+
+        /* Solid core dot */
+        ctx.beginPath();
+        ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,92,0,${a})`;
+        ctx.fill();
+
+        /* Coordinate label */
+        if (showCoords) {
+          const pureAng = 2 * Math.PI * i / sides; // un-rotated, for display values
+          const nx = Math.cos(pureAng).toFixed(3);
+          const ny = (-Math.sin(pureAng)).toFixed(3); // flip Y for standard math
+          const labelR = r + clamp(20, r * 0.15, 36);
+          const lx = cx + labelR * Math.cos(ang);
+          const ly = cy + labelR * Math.sin(ang);
+          const fs = clamp(8.5, W * 0.009, 11);
+          ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
+          ctx.fillStyle    = `rgba(255,255,255,${0.30 * a})`;
+          ctx.textAlign    = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(`(${nx}, ${ny})`, lx, ly);
+        }
+      }
+
+      /* ── π approximation label ── */
+      const piApprox = sides * Math.sin(Math.PI / sides);
+      const fs = clamp(10, W * 0.011, 13);
+      ctx.font         = `300 ${fs}px 'Space Grotesk', sans-serif`;
+      ctx.fillStyle    = `rgba(255,255,255,${0.42 * a})`;
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(
+        `π  ≈  ${piApprox.toFixed(8)}     n = ${sides}`,
+        cx,
+        cy + r + clamp(30, r * 0.16, 48)
+      );
+
+      /* ── Loop or exit ── */
+      if (elapsed < SHOW_MS) {
+        requestAnimationFrame(frame);
+      } else {
+        /* Fade everything out, then redirect */
+        veil.classList.add('out');
+        corners.forEach(el => { el.style.opacity = '0'; });
+        logo.style.opacity = '0';
+        setTimeout(() => { window.location.href = DEST; }, VEIL_MS + 80);
+      }
+    }
+
+    requestAnimationFrame(frame);
+  })();
+  </script>
+
+</body>
+</html>
