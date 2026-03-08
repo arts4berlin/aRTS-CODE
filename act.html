@@ -92,65 +92,69 @@
   </div>
 
   <script>
-    /* CoNNECT — typewriter scramble on hover (desktop) / auto (touch) */
+    /* Button scramble — hover (desktop) / auto (touch) / idle (desktop) */
     (function () {
-      var btn    = document.querySelector('.btn-connect');
-      var TARGET = 'CoNNECT';
-      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-      var FRAMES = 18, RATE = 45;
-      var timer  = null;
-      function runScramble() {
-        clearInterval(timer);
-        var step = 0;
-        timer = setInterval(function () {
-          var out = '';
-          for (var i = 0; i < TARGET.length; i++) {
-            out += (i < Math.floor(step * TARGET.length / FRAMES))
-              ? TARGET[i]
-              : POOL[Math.floor(Math.random() * POOL.length)];
-          }
-          btn.textContent = out;
-          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
-        }, RATE);
-      }
-      if (window.matchMedia('(hover: none)').matches) {
-        setTimeout(runScramble, 700);
-        setInterval(runScramble, 3500);
-      } else {
-        btn.addEventListener('mouseenter', runScramble);
-        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
-      }
-    })();
-  </script>
+      var POOL    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES  = 18, RATE = 45;
+      var IDLE_MS = 4000;
 
-  <script>
-    /* WORK — typewriter scramble on hover (desktop) / auto (touch) */
-    (function () {
-      var btn    = document.querySelector('.btn-work');
-      var TARGET = 'WORK';
-      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-      var FRAMES = 18, RATE = 45;
-      var timer  = null;
-      function runScramble() {
-        clearInterval(timer);
+      var buttons = [
+        { sel: '.btn-connect', target: 'CoNNECT', delay: 0   },
+        { sel: '.btn-work',    target: 'WORK',    delay: 350 },
+      ];
+
+      var isTouch = window.matchMedia('(hover: none)').matches;
+      var timers  = {};
+      var lastAct = Date.now();
+
+      function scramble(btn, target) {
+        clearInterval(timers[target]);
         var step = 0;
-        timer = setInterval(function () {
+        timers[target] = setInterval(function () {
           var out = '';
-          for (var i = 0; i < TARGET.length; i++) {
-            out += (i < Math.floor(step * TARGET.length / FRAMES))
-              ? TARGET[i]
+          for (var i = 0; i < target.length; i++) {
+            out += (i < Math.floor(step * target.length / FRAMES))
+              ? target[i]
               : POOL[Math.floor(Math.random() * POOL.length)];
           }
           btn.textContent = out;
-          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
+          if (++step > FRAMES) { clearInterval(timers[target]); btn.textContent = target; }
         }, RATE);
       }
-      if (window.matchMedia('(hover: none)').matches) {
-        setTimeout(runScramble, 700);
-        setInterval(runScramble, 3500);
-      } else {
-        btn.addEventListener('mouseenter', runScramble);
-        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
+
+      buttons.forEach(function (b) {
+        var btn = document.querySelector(b.sel);
+        if (!btn) return;
+
+        if (isTouch) {
+          /* Touch: auto-fire with stagger */
+          setTimeout(function () { scramble(btn, b.target); }, b.delay || 700);
+          setInterval(function () { scramble(btn, b.target); }, 3500);
+        } else {
+          /* Desktop: hover scramble */
+          btn.addEventListener('mouseenter', function () { scramble(btn, b.target); });
+          btn.addEventListener('mouseleave', function () {
+            clearInterval(timers[b.target]);
+            btn.textContent = b.target;
+          });
+        }
+      });
+
+      /* Desktop idle scramble — fires all buttons after IDLE_MS of no interaction */
+      if (!isTouch) {
+        ['mousemove', 'click', 'scroll', 'keydown', 'touchstart'].forEach(function (ev) {
+          document.addEventListener(ev, function () { lastAct = Date.now(); }, { passive: true });
+        });
+        setInterval(function () {
+          if (Date.now() - lastAct >= IDLE_MS) {
+            lastAct = Date.now(); /* reset so next fire is another IDLE_MS away */
+            buttons.forEach(function (b, i) {
+              var btn = document.querySelector(b.sel);
+              if (!btn) return;
+              setTimeout(function () { scramble(btn, b.target); }, i * 300);
+            });
+          }
+        }, 500);
       }
     })();
   </script>

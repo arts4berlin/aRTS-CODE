@@ -26,19 +26,6 @@
       flex-direction: column;
     }
 
-    /* ── TV static noise canvas ── */
-    #crt-noise {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      z-index: 9999;
-      pointer-events: none;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-    }
-
     /* ── Phosphor scanlines — green tint, strong ── */
     #crt-scan {
       position: fixed;
@@ -339,7 +326,6 @@
   </div><!-- /crt-wrap -->
 
   <!-- CRT overlays — outside wrapper so filters don't break fixed positioning -->
-  <canvas id="crt-noise"></canvas>
   <div id="crt-scan"></div>
   <div id="crt-vignette"></div>
 
@@ -538,19 +524,9 @@
   <!-- ── CRT turn-on animation ── -->
   <script>
   (function () {
-    const noise    = document.getElementById('crt-noise');
     const scan     = document.getElementById('crt-scan');
     const vignette = document.getElementById('crt-vignette');
     const wrap     = document.getElementById('crt-wrap');
-    const ctx      = noise.getContext('2d');
-
-    // Low-res canvas scaled up → chunky CRT static pixels
-    const SCALE = 4;
-    noise.width  = Math.ceil(window.innerWidth  / SCALE);
-    noise.height = Math.ceil(window.innerHeight / SCALE);
-    noise.style.width  = window.innerWidth  + 'px';
-    noise.style.height = window.innerHeight + 'px';
-    ctx.imageSmoothingEnabled = false;
 
     // Boot: collapse content to a single horizontal center line
     wrap.style.clipPath = 'inset(50% 0 50% 0)';
@@ -568,24 +544,7 @@
     let start = null;
     function lerp(a, b, t) { return a + (b - a) * t; }
     function easeOut(t)    { return 1 - Math.pow(1 - t, 3); }
-    function easeOut2(t)   { return 1 - (1 - t) * (1 - t); }
     function smoothstep(t) { return t * t * (3 - 2 * t); }
-
-    // Draw pixelated TV static; alpha 0-1
-    function drawNoise(alpha) {
-      noise.style.opacity = alpha < 0.01 ? '0' : String(alpha.toFixed(3));
-      if (alpha < 0.01) return;
-      const img = ctx.createImageData(noise.width, noise.height);
-      const d   = img.data;
-      for (let i = 0; i < d.length; i += 4) {
-        const v  = Math.random() * 220 | 0;
-        d[i]   = Math.min(255, v + (Math.random() * 40 | 0)); // R — warm
-        d[i+1] = v;
-        d[i+2] = Math.max(0,   v - (Math.random() * 40 | 0)); // B — cool
-        d[i+3] = 255;
-      }
-      ctx.putImageData(img, 0, 0);
-    }
 
     // Apply RGB chromatic aberration via CSS drop-shadow on the content wrap
     function setRGB(px, alpha) {
@@ -603,8 +562,6 @@
 
       if (e < T_FLICKER) {
         // ── Flicker burst: random brightness pulses, clip stays at center line
-        const loud = Math.random() > 0.35;
-        drawNoise(loud ? lerp(0.75, 1.0, Math.random()) : lerp(0.2, 0.55, Math.random()));
         scan.style.opacity     = String(lerp(0, 1.0, e / T_FLICKER));
         vignette.style.opacity = '0.95';
         setRGB(9, 0.75);
@@ -619,9 +576,6 @@
         // RGB strongest at start, gone by end of expansion
         setRGB(lerp(9, 0, smoothstep(t)), lerp(0.75, 0, smoothstep(t)));
 
-        // Static fades fast — gone by 60% of expansion
-        drawNoise(lerp(0.9, 0, easeOut2(Math.min(t / 0.6, 1))));
-
         scan.style.opacity     = '1.0';
         vignette.style.opacity = String(lerp(0.95, 0.55, et));
 
@@ -631,7 +585,6 @@
         const et = smoothstep(t);
         wrap.style.clipPath    = '';
         wrap.style.filter      = '';
-        drawNoise(0);
         scan.style.opacity     = String(lerp(1.0, 0, et));
         vignette.style.opacity = String(lerp(0.55, 0, et));
 
@@ -639,7 +592,6 @@
         // ── Done — clean up
         wrap.style.clipPath    = '';
         wrap.style.filter      = '';
-        noise.remove();
         scan.remove();
         vignette.remove();
         return;
