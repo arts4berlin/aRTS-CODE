@@ -58,7 +58,15 @@
       overflow: hidden;
       line-height: 0;
     }
-    #qr svg { display: block; }
+    @keyframes qrBreath {
+      0%, 100% { opacity: 1;     transform: scale(1); }
+      50%       { opacity: 0.82; transform: scale(0.984); }
+    }
+    #qr svg {
+      display: block;
+      animation: qrBreath 3.5s ease-in-out infinite;
+      transform-origin: center;
+    }
 
     .handle {
       margin-top: 1.2rem;
@@ -66,6 +74,9 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       color: #FF5C00;
+      cursor: pointer;
+      touch-action: manipulation;
+      text-align: center;
     }
 
     .bear-corner {
@@ -128,29 +139,50 @@
     }).append(document.getElementById('qr'));
   </script>
   <script>
-    /* rts.berlin — auto-scramble periodically */
+    /* rts.berlin — scramble on load, periodic, hover→VIEW, click→Instagram */
     (function () {
-      var el     = document.querySelector('.handle');
-      var TARGET = 'rts.berlin';
-      var POOL   = 'abcdefghijklmnopqrstuvwxyz0123456789@#!?.';
-      var FRAMES = 22, RATE = 45;
-      var timer  = null;
-      function runScramble() {
+      var el      = document.querySelector('.handle');
+      var DEFAULT = 'rts.berlin';
+      var HOVER   = 'VIEW';
+      var POOL    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#!?.';
+      var FRAMES  = 22, RATE = 45;
+      var timer   = null;
+      var hovered = false;
+
+      /* Lock width NOW (while text is still "rts.berlin") so VIEW never causes layout shift */
+      el.style.width = el.offsetWidth + 'px';
+
+      function scrambleTo(target) {
         clearInterval(timer);
         var step = 0;
         timer = setInterval(function () {
           var out = '';
-          for (var i = 0; i < TARGET.length; i++) {
-            out += (i < Math.floor(step * TARGET.length / FRAMES))
-              ? TARGET[i]
+          for (var i = 0; i < target.length; i++) {
+            out += (i < Math.floor(step * target.length / FRAMES))
+              ? target[i]
               : POOL[Math.floor(Math.random() * POOL.length)];
           }
           el.textContent = out;
-          if (++step > FRAMES) { clearInterval(timer); el.textContent = TARGET; }
+          if (++step > FRAMES) { clearInterval(timer); el.textContent = target; }
         }, RATE);
       }
-      setTimeout(runScramble, 1200);
-      setInterval(runScramble, 7000);
+
+      /* Click → open Instagram (works everywhere, no <a href> needed) */
+      el.addEventListener('click', function () {
+        window.open('https://www.instagram.com/rts.berlin/', '_blank', 'noopener');
+      });
+
+      /* Scramble immediately on load */
+      scrambleTo(DEFAULT);
+
+      /* Periodic auto-scramble (skipped while hovered) */
+      setInterval(function () { if (!hovered) scrambleTo(DEFAULT); }, 7000);
+
+      /* Desktop hover: scramble to VIEW on enter, back to rts.berlin on leave */
+      if (window.matchMedia('(hover: hover)').matches) {
+        el.addEventListener('mouseenter', function () { hovered = true;  scrambleTo(HOVER);   });
+        el.addEventListener('mouseleave', function () { hovered = false; scrambleTo(DEFAULT); });
+      }
     })();
   </script>
   <script>
@@ -296,12 +328,9 @@
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
 
-    /* Logo [aXXX] — collapse to [a] by default, expand on hover */
-    document.querySelectorAll('a.logo').forEach(function(logo){
-      var m=logo.textContent.match(/^\[a([^\]]+)\]$/);
-      if(!m) return;
-      var inner=m[1];
-      logo.textContent='[a]';
+    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
+    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
       var timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }

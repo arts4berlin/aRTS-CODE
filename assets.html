@@ -129,7 +129,7 @@
   <!-- CRT: prevent flash on arrival -->
   <script>(function(){if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
-  <a href="home.html" class="logo">[aRTS]</a>
+  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="question">
@@ -346,12 +346,9 @@
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
 
-    /* Logo [aXXX] — collapse to [a] by default, expand on hover */
-    document.querySelectorAll('a.logo').forEach(function(logo){
-      var m=logo.textContent.match(/^\[a([^\]]+)\]$/);
-      if(!m) return;
-      var inner=m[1];
-      logo.textContent='[a]';
+    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
+    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
       var timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }

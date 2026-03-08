@@ -99,7 +99,15 @@
       transition: border-color 0.15s;
     }
     .field::placeholder { color: rgba(0,0,0,0.38); }
-    .field:focus        { border-color: #FF5C00; }
+    @keyframes caretBlink {
+      0%, 100% { caret-color: #FF5C00; }
+      50%      { caret-color: transparent; }
+    }
+    .field:focus {
+      border-color: #FF5C00;
+      caret-color: #FF5C00;
+      animation: caretBlink 0.9s step-end infinite;
+    }
 
     .nav-about {
       position: fixed;
@@ -413,12 +421,9 @@
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
 
-    /* Logo [aXXX] — collapse to [a] by default, expand on hover */
-    document.querySelectorAll('a.logo').forEach(function(logo){
-      var m=logo.textContent.match(/^\[a([^\]]+)\]$/);
-      if(!m) return;
-      var inner=m[1];
-      logo.textContent='[a]';
+    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
+    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
       var timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }

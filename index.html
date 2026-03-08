@@ -384,29 +384,43 @@
     const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
 
     async function runPoW() {
-      const enc   = new TextEncoder();
-      const BATCH = 128;
-      let n = 0;
+      /* Fallback for in-app browsers (Instagram IAB, etc.) lacking crypto.subtle */
+      if (!window.crypto || !window.crypto.subtle || typeof TextEncoder === 'undefined') {
+        powDone = true;
+        setPowUI(100, 'verified ✓');
+        tryVerify();
+        return;
+      }
+      try {
+        const enc   = new TextEncoder();
+        const BATCH = 128;
+        let n = 0;
 
-      while (!powDone) {
-        const jobs = Array.from({ length: BATCH }, (_, i) =>
-          crypto.subtle.digest('SHA-256', enc.encode(token + ':' + (n + i)))
-        );
-        const results = await Promise.all(jobs);
+        while (!powDone) {
+          const jobs = Array.from({ length: BATCH }, (_, i) =>
+            crypto.subtle.digest('SHA-256', enc.encode(token + ':' + (n + i)))
+          );
+          const results = await Promise.all(jobs);
 
-        for (let i = 0; i < results.length; i++) {
-          const b = new Uint8Array(results[i]);
-          if (b[0] === 0 && b[1] < 8) {
-            powDone = true;
-            setPowUI(100, 'verified ✓');
-            tryVerify();
-            return;
+          for (let i = 0; i < results.length; i++) {
+            const b = new Uint8Array(results[i]);
+            if (b[0] === 0 && b[1] < 8) {
+              powDone = true;
+              setPowUI(100, 'verified ✓');
+              tryVerify();
+              return;
+            }
           }
-        }
 
-        n += BATCH;
-        setPowUI(Math.min(95, (n / 8192) * 100), 'computing...');
-        await new Promise(r => setTimeout(r, 0));
+          n += BATCH;
+          setPowUI(Math.min(95, (n / 8192) * 100), 'computing...');
+          await new Promise(r => setTimeout(r, 0));
+        }
+      } catch (e) {
+        /* Any crypto error → skip PoW; visual captcha alone verifies humanity */
+        powDone = true;
+        setPowUI(100, 'verified ✓');
+        tryVerify();
       }
     }
 
@@ -660,6 +674,17 @@
     const scan     = document.getElementById('crt-scan');
     const vignette = document.getElementById('crt-vignette');
     const wrap     = document.getElementById('crt-wrap');
+
+    // In-app browsers (Instagram, Facebook, etc.) suppress rAF during page-open
+    // animation — skip the CRT boot entirely so the captcha is immediately usable
+    const isIAB = /Instagram|FBAN|FBAV|Snapchat|Twitter|Line\/|WhatsApp/i.test(navigator.userAgent);
+    if (isIAB) {
+      wrap.style.clipPath = '';
+      wrap.style.filter   = '';
+      try { scan.remove(); } catch(e) {}
+      try { vignette.remove(); } catch(e) {}
+      return;
+    }
 
     // Boot: collapse content to a single horizontal center line
     wrap.style.clipPath = 'inset(50% 0 50% 0)';
