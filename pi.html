@@ -21,7 +21,7 @@
       position: fixed;
       inset: 0;
       display: block;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.45s ease;
     }
 
     /* ── Full-screen black veil (fades in on exit) ── */
@@ -72,12 +72,14 @@
     }
 
     @keyframes iBounce {
-      0%   { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      0%   { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
+      60%  { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+      80%  { transform: translate(-50%, -50%) scale(0.94); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
     }
 
     #big-i.show {
-      animation: iBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: iBounce 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
   </style>
 </head>
@@ -105,8 +107,9 @@
     const bigI   = document.getElementById('big-i');
 
     /* ── Timing (ms) ── */
-    const MORPH_START = 2400;  // canvas fades out, I bounces in
-    const SHOW_MS     = 4000;  // total time before redirect veil
+    const MORPH_START = 2400;  // canvas + logo fade out
+    const I_DELAY     = 350;   // I bounces in after canvas is gone
+    const SHOW_MS     = 5200;  // total time before redirect veil
     const VEIL_MS     = 750;   // veil fade duration
     const DEST        = 'index.html';
 
@@ -275,12 +278,12 @@
 
       ctx.restore();
 
-      /* ── Trigger morph: fade canvas + logo out, I bounces in ── */
+      /* ── Trigger morph: canvas + logo fade, then I bounces in ── */
       if (!morphed && elapsed >= MORPH_START) {
         morphed = true;
         canvas.style.opacity = '0';
         logo.style.opacity   = '0';
-        bigI.classList.add('show');
+        setTimeout(() => bigI.classList.add('show'), I_DELAY);
       }
 
       /* ── Loop or exit ── */
