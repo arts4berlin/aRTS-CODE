@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS] — aSSETS</title>
+  <script>
+    if (!sessionStorage.getItem('captcha_passed')) {
+      window.location.replace('index.html');
+    }
+  </script>
+  <link rel="prefetch" href="art.html">
+  <link rel="prefetch" href="apparel.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      position: fixed;
+      top: 28px;
+      left: 32px;
+      z-index: 100;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    .question {
+      text-align: center;
+      margin-bottom: clamp(1.4rem, 3vh, 2.2rem);
+    }
+
+    .small {
+      font-size: 0.82rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      opacity: 0.65;
+      display: block;
+      margin-bottom: 0.28rem;
+    }
+
+    .large {
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      display: block;
+    }
+
+    .buttons { display: flex; }
+
+    /* Adjacent buttons form one unified box */
+    .buttons .btn:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
+    .buttons .btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
+
+    .btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.9rem, 2.2vw, 1.25rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      padding: clamp(0.8rem, 1.6vh, 1.1rem) clamp(1.8rem, 4vw, 3.2rem);
+      border: 2px solid #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-fill  { background: #fff; color: #000; }
+    .btn-fill:hover  { background: #e2e2e2; border-color: #e2e2e2; }
+    .btn-ghost { background: transparent; color: #fff; }
+    .btn-ghost:hover { background: #fff; color: #000; }
+  </style>
+</head>
+<body>
+
+  <a href="home.html" class="logo">[aRTS]</a>
+
+  <div class="question">
+    <span class="small">SELECT</span>
+    <span class="large">aSSETS:</span>
+  </div>
+
+  <div class="buttons">
+    <a href="art.html"     class="btn btn-fill  btn-art">aRT</a>
+    <a href="apparel.html" class="btn btn-ghost btn-apparel">aPPaREL</a>
+  </div>
+
+  <script>
+    /* aRT — typewriter scramble on hover (desktop) / auto (touch) */
+    (function () {
+      var btn    = document.querySelector('.btn-art');
+      var TARGET = 'aRT';
+      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES = 18, RATE = 45;
+      var timer  = null;
+      function runScramble() {
+        clearInterval(timer);
+        var step = 0;
+        timer = setInterval(function () {
+          var out = '';
+          for (var i = 0; i < TARGET.length; i++) {
+            out += (i < Math.floor(step * TARGET.length / FRAMES))
+              ? TARGET[i]
+              : POOL[Math.floor(Math.random() * POOL.length)];
+          }
+          btn.textContent = out;
+          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
+        }, RATE);
+      }
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(runScramble, 700);
+        setInterval(runScramble, 7000);
+      } else {
+        btn.addEventListener('mouseenter', runScramble);
+        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
+      }
+    })();
+
+    /* aPPaREL — typewriter scramble on hover (desktop) / auto (touch) */
+    (function () {
+      var btn    = document.querySelector('.btn-apparel');
+      var TARGET = 'aPPaREL';
+      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES = 18, RATE = 45;
+      var timer  = null;
+      function runScramble() {
+        clearInterval(timer);
+        var step = 0;
+        timer = setInterval(function () {
+          var out = '';
+          for (var i = 0; i < TARGET.length; i++) {
+            out += (i < Math.floor(step * TARGET.length / FRAMES))
+              ? TARGET[i]
+              : POOL[Math.floor(Math.random() * POOL.length)];
+          }
+          btn.textContent = out;
+          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
+        }, RATE);
+      }
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(runScramble, 1400);
+        setInterval(runScramble, 7000);
+      } else {
+        btn.addEventListener('mouseenter', runScramble);
+        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      function reveal() {
+        var c = document.createElement('div');
+        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        document.body.appendChild(c);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            c.style.transition = 'opacity 0.22s ease';
+            c.style.opacity    = '0';
+            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
+          });
+        });
+      }
+      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
+    })();
+  </script>
+</body>
+</html>

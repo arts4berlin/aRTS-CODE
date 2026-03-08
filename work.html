@@ -85,8 +85,9 @@
       text-align: center;
       transition: border-color 0.15s;
     }
-    .field::placeholder { color: rgba(255,255,255,0.38); }
-    .field:focus        { border-color: #FF5C00; }
+    .field::placeholder          { color: rgba(255,255,255,0.38); }
+    .field:focus,
+    .field.has-value             { border-color: #FF5C00; }
 
     /* ── Bottom row: E-MaIL + bear side by side ── */
     .send-row        { display: flex; gap: clamp(8px, 1.4vw, 14px); }
@@ -144,7 +145,7 @@
 </head>
 <body>
 
-  <a href="connect.html" class="logo">[aRTS]</a>
+  <a href="connect.html" class="logo">[sEEK]</a>
 
   <div class="heading">
     <span class="small">LET'S</span>
@@ -198,6 +199,13 @@
       btn.classList.add('sent');
       setTimeout(() => btn.classList.remove('sent'), 2000);
     }
+
+    /* Orange outline persists while field has a value */
+    document.querySelectorAll('.field').forEach(function (f) {
+      f.addEventListener('input', function () {
+        this.classList.toggle('has-value', this.value.length > 0);
+      });
+    });
   </script>
   <script>
     (function () {
