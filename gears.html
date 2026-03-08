@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[aRTS]</title>
-  <!-- No sessionStorage gate – robot path (dead end for bots) -->
+  <!-- Clears captcha on entry — tail end: must reopen to restart -->
+  <script> sessionStorage.removeItem('captcha_passed'); </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +21,7 @@
       position: relative;
     }
 
-    /* ── I frame wrapper — true viewport centre on all devices ── */
+    /* ── I frame wrapper ── */
     .i-wrap {
       position: fixed;
       top: 50%;
@@ -39,7 +40,6 @@
       line-height: 1;
       user-select: none;
       pointer-events: none;
-      /* Spring bounce in — one shot */
       animation: iBounce 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
@@ -60,7 +60,6 @@
       transition: opacity 0.65s ease;
     }
 
-    /* ── All slots: width in em (relative to own font-size) keeps symmetry at any viewport ── */
     .s {
       flex-shrink: 0;
       width: 1.5em;
@@ -69,21 +68,16 @@
       font-weight: 400;
       user-select: none;
       pointer-events: none;
-      transition: opacity 0.13s ease;
+      transition: opacity 0.11s ease;
     }
 
-    /* far (±2) */
     .s-far  { font-size: clamp(0.7rem,  2.4vh, 1.7rem); color: rgba(255,255,255,0.14); }
-    /* near (±1) */
     .s-near { font-size: clamp(1.1rem,  5vh,   3rem);   color: rgba(255,255,255,0.34); }
-    /* center (0) — inside the I */
     .s-ctr  { font-size: clamp(2.2rem,  9vh,   6rem);   color: #fff; font-weight: 700; }
-
   </style>
 </head>
 <body>
 
-  <!-- I frame + scrolling strip -->
   <div class="i-wrap">
     <span class="big-i">I</span>
     <div class="strip">
@@ -96,34 +90,17 @@
   </div>
 
   <script>
-    /* Words as plain lowercase — JS capitalises only the center letter */
-    /* Route map: word → destination page */
-    const routes = {
-      'work': 'work.html',
-    };
+    const routes = { 'work': 'work.html' };
 
     const words = [
       'work',
-      'applying',
-      'buzzing',
-      'buying',
-      'doping',
-      'trotting',
-      'bubbling',
-      'coping',
-      'siezing',
-      'mokka',
-      'zoning',
-      'propping',
-      'calling',
-      'questioning',
-      'viewing',
-      'tripping',
-      'buffering',
-      'crunching',
+      'applying', 'buzzing', 'buying', 'doping', 'trotting',
+      'bubbling', 'coping', 'siezing', 'mokka', 'zoning',
+      'propping', 'calling', 'questioning', 'viewing',
+      'tripping', 'buffering', 'crunching',
     ];
 
-    /* Shuffle words so every visit is unique */
+    /* Fisher-Yates shuffle */
     (function shuffle(a) {
       for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -131,67 +108,84 @@
       }
     })(words);
 
-    const slots = [-2, -1, 0, 1, 2].map(d => document.getElementById('s' + d));
+    /* ── Build flat character stream ── */
+    const PAD = 5, GAP = 6;
+    const streamChars  = [];   // actual character
+    const streamWordOf = [];   // word index at this position (-1 = space)
 
-    /* Padding: spaces before/after so the word scrolls fully in and out */
-    const PAD = 3;
+    words.forEach((word, wi) => {
+      for (let i = 0; i < PAD; i++) { streamChars.push(' '); streamWordOf.push(-1); }
+      for (const ch of word)        { streamChars.push(ch);  streamWordOf.push(wi); }
+      for (let i = 0; i < GAP; i++) { streamChars.push(' '); streamWordOf.push(-1); }
+    });
+    const SLEN = streamChars.length;
 
-    /* ms per scroll step (includes fade-out + update + fade-in) */
-    const STEP_MS  = 320;
-    /* delay before swapping text (mid-fade) */
-    const SWAP_MS  = 120;
-    /* extra pause between words (ms) */
-    const PAUSE_MS = 900;
+    /* ── Slots & state ── */
+    const slots    = [-2, -1, 0, 1, 2].map(d => document.getElementById('s' + d));
+    const shown    = ['', '', '', '', ''];  // last text shown per slot
+    const fading   = [false, false, false, false, false];
+    const iWrap    = document.querySelector('.i-wrap');
+    const strip    = document.querySelector('.strip');
 
-    let wordIdx = 0;
-    let pos     = 0;
+    /* scroll speed in chars / second */
+    const SPEED = 2.2;
+    let scrollPos = 0;
+    let lastTs    = null;
+    let running   = false;
 
-    const iWrap = document.querySelector('.i-wrap');
-
-    function updateCursor() {
-      iWrap.style.cursor = routes[words[wordIdx]] ? 'pointer' : 'default';
+    function charAt(idx) {
+      return streamChars[(idx % SLEN + SLEN) % SLEN];
+    }
+    function wordAt(idx) {
+      return streamWordOf[(idx % SLEN + SLEN) % SLEN];
     }
 
-    function getChar(padded, i, isCenter) {
-      if (i < 0 || i >= padded.length) return '';
-      const ch = padded[i];
-      if (ch === ' ') return '';
-      return isCenter ? ch.toUpperCase() : ch;
-    }
+    function frame(ts) {
+      if (!running) return;
+      if (lastTs === null) lastTs = ts;
+      const dt = Math.min(ts - lastTs, 50);
+      lastTs = ts;
 
-    function step() {
-      const word   = words[wordIdx];
-      const padded = ' '.repeat(PAD) + word + ' '.repeat(PAD);
+      scrollPos = (scrollPos + SPEED * dt / 1000) % SLEN;
+      const ipos = Math.floor(scrollPos);
 
-      /* Fade out */
-      slots.forEach(el => { el.style.opacity = '0'; });
+      /* Update each slot */
+      slots.forEach((el, si) => {
+        const offset = si - 2;
+        const ch     = charAt(ipos + offset);
+        const isCenter = offset === 0;
+        const next   = (ch === ' ') ? '' : (isCenter ? ch.toUpperCase() : ch);
 
-      setTimeout(() => {
-        /* Swap text mid-fade */
-        slots.forEach((el, idx) => {
-          const offset   = idx - 2;
-          el.textContent = getChar(padded, pos + offset, offset === 0);
-          el.style.opacity = '';
-        });
-
-        pos++;
-
-        if (pos >= padded.length) {
-          pos     = 0;
-          wordIdx = (wordIdx + 1) % words.length;
-          updateCursor();
-          setTimeout(step, PAUSE_MS + Math.random() * 400);
-        } else {
-          setTimeout(step, STEP_MS);
+        if (next !== shown[si] && !fading[si]) {
+          fading[si] = true;
+          el.style.opacity = '0';
+          /* Swap text mid-fade, then restore opacity */
+          setTimeout(() => {
+            el.textContent = next;
+            shown[si] = next;
+            el.style.opacity = '';
+            fading[si] = false;
+          }, 90);
         }
-      }, SWAP_MS);
+      });
+
+      /* Cursor: pointer when a routable word is at centre */
+      const wi = wordAt(ipos);
+      const currentWord = wi >= 0 ? words[wi] : null;
+      iWrap.style.cursor = (currentWord && routes[currentWord]) ? 'pointer' : 'default';
+
+      requestAnimationFrame(frame);
     }
 
-    /* Click-to-navigate: if current word has a route, flash green then go */
+    /* Click: navigate if routable word is centred */
     iWrap.addEventListener('click', () => {
-      const dest = routes[words[wordIdx]];
+      const ipos = Math.floor(scrollPos);
+      const wi   = wordAt(ipos);
+      const word = wi >= 0 ? words[wi] : null;
+      const dest = word && routes[word];
       if (dest) {
-        /* Flash the three center slots green */
+        running = false;
+        /* Flash centre three green */
         [slots[1], slots[2], slots[3]].forEach(el => {
           el.style.transition = 'color 0.15s ease';
           el.style.color = '#00e676';
@@ -201,12 +195,11 @@
       }
     });
 
-    /* Strip fades in as bounce lands — I and text arrive together */
-    const strip = document.querySelector('.strip');
-    updateCursor();
+    /* Start after I bounce lands */
     setTimeout(() => {
       strip.style.opacity = '1';
-      step();
+      running = true;
+      requestAnimationFrame(frame);
     }, 820);
   </script>
 

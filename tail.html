@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS] — TaIL EnD</title>
+  <script>
+    /* Clear any pass so the user must restart from scratch */
+    sessionStorage.removeItem('captcha_passed');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Label row: TaIL  ·  EnD ── */
+    .label-row {
+      display: flex;
+      gap: clamp(3rem, 12vw, 9rem);
+      align-items: baseline;
+      margin-bottom: clamp(2rem, 5vh, 4rem);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+
+    .label {
+      font-size: clamp(1.1rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: #fff;
+    }
+
+    /* ── Bear grin ── */
+    .bear-wrap {
+      width: clamp(180px, 46vw, 420px);
+      opacity: 0;
+      animation: fadeUp 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s forwards;
+    }
+
+    .bear-wrap img {
+      width: 100%;
+      height: auto;
+      filter: brightness(0) invert(1);
+      display: block;
+    }
+
+    /* ── Hint ── */
+    .hint {
+      margin-top: clamp(1.4rem, 3vh, 2.8rem);
+      font-size: clamp(0.7rem, 1.6vw, 0.95rem);
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.28);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.55s forwards;
+    }
+
+    @keyframes fadeUp {
+      0%   { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0);    }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="label-row">
+    <span class="label">TaIL</span>
+    <span class="label">EnD</span>
+  </div>
+
+  <div class="bear-wrap">
+    <img src="assets/bear.png" alt="">
+  </div>
+
+  <p class="hint">close &amp; reopen to start again</p>
+
+</body>
+</html>
