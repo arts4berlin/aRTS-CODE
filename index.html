@@ -574,6 +574,34 @@
 
     document.querySelector('.btn-captcha').addEventListener('click', openOverlay);
     document.getElementById('c-close').addEventListener('click', closeOverlay);
+
+    /* CaPTCHa button — typewriter scramble on hover / auto on touch */
+    (function () {
+      var btn    = document.querySelector('.btn-captcha');
+      var TARGET = 'CaPTCHa';
+      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES = 18, RATE = 45, timer = null;
+      function runScramble() {
+        clearInterval(timer);
+        var step = 0;
+        timer = setInterval(function () {
+          var out = '';
+          for (var i = 0; i < TARGET.length; i++) {
+            out += (i < Math.floor(step * TARGET.length / FRAMES))
+              ? TARGET[i] : POOL[Math.floor(Math.random() * POOL.length)];
+          }
+          btn.textContent = out;
+          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
+        }, RATE);
+      }
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(runScramble, 1200);
+        setInterval(runScramble, 7000);
+      } else {
+        btn.addEventListener('mouseenter', runScramble);
+        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
+      }
+    })();
     document.getElementById('c-overlay').addEventListener('click', e => {
       if (e.target.id === 'c-overlay') closeOverlay();
     });

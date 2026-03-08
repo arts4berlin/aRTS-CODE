@@ -88,6 +88,19 @@
     .field::placeholder { color: rgba(0,0,0,0.38); }
     .field:focus        { border-color: #FF5C00; }
 
+    .nav-about {
+      position: fixed;
+      top: 28px; right: 32px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .nav-about:hover { opacity: 1; }
+
     /* ── NaME + LaST side by side ── */
     .name-row        { display: flex; gap: clamp(8px, 1.4vw, 14px); }
     .name-row .field { flex: 1; }
@@ -149,6 +162,7 @@
 <body>
 
   <a href="connect.html" class="logo">[sEEK]</a>
+  <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="heading">
     <span class="small">LET'S</span>
