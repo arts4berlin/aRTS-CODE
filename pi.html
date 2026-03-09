@@ -11,11 +11,11 @@
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
-  <meta property="og:description"  content="aRT · aSSETS · aID — now in BERLIN">
+  <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
   <meta property="og:image"        content="https://4-arts.com/assets/og.png">
   <meta name="twitter:card"        content="summary">
   <meta name="twitter:title"       content="[aRTS]">
-  <meta name="twitter:description" content="aRT · aSSETS · aID — now in BERLIN">
+  <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
   <title>[aRTS]</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +42,8 @@
       color: #FF5C00;
       line-height: 1;
       user-select: none;
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: default;
       z-index: 20;
       opacity: 0;
       transition: opacity 0.28s ease;
@@ -109,12 +110,113 @@
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
+
+    /* ── Apple Wallet voucher — Easter egg ── */
+    #voucher-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 99990;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+    #voucher-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    #voucher-card {
+      background: #0e0e0e;
+      border-radius: 24px 24px 0 0;
+      width: min(440px, 100vw);
+      padding-bottom: max(env(safe-area-inset-bottom), 32px);
+      transform: translateY(100%);
+      transition: transform 0.48s cubic-bezier(0.34, 1.2, 0.64, 1);
+      overflow: hidden;
+    }
+    #voucher-overlay.open #voucher-card {
+      transform: translateY(0);
+    }
+    .v-stripe { height: 5px; background: #FF5C00; }
+    .v-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 20px 28px 0;
+    }
+    .v-logo { font-size: 1rem; font-weight: 300; letter-spacing: 0.08em; color: #fff; }
+    .v-type {
+      font-size: 0.56rem; font-weight: 300; letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.28); text-transform: uppercase;
+    }
+    .v-discount {
+      font-size: clamp(5.5rem, 22vw, 9rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #FF5C00;
+      line-height: 1;
+      text-align: center;
+      padding: 10px 28px 0;
+    }
+    .v-label {
+      font-size: 0.7rem; font-weight: 300; letter-spacing: 0.24em;
+      color: rgba(255,255,255,0.35); text-transform: uppercase;
+      text-align: center; margin-top: 2px;
+    }
+    .v-rule { height: 1px; background: rgba(255,255,255,0.07); margin: 22px 28px; }
+    .v-congrats {
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.14em;
+      color: #fff; text-align: center;
+    }
+    .v-sublabel {
+      font-size: 0.65rem; font-weight: 300; letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.32); text-align: center; margin-top: 4px;
+    }
+    .v-code-label {
+      font-size: 0.52rem; font-weight: 300; letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.22); text-align: center;
+      margin-top: 22px; text-transform: uppercase;
+    }
+    #v-code {
+      font-size: 1.05rem; font-weight: 700; letter-spacing: 0.2em;
+      color: #fff; text-align: center; margin-top: 7px;
+      cursor: pointer; transition: color 0.15s;
+      touch-action: manipulation;
+    }
+    #v-code:hover { color: #FF5C00; }
+    .v-dismiss {
+      font-size: 0.52rem; font-weight: 300; letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.15); text-align: center;
+      margin-top: 22px; text-transform: lowercase;
+    }
   </style>
 </head>
 <body>
 
   <span id="big-i">?</span>
   <div id="word-wrap"></div>
+
+  <!-- Easter egg: Apple Wallet voucher -->
+  <div id="voucher-overlay">
+    <div id="voucher-card">
+      <div class="v-stripe"></div>
+      <div class="v-header">
+        <span class="v-logo">[aRTS]</span>
+        <span class="v-type">member pass</span>
+      </div>
+      <div class="v-discount">77%</div>
+      <div class="v-label">OFF — any purchase</div>
+      <div class="v-rule"></div>
+      <div class="v-congrats">cONGRATULATIONS</div>
+      <div class="v-sublabel">you found the easter egg</div>
+      <div class="v-code-label">redemption code</div>
+      <div id="v-code">—</div>
+      <div class="v-dismiss">tap anywhere to close</div>
+    </div>
+  </div>
 
   <script>
   (function () {
@@ -125,8 +227,12 @@
 
     const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
     const WORDS       = ['sense','shift','signal','build','hold','move','speak','open','draw'];
-    const WORD_SPEED  = 100;  // px / second
+    /* Scale speed to viewport — wider screens move faster, capped */
+    const WORD_SPEED  = Math.max(85, Math.min(window.innerWidth * 0.115, 175));
     const SCRAMBLE_MS = 80;   // letter scramble interval
+
+    /* Shuffle for a unique experience every session */
+    (function(){ for (var si=WORDS.length-1; si>0; si--){ var sj=Math.floor(Math.random()*(si+1)); var t=WORDS[si]; WORDS[si]=WORDS[sj]; WORDS[sj]=t; } })();
 
     let wordIdx  = 0;
     let wordX    = 0;
@@ -276,6 +382,7 @@
         const last = spans[spans.length - 1];
         if (last && last.getBoundingClientRect().right < 0) {
           exited = true;
+          bigI.classList.add('idle'); // restart blink during gap
           sTimers.forEach(clearInterval);
           setTimeout(() => {
             wordIdx = (wordIdx + 1) % WORDS.length;
@@ -286,6 +393,49 @@
 
       requestAnimationFrame(tick);
     }
+
+    /* ── Easter egg: 7 clicks on I → 77% voucher ── */
+    (function(){
+      var clicks = 0;
+      var CPOOL  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      function randCode(){
+        var c=''; for(var i=0;i<6;i++) c+=CPOOL[Math.floor(Math.random()*CPOOL.length)];
+        return 'aRTS-77-'+c;
+      }
+      var overlay = document.getElementById('voucher-overlay');
+      var codeEl  = document.getElementById('v-code');
+
+      bigI.addEventListener('click', function(){
+        clicks++;
+        if(clicks===7){
+          clicks=0;
+          codeEl.textContent = randCode();
+          codeEl.style.color = '';
+          overlay.classList.add('open');
+        }
+      });
+
+      /* Tap anywhere on backdrop to close */
+      overlay.addEventListener('click', function(e){
+        if(e.target!==codeEl) overlay.classList.remove('open');
+      });
+
+      /* Tap code to copy it */
+      codeEl.addEventListener('click', function(e){
+        e.stopPropagation();
+        var txt = codeEl.textContent;
+        if(navigator.clipboard){ navigator.clipboard.writeText(txt); }
+        else{
+          var ta=document.createElement('textarea'); ta.value=txt;
+          ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta);
+          ta.select(); try{document.execCommand('copy');}catch(ee){}
+          document.body.removeChild(ta);
+        }
+        var orig=codeEl.textContent;
+        codeEl.textContent='cOPIED ✓'; codeEl.style.color='#FF5C00';
+        setTimeout(function(){ codeEl.textContent=orig; codeEl.style.color=''; }, 1600);
+      });
+    })();
 
     /* ── Go ── */
     runIntro();
