@@ -506,9 +506,7 @@
           '._ec-code{font-size:1.05rem;font-weight:700;letter-spacing:0.2em;color:#fff;' +
             'text-align:center;margin-top:7px;cursor:pointer;' +
             'transition:color 0.15s;touch-action:manipulation;}' +
-          '._ec-code:hover{color:#FF5C00;}' +
-          '._ec-dismiss{font-size:0.52rem;font-weight:300;letter-spacing:0.16em;' +
-            'color:rgba(255,255,255,0.15);text-align:center;margin-top:22px;text-transform:lowercase;}';
+          '._ec-code:hover{color:#FF5C00;}';
         document.head.appendChild(st);
       }
 
@@ -535,9 +533,7 @@
       var sub     = document.createElement('div'); sub.className = '_ec-sub'; sub.textContent = 'you found the easter egg';
       var clbl    = document.createElement('div'); clbl.className = '_ec-codelabel'; clbl.textContent = 'redemption code';
       var codeEl  = document.createElement('div'); codeEl.className = '_ec-code'; codeEl.textContent = codeStr;
-      var dismiss = document.createElement('div'); dismiss.className = '_ec-dismiss'; dismiss.textContent = 'tap anywhere to close';
-
-      [stripe,hdr,pay,numEl,rule,congrats,sub,clbl,codeEl,dismiss].forEach(function(el){ card.appendChild(el); });
+      [stripe,hdr,pay,numEl,rule,congrats,sub,clbl,codeEl].forEach(function(el){ card.appendChild(el); });
       ov.appendChild(card);
       document.body.appendChild(ov);
 
@@ -933,19 +929,13 @@
         '#_techWord{position:relative;z-index:2;' +
           'font-family:"Space Grotesk",sans-serif;' +
           'font-size:clamp(1.8rem,8vw,5rem);font-weight:700;letter-spacing:0.18em;' +
-          'color:#fff;text-align:center;padding:0 6vw;line-height:1.1;}' +
-        '#_techHint{position:absolute;bottom:28px;z-index:2;' +
-          'font-family:"Space Grotesk",sans-serif;' +
-          'font-size:0.52rem;letter-spacing:0.22em;color:rgba(255,255,255,0.15);' +
-          'text-transform:uppercase;}';
+          'color:#fff;text-align:center;padding:0 6vw;line-height:1.1;}';
       document.head.appendChild(s);
 
       /* ── overlay ── */
       var ov   = document.createElement('div'); ov.id = '_techEgg';
       var wEl  = document.createElement('div'); wEl.id = '_techWord';
-      var hint = document.createElement('div'); hint.id = '_techHint';
-      hint.textContent = 'dOUBLE tAP · eSC · cLOSE';
-      ov.appendChild(wEl); ov.appendChild(hint);
+      ov.appendChild(wEl);
       document.body.appendChild(ov);
 
       /* ── sequencer — rAF-based reset for clean per-word animation ── */
@@ -1035,10 +1025,7 @@
         '#_zenoName{font-family:"Space Grotesk",sans-serif;' +
           'font-size:clamp(0.48rem,1.1vw,0.60rem);font-weight:300;' +
           'letter-spacing:0.30em;color:rgba(255,255,255,0.14);' +
-          'text-align:center;position:relative;z-index:1;}' +
-        '#_zenoHint{position:absolute;bottom:28px;font-family:"Space Grotesk",sans-serif;' +
-          'font-size:0.48rem;letter-spacing:0.22em;' +
-          'color:rgba(255,255,255,0.08);text-transform:uppercase;}';
+          'text-align:center;position:relative;z-index:1;}';
       document.head.appendChild(s);
 
       var ov = document.createElement('div'); ov.id = '_zenoEgg';
@@ -1061,10 +1048,7 @@
       var name = document.createElement('p'); name.id = '_zenoName';
       name.textContent = '— Zeno of Elea  ·  490 BC';
 
-      var hint = document.createElement('div'); hint.id = '_zenoHint';
-      hint.textContent = 'dOUBLE tAP · eSC · cLOSE';
-
-      ov.appendChild(eq); ov.appendChild(quote); ov.appendChild(name); ov.appendChild(hint);
+      ov.appendChild(eq); ov.appendChild(quote); ov.appendChild(name);
       document.body.appendChild(ov);
 
       function close(){
