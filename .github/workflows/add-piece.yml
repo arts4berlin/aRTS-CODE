@@ -1,0 +1,120 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# [aRTS] — Automatically add a new art piece to data/pieces.json
+#
+# Triggers:
+#   1. workflow_dispatch  → manual run from GitHub Actions UI
+#   2. repository_dispatch (event: new-piece) → Formspree webhook
+#      Configure Formspree to POST to:
+#        https://api.github.com/repos/arts4berlin/aRTS-CODE/dispatches
+#      Headers: Authorization: Bearer <GH_PAT>, Content-Type: application/json
+#      Body: {"event_type":"new-piece","client_payload":{"title":"...","price":"...","image":"...","media":"...","year":"..."}}
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: Add Art Piece
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Artwork title (e.g. pIETRO)'
+        required: true
+      price:
+        description: 'Price in € (e.g. 88.888.888 — leave blank for —)'
+        default: '—'
+      year:
+        description: 'Year created (blank = current year)'
+        default: ''
+      image:
+        description: 'Image path or URL (e.g. assets/piece-002.jpg)'
+        required: true
+      media:
+        description: 'Medium description (e.g. pLASTER · mOUNTED cANVAS)'
+        default: ''
+      status:
+        description: 'Status'
+        default: 'aVAILABLE'
+
+  repository_dispatch:
+    types: [new-piece]
+
+jobs:
+  add-piece:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Append piece to pieces.json
+        run: |
+          python3 << 'PYEOF'
+          import json, datetime, os, sys
+
+          ev = os.environ.get('GITHUB_EVENT_NAME', '')
+
+          if ev == 'workflow_dispatch':
+              title  = os.environ.get('INPUT_TITLE', '').strip()
+              price  = os.environ.get('INPUT_PRICE', '—').strip() or '—'
+              year   = os.environ.get('INPUT_YEAR',  '').strip() or str(datetime.date.today().year)
+              image  = os.environ.get('INPUT_IMAGE', '').strip()
+              media  = os.environ.get('INPUT_MEDIA', '').strip()
+              status = os.environ.get('INPUT_STATUS','aVAILABLE').strip()
+          else:
+              # repository_dispatch: read from GITHUB_EVENT_PATH
+              with open(os.environ['GITHUB_EVENT_PATH']) as f:
+                  event = json.load(f)
+              cp     = event.get('client_payload', {})
+              title  = str(cp.get('title',  '')).strip()
+              price  = str(cp.get('price',  '—')).strip() or '—'
+              year   = str(cp.get('year',   '')).strip() or str(datetime.date.today().year)
+              image  = str(cp.get('image',  '')).strip()
+              media  = str(cp.get('media',  '')).strip()
+              status = 'pENDING'   # webhook submissions require manual approval
+
+          if not title:
+              print('ERROR: title is required', file=sys.stderr)
+              sys.exit(1)
+
+          path = 'data/pieces.json'
+          with open(path) as f:
+              pieces = json.load(f)
+
+          ids     = [int(p['id']) for p in pieces if str(p.get('id', '')).isdigit()]
+          next_id = str(max(ids) + 1 if ids else 0).zfill(3)
+
+          pieces.append({
+              'id':       next_id,
+              'title':    title,
+              'year':     year,
+              'price':    price,
+              'currency': '€',
+              'status':   status,
+              'image':    image,
+              'media':    media
+          })
+
+          with open(path, 'w') as f:
+              json.dump(pieces, f, indent=2, ensure_ascii=False)
+              f.write('\n')
+
+          print(f"✓ Added piece #{next_id}: {title} ({status})")
+          PYEOF
+        env:
+          INPUT_TITLE:  ${{ github.event.inputs.title }}
+          INPUT_PRICE:  ${{ github.event.inputs.price }}
+          INPUT_YEAR:   ${{ github.event.inputs.year }}
+          INPUT_IMAGE:  ${{ github.event.inputs.image }}
+          INPUT_MEDIA:  ${{ github.event.inputs.media }}
+          INPUT_STATUS: ${{ github.event.inputs.status }}
+
+      - name: Commit and push
+        run: |
+          git config user.name  'aRTS[bot]'
+          git config user.email 'bot@4-arts.com'
+          git add data/pieces.json
+          git diff --cached --quiet && echo "No changes" && exit 0
+          TITLE="${{ github.event.inputs.title }}${{ github.event.client_payload.title }}"
+          git commit -m "data: add piece — ${TITLE:-new submission}"
+          git push
