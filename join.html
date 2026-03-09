@@ -403,12 +403,13 @@
         </p>
 
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
-          <a href="id.html" class="btn-access">aCCESS mEMBER aREa →</a>
+          <a href="#" class="btn-access" id="btn-access" target="_blank" rel="noopener">pAY & aCTIVaTE →</a>
         </div>
 
         <p class="payment-note">
-          * payment instructions will be sent to your email within 24h.<br>
-          your ID is active once payment is confirmed.
+          * clicking above opens stripe checkout in a new tab.<br>
+          your ID is active once payment is confirmed.<br>
+          <a href="id.html" style="color:rgba(255,255,255,0.22);text-decoration:none;letter-spacing:0.1em;transition:color 0.15s;" onmouseover="this.style.color='rgba(255,255,255,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.22)'">already paid? → aCCESS iD</a>
         </p>
       </div>
 
@@ -450,6 +451,13 @@
 
     var selectedTier = null;
     var generatedWords = [];
+
+    /* ── Stripe payment links ── */
+    var PAYMENT_LINKS = {
+      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+    };
 
     /* Pre-select tier from URL param */
     var urlTier = new URLSearchParams(window.location.search).get('tier');
@@ -535,6 +543,10 @@
       var ptsEl = document.getElementById('s2-pts');
       ptsEl.textContent = '+ ' + startPts + ' sTaRTING pOINTS aWaRDED';
       ptsEl.style.display = 'block';
+
+      /* Wire Stripe payment link with pre-filled email */
+      var payUrl = PAYMENT_LINKS[selectedTier] + '?prefilled_email=' + encodeURIComponent(email);
+      document.getElementById('btn-access').href = payUrl;
 
       /* Backlog → Formspree (fire and forget) */
       var data = new FormData();
