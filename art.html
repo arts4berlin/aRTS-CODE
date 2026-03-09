@@ -94,10 +94,10 @@
     .piece-index {
       font-size: 0.68rem;
       font-weight: 300;
-      letter-spacing: 0.32em;
-      color: rgba(255,255,255,0.22);
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.2);
       text-transform: uppercase;
-      margin-bottom: clamp(12px, 2vh, 18px);
+      margin-bottom: clamp(14px, 2.2vh, 22px);
     }
 
     /* Artwork image */
@@ -109,34 +109,37 @@
 
     /* Title block sits right below image */
     .title-block {
-      margin-top: clamp(22px, 3.5vh, 36px);
+      margin-top: clamp(28px, 4vh, 44px);
       display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
     }
 
     .piece-title {
-      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-size: clamp(2.2rem, 6.5vw, 3.8rem);
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       line-height: 1;
       color: #fff;
     }
 
-    .piece-medium {
-      font-size: 0.72rem;
+    .piece-year {
+      font-size: 0.68rem;
       font-weight: 300;
       letter-spacing: 0.26em;
-      color: rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.22);
       text-transform: uppercase;
+      align-self: center;
+      flex-shrink: 0;
     }
 
     /* Divider */
     .divider {
       width: 100%;
       height: 1px;
-      background: rgba(255,255,255,0.08);
-      margin: clamp(24px, 3.5vh, 40px) 0;
+      background: rgba(255,255,255,0.07);
+      margin: clamp(28px, 4vh, 48px) 0;
     }
 
     /* Price block */
@@ -157,20 +160,20 @@
     }
 
     .status {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 300;
       letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.32);
+      color: rgba(255,255,255,0.28);
       text-transform: uppercase;
       align-self: center;
     }
 
     /* Payment details */
     .payment-block {
-      margin-top: clamp(24px, 3.5vh, 40px);
+      margin-top: clamp(28px, 4vh, 48px);
       display: flex;
       flex-direction: column;
-      border-top: 1px solid rgba(255,255,255,0.08);
+      border-top: 1px solid rgba(255,255,255,0.07);
     }
 
     .payment-row {
@@ -242,13 +245,13 @@
   <main>
     <div class="art-col">
 
-      <p class="piece-index">aRT · 001</p>
+      <p class="piece-index">aRT #000</p>
 
       <img class="piece-img" src="assets/piece-001.jpg" alt="pIETRO — [aRTS]" fetchpriority="high">
 
       <div class="title-block">
         <h1 class="piece-title">pIETRO</h1>
-        <p class="piece-medium">pLASTER · mOUNTED cANVAS · fLOATING fRAME</p>
+        <span class="piece-year">2025</span>
       </div>
 
       <div class="divider"></div>
