@@ -233,20 +233,8 @@
       .burger { display: flex; }
       .burger-label { display: block; } /* show on mobile */
 
-      /* ── CRT power-on: overlay squeezes from a centre line, text squishes with it ── */
-      .nav-overlay {
-        opacity: 1;
-        -webkit-transform: scaleY(0);
-                transform: scaleY(0);
-        -webkit-transform-origin: center center;
-                transform-origin: center center;
-        -webkit-transition: -webkit-transform 0.46s cubic-bezier(0.34, 1.18, 0.64, 1);
-                transition:         transform 0.46s cubic-bezier(0.34, 1.18, 0.64, 1);
-      }
-      .nav-overlay.is-open {
-        -webkit-transform: scaleY(1);
-                transform: scaleY(1);
-      }
+      /* ── Mobile: overlay instant-visible; RGB power-on handled by JS filter ── */
+      .nav-overlay { opacity: 1; }
     }
   </style>
 </head>
@@ -263,7 +251,7 @@
     </nav>
     <button class="burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
-      <span class="burger-label">mENU</span>
+      <span class="burger-label">[aRTS]</span>
     </button>
   </header>
 
@@ -608,26 +596,71 @@
     var overlay = document.getElementById('nav-overlay');
     var closer  = document.getElementById('burger-close');
 
+    /* Capture overlay nav links + original mixed-case labels once */
+    var oLinks  = Array.from(overlay.querySelectorAll('a'));
+    var oLabels = oLinks.map(function(el){ return el.textContent; });
+
+    /* ── RGB power-on flash (mobile CRT aesthetic) ── */
+    function rgbPowerOn(){
+      var steps = [
+        [0,   'brightness(9) saturate(0.1)'],
+        [55,  'brightness(5) hue-rotate(0deg)   saturate(3)'],
+        [110, 'brightness(3) hue-rotate(120deg) saturate(2.5)'],
+        [165, 'brightness(2) hue-rotate(240deg) saturate(1.5)'],
+        [220, 'brightness(1.2) saturate(0.9)'],
+        [300, '']
+      ];
+      steps.forEach(function(s){
+        setTimeout(function(){
+          if (overlay.classList.contains('is-open')) overlay.style.filter = s[1];
+        }, s[0]);
+      });
+    }
+
+    /* ── Decap cascade: all-lowercase → mixed-case left-to-right, staggered per link ── */
+    function decapCascade(){
+      oLinks.forEach(function(el, li){
+        var target = oLabels[li];
+        el.textContent = target.toLowerCase();          /* start: all lowercase */
+        var base = li * 60 + 80;                        /* stagger per link     */
+        Array.from(target).forEach(function(ch, i){
+          setTimeout(function(){
+            if (!overlay.classList.contains('is-open')) return;
+            var chars = el.textContent.split('');
+            chars[i] = ch;                              /* pop to target case   */
+            el.textContent = chars.join('');
+          }, base + i * 32);
+        });
+      });
+    }
+
     function openMenu(){
       overlay.style.display = 'flex';
-      void overlay.offsetHeight; /* force layout reflow so iOS Safari sees initial clip-path state */
-      requestAnimationFrame(function(){ overlay.classList.add('is-open'); });
+      void overlay.offsetHeight;                        /* force reflow for iOS */
+      requestAnimationFrame(function(){
+        overlay.classList.add('is-open');
+        rgbPowerOn();
+        decapCascade();
+      });
       burger.classList.add('is-open');
     }
+
     function closeMenu(){
+      overlay.style.filter = '';
+      oLinks.forEach(function(el, i){ el.textContent = oLabels[i]; }); /* restore labels */
       overlay.classList.remove('is-open');
       burger.classList.remove('is-open');
-      /* Allow hourglass animation to complete on mobile before hiding */
-      var dur = window.innerWidth <= 520 ? 480 : 230;
+      /* Mobile: no CSS transition → near-instant hide. Desktop: opacity 0.22s */
+      var dur = window.innerWidth <= 520 ? 30 : 230;
       setTimeout(function(){ overlay.style.display = 'none'; }, dur);
     }
 
     burger.addEventListener('click', openMenu);
     closer.addEventListener('click', closeMenu);
 
-    /* Also close if user taps outside a link in the overlay */
+    /* Close on tap outside any link */
     overlay.addEventListener('click', function(e){
-      if(e.target === overlay) closeMenu();
+      if (e.target === overlay) closeMenu();
     });
   })();
   </script>
