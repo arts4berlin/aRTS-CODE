@@ -6,15 +6,14 @@
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
-
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
-  <meta property="og:title"        content="[aRTS]">
+  <meta property="og:title"        content="[aRTS] — aUDIENCE">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
   <meta property="og:image"        content="https://4-arts.com/assets/og.png">
   <meta name="twitter:card"        content="summary">
-  <meta name="twitter:title"       content="[aRTS]">
+  <meta name="twitter:title"       content="[aRTS] — aUDIENCE">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
   <title>[aRTS] — aUDIENCE</title>
@@ -25,7 +24,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -33,145 +32,287 @@
       background: #000;
       color: #fff;
       font-family: 'Space Grotesk', sans-serif;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── Fixed header ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      padding: 26px 32px;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 60%, transparent);
     }
-
-    .stack {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: clamp(1rem, 2.5vh, 2rem);
-    }
-
-    .tagline {
-      font-size: 0.82rem;
-      font-weight: 300;
-      letter-spacing: 0.13em;
-      opacity: 0.5;
-      white-space: nowrap;
-    }
-
-    /* Big orange-bordered INSTa button */
-    .btn-insta {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: clamp(220px, 46vw, 430px);
-      height: clamp(80px, 14vh, 140px);
-      border: 2.5px solid #FF5C00;
-      border-radius: 4px;
-      background: transparent;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 5.5vw, 3.4rem);
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-decoration: none;
-      transition: background 0.18s, color 0.18s;
-    }
-    .btn-insta:hover { background: #FF5C00; color: #000; }
-    .btn-insta { font-variant-numeric: tabular-nums; }
 
     .logo {
-      position: fixed;
-      top: 28px; left: 32px;
-      z-index: 100;
       text-decoration: none;
       color: #fff;
       font-size: 1rem;
       font-weight: 300;
       letter-spacing: 0.05em;
       line-height: 1;
+      cursor: crosshair;
     }
 
-    .nav-about {
-      position: fixed;
-      top: 28px;
-      right: 32px;
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+    }
+
+    nav a {
       text-decoration: none;
       color: #fff;
       font-size: 0.9rem;
       font-weight: 300;
       letter-spacing: 0.1em;
-      opacity: 0.7;
+      opacity: 0.85;
+      cursor: crosshair;
       transition: opacity 0.15s;
     }
-    .nav-about:hover { opacity: 1; }
+    nav a:hover { opacity: 1; }
+    nav a.active { opacity: 1; font-weight: 600; }
 
-    /* ── dvh fix: excludes iOS Safari address bar ── */
-    @supports (height: 100dvh) {
-      body { height: 100dvh; }
+    /* ── Main layout ── */
+    main {
+      padding-top: clamp(86px, 13vh, 120px);
+      padding-bottom: clamp(60px, 8vh, 100px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(56px, 9vw, 120px);
     }
-    /* ── Mobile: safe area + text-size ── */
+
+    /* ── Entity hero ── */
+    .entity {
+      width: min(92vw, 680px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 3.5vh, 32px);
+    }
+
+    .entity-eyebrow {
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.36em;
+      color: rgba(255, 92, 0, 0.65);
+      text-transform: uppercase;
+    }
+
+    .entity-title {
+      font-size: clamp(3.4rem, 12vw, 7rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      line-height: 0.95;
+      color: #fff;
+    }
+
+    .entity-sub {
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.32);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Perks ── */
+    .perks-rule {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .perks {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .perk-row {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: clamp(14px, 2.5vh, 20px) clamp(16px, 2.5vw, 22px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .perk-row:last-child { border-bottom: none; }
+
+    .perk-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255, 92, 0, 0.55);
+      flex-shrink: 0;
+    }
+
+    .perk-label {
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .perk-pts {
+      margin-left: auto;
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255, 92, 0, 0.4);
+    }
+
+    /* ── Join CTA ── */
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-join {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      padding: 0.9rem clamp(1.6rem, 4vw, 2.6rem);
+      border: 2px solid rgba(255, 92, 0, 0.7);
+      border-radius: 4px;
+      color: rgba(255, 92, 0, 0.85);
+      background: transparent;
+      cursor: crosshair;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .btn-join:hover {
+      background: #FF5C00;
+      border-color: #FF5C00;
+      color: #000;
+    }
+
+    .btn-join-sub {
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* ── Signal / INSTa section ── */
+    .signal {
+      width: min(92vw, 680px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(18px, 3vh, 28px);
+      padding-top: clamp(28px, 4.5vh, 48px);
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .signal-label {
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.32em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+    }
+
+    .btn-insta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(200px, 44vw, 380px);
+      height: clamp(70px, 13vh, 120px);
+      border: 2px solid rgba(255, 92, 0, 0.5);
+      border-radius: 4px;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-decoration: none;
+      cursor: crosshair;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .btn-insta:hover {
+      background: #FF5C00;
+      border-color: #FF5C00;
+      color: #000;
+    }
+
+    /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
-    .logo, .nav-about, header { touch-action: manipulation; }
-    .btn, button, a { touch-action: manipulation; }
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    @media (max-width: 520px) {
+      header  { padding: 18px 16px; }
+      nav     { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
+      nav a   { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+    }
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
-</style>
+    .logo, nav a, a { touch-action: manipulation; }
+  </style>
 </head>
 <body>
   <!-- CRT: prevent flash on arrival -->
   <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
-  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-  <a href="about.html" class="nav-about">aBOUT</a>
+  <header>
+    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+    <nav>
+      <a href="about.html">aBOUT</a>
+      <a href="articles.html">aRTICLES</a>
+      <a href="assets.html">aSSETS</a>
+      <a href="ask.html">cONNECT</a>
+      <a href="work.html">wORK</a>
+    </nav>
+  </header>
 
-  <div class="stack">
-    <a href="socials.html" class="btn-insta">INSTa</a>
-    <span class="tagline">... JOIN THE SIGNAL ...</span>
-  </div>
+  <main>
 
-  <script>
-    (function () {
-      const TARGET = 'INSTa';
-      const POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
-      const btn    = document.querySelector('.btn-insta');
-      let timer    = null;
-      let frame    = 0;
-      const FRAMES = 18;
-      const RATE   = 45;
+    <div class="entity">
+      <p class="entity-eyebrow">fREE · oPEN aCCESS · 50 pOINTS</p>
+      <h1 class="entity-title">aUDIENCE</h1>
+      <p class="entity-sub">tHE oPEN LAYER. fOLLOW THE NETWORK. sTAY iN THE SIGNAL.</p>
 
-      function rand() { return POOL[Math.floor(Math.random() * POOL.length)]; }
+      <hr class="perks-rule">
 
-      function runScramble() {
-        clearInterval(timer);
-        frame = 0;
-        timer = setInterval(() => {
-          const settled = Math.floor((frame / FRAMES) * TARGET.length);
-          btn.textContent = TARGET.split('').map((ch, i) =>
-            i < settled ? ch : rand()
-          ).join('');
-          frame++;
-          if (frame > FRAMES) {
-            clearInterval(timer);
-            btn.textContent = TARGET;
-          }
-        }, RATE);
-      }
+      <div class="perks">
+        <div class="perk-row">
+          <span class="perk-dot"></span>
+          <span class="perk-label">cOMMUNITY aCCESS</span>
+        </div>
+        <div class="perk-row">
+          <span class="perk-dot"></span>
+          <span class="perk-label">eVENT aLERTS</span>
+        </div>
+        <div class="perk-row">
+          <span class="perk-dot"></span>
+          <span class="perk-label">nEWSLETTER</span>
+          <span class="perk-pts">50 sIGNaL pOINTS</span>
+        </div>
+      </div>
 
-      /* Always scramble immediately on load — no static preview */
-      runScramble();
+      <div class="cta-row">
+        <a href="join.html" class="btn-join">jOIN aUDIENCE</a>
+        <span class="btn-join-sub">fREE · NO CaRD rEQUIRED</span>
+      </div>
+    </div>
 
-      if (window.matchMedia('(hover: none)').matches) {
-        setInterval(runScramble, 3500);
-      } else {
-        btn.addEventListener('mouseenter', runScramble);
-        btn.addEventListener('mouseleave', () => {
-          clearInterval(timer);
-          btn.textContent = TARGET;
-        });
-      }
-    })();
-  </script>
+    <div class="signal">
+      <p class="signal-label">... JOIN THE SIGNAL ...</p>
+      <a href="socials.html" class="btn-insta" id="btn-insta">INSTa</a>
+    </div>
+
+  </main>
+
   <script>
     (function () {
       function reveal() {
@@ -188,6 +329,49 @@
       }
       window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
     })();
+  </script>
+
+  <!-- INSTa scramble -->
+  <script>
+  (function(){
+    var TARGET = 'INSTa';
+    var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
+    var btn    = document.getElementById('btn-insta');
+    var timer  = null;
+    var frame  = 0;
+    var FRAMES = 18;
+    var RATE   = 45;
+
+    function rand() { return POOL[Math.floor(Math.random() * POOL.length)]; }
+
+    function runScramble() {
+      clearInterval(timer);
+      frame = 0;
+      timer = setInterval(function() {
+        var settled = Math.floor((frame / FRAMES) * TARGET.length);
+        btn.textContent = TARGET.split('').map(function(ch, i) {
+          return i < settled ? ch : rand();
+        }).join('');
+        frame++;
+        if (frame > FRAMES) {
+          clearInterval(timer);
+          btn.textContent = TARGET;
+        }
+      }, RATE);
+    }
+
+    runScramble();
+
+    if (window.matchMedia('(hover: none)').matches) {
+      setInterval(runScramble, 3500);
+    } else {
+      btn.addEventListener('mouseenter', runScramble);
+      btn.addEventListener('mouseleave', function() {
+        clearInterval(timer);
+        btn.textContent = TARGET;
+      });
+    }
+  })();
   </script>
 
   <!-- CRT channel-change transition -->
@@ -265,18 +449,16 @@
       requestAnimationFrame(run);
     }
 
-    /* Arrival */
     if(sessionStorage.getItem('crt_transition')){
       sessionStorage.removeItem('crt_transition');
       doEnter();
     }
 
-    /* Exit interceptor */
     document.addEventListener('click',function(ev){
       var a=ev.target.closest('a[href]');
       if(!a)return;
       var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\\/\\/)/.test(h))return;
       if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
       ev.preventDefault();
       doExit(h);
@@ -289,7 +471,6 @@
   (function(){
     var DELAY = 40;
 
-    /* Nav links — lowercase left→right on enter, recapitalise right→left on leave */
     function navHover(el){
       var orig = el.textContent;
       var timers=[], state=0;
@@ -316,7 +497,6 @@
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
 
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
     document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
       var inner=logo.dataset.inner;
       var timers=[], state=0;
