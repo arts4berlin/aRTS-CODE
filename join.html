@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
@@ -378,6 +378,238 @@
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ══════════════════════════════════════════
+       aRTS CHECKOUT SHEET
+       ══════════════════════════════════════════ */
+    #co-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.68);
+      z-index: 9000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.28s ease, visibility 0s 0.28s;
+      touch-action: manipulation;
+    }
+    #co-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 0.28s ease;
+    }
+
+    #co-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(110%);
+      width: min(480px, 100vw);
+      background: #0c0c0c;
+      border-radius: 22px 22px 0 0;
+      padding-bottom: max(env(safe-area-inset-bottom), 28px);
+      z-index: 9001;
+      overflow: hidden;
+      transition: transform 0.46s cubic-bezier(0.34, 1.22, 0.64, 1);
+    }
+    #co-backdrop.open #co-sheet {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Handle bar ── */
+    .co-handle-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 10px 0 0;
+    }
+    .co-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 2px;
+    }
+
+    /* ── Orange stripe ── */
+    .co-stripe { height: 5px; background: #FF5C00; }
+
+    /* ── Header ── */
+    .co-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 18px 26px 0;
+    }
+    .co-logo {
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: #fff;
+    }
+    .co-tag {
+      font-size: 0.46rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.18);
+      text-transform: uppercase;
+    }
+
+    /* ── Tier info ── */
+    .co-body { padding: 16px 26px 0; }
+    .co-tier-name-el {
+      font-size: clamp(1.9rem, 7vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #FF5C00;
+      line-height: 1;
+    }
+    .co-tier-price-el {
+      font-size: 0.66rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.28);
+      margin-top: 6px;
+    }
+    .co-tier-perks-el {
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.13em;
+      color: rgba(255,255,255,0.13);
+      margin-top: 6px;
+      line-height: 1.8;
+    }
+
+    /* ── Divider ── */
+    .co-rule {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 16px 26px;
+    }
+
+    /* ── Email row ── */
+    .co-email-row { padding: 0 26px; }
+    .co-email-label {
+      font-size: 0.46rem;
+      font-weight: 300;
+      letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.18);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .co-email-val-el {
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: rgba(255,255,255,0.6);
+      word-break: break-all;
+    }
+
+    /* ── Wallet buttons ── */
+    .co-wallet-row {
+      padding: 0 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-top: 16px;
+    }
+    .co-btn-apple,
+    .co-btn-gpay {
+      display: none; /* shown conditionally by JS */
+      width: 100%;
+      height: 50px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      touch-action: manipulation;
+      transition: opacity 0.15s;
+    }
+    .co-btn-apple {
+      background: #fff;
+      color: #000;
+      font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      font-size: 1.06rem;
+      letter-spacing: -0.01em;
+    }
+    .co-btn-apple:hover { opacity: 0.88; }
+    .co-btn-gpay {
+      background: #1c1c1e;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .co-btn-gpay:hover { opacity: 0.84; }
+
+    /* ── Or divider ── */
+    .co-or-row {
+      display: none; /* shown by JS when wallets present */
+      align-items: center;
+      gap: 10px;
+      padding: 0 26px;
+      margin: 14px 0 0;
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.24em;
+      color: rgba(255,255,255,0.15);
+    }
+    .co-or-row::before, .co-or-row::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* ── Primary pay button ── */
+    .co-pay-row { padding: 0 26px; margin-top: 14px; }
+    .co-btn-pay {
+      width: 100%;
+      height: 56px;
+      background: #FF5C00;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.15s, color 0.15s;
+    }
+    .co-btn-pay:hover { background: #fff; }
+
+    /* ── Footer ── */
+    .co-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 26px 0;
+    }
+    .co-secure {
+      font-size: 0.44rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.11);
+      text-transform: uppercase;
+    }
+    .co-cancel-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.2);
+      cursor: pointer;
+      background: none;
+      border: none;
+      touch-action: manipulation;
+      transition: color 0.15s;
+    }
+    .co-cancel-btn:hover { color: rgba(255,255,255,0.5); }
 </style>
 </head>
 <body>
@@ -484,6 +716,66 @@
 
     </div>
   </main>
+
+  <!-- ══════════════════════════════════════════
+       aRTS CHECKOUT SHEET — sits above everything
+       All payment buttons hand off to Stripe.
+       Stripe's own modal handles Apple Pay / Google Pay natively.
+       ══════════════════════════════════════════ -->
+  <div id="co-backdrop">
+    <div id="co-sheet">
+      <div class="co-stripe"></div>
+
+      <div class="co-hdr">
+        <span class="co-logo">[aRTS]</span>
+        <span class="co-tag">member pass</span>
+      </div>
+
+      <div class="co-body">
+        <div class="co-tier-name-el" id="co-tier-name-el">—</div>
+        <div class="co-tier-price-el" id="co-tier-price-el">—</div>
+        <div class="co-tier-perks-el" id="co-tier-perks-el">—</div>
+      </div>
+
+      <div class="co-rule"></div>
+
+      <div class="co-email-row">
+        <div class="co-email-label">paying as</div>
+        <div class="co-email-val-el" id="co-email-val-el">—</div>
+      </div>
+
+      <!-- Wallet shortcuts — shown by JS when device supports them.
+           Both trigger the Stripe buy-button; Stripe's modal then
+           surfaces Apple Pay / Google Pay at the top of its sheet. -->
+      <div class="co-wallet-row" id="co-wallet-row">
+        <!-- Apple logo (U+F8FF private-use char — renders on Apple devices only) -->
+        <button class="co-btn-apple" id="co-btn-apple"> Apple Pay</button>
+        <button class="co-btn-gpay" id="co-btn-gpay">
+          <!-- Google G logo -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Google Pay
+        </button>
+      </div>
+
+      <div class="co-or-row" id="co-or-row">or</div>
+
+      <div class="co-pay-row">
+        <button class="co-btn-pay" id="co-btn-pay">
+          pAY — <span id="co-price-span">—</span>
+        </button>
+      </div>
+
+      <div class="co-foot">
+        <span class="co-secure">🔒 secured by stripe</span>
+        <button class="co-cancel-btn" id="co-cancel-btn">cancel</button>
+      </div>
+    </div>
+  </div>
 
   <script>
   (function(){
@@ -623,23 +915,28 @@
       sbb.setAttribute('customer-email', email);
       mount.appendChild(sbb);
 
-      /* Wire btn-access to trigger the Stripe modal; replace any prior listener */
+      /* Wire btn-access to open the aRTS checkout sheet; replace any prior listener */
       var tierForPay = selectedTier;
+      var emailForPay = email; /* capture current email in closure */
       var btnAccess = document.getElementById('btn-access');
       var newBtn = btnAccess.cloneNode(true); /* remove previous event listeners */
       btnAccess.parentNode.replaceChild(newBtn, btnAccess);
       newBtn.addEventListener('click', function() {
-        var liveSbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
-        if (liveSbb) {
-          liveSbb.click();
+        if (typeof window.openCheckoutSheet === 'function') {
+          window.openCheckoutSheet(tierForPay, emailForPay);
         } else {
-          /* Fallback: payment link same tab */
-          var PAYMENT_LINKS = {
-            'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
-            'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
-            'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
-          };
-          window.location.href = PAYMENT_LINKS[tierForPay];
+          /* Fallback: trigger Stripe directly if sheet not available */
+          var liveSbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
+          if (liveSbb) {
+            liveSbb.click();
+          } else {
+            var PAYMENT_LINKS = {
+              'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+              'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+              'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+            };
+            window.location.href = PAYMENT_LINKS[tierForPay];
+          }
         }
       });
 
@@ -755,6 +1052,123 @@
       if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
       if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
       ev.preventDefault();doExit(h);},true);
+  })();
+  </script>
+
+  <!-- ── aRTS Checkout Sheet controller ── -->
+  <script>
+  (function(){
+    /* Tier display data — mirrors the join form */
+    var TIER_INFO = {
+      'aLLY':      { price: '€3',   period: '/ month', perks: 'member card · community access · trading network' },
+      'BRIGaDIER': { price: '€33',  period: '/ month', perks: 'all above · submission slots · 2 guest invites' },
+      'CURaTOR':   { price: '€333', period: '/ month', perks: 'all above · editorial seat · private archive · patronage' }
+    };
+
+    /* Payment fallback links (used if Stripe buy-button not mounted yet) */
+    var PAYMENT_LINKS = {
+      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+    };
+
+    var currentTier = null;
+
+    /* ── Close sheet ── */
+    function closeSheet() {
+      document.getElementById('co-backdrop').classList.remove('open');
+    }
+
+    /* ── Trigger Stripe (called by every payment button) ── */
+    function triggerStripe() {
+      closeSheet();
+      /* Small delay so the close animation starts before Stripe's modal opens */
+      setTimeout(function() {
+        var sbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
+        if (sbb) {
+          sbb.click();
+        } else if (currentTier && PAYMENT_LINKS[currentTier]) {
+          window.location.href = PAYMENT_LINKS[currentTier];
+        }
+      }, 80);
+    }
+
+    /* ── Detect wallet support ── */
+    function detectWallets() {
+      var hasApple = typeof window.ApplePaySession !== 'undefined'
+                     && window.ApplePaySession.canMakePayments();
+      var ua = navigator.userAgent;
+      /* Google Pay: Chrome (desktop/Android) but not Safari */
+      var hasGoogle = !hasApple
+                      && (/Chrome\//i.test(ua) || /Android/i.test(ua))
+                      && !/Edge\//i.test(ua); /* exclude old Edge */
+      return { apple: hasApple, google: hasGoogle };
+    }
+
+    /* ── Open sheet — called from the main form script ── */
+    window.openCheckoutSheet = function(tier, email) {
+      currentTier = tier;
+      var info = TIER_INFO[tier] || {};
+
+      /* Populate content */
+      document.getElementById('co-tier-name-el').textContent  = tier;
+      document.getElementById('co-tier-price-el').textContent = (info.price || '') + ' ' + (info.period || '');
+      document.getElementById('co-tier-perks-el').textContent = info.perks || '';
+      document.getElementById('co-email-val-el').textContent  = email || '—';
+      document.getElementById('co-price-span').textContent    = (info.price || '') + ' ' + (info.period || '');
+
+      /* Wallet detection */
+      var w = detectWallets();
+      var appleBtn = document.getElementById('co-btn-apple');
+      var gpayBtn  = document.getElementById('co-btn-gpay');
+      var orRow    = document.getElementById('co-or-row');
+      appleBtn.style.display = w.apple  ? 'flex' : 'none';
+      gpayBtn.style.display  = w.google ? 'flex' : 'none';
+      orRow.style.display    = (w.apple || w.google) ? 'flex' : 'none';
+
+      /* Open */
+      document.getElementById('co-backdrop').classList.add('open');
+    };
+
+    /* ── Wire all payment buttons ── */
+    ['co-btn-apple', 'co-btn-gpay', 'co-btn-pay'].forEach(function(id) {
+      document.getElementById(id).addEventListener('click', triggerStripe);
+    });
+
+    /* ── Close controls ── */
+    document.getElementById('co-cancel-btn').addEventListener('click', closeSheet);
+    document.getElementById('co-backdrop').addEventListener('click', function(e) {
+      /* Close when tapping the backdrop, not the sheet itself */
+      if (e.target === this) closeSheet();
+    });
+
+    /* ── Swipe-down to close (touch) ── */
+    var sheet = document.getElementById('co-sheet');
+    var startY = 0, dragging = false;
+    sheet.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+      dragging = true;
+    }, { passive: true });
+    sheet.addEventListener('touchmove', function(e) {
+      if (!dragging) return;
+      var dy = e.touches[0].clientY - startY;
+      if (dy > 0) { /* only allow downward drag */
+        sheet.style.transform = 'translateX(-50%) translateY(' + dy + 'px)';
+      }
+    }, { passive: true });
+    sheet.addEventListener('touchend', function(e) {
+      if (!dragging) return;
+      dragging = false;
+      var dy = e.changedTouches[0].clientY - startY;
+      if (dy > 80) {
+        /* Swiped far enough — close */
+        sheet.style.transform = '';
+        closeSheet();
+      } else {
+        /* Snap back */
+        sheet.style.transform = '';
+      }
+    }, { passive: true });
   })();
   </script>
 
