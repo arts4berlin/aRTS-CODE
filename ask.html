@@ -56,17 +56,6 @@
       white-space: nowrap;
     }
 
-    .iban-line {
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.22);
-      cursor: pointer;
-      transition: color 0.15s;
-      white-space: nowrap;
-    }
-    .iban-line:hover { color: rgba(255,255,255,0.55); }
-    .iban-line.copied { color: #FF5C00; }
 
     /* Big orange-bordered aCT button */
     .btn-act {
@@ -136,7 +125,6 @@
   <div class="stack">
     <a href="act.html" class="btn-act">aSK</a>
     <span class="tagline">... aND aNSWERS aPPEAR ...</span>
-    <span class="iban-line" id="iban-copy">LT60 3250 0080 4650 5173</span>
   </div>
 
   <script>
@@ -182,17 +170,6 @@
         });
       }
     })();
-  </script>
-  <script>
-  (function(){
-    var el = document.getElementById('iban-copy');
-    el.addEventListener('click', function(){
-      var text = 'LT60 3250 0080 4650 5173';
-      function confirm(){ el.classList.add('copied'); el.textContent='cOPIED'; setTimeout(function(){ el.classList.remove('copied'); el.textContent=text; }, 1800); }
-      if(navigator.clipboard){ navigator.clipboard.writeText(text).then(confirm).catch(function(){ fallback(); confirm(); }); } else { fallback(); confirm(); }
-      function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
-    });
-  })();
   </script>
   <script>
     (function () {

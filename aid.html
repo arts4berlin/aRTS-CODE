@@ -86,6 +86,19 @@
       letter-spacing: 0.25em;
       display: block;
     }
+
+    .iban-line {
+      margin-top: clamp(1rem, 2.5vh, 2rem);
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.22);
+      cursor: pointer;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .iban-line:hover { color: rgba(255,255,255,0.55); }
+    .iban-line.copied { color: #FF5C00; }
   
     /* ── dvh fix: excludes iOS Safari address bar ── */
     @supports (height: 100dvh) {
@@ -107,8 +120,55 @@
   <div class="heading">
     <span class="small">YOUR</span>
     <span class="large">aID.</span>
+    <span class="iban-line" id="iban-copy">LT60 3250 0080 4650 5173</span>
   </div>
 
+  <script>
+  (function(){
+    var el    = document.querySelector('.large');
+    var orig  = el.textContent;   /* 'aID.' */
+    var HEART = '♥';
+    var DELAY = 55;
+    var timers = [], state = 0;   /* state = number of chars replaced */
+
+    function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
+
+    function render(n){
+      var s = '';
+      for(var i = 0; i < orig.length; i++){
+        s += (i < n) ? HEART : orig[i];
+      }
+      el.textContent = s;
+    }
+
+    el.addEventListener('mouseenter', function(){
+      clr();
+      var from = state;
+      for(var i = 0; i < orig.length - from; i++)(function(i){
+        timers.push(setTimeout(function(){ render(state = from + i + 1); }, i * DELAY));
+      })(i);
+    });
+
+    el.addEventListener('mouseleave', function(){
+      clr();
+      var from = state;
+      for(var i = 0; i < from; i++)(function(i){
+        timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
+      })(i);
+    });
+  })();
+  </script>
+  <script>
+  (function(){
+    var el = document.getElementById('iban-copy');
+    el.addEventListener('click', function(){
+      var text = 'LT60 3250 0080 4650 5173';
+      function confirm(){ el.classList.add('copied'); el.textContent='cOPIED'; setTimeout(function(){ el.classList.remove('copied'); el.textContent=text; }, 1800); }
+      if(navigator.clipboard){ navigator.clipboard.writeText(text).then(confirm).catch(function(){ fallback(); confirm(); }); } else { fallback(); confirm(); }
+      function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
+    });
+  })();
+  </script>
   <script>
     (function () {
       function reveal() {
