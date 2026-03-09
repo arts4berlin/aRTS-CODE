@@ -100,6 +100,8 @@
 
     /* ── [aRTS] home mark (desktop left anchor — links to login) ── */
     .home-mark {
+      display: inline-block;
+      min-width: 8rem;          /* reserve full [aRTS LOGIN] width — prevents layout shift */
       font-size: 1rem;
       font-weight: 300;
       letter-spacing: 0.05em;
@@ -258,15 +260,34 @@
       background: none;
       border-radius: 0;
     }
-    .burger.is-open .burger-label { opacity: 0; }
+    /* When open-state burger is NOT the close button, hide its label */
+    .burger.is-open:not(.overlay-close) .burger-label { opacity: 0; }
 
-    /* ── Mobile nav: switch to hamburger ── */
+    /* ── Mobile nav: switch to text-only hamburger ── */
     @media (max-width: 520px) {
       header  { padding: 18px 16px; }
       nav     { display: none; }
       .home-mark { display: none; } /* burger-label [aRTS] covers this on mobile */
-      .burger { display: flex; }
-      .burger-label { display: block; } /* show on mobile */
+      .burger { display: flex; gap: 0; align-items: center; justify-content: center; }
+
+      /* Hide the three bar spans — text-only [aRTS] button */
+      .burger span:not(.burger-label) { display: none; }
+
+      /* Restyle label to match home-mark on desktop */
+      .burger-label {
+        display: block;
+        font-size: 1rem;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+        color: rgba(255,255,255,0.88);
+        margin-top: 0;
+      }
+
+      /* Close button label [×] — always visible inside overlay */
+      .overlay-close .burger-label {
+        font-size: 1.1rem;
+        opacity: 0.72;
+      }
 
       /* ── Mobile: overlay instant-visible; RGB power-on handled by JS filter ── */
       .nav-overlay { opacity: 1; }
@@ -293,8 +314,8 @@
 
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger is-open overlay-close" id="burger-close" aria-label="close menu">
-      <span></span><span></span><span></span>
+    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[×]</span>
     </button>
     <a href="about.html">aBOUT</a>
     <a href="ask.html">aCT</a>
@@ -704,14 +725,14 @@
       oLinks.forEach(function(el, li){
         var target = oLabels[li];
         el.textContent = target.toLowerCase();          /* start: all lowercase */
-        var base = li * 60 + 80;                        /* stagger per link     */
+        var base = li * 100 + 120;                      /* slower stagger per link */
         Array.from(target).forEach(function(ch, i){
           setTimeout(function(){
             if (!overlay.classList.contains('is-open')) return;
             var chars = el.textContent.split('');
             chars[i] = ch;                              /* pop to target case   */
             el.textContent = chars.join('');
-          }, base + i * 32);
+          }, base + i * 50);                            /* slower per-char cadence */
         });
       });
     }
