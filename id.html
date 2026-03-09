@@ -461,12 +461,12 @@
       transition: transform 0.2s, background 0.2s;
     }
     .stealth-toggle-btn.active .stealth-pill {
-      background: rgba(255,255,255,0.18);
-      border-color: rgba(255,255,255,0.35);
+      background: rgba(255,92,0,0.25);
+      border-color: rgba(255,92,0,0.55);
     }
     .stealth-toggle-btn.active .stealth-pill::after {
       transform: translateX(16px);
-      background: #fff;
+      background: #FF5C00;
     }
     .stealth-toggle-label {
       font-size: 0.58rem;
@@ -477,7 +477,7 @@
       transition: color 0.2s;
     }
     .stealth-toggle-btn.active .stealth-toggle-label {
-      color: rgba(255,255,255,0.55);
+      color: #FF5C00;
     }
     .stealth-toggle-btn:hover .stealth-toggle-label { color: rgba(255,255,255,0.4); }
     .stealth-notice {
@@ -488,41 +488,9 @@
       line-height: 1.7;
     }
 
-    /* ── bIOMETRIC quick-login ── */
-    .bio-center { display:flex; flex-direction:column; align-items:center; padding:clamp(32px,6vh,52px) 0 clamp(20px,3.5vh,36px); gap:clamp(10px,1.8vh,16px); }
-    .btn-biometric { display:flex; flex-direction:column; align-items:center; gap:14px; background:transparent; border:1.5px solid rgba(255,255,255,0.16); border-radius:18px; padding:clamp(24px,4vh,40px) clamp(28px,5vw,48px); cursor:pointer; color:rgba(255,255,255,0.72); transition:border-color 0.18s,background 0.18s,transform 0.12s; }
-    .btn-biometric:hover { border-color:rgba(255,255,255,0.38); background:rgba(255,255,255,0.035); transform:scale(1.025); }
-    .btn-biometric:active { transform:scale(0.965); }
-    .btn-biometric:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
-    .bio-icon { width:clamp(48px,10vw,68px); height:clamp(48px,10vw,68px); color:rgba(255,255,255,0.78); transition:color 0.18s; }
-    .btn-biometric:hover .bio-icon { color:#fff; }
-    .bio-btn-label { font-size:clamp(0.72rem,2vw,0.88rem); font-weight:700; letter-spacing:0.22em; color:rgba(255,255,255,0.5); transition:color 0.18s; }
-    .bio-hint { font-size:0.5rem; font-weight:300; letter-spacing:0.24em; color:rgba(255,255,255,0.14); text-transform:uppercase; }
-    .bio-err { font-size:0.6rem; font-weight:300; letter-spacing:0.16em; color:rgba(255,80,80,0.72); min-height:1em; text-align:center; }
-    .bio-fallback-row { display:flex; justify-content:center; padding-top:clamp(6px,1.2vh,12px); }
-    .bio-fallback { font-size:0.6rem; font-weight:300; letter-spacing:0.14em; color:rgba(255,255,255,0.18); text-decoration:none; transition:color 0.15s; }
-    .bio-fallback:hover { color:rgba(255,255,255,0.48); }
-    .bio-enroll-row { margin-top:clamp(10px,1.5vh,16px); }
-    /* ── Biometric button on s1 ── */
-    .s1-bio-row { margin-top: clamp(14px,2.2vh,22px); display:flex; justify-content:center; }
-    .btn-s1-bio {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em;
-      cursor: pointer; background: transparent;
-      color: rgba(255,255,255,0.45);
-      border: 1.5px solid rgba(255,255,255,0.13);
-      border-radius: 8px; padding: 0.55rem 1.2rem;
-      transition: color 0.18s, border-color 0.18s, background 0.18s;
-    }
-    .btn-s1-bio:hover { color:#fff; border-color:rgba(255,255,255,0.38); background:rgba(255,255,255,0.04); }
-    .btn-bio-enroll { font-family:'Space Grotesk',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.18em; cursor:pointer; background:transparent; color:rgba(255,255,255,0.28); border:1px solid rgba(255,255,255,0.09); border-radius:3px; padding:0.4rem 0.9rem; transition:color 0.15s,border-color 0.15s; }
-    .btn-bio-enroll:hover { color:rgba(255,255,255,0.65); border-color:rgba(255,255,255,0.22); }
-    .btn-bio-enroll.done { color:rgba(110,227,110,0.75); border-color:rgba(110,227,110,0.2); pointer-events:none; }
-    .btn-bio-enroll:disabled { opacity:0.4; cursor:not-allowed; }
 
     /* ── Stage fade transitions ── */
-    #s1, #s1-bio, #s2 { transition: opacity 0.22s ease; }
+    #s1, #s2 { transition: opacity 0.22s ease; }
 
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
@@ -558,32 +526,6 @@
   <main>
     <div class="form-col">
 
-      <!-- ── STAGE 1b: biometric quick-access ── -->
-      <div id="s1-bio" hidden>
-        <p class="section-label">mEMBER aCCESS</p>
-        <h1 class="form-title">qUICK aCCESS</h1>
-        <div class="bio-center">
-          <button class="btn-biometric" id="btn-bio" aria-label="Authenticate with biometrics">
-            <svg class="bio-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M2 12V4h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M24 4h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M34 24v8h-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 32H4v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="13.5" cy="15.5" r="1.6" fill="currentColor"/>
-              <circle cx="22.5" cy="15.5" r="1.6" fill="currentColor"/>
-              <path d="M18 13v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M12.5 22c1.8 2.4 9.2 2.4 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <span class="bio-btn-label" id="bio-btn-lbl">bIOMETRiCS</span>
-          </button>
-          <p class="bio-hint">tOUCH iD · wINDOWS hELLO</p>
-          <p class="bio-err" id="bio-err"></p>
-        </div>
-        <div class="bio-fallback-row">
-          <a href="#" class="bio-fallback" id="bio-fallback">enter 12 words instead →</a>
-        </div>
-      </div>
-
       <!-- ── STAGE 1: word entry ── -->
       <div id="s1">
         <p class="section-label">mEMBER aCCESS</p>
@@ -599,30 +541,13 @@
           <p class="not-member"><a href="join.html">not a member? →</a></p>
         </div>
 
-        <!-- ── Biometric shortcut on main entry screen ── -->
-        <div class="s1-bio-row" id="s1-bio-row" hidden>
-          <button class="btn-s1-bio" id="btn-s1-bio">
-            <svg width="18" height="18" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M2 12V4h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M24 4h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M34 24v8h-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 32H4v-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="13.5" cy="15.5" r="1.6" fill="currentColor"/>
-              <circle cx="22.5" cy="15.5" r="1.6" fill="currentColor"/>
-              <path d="M18 13v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M12.5 22c1.8 2.4 9.2 2.4 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <span id="s1-bio-lbl">bIOMETRiCS</span>
-          </button>
-        </div>
-
         <div class="stealth-row">
           <button class="stealth-toggle-btn" id="btn-stealth-toggle" role="switch" aria-checked="false">
             <span class="stealth-pill"></span>
             <span class="stealth-toggle-label">sTEaLTH mODE</span>
           </button>
           <p class="stealth-notice" id="stealth-notice" hidden>
-            session-only — nothing stored after tab closes · works in incognito
+            session-only — nothing stored after tab closes
           </p>
         </div>
       </div>
@@ -674,10 +599,6 @@
           <a href="#" class="btn-activate-pay" id="btn-activate-pay">nOT yET aCTIVE? pAY →</a>
         </div>
 
-        <div class="bio-enroll-row" id="bio-enroll-row" hidden>
-          <button class="btn-bio-enroll" id="btn-bio-enroll">ENaBlE bIOMETRiCS →</button>
-        </div>
-
         <div class="signout-row">
           <button class="btn-signout" id="btn-signout">sIGN OuT</button>
         </div>
@@ -692,11 +613,37 @@
     var stealthMode = false;
 
     /* Auto-detect: if localStorage is blocked (Firefox private etc), force stealth */
+    var _inIncognito = false;
     try {
       localStorage.setItem('_arts_test', '1');
       localStorage.removeItem('_arts_test');
     } catch(e) {
       stealthMode = true;
+      _inIncognito = true;
+    }
+    /* Chrome/Safari incognito: localStorage quota is reduced to 0 */
+    if (!_inIncognito) {
+      try {
+        var _q = window.navigator.storage && window.navigator.storage.estimate;
+        if (typeof StorageManager !== 'undefined' && navigator.storage && navigator.storage.estimate) {
+          navigator.storage.estimate().then(function(est) {
+            /* In Chrome incognito, quota is typically ~120MB vs ~unlimited in normal mode */
+            if (est.quota && est.quota < 200 * 1024 * 1024) {
+              stealthMode = true; _inIncognito = true;
+              applyStealthUI();
+              var stRow = document.querySelector('.stealth-row');
+              if (stRow) stRow.hidden = true;
+            }
+          }).catch(function(){});
+        }
+      } catch(e) {}
+    }
+    /* Hide stealth toggle if already in incognito (forced stealth) */
+    if (_inIncognito) {
+      document.addEventListener('DOMContentLoaded', function() {
+        var stRow = document.querySelector('.stealth-row');
+        if (stRow) stRow.hidden = true;
+      });
     }
 
     /* Unified store helper — swaps backend transparently */
@@ -705,67 +652,6 @@
       set: function(k,v){ try{ (stealthMode ? sessionStorage : localStorage).setItem(k,v); }catch(e){} },
       del: function(k){ try{ (stealthMode ? sessionStorage : localStorage).removeItem(k); }catch(e){} }
     };
-
-    /* ── bIOMETRIC helpers ── */
-    var BIO_SUPPORTED = !!(window.PublicKeyCredential &&
-                           navigator.credentials &&
-                           navigator.credentials.create);
-
-    function _b64u(buf) {
-      return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)))
-        .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    }
-    function _u8(s) {
-      s = s.replace(/-/g,'+').replace(/_/g,'/');
-      while (s.length % 4) s += '=';
-      var bin = atob(s), b = new Uint8Array(bin.length);
-      for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
-      return b;
-    }
-    async function registerBiometric(hash, alias) {
-      if (!BIO_SUPPORTED) return false;
-      try {
-        var cred = await navigator.credentials.create({
-          publicKey: {
-            challenge: crypto.getRandomValues(new Uint8Array(32)),
-            rp: { name: '[aRTS]' },
-            user: {
-              id: new TextEncoder().encode((hash || 'arts').slice(0, 16)),
-              name: 'arts_member',
-              displayName: alias ? String(alias) : '[aRTS] mEMBER'
-            },
-            pubKeyCredParams: [
-              { type:'public-key', alg:-7 },
-              { type:'public-key', alg:-257 }
-            ],
-            authenticatorSelection: {
-              authenticatorAttachment: 'platform',
-              userVerification: 'required',
-              residentKey: 'preferred'
-            },
-            timeout: 60000
-          }
-        });
-        store.set('arts_biometric_cid', _b64u(cred.rawId));
-        return true;
-      } catch(e) { return false; }
-    }
-    async function authBiometric() {
-      if (!BIO_SUPPORTED) return false;
-      var cid = store.get('arts_biometric_cid');
-      if (!cid) return false;
-      try {
-        var cred = await navigator.credentials.get({
-          publicKey: {
-            challenge: crypto.getRandomValues(new Uint8Array(32)),
-            allowCredentials: [{ id: _u8(cid), type:'public-key' }],
-            userVerification: 'required',
-            timeout: 60000
-          }
-        });
-        return !!cred;
-      } catch(e) { return false; }
-    }
 
     function applyStealthUI(){
       var btn = document.getElementById('btn-stealth-toggle');
@@ -998,12 +884,6 @@
         requestAnimationFrame(function() {
           requestAnimationFrame(function() { s2.style.opacity = '1'; });
         });
-        /* Offer biometric enroll if supported and not yet enrolled */
-        if (BIO_SUPPORTED && !store.get('arts_biometric_cid')) {
-          PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-            .then(function(av) { if (av) document.getElementById('bio-enroll-row').hidden = false; })
-            .catch(function(){});
-        }
       }, 230);
 
       /* Show STEaLTH badge if in stealth mode */
@@ -1059,109 +939,10 @@
       document.getElementById('vc-remembered').hidden = true;
       document.getElementById('vc-progress-fill').style.width = '0%';
       document.getElementById('activate-row').hidden = true;
-      document.getElementById('bio-enroll-row').hidden = true;
-      document.getElementById('bio-err').textContent = '';
-      var bioScr = document.getElementById('s1-bio');
-      if (bioScr) bioScr.hidden = true;
       document.getElementById('tier-confirm').hidden = true;
       inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
       document.getElementById('err-msg').textContent = '';
     });
-
-    /* ── bIOMETRIC event handlers ── */
-    /* Show s2 dashboard from bio screen */
-    function showDashboardFromBio() {
-      var t = store.get('arts_tier');
-      var a = store.get('arts_alias');
-      var s = store.get('arts_since');
-      var p = store.get('arts_points');
-      var bioEl = document.getElementById('s1-bio');
-      bioEl.style.opacity = '0';
-      setTimeout(function() {
-        bioEl.hidden = true;
-        var s2El = document.getElementById('s2');
-        s2El.style.opacity = '0';
-        s2El.hidden = false;
-        setTimeout(function() {
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() { s2El.style.opacity = '1'; });
-          });
-        }, 50);
-        document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
-        document.getElementById('vc-phrase').textContent  = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
-        document.getElementById('vc-stealth').hidden      = !stealthMode;
-        renderPoints(p || 0, a, t, s, true);
-        if (t) showActivateLink(t);
-        /* bio-enroll-row stays hidden (already enrolled — just authed) */
-      }, 200);
-    }
-
-    /* btn-bio: trigger biometric auth */
-    var bioBtnEl = document.getElementById('btn-bio');
-    if (bioBtnEl) {
-      bioBtnEl.addEventListener('click', async function() {
-        var errEl = document.getElementById('bio-err');
-        bioBtnEl.disabled = true;
-        errEl.textContent = '';
-        var ok = await authBiometric();
-        bioBtnEl.disabled = false;
-        if (ok) {
-          showDashboardFromBio();
-        } else {
-          errEl.textContent = '— aUTHENTICaTION fAILED · tRY aGaIN';
-        }
-      });
-    }
-
-    /* btn-s1-bio: biometric shortcut from main entry screen */
-    var s1BioBtn = document.getElementById('btn-s1-bio');
-    if (s1BioBtn) {
-      s1BioBtn.addEventListener('click', async function() {
-        s1BioBtn.disabled = true;
-        var ok = await authBiometric();
-        s1BioBtn.disabled = false;
-        if (ok) {
-          showDashboardFromBio();
-        } else {
-          /* fall through — let user type 12 words */
-          document.getElementById('s1-bio-row').hidden = true;
-        }
-      });
-    }
-
-    /* bio-fallback: show word-entry form instead */
-    var bioFallbackEl = document.getElementById('bio-fallback');
-    if (bioFallbackEl) {
-      bioFallbackEl.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('s1-bio').hidden = true;
-        var s1 = document.getElementById('s1');
-        s1.style.opacity = '0';
-        s1.hidden = false;
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() { s1.style.opacity = '1'; });
-        });
-      });
-    }
-
-    /* btn-bio-enroll: register biometric after 12-word verify */
-    var bioEnrollBtn = document.getElementById('btn-bio-enroll');
-    if (bioEnrollBtn) {
-      bioEnrollBtn.addEventListener('click', async function() {
-        bioEnrollBtn.disabled = true;
-        bioEnrollBtn.textContent = 'tOUCHING …';
-        var hash  = store.get('arts_id_hash');
-        var alias = store.get('arts_alias');
-        var ok = await registerBiometric(hash, alias);
-        if (ok) {
-          bioEnrollBtn.textContent = 'ENaBLED ✓';
-          bioEnrollBtn.classList.add('done');
-        } else {
-          bioEnrollBtn.textContent = 'ENaBlE bIOMETRiCS →';
-          bioEnrollBtn.disabled = false;
-        }
-      });
-    }
 
     /* ── Cascading scramble on login page text ── */
     var _scramblePool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#!?·—';
@@ -1211,31 +992,6 @@
     (async function() {
       var h = store.get('arts_id_hash');
       if (!h) return;
-
-      /* ── Biometric fast-track: show #s1-bio if credential registered ── */
-      var cid = store.get('arts_biometric_cid');
-      if (cid && BIO_SUPPORTED) {
-        var avail = false;
-        try { avail = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); } catch(e) {}
-        if (avail) {
-          var s1F = document.getElementById('s1');
-          s1F.style.opacity = '0';
-          setTimeout(function() { s1F.hidden = true; }, 180);
-          document.getElementById('s1-bio').hidden = false;
-          return;
-        }
-      }
-
-      /* ── Surface biometric button on s1 if enrolled ── */
-      if (BIO_SUPPORTED && store.get('arts_biometric_cid')) {
-        try {
-          var bioAvail = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-          if (bioAvail) {
-            var s1BioRow = document.getElementById('s1-bio-row');
-            if (s1BioRow) s1BioRow.hidden = false;
-          }
-        } catch(e) {}
-      }
 
       var t = store.get('arts_tier');
       var a = store.get('arts_alias');
