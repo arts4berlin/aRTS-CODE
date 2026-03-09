@@ -688,12 +688,18 @@
       return;
     }
 
-    // Boot: collapse content to a single horizontal center line
-    wrap.style.clipPath = 'inset(50% 0 50% 0)';
+    // Boot: two black cover divs simulate CRT squish line — pointer-events:none
+    // so buttons remain clickable immediately on page load
+    const topCover = document.createElement('div');
+    topCover.style.cssText = 'position:fixed;left:0;right:0;top:0;height:50%;background:#000;z-index:9995;pointer-events:none;';
+    const botCover = document.createElement('div');
+    botCover.style.cssText = 'position:fixed;left:0;right:0;bottom:0;height:50%;background:#000;z-index:9995;pointer-events:none;';
+    document.body.appendChild(topCover);
+    document.body.appendChild(botCover);
 
     // ── Phases (ms) ──────────────────────────────────────────────
-    // 0   – 130 : flicker burst — static + strong RGB, no expansion
-    // 130 – 780 : tube warms up — clip expands, RGB fades, static clears
+    // 0   – 130 : flicker burst — static + strong RGB, covers hold at 50%
+    // 130 – 780 : tube warms up — covers shrink, RGB fades, static clears
     // 780 – 1150: afterglow — scanlines + vignette dissolve smoothly
     // 1150+     : done
 
@@ -721,17 +727,18 @@
       const e = ts - start;
 
       if (e < T_FLICKER) {
-        // ── Flicker burst: random brightness pulses, clip stays at center line
+        // ── Flicker burst: covers hold, scanlines + RGB build up
         scan.style.opacity     = String(lerp(0, 1.0, e / T_FLICKER));
         vignette.style.opacity = '0.95';
         setRGB(9, 0.75);
 
       } else if (e < T_EXPAND) {
-        // ── Tube warms up: clip expands, RGB fades, static clears
-        const t  = (e - T_FLICKER) / (T_EXPAND - T_FLICKER);
-        const et = easeOut(t);
+        // ── Tube warms up: covers shrink away, RGB fades, static clears
+        const t   = (e - T_FLICKER) / (T_EXPAND - T_FLICKER);
+        const et  = easeOut(t);
         const pct = lerp(50, 0, et);
-        wrap.style.clipPath = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
+        topCover.style.height = pct.toFixed(2) + '%';
+        botCover.style.height = pct.toFixed(2) + '%';
 
         // RGB strongest at start, gone by end of expansion
         setRGB(lerp(9, 0, smoothstep(t)), lerp(0.75, 0, smoothstep(t)));
@@ -743,15 +750,17 @@
         // ── Afterglow: scanlines + vignette dissolve, reveal clean page
         const t  = (e - T_EXPAND) / (T_FADE_END - T_EXPAND);
         const et = smoothstep(t);
-        wrap.style.clipPath    = '';
+        topCover.style.height  = '0%';
+        botCover.style.height  = '0%';
         wrap.style.filter      = '';
         scan.style.opacity     = String(lerp(1.0, 0, et));
         vignette.style.opacity = String(lerp(0.55, 0, et));
 
       } else {
         // ── Done — clean up
-        wrap.style.clipPath    = '';
-        wrap.style.filter      = '';
+        wrap.style.filter = '';
+        topCover.remove();
+        botCover.remove();
         scan.remove();
         vignette.remove();
         return;

@@ -113,7 +113,12 @@
   </div>
 
   <script>
-    const routes = { 'work': 'work.html' };
+    const routes = {
+      'work':       'work.html',
+      'aiding':     'aid.html',
+      'connecting': 'connect.html',
+      'creating':   'art.html',
+    };
 
     const words = [
       'work',
@@ -192,10 +197,12 @@
         }
       });
 
-      /* Cursor: pointer when a routable word is at centre */
+      /* Cursor + centre highlight when a routable word is at centre */
       const wi = wordAt(ipos);
       const currentWord = wi >= 0 ? words[wi] : null;
-      iWrap.style.cursor = (currentWord && routes[currentWord]) ? 'pointer' : 'default';
+      const isRoutable = !!(currentWord && routes[currentWord]);
+      iWrap.style.cursor = isRoutable ? 'pointer' : 'default';
+      slots[2].style.color = isRoutable ? '#FF5C00' : '';
 
       requestAnimationFrame(frame);
     }

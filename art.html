@@ -155,68 +155,46 @@
       font-size: clamp(1.9rem, 6.5vw, 3.8rem);
       font-weight: 700;
       letter-spacing: 0.03em;
-      color: #FF5C00;
+      color: #fff;
       line-height: 1;
     }
+    .price .euro { color: #FF5C00; }
 
     .status {
       font-size: 0.65rem;
       font-weight: 300;
       letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.28);
+      color: #FF5C00;
       text-transform: uppercase;
       align-self: center;
     }
 
-    /* Payment details */
-    .payment-block {
+    /* Inquiry buttons */
+    .inquiry-row {
       margin-top: clamp(28px, 4vh, 48px);
       display: flex;
-      flex-direction: column;
-      border-top: 1px solid rgba(255,255,255,0.07);
+      align-items: stretch;
     }
 
-    .payment-row {
-      display: flex;
+    .btn-inq {
+      display: inline-flex;
       align-items: center;
-      gap: 1.6rem;
-      padding: clamp(14px, 2vh, 20px) 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      cursor: pointer;
-      transition: opacity 0.15s;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.82rem, 2.2vw, 0.98rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      padding: 0.85rem clamp(1.4rem, 4vw, 2.6rem);
+      border: 2px solid #fff;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .payment-row:hover { opacity: 0.6; }
-
-    .pay-label {
-      font-size: 0.68rem;
-      font-weight: 300;
-      letter-spacing: 0.24em;
-      color: rgba(255,255,255,0.28);
-      text-transform: uppercase;
-      flex-shrink: 0;
-      min-width: 3rem;
-    }
-
-    .pay-value {
-      font-size: clamp(0.8rem, 2vw, 0.92rem);
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      color: #fff;
-      word-break: break-all;
-    }
-
-    .pay-hint {
-      margin-left: auto;
-      font-size: 0.62rem;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.14);
-      text-transform: uppercase;
-      flex-shrink: 0;
-      transition: color 0.18s;
-    }
-    .payment-row:hover .pay-hint { color: rgba(255,255,255,0.35); }
-    .payment-row.copied .pay-hint { color: #FF5C00 !important; }
+    .btn-inq:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
+    .btn-inq:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
+    .btn-inq-fill  { background: #fff; color: #000; }
+    .btn-inq-fill:hover  { background: #FF5C00; border-color: #FF5C00; color: #000; }
+    .btn-inq-ghost { background: transparent; color: #fff; }
+    .btn-inq-ghost:hover { background: #fff; color: #000; }
 
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -257,61 +235,17 @@
       <div class="divider"></div>
 
       <div class="price-block">
-        <span class="price">88.888.888 €</span>
+        <span class="price">88.888.888 <span class="euro">€</span></span>
         <span class="status">aVAILABLE</span>
       </div>
 
-      <div class="payment-block">
-        <div class="payment-row" id="row-iban">
-          <span class="pay-label">IBAN</span>
-          <span class="pay-value">LT68 3250 0336 1373 8645</span>
-          <span class="pay-hint">cOPY</span>
-        </div>
-        <div class="payment-row" id="row-bic">
-          <span class="pay-label">BIC</span>
-          <span class="pay-value">REVOLT21</span>
-          <span class="pay-hint">cOPY</span>
-        </div>
+      <div class="inquiry-row">
+        <a href="ask.html" class="btn-inq btn-inq-fill">iNQUiRE</a>
+        <a href="assets.html" class="btn-inq btn-inq-ghost">BaCK</a>
       </div>
 
     </div>
   </main>
-
-  <!-- Copy-to-clipboard -->
-  <script>
-  (function(){
-    function makeCopy(rowId, text){
-      var row  = document.getElementById(rowId);
-      var hint = row.querySelector('.pay-hint');
-      row.addEventListener('click', function(){
-        function confirm(){
-          row.classList.add('copied');
-          hint.textContent = 'cOPIED';
-          setTimeout(function(){
-            row.classList.remove('copied');
-            hint.textContent = 'cOPY';
-          }, 1800);
-        }
-        if(navigator.clipboard){
-          navigator.clipboard.writeText(text).then(confirm).catch(function(){
-            fallback(); confirm();
-          });
-        } else { fallback(); confirm(); }
-        function fallback(){
-          var ta = document.createElement('textarea');
-          ta.value = text;
-          ta.style.cssText = 'position:fixed;opacity:0;';
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand('copy'); } catch(e){}
-          document.body.removeChild(ta);
-        }
-      });
-    }
-    makeCopy('row-iban', 'LT68 3250 0336 1373 8645');
-    makeCopy('row-bic',  'REVOLT21');
-  })();
-  </script>
 
   <script>
     (function () {
