@@ -222,9 +222,9 @@
       lastTs = ts;
 
       if (streaming && spans.length && !exited) {
-        /* Accelerate after all letters decoded — gradual then rockets */
+        /* Accelerate after all letters decoded */
         if (decrypted.length && decrypted.every(function(d){ return d; })) {
-          speedMult = Math.min(speedMult * (1 + dt * 4.5), 20);
+          speedMult = Math.min(speedMult + dt * 4, 3.2);
         }
 
         /* Move word left */
