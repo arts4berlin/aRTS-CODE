@@ -209,9 +209,10 @@
 
     /* ── Mobile full-screen overlay ── */
     .nav-overlay {
-      display: none;
+      /* always display:flex — visibility/pointer-events control show/hide (avoids iOS display:none→flex bug) */
+      display: flex;
       position: fixed;
-      inset: 0;
+      top: 0; left: 0; right: 0; bottom: 0; /* explicit instead of inset for older iOS */
       background: #000;
       z-index: 150;
       flex-direction: column;
@@ -219,10 +220,18 @@
       justify-content: center;
       gap: clamp(1.4rem, 4vh, 2.4rem);
       opacity: 0;
-      transition: opacity 0.22s ease;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.22s ease, visibility 0s 0.22s;
     }
-    .nav-overlay.is-open { opacity: 1; }
+    .nav-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 0.22s ease, visibility 0s;
+    }
     .nav-overlay a {
+      display: block; /* explicit block — prevents inline collapse in flex on mobile */
       text-decoration: none;
       color: #fff;
       font-size: clamp(1.3rem, 7vw, 2rem);
@@ -233,6 +242,7 @@
       padding: 0.55em 1.6em;     /* large tap target — mobile-friendly */
       transition: opacity 0.12s, color 0.12s;
       touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .nav-overlay a:active,
     .nav-overlay a:hover { opacity: 1; color: #FF5C00; }
@@ -292,8 +302,8 @@
         opacity: 0.72;
       }
 
-      /* ── Mobile: overlay instant-visible; RGB power-on handled by JS filter ── */
-      .nav-overlay { opacity: 1; }
+      /* ── Mobile: no CSS fade — instant open/close; RGB power-on handled by JS filter ── */
+      .nav-overlay, .nav-overlay.is-open { transition: none; }
     }
   
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
@@ -520,7 +530,7 @@
       var sub     = document.createElement('div'); sub.className = '_ec-sub'; sub.textContent = 'you found the easter egg';
       var clbl    = document.createElement('div'); clbl.className = '_ec-codelabel'; clbl.textContent = 'redemption code';
       var codeEl  = document.createElement('div'); codeEl.className = '_ec-code'; codeEl.textContent = codeStr;
-      var dismiss = document.createElement('div'); dismiss.className = '_ec-dismiss'; dismiss.textContent = 'double tap to close';
+      var dismiss = document.createElement('div'); dismiss.className = '_ec-dismiss'; dismiss.textContent = 'tap anywhere to close';
 
       [stripe,hdr,pay,numEl,rule,congrats,sub,clbl,codeEl,dismiss].forEach(function(el){ card.appendChild(el); });
       ov.appendChild(card);
@@ -824,14 +834,10 @@
     }
 
     function openMenu(){
-      overlay.style.display = 'flex';
-      void overlay.offsetHeight;                        /* force reflow for iOS */
-      requestAnimationFrame(function(){
-        overlay.classList.add('is-open');
-        rgbPowerOn();
-        decapCascade();
-      });
+      overlay.classList.add('is-open');
       burger.classList.add('is-open');
+      rgbPowerOn();
+      decapCascade();
     }
 
     function closeMenu(){
@@ -839,9 +845,7 @@
       oLinks.forEach(function(el, i){ el.textContent = oLabels[i]; }); /* restore labels */
       overlay.classList.remove('is-open');
       burger.classList.remove('is-open');
-      /* Mobile: no CSS transition → near-instant hide. Desktop: opacity 0.22s */
-      var dur = window.innerWidth <= 520 ? 30 : 230;
-      setTimeout(function(){ overlay.style.display = 'none'; }, dur);
+      /* visibility + pointer-events handled entirely by CSS; no display toggle needed */
     }
 
     burger.addEventListener('click', openMenu);
