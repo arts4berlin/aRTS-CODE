@@ -952,161 +952,119 @@
     });
 
     function launchZeno(){
-      /* ══════════════════════════════════════════════════════════════════
-         Visual: THE HALVING COMB — Zeno's series encoded as decaying bars.
-
-         Each step plants one bar on the stage:
-           x-position = partial sum  (WHERE Achilles has arrived)
-           bar height  = term size   (HOW FAR he jumped this step)
-
-         Both values halve with each iteration. The resulting comb —
-         tall on the left, vanishingly short and dense toward GOAL —
-         makes the infinite series 1/2 + 1/4 + 1/8 + … = 1 visible
-         without any graph axes, just pure shape.
-      ══════════════════════════════════════════════════════════════════ */
       var s = document.createElement('style');
       s.textContent =
         '@keyframes zFade{0%{opacity:0}100%{opacity:1}}' +
-        '@keyframes zPulse{0%,100%{opacity:0.18}50%{opacity:0.40}}' +
+        '@keyframes zGlow{0%,100%{text-shadow:0 0 40px rgba(255,92,0,0.45)}' +
+          '50%{text-shadow:0 0 90px rgba(255,92,0,0.95)}}' +
         '#_zenoEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
-          'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' +
-          'cursor:pointer;overflow:hidden;animation:zFade 0.28s ease forwards;}' +
+          'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+          'gap:clamp(18px,3.5vh,40px);cursor:pointer;overflow:hidden;' +
+          'animation:zFade 0.28s ease forwards;}' +
+        /* CRT scanlines */
         '#_zenoEgg::after{content:"";position:absolute;inset:0;pointer-events:none;' +
           'background:repeating-linear-gradient(to bottom,' +
             'transparent 0px,transparent 3px,rgba(0,14,0,0.42) 3px,rgba(0,14,0,0.42) 4px);}' +
+        /* ZENO ghost watermark */
         '#_zenoEgg::before{content:"ZENO";position:absolute;top:50%;left:50%;' +
           'transform:translate(-50%,-50%);z-index:0;' +
           'font-family:"Space Grotesk",sans-serif;font-size:clamp(6rem,30vw,18rem);' +
-          'font-weight:700;color:rgba(255,92,0,0.015);letter-spacing:0.1em;' +
+          'font-weight:700;color:rgba(255,92,0,0.018);letter-spacing:0.1em;' +
           'pointer-events:none;user-select:none;}' +
-        /* Quote */
-        '#_zenoQuote{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.68rem,1.8vw,0.86rem);' +
-          'font-weight:300;letter-spacing:0.16em;color:rgba(255,255,255,0.30);' +
-          'text-align:center;max-width:min(80vw,520px);line-height:1.7;' +
-          'margin-bottom:clamp(4px,0.6vh,8px);text-transform:uppercase;position:relative;z-index:1;}' +
-        '#_zenoName{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.48rem,1.2vw,0.62rem);' +
-          'font-weight:300;letter-spacing:0.32em;color:rgba(255,255,255,0.15);' +
-          'margin-bottom:clamp(18px,3vh,42px);text-transform:uppercase;position:relative;z-index:1;}' +
-        /* Current-step display — shows 1/2ⁿ */
-        '#_zenoStep{font-family:"Space Grotesk",sans-serif;' +
-          'font-size:clamp(3rem,12vw,7rem);font-weight:700;letter-spacing:0.04em;' +
-          'color:#fff;line-height:1;margin-bottom:clamp(16px,2.5vh,32px);' +
-          'transition:color 0.55s ease,text-shadow 0.55s ease;position:relative;z-index:1;text-align:center;}' +
-        /* Comb stage */
-        '#_zenoComb{position:relative;z-index:1;' +
-          'width:min(74vw,540px);height:clamp(60px,10vh,110px);' +
-          'margin-bottom:clamp(12px,2vh,24px);}' +
-        '#_zenoBase{position:absolute;bottom:0;left:0;right:0;' +
-          'height:1px;background:rgba(255,255,255,0.10);}' +
-        /* Endpoint markers + labels */
-        '.zn-end{position:absolute;bottom:0;width:1px;height:6px;background:rgba(255,255,255,0.20);}' +
-        '.zn-lbl{position:absolute;bottom:-15px;font-family:"Space Grotesk",sans-serif;' +
-          'font-size:0.40rem;letter-spacing:0.2em;color:rgba(255,255,255,0.16);transform:translateX(-50%);}' +
-        /* THE COMB BARS */
-        '.zn-bar{position:absolute;bottom:0;width:2px;' +
-          'transform:translateX(-50%);border-radius:1px 1px 0 0;}' +
-        /* Sub */
-        '#_zenoSub{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.48rem,1.2vw,0.60rem);' +
-          'font-weight:300;letter-spacing:0.3em;color:rgba(255,255,255,0.18);' +
-          'text-transform:uppercase;animation:zPulse 2.2s ease infinite;position:relative;z-index:1;}' +
+        /* Equation row: Σ  (1/2)ⁿ  ≈  sum */
+        '#_zenoEq{display:flex;align-items:center;gap:clamp(10px,2.2vw,24px);' +
+          'position:relative;z-index:1;}' +
+        /* Sigma block — ∞ stacked above Σ above n=1 */
+        '#_zenoSig{display:inline-flex;flex-direction:column;align-items:center;' +
+          'font-family:"Space Grotesk",sans-serif;color:#FF5C00;line-height:1.1;}' +
+        '.zs-top{font-size:clamp(0.9rem,2.4vw,1.4rem);}' +
+        '.zs-sym{font-size:clamp(2.8rem,9vw,5.5rem);font-weight:700;line-height:0.9;}' +
+        '.zs-bot{font-size:clamp(0.62rem,1.6vw,0.88rem);letter-spacing:0.06em;}' +
+        /* (1/2)ⁿ — n increments each step */
+        '#_zenoTerm{font-family:"Space Grotesk",sans-serif;' +
+          'font-size:clamp(2rem,7vw,4.5rem);font-weight:700;' +
+          'color:#FF5C00;position:relative;z-index:1;}' +
+        /* ≈ / = */
+        '#_zenoRel{font-family:"Space Grotesk",sans-serif;' +
+          'font-size:clamp(2rem,7vw,4.5rem);font-weight:300;' +
+          'color:#FF5C00;position:relative;z-index:1;' +
+          'transition:opacity 0.22s ease;min-width:1.1ch;text-align:center;}' +
+        /* Running sum → 1 */
+        '#_zenoSum{font-family:"Space Grotesk",sans-serif;' +
+          'font-size:clamp(2rem,7vw,4.5rem);font-weight:700;' +
+          'color:#FF5C00;position:relative;z-index:1;min-width:5ch;}' +
+        '#_zenoSum.done{animation:zGlow 1.6s ease infinite;}' +
+        /* Sub label */
+        '#_zenoSub{font-family:"Space Grotesk",sans-serif;' +
+          'font-size:clamp(0.58rem,1.5vw,0.78rem);font-weight:300;' +
+          'letter-spacing:0.28em;color:rgba(255,92,0,0.38);' +
+          'text-transform:uppercase;position:relative;z-index:1;' +
+          'transition:opacity 0.4s ease;}' +
         '#_zenoHint{position:absolute;bottom:28px;font-family:"Space Grotesk",sans-serif;' +
-          'font-size:0.48rem;letter-spacing:0.22em;color:rgba(255,255,255,0.08);text-transform:uppercase;}';
+          'font-size:0.48rem;letter-spacing:0.22em;' +
+          'color:rgba(255,255,255,0.08);text-transform:uppercase;}';
       document.head.appendChild(s);
 
-      /* ── DOM ── */
-      var ov     = document.createElement('div');  ov.id = '_zenoEgg';
-      var quote  = document.createElement('p');    quote.id = '_zenoQuote';
-      var nm     = document.createElement('p');    nm.id    = '_zenoName';
-      var stepEl = document.createElement('div');  stepEl.id = '_zenoStep';
-      var comb   = document.createElement('div');  comb.id   = '_zenoComb';
-      var base   = document.createElement('div');  base.id   = '_zenoBase';
-      var sub    = document.createElement('div');  sub.id    = '_zenoSub';
-      var hint   = document.createElement('div');  hint.id   = '_zenoHint';
-
-      /* Origin (0) and Goal (1) markers on the baseline */
-      function mkEndpoint(pct, label) {
-        var m = document.createElement('div'); m.className = 'zn-end'; m.style.left = pct;
-        var l = document.createElement('span'); l.className = 'zn-lbl'; l.style.left = pct;
-        l.textContent = label;
-        comb.appendChild(m); comb.appendChild(l);
-      }
-      mkEndpoint('0%', '0'); mkEndpoint('100%', 'GOAL');
-
-      quote.textContent  = 'That which is in locomotion must arrive at the half-way stage before it arrives at the goal.';
-      nm.textContent     = '— Zeno of Elea · 490 BC';
-      stepEl.textContent = '—';
-      sub.textContent    = 'approaching…';
-      hint.textContent   = 'tAP · eSC · cLOSE';
-
-      comb.appendChild(base);
-      ov.appendChild(quote); ov.appendChild(nm);
-      ov.appendChild(stepEl); ov.appendChild(comb);
-      ov.appendChild(sub);    ov.appendChild(hint);
-      document.body.appendChild(ov);
-
-      /* ── Helpers ── */
       function toSup(n){
-        return String(n).replace(/[0-9]/g, function(c){
-          return ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'][parseInt(c)];
+        return String(n).replace(/[0-9]/g,function(c){
+          return ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'][+c];
         });
       }
 
-      /* ── State ── */
-      var current   = 0;       /* cumulative fraction [0,1] */
-      var stepIdx   = 0;
-      var STEPS     = 32;
-      var DELAY     = 340;
-      var THRESHOLD = 0.9999999;
-      var inFrac    = false;
+      /* ── DOM ── */
+      var ov   = document.createElement('div'); ov.id = '_zenoEgg';
+
+      /* Equation row */
+      var eq   = document.createElement('div'); eq.id = '_zenoEq';
+      var sig  = document.createElement('div'); sig.id = '_zenoSig';
+      sig.innerHTML =
+        '<span class="zs-top">∞</span>' +
+        '<span class="zs-sym">Σ</span>' +
+        '<span class="zs-bot">n=1</span>';
+      var term = document.createElement('div'); term.id = '_zenoTerm';
+      term.textContent = '(1/2)' + toSup(1);
+      var rel  = document.createElement('div'); rel.id = '_zenoRel';
+      rel.textContent = '≈';
+      var sum  = document.createElement('div'); sum.id = '_zenoSum';
+      sum.textContent = '0';
+      eq.appendChild(sig); eq.appendChild(term);
+      eq.appendChild(rel); eq.appendChild(sum);
+
+      var sub  = document.createElement('div'); sub.id = '_zenoSub';
+      sub.textContent = '½ + ¼ + ⅛ + …';
+      var hint = document.createElement('div'); hint.id = '_zenoHint';
+      hint.textContent = 'dOUBLE tAP · eSC · cLOSE';
+
+      ov.appendChild(eq); ov.appendChild(sub); ov.appendChild(hint);
+      document.body.appendChild(ov);
+
+      /* ── Animation — each step adds next term, updates display ── */
+      var n = 0, runSum = 0, stopped = false, timer;
 
       function step(){
         if(stopped) return;
-        stepIdx++;
-        var remaining = 1 - current;
-        current += remaining / 2;   /* halve remaining distance */
+        n++;
+        runSum += Math.pow(0.5, n);
 
-        /* ── Plant one comb bar ──
-           x  = partial sum  →  WHERE Achilles arrives this step
-           ht = term value   →  HOW FAR he jumped (halves each time)
-           Reading the comb left-to-right reveals the convergent series. */
-        var posPct = current * 100;
-        var htFrac = Math.pow(0.5, stepIdx - 1);   /* 1 → ½ → ¼ → ⅛ … */
-        var htPct  = Math.max(0.5, htFrac * 100);
-        var alpha  = Math.max(0.10, Math.min(0.88, htFrac * 1.9));
+        /* (1/2)ⁿ — exponent increments */
+        term.textContent = '(1/2)' + toSup(n);
 
-        var bar = document.createElement('div');
-        bar.className = 'zn-bar';
-        bar.style.left    = posPct.toFixed(4) + '%';
-        bar.style.height  = htPct.toFixed(3) + '%';
-        bar.style.opacity = alpha.toFixed(3);
-        bar.style.background = inFrac ? '#FF5C00' : 'rgba(255,255,255,0.92)';
-        comb.appendChild(bar);
-
-        /* Enter fraction / orange mode when sum becomes indistinguishable from 1 */
-        if(!inFrac && current > THRESHOLD){
-          inFrac = true;
-          sub.textContent = '∞  —  approaching';
-          stepEl.style.color       = '#FF5C00';
-          stepEl.style.textShadow  = '0 0 50px rgba(255,92,0,0.38)';
-          Array.from(comb.querySelectorAll('.zn-bar')).forEach(function(b){
-            b.style.background = '#FF5C00';
-          });
-        }
-
-        /* Label shows the current step size — the term of the series */
-        stepEl.textContent = '1/2' + toSup(stepIdx);
-
-        if(stepIdx < STEPS){
-          timer = setTimeout(step, DELAY + stepIdx * 18);
+        if(runSum >= 0.9999){
+          /* Converged — snap to = 1 */
+          rel.textContent = '=';
+          sum.textContent = '1';
+          sum.classList.add('done');
+          sub.textContent = 'qED';
         } else {
-          sub.textContent = 'undefined.';
-          sub.style.animationPlayState = 'paused';
-          sub.style.opacity = '0.32';
+          rel.textContent = '≈';
+          /* Running decimal — more digits as terms shrink */
+          sum.textContent = runSum.toFixed(Math.min(n, 5));
+          timer = setTimeout(step, 460 + n * 14);
         }
       }
 
       var stopped = false, timer;
-      setTimeout(step, 900);   /* brief pause — let quote breathe */
+      setTimeout(step, 750);
 
       function close(){
         stopped = true; clearTimeout(timer);
