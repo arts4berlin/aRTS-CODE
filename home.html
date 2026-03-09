@@ -257,7 +257,8 @@
     .btn, button, a { touch-action: manipulation; }
 
     /* ── Burger label ── */
-    .burger-label {
+    /* Must use .burger .burger-label (specificity 0,2,0) to beat .burger span (0,1,1) */
+    .burger .burger-label {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 0.42rem;
       font-weight: 700;
@@ -267,7 +268,6 @@
       line-height: 1;
       transition: opacity 0.2s ease;
       display: none; /* hidden on desktop */
-      /* Override inherited .burger span rules */
       width: auto;
       height: auto;
       background: none;
@@ -287,13 +287,18 @@
       .burger span:not(.burger-label) { display: none; }
 
       /* Restyle label to match home-mark on desktop */
-      .burger-label {
+      /* .burger .burger-label beats .burger span (0,2,0 > 0,1,1) — prevents white-bar artefact */
+      .burger .burger-label {
         display: block;
         font-size: 1rem;
         font-weight: 300;
         letter-spacing: 0.05em;
         color: rgba(255,255,255,0.88);
         margin-top: 0;
+        width: auto;
+        height: auto;
+        background: none;
+        border-radius: 0;
       }
 
       /* Close button label [×] — always visible inside overlay */
