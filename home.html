@@ -218,6 +218,11 @@
       line-height: 1;
       transition: opacity 0.2s ease;
       display: none; /* hidden on desktop */
+      /* Override inherited .burger span rules */
+      width: auto;
+      height: auto;
+      background: none;
+      border-radius: 0;
     }
     .burger.is-open .burger-label { opacity: 0; }
 

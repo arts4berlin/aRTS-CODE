@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
-  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  <script defer src="https://js.stripe.com/v3/buy-button.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -330,22 +330,23 @@
       border-radius: 4px;
       -webkit-appearance: none;
       appearance: none;
+      cursor: pointer;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
-      pointer-events: none;
-      user-select: none;
     }
-    .pay-trigger-wrap:hover .btn-access {
+    .btn-access:hover, .pay-trigger-wrap:hover .btn-access {
       background: #000;
       color: #FF5C00;
       border-color: #FF5C00;
     }
 
-    /* Stripe buy-button lives under the visual button and catches clicks */
+    /* Stripe buy-button sits off-screen; triggered programmatically on button click */
     #stripe-btn-mount {
-      position: absolute;
-      inset: 0;
-      overflow: visible;
-      z-index: 2;
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 200px;
+      height: 60px;
+      pointer-events: none;
     }
     #stripe-btn-mount stripe-buy-button {
       display: block;
@@ -608,7 +609,7 @@
       ptsEl.textContent = '+ ' + startPts + ' sTaRTING pOINTS aWaRDED';
       ptsEl.style.display = 'block';
 
-      /* Mount Stripe Buy Button for the selected tier */
+      /* Mount Stripe Buy Button for the selected tier (off-screen, triggered by btn-access click) */
       var mount = document.getElementById('stripe-btn-mount');
       mount.innerHTML = '';
       var sbb = document.createElement('stripe-buy-button');
@@ -616,6 +617,26 @@
       sbb.setAttribute('publishable-key', STRIPE_PK);
       sbb.setAttribute('customer-email', email);
       mount.appendChild(sbb);
+
+      /* Wire btn-access to trigger the Stripe modal; replace any prior listener */
+      var tierForPay = selectedTier;
+      var btnAccess = document.getElementById('btn-access');
+      var newBtn = btnAccess.cloneNode(true); /* remove previous event listeners */
+      btnAccess.parentNode.replaceChild(newBtn, btnAccess);
+      newBtn.addEventListener('click', function() {
+        var liveSbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
+        if (liveSbb) {
+          liveSbb.click();
+        } else {
+          /* Fallback: payment link same tab */
+          var PAYMENT_LINKS = {
+            'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+            'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+            'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+          };
+          window.location.href = PAYMENT_LINKS[tierForPay];
+        }
+      });
 
       /* Backlog → Formspree (fire and forget) */
       var data = new FormData();
