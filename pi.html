@@ -219,7 +219,7 @@
       <div class="v-sublabel">you found the easter egg</div>
       <div class="v-code-label">redemption code</div>
       <div id="v-code">—</div>
-      <div class="v-dismiss">tap anywhere to close</div>
+      <div class="v-dismiss">double tap to close</div>
     </div>
   </div>
 
@@ -442,8 +442,8 @@
         }
       });
 
-      /* Tap anywhere on backdrop to close */
-      overlay.addEventListener('click', function(e){
+      /* Double tap anywhere on backdrop to close */
+      overlay.addEventListener('dblclick', function(e){
         if(e.target!==codeEl) overlay.classList.remove('open');
       });
 

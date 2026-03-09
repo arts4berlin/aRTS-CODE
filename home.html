@@ -499,7 +499,7 @@
       /* Dismiss hint */
       var hint = document.createElement('div');
       hint.style.cssText = 'font-size:0.72rem;font-weight:300;color:rgba(255,255,255,0.25);letter-spacing:0.18em;margin-top:1.4rem;opacity:0;transition:opacity 0.4s ease 0.5s;';
-      hint.textContent   = 'tap anywhere to close';
+      hint.textContent   = 'double tap to close';
       ov.appendChild(hint);
 
       document.body.appendChild(ov);
@@ -523,8 +523,8 @@
         });
       });
 
-      /* Dismiss */
-      ov.addEventListener('click', function () {
+      /* Dismiss — double click/tap */
+      ov.addEventListener('dblclick', function () {
         ov.style.opacity = '0';
         setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 300);
       });
@@ -896,7 +896,7 @@
       var ov   = document.createElement('div'); ov.id = '_techEgg';
       var wEl  = document.createElement('div'); wEl.id = '_techWord';
       var hint = document.createElement('div'); hint.id = '_techHint';
-      hint.textContent = 'tAP · eSC · cLOSE';
+      hint.textContent = 'dOUBLE tAP · eSC · cLOSE';
       ov.appendChild(wEl); ov.appendChild(hint);
       document.body.appendChild(ov);
 
@@ -934,7 +934,7 @@
       }
 
       tick();
-      ov.addEventListener('click', function(){ stop(); });
+      ov.addEventListener('dblclick', function(){ stop(); });
       document.addEventListener('keydown', function esc(e){
         if(e.key === 'Escape'){ stop(); document.removeEventListener('keydown', esc); }
       });
@@ -1117,7 +1117,7 @@
           if(s.parentNode)  s.parentNode.removeChild(s);
         }, 380);
       }
-      ov.addEventListener('click', close);
+      ov.addEventListener('dblclick', close);
       document.addEventListener('keydown', function esc(e){
         if(e.key === 'Escape'){ close(); document.removeEventListener('keydown', esc); }
       });
