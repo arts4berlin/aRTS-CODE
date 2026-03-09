@@ -213,9 +213,9 @@
     }
     .back-link:hover { color: rgba(255,255,255,0.55); }
 
-    /* ── Success state ── */
+    /* ── Success state — hidden until JS shows it ── */
     #success {
-      display: flex;
+      display: none;          /* JS sets display:flex on success */
       flex-direction: column;
       gap: clamp(10px, 1.5vh, 16px);
       transition: opacity 0.22s ease;
@@ -262,7 +262,7 @@
     <nav>
       <a href="art.html">aRT</a>
       <a href="about.html">aBOUT</a>
-      <a href="ask.html">aCT</a>
+      <a href="access.html">aCCESS</a>
     </nav>
   </header>
 
@@ -310,7 +310,7 @@
       </div>
 
       <!-- ── Success state ── -->
-      <div id="success" hidden>
+      <div id="success">
         <p class="section-label">sENT ✓</p>
         <h1 class="form-title">mESSAGE<br>sENT</h1>
         <div class="success-check">✓</div>
@@ -390,7 +390,7 @@
             wrap.hidden = true;
             var suc = document.getElementById('success');
             suc.style.opacity = '0';
-            suc.hidden = false;
+            suc.style.display = 'flex';
             requestAnimationFrame(function(){
               requestAnimationFrame(function(){ suc.style.opacity = '1'; });
             });
