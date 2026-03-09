@@ -344,7 +344,8 @@
     #stripe-btn-mount {
       position: absolute;
       inset: 0;
-      overflow: hidden;
+      overflow: visible;
+      z-index: 2;
     }
     #stripe-btn-mount stripe-buy-button {
       display: block;
@@ -464,7 +465,7 @@
             <!-- Stripe buy-button: invisible base layer, handles the actual click -->
             <div id="stripe-btn-mount"></div>
             <!-- Visual button: sits on top, pointer-events:none so clicks fall through -->
-            <button class="btn-access">pAY & aCTIVaTE →</button>
+            <button class="btn-access" id="btn-access">pAY & aCTIVaTE →</button>
           </div>
         </div>
 
@@ -621,6 +622,7 @@
       data.append('_subject', '[aRTS] member backlog: ' + selectedTier + ' — ' + email);
       data.append('tier',     selectedTier);
       data.append('email',    email);
+      data.append('alias',    alias || '');
       data.append('id_words', generatedWords.join(' — '));
       data.append('note',     'NEW MEMBER — backlog entry. ID phrase above.');
       fetch('https://formspree.io/f/xlgpgbeq', {
