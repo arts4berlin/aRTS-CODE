@@ -178,7 +178,12 @@
       font-size: clamp(2rem, 6vw, 3rem);
       font-weight: 700;
       letter-spacing: 0.25em;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: opacity 0.15s;
     }
+    .berlin:hover { opacity: 0.82; }
   
     /* ── Hamburger button ── */
     .burger {
@@ -432,11 +437,9 @@
   })();
   </script>
 
-  <!-- Easter egg: bear × 7 → 77% off -->
+  <!-- Easter egg: BERLIN × 7 → 77% -->
   <script>
   (function () {
-    var bear  = document.querySelector('.bear');
-    var clicks = 0;
     var MAGIC  = 7;
     var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
 
@@ -527,14 +530,53 @@
       });
     }
 
-    if (!bear) return;
-    bear.addEventListener('click', function () {
-      clicks++;
-      if (clicks === MAGIC) {
-        clicks = 0;
-        showEgg();
+    /* ── BERLIN: scramble element + 7-click easter egg trigger ── */
+    var berlin     = document.querySelector('.berlin');
+    var clicks     = 0;
+    var scramTimer = null;
+    var B_TARGET   = 'BERLIN';
+
+    function runBerlinScramble() {
+      clearInterval(scramTimer);
+      var step = 0, FRAMES = 18, RATE = 45;
+      scramTimer = setInterval(function () {
+        var out = '';
+        for (var i = 0; i < B_TARGET.length; i++) {
+          out += (i < Math.floor(step * B_TARGET.length / FRAMES))
+            ? B_TARGET[i]
+            : POOL[Math.floor(Math.random() * POOL.length)];
+        }
+        berlin.textContent = out;
+        if (++step > FRAMES) {
+          clearInterval(scramTimer);
+          berlin.textContent = B_TARGET;
+        }
+      }, RATE);
+    }
+
+    if (berlin) {
+      /* Touch devices: auto-scramble on load + periodic */
+      if (window.matchMedia('(hover: none)').matches) {
+        setTimeout(runBerlinScramble, 1400);
+        setInterval(runBerlinScramble, 7000);
+      } else {
+        /* Desktop: scramble on hover */
+        berlin.addEventListener('mouseenter', runBerlinScramble);
+        berlin.addEventListener('mouseleave', function () {
+          clearInterval(scramTimer);
+          berlin.textContent = B_TARGET;
+        });
       }
-    });
+
+      /* 7-click → reveal discount */
+      berlin.addEventListener('click', function () {
+        clicks++;
+        if (clicks === MAGIC) {
+          clicks = 0;
+          showEgg();
+        }
+      });
+    }
   })();
   </script>
 
