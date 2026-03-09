@@ -295,7 +295,12 @@
       /* ── Mobile: overlay instant-visible; RGB power-on handled by JS filter ── */
       .nav-overlay { opacity: 1; }
     }
-  </style>
+  
+    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+</style>
 </head>
 <body>
 
@@ -557,7 +562,7 @@
       } catch(ee){}
 
       /* ── Dismiss — double tap backdrop ── */
-      ov.addEventListener('dblclick', function(e){
+      ov.addEventListener('click', function(e){
         if(codeEl.contains(e.target)) return;
         ov.classList.remove('open');
         setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 340);
@@ -968,7 +973,7 @@
       }
 
       tick();
-      ov.addEventListener('dblclick', function(){ stop(); });
+      ov.addEventListener('click', function(){ stop(); });
       document.addEventListener('keydown', function esc(e){
         if(e.key === 'Escape'){ stop(); document.removeEventListener('keydown', esc); }
       });
@@ -1061,7 +1066,7 @@
           if(s.parentNode)  s.parentNode.removeChild(s);
         }, 380);
       }
-      ov.addEventListener('dblclick', close);
+      ov.addEventListener('click', close);
       document.addEventListener('keydown', function esc(e){
         if(e.key === 'Escape'){ close(); document.removeEventListener('keydown', esc); }
       });

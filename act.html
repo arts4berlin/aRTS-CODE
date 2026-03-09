@@ -124,7 +124,12 @@
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
-  </style>
+  
+    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+</style>
 </head>
 <body>
   <!-- CRT: prevent flash on arrival -->

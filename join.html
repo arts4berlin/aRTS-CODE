@@ -373,7 +373,12 @@
       nav a  { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
       .words-grid { grid-template-columns: repeat(2, 1fr); }
     }
-  </style>
+  
+    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+</style>
 </head>
 <body>
   <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>

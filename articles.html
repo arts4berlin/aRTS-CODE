@@ -150,7 +150,12 @@
       nav     { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
       nav a   { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
     }
-  </style>
+  
+    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+</style>
 </head>
 <body>
   <!-- CRT: prevent flash on arrival -->

@@ -199,7 +199,12 @@
       color: rgba(255,255,255,0.15); text-align: center;
       margin-top: 22px; text-transform: lowercase;
     }
-  </style>
+  
+    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+</style>
 </head>
 <body>
 
@@ -445,7 +450,7 @@
       });
 
       /* Double tap anywhere on backdrop to close */
-      overlay.addEventListener('dblclick', function(e){
+      overlay.addEventListener('click', function(e){
         if(e.target!==codeEl) overlay.classList.remove('open');
       });
 

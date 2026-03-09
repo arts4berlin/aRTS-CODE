@@ -6,7 +6,6 @@
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
-
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
@@ -17,8 +16,9 @@
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
-  <title>[aRTS] — aCCESS</title>
+  <title>[aRTS] — sENT</title>
   <script>
+    document.documentElement.style.background = '#000';
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
     }
@@ -45,48 +45,63 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(1rem, 2.5vh, 2rem);
+      gap: clamp(0.9rem, 2.2vh, 1.8rem);
+      text-align: center;
     }
 
-    /* Three buttons side-by-side */
-    .btn-row {
-      display: flex;
-      flex-direction: row;
-      gap: clamp(0.7rem, 2vw, 1.6rem);
-      flex-wrap: wrap;
-      justify-content: center;
+    /* ── Big check mark ── */
+    .sent-check {
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      color: #FF5C00;
+      line-height: 1;
+      animation: sFade 0.5s ease both;
     }
 
-    .btn-act {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: clamp(140px, 24vw, 240px);
-      height: clamp(70px, 12vh, 120px);
-      border: 2.5px solid #FF5C00;
-      border-radius: 4px;
-      background: transparent;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.1rem, 3.2vw, 1.9rem);
+    /* ── Title ── */
+    .sent-title {
+      font-size: clamp(1.8rem, 6vw, 3.6rem);
       font-weight: 700;
-      letter-spacing: 0.18em;
-      text-decoration: none;
-      transition: background 0.18s, color 0.18s;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
+      letter-spacing: 0.14em;
+      line-height: 1.1;
+      animation: sFade 0.5s 0.08s ease both;
     }
-    .btn-act:hover { background: #FF5C00; color: #000; }
 
-    .tagline {
-      font-size: 0.82rem;
+    /* ── Sub-copy ── */
+    .sent-sub {
+      font-size: clamp(0.72rem, 2vw, 0.88rem);
       font-weight: 300;
       letter-spacing: 0.13em;
       opacity: 0.5;
-      white-space: nowrap;
+      line-height: 1.7;
+      animation: sFade 0.5s 0.18s ease both;
     }
 
+    /* ── Thin rule ── */
+    .sent-rule {
+      width: clamp(60px, 18vw, 120px);
+      height: 1px;
+      background: rgba(255,255,255,0.15);
+      animation: sFade 0.5s 0.26s ease both;
+    }
+
+    /* ── Back link ── */
+    .sent-back {
+      font-size: clamp(0.78rem, 2vw, 0.9rem);
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      transition: color 0.15s;
+      animation: sFade 0.5s 0.32s ease both;
+    }
+    .sent-back:hover { color: #fff; }
+
+    @keyframes sFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Fixed nav ── */
     .logo {
       position: fixed;
       top: 28px; left: 32px;
@@ -118,15 +133,9 @@
       body { height: 100dvh; }
     }
 
-    /* ── Mobile: stack buttons vertically on narrow screens ── */
-    @media (max-width: 480px) {
-      .btn-row { flex-direction: column; }
-      .btn-act  { width: clamp(200px, 72vw, 320px); }
-    }
-
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     .logo, .nav-about { touch-action: manipulation; }
-    .btn, button, a   { touch-action: manipulation; }
+    a { touch-action: manipulation; }
   
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
@@ -142,60 +151,15 @@
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="stack">
-    <div class="btn-row">
-      <a href="ask.html"      class="btn-act" id="btn-act">aCT</a>
-      <a href="assets.html"   class="btn-act" id="btn-assets">aSSETS</a>
-      <a href="audience.html" class="btn-act" id="btn-audience">aUDIENCE</a>
-    </div>
-    <span class="tagline">... aCCESS ...</span>
+    <div class="sent-check">✓</div>
+    <h1 class="sent-title">mESSAGE<br>sENT</h1>
+    <p class="sent-sub">
+      iNQUIRY dELIVERED tO [aRTS]<br>
+      wE'LL bE iN tOUCH sOON
+    </p>
+    <div class="sent-rule"></div>
+    <a href="art.html" class="sent-back">← bACK tO aRT</a>
   </div>
-
-  <!-- Scramble effect — staggered per button, hover on desktop / periodic on touch -->
-  <script>
-  (function () {
-    var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
-    var FRAMES = 18, RATE = 45;
-    var TOUCH  = window.matchMedia('(hover: none)').matches;
-
-    var btns = [
-      { id: 'btn-act',      target: 'aCT'      },
-      { id: 'btn-assets',   target: 'aSSETS'   },
-      { id: 'btn-audience', target: 'aUDIENCE' }
-    ];
-
-    btns.forEach(function (b, idx) {
-      var el    = document.getElementById(b.id);
-      var timer = null, frame = 0;
-
-      function runScramble() {
-        clearInterval(timer);
-        frame = 0;
-        timer = setInterval(function () {
-          var settled = Math.floor((frame / FRAMES) * b.target.length);
-          el.textContent = b.target.split('').map(function (ch, i) {
-            return i < settled ? ch : POOL[Math.floor(Math.random() * POOL.length)];
-          }).join('');
-          frame++;
-          if (frame > FRAMES) { clearInterval(timer); el.textContent = b.target; }
-        }, RATE);
-      }
-
-      /* Staggered scramble on load */
-      setTimeout(runScramble, idx * 180);
-
-      if (TOUCH) {
-        /* Touch: repeat periodically, staggered so they don't all fire at once */
-        setInterval(runScramble, 3800 + idx * 600);
-      } else {
-        el.addEventListener('mouseenter', runScramble);
-        el.addEventListener('mouseleave', function () {
-          clearInterval(timer);
-          el.textContent = b.target;
-        });
-      }
-    });
-  })();
-  </script>
 
   <!-- bfcache restore fade -->
   <script>
@@ -300,7 +264,7 @@
       var a=ev.target.closest('a[href]');
       if(!a)return;
       var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\\/\\/)/.test(h))return;
       if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
       ev.preventDefault();
       doExit(h);
