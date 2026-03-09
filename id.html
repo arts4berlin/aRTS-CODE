@@ -863,7 +863,11 @@
         s1Back.style.opacity = '0';
         s1Back.hidden = false;
         requestAnimationFrame(function() {
-          requestAnimationFrame(function() { s1Back.style.opacity = '1'; });
+          requestAnimationFrame(function() {
+            s1Back.style.opacity = '1';
+            /* Re-scramble login text on sign-out */
+            if (typeof scrambleLoginText === 'function') scrambleLoginText();
+          });
         });
       }, 230);
       document.getElementById('vc-remembered').hidden = true;
@@ -874,26 +878,49 @@
       document.getElementById('err-msg').textContent = '';
     });
 
-    /* ── Scramble title on arrival ── */
-    (function(){
-      var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ@#!?';
-      function scrambleTo(el, target) {
-        var FRAMES = 18, RATE = 42, step = 0;
-        var orig = el.textContent;
-        var t = setInterval(function() {
-          var settled = Math.floor((step / FRAMES) * target.length);
-          el.textContent = target.split('').map(function(ch, i) {
-            return i < settled ? ch : POOL[Math.floor(Math.random() * POOL.length)];
-          }).join('');
-          step++;
-          if (step > FRAMES) { clearInterval(t); el.textContent = target; }
-        }, RATE);
-      }
+    /* ── Cascading scramble on login page text ── */
+    var _scramblePool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#!?·—';
+    function scrambleTo(el, target, cb) {
+      var FRAMES = 20, RATE = 38, step = 0;
+      var t = setInterval(function() {
+        var settled = Math.floor((step / FRAMES) * target.length);
+        el.textContent = target.split('').map(function(ch, i) {
+          if (i < settled) return ch;
+          /* preserve spaces and special chars for readability */
+          if (ch === ' ' || ch === '\n') return ch;
+          return _scramblePool[Math.floor(Math.random() * _scramblePool.length)];
+        }).join('');
+        step++;
+        if (step > FRAMES) {
+          clearInterval(t);
+          el.textContent = target;
+          if (cb) cb();
+        }
+      }, RATE);
+    }
+
+    /* Cascade: section-label → title → sub-label */
+    function scrambleLoginText() {
+      var label  = document.querySelector('#s1 .section-label');
+      var title  = document.querySelector('#s1 .form-title');
+      var sub    = document.querySelector('#s1 .sub-label');
+      /* stash originals (first call only) */
+      if (label && !label.dataset.orig) label.dataset.orig = label.textContent;
+      if (title && !title.dataset.orig) title.dataset.orig = title.textContent;
+      if (sub   && !sub.dataset.orig)   sub.dataset.orig   = sub.textContent;
       setTimeout(function() {
-        var titleEl = document.querySelector('#s1 .form-title');
-        if (titleEl) scrambleTo(titleEl, titleEl.textContent);
-      }, 320);
-    })();
+        if (label) scrambleTo(label, label.dataset.orig);
+      }, 220);
+      setTimeout(function() {
+        if (title) scrambleTo(title, title.dataset.orig);
+      }, 360);
+      setTimeout(function() {
+        if (sub) scrambleTo(sub, sub.dataset.orig);
+      }, 500);
+    }
+
+    /* Fire on page load */
+    scrambleLoginText();
 
     /* Auto-login: if hash stored, skip word entry and show personalised dashboard */
     (async function() {
