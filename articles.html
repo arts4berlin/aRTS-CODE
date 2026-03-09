@@ -19,7 +19,7 @@
   <title>[aRTS] — aRTICLES</title>
   <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
-    if (!sessionStorage.getItem('captcha_passed')) {
+    if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
     }
   </script>

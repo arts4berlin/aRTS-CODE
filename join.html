@@ -18,7 +18,7 @@
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
   <title>[aRTS] — jOIN</title>
   <script>
-    if (!sessionStorage.getItem('captcha_passed')) {
+    if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
     }
   </script>
@@ -433,11 +433,11 @@
         </p>
 
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
-          <a href="#" class="btn-access" id="btn-access" target="_blank" rel="noopener">pAY & aCTIVaTE →</a>
+          <a href="#" class="btn-access" id="btn-access">pAY & aCTIVaTE →</a>
         </div>
 
         <p class="payment-note">
-          stripe checkout opens in a new tab · your iD activates once payment is confirmed.<br>
+          you will be redirected to stripe · your iD activates once payment is confirmed.<br>
           on this device your key is remembered — just return to your member area after paying.
         </p>
         <a href="id.html" class="btn-already-paid">already paid? → aCCESS mEMBER iD</a>
