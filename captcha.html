@@ -113,7 +113,6 @@
     .c-pow-track { height: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
     .c-pow-fill  { height: 100%; background: #fff; width: 0%; transition: width 0.2s ease; }
     .c-pow-label { display: block; font-size: 0.59rem; letter-spacing: 0.12em; font-weight: 300; opacity: 0.4; margin-top: 4px; }
-    .c-tally     { font-size: 0.72rem; letter-spacing: 0.1em; opacity: 0.5; white-space: nowrap; }
     .c-msg       { font-size: 0.78rem; letter-spacing: 0.14em; font-weight: 600; text-align: center; min-height: 1.4em; margin-top: 0.6rem; }
     .c-msg.ok    { color: #00e676; }
     .c-msg.err   { color: rgba(255,70,70,0.9); }
@@ -145,7 +144,6 @@
         <div class="c-pow-track"><div class="c-pow-fill" id="c-pow-fill"></div></div>
         <span class="c-pow-label" id="c-pow-label">computing...</span>
       </div>
-      <span class="c-tally" id="c-tally">0 / 3</span>
     </div>
     <div class="c-msg" id="c-msg"></div>
   </div>
@@ -232,7 +230,7 @@
       }
     }
 
-    function syncTally(){document.getElementById('c-tally').textContent=selected.size+' / '+N_BEARS;}
+    function syncTally(){}
     function setMsg(txt,cls){var el=document.getElementById('c-msg');el.textContent=txt;el.className='c-msg'+(cls?' '+cls:'');}
 
     function runCRTCollapse(onDone){

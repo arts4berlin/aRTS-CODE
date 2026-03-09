@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://4-arts.com/">
+  <meta property="og:title" content="[aRTS]">
+  <meta property="og:description" content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:image" content="https://4-arts.com/assets/og.png">
+  <title>[aRTS] — bOT oPERaTIONS · T&amp;Cs</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000; color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: clamp(80px, 12vh, 120px) clamp(16px, 4vw, 32px) clamp(48px, 8vh, 80px);
+    }
+
+    #crt-scan {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);
+      opacity: 0; z-index: 9998; pointer-events: none;
+    }
+    #crt-vignette {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);
+      opacity: 0; z-index: 9997; pointer-events: none;
+    }
+
+    .c-back {
+      position: fixed; top: 22px; left: 28px;
+      background: none; border: none;
+      color: rgba(255,255,255,0.38);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem; font-weight: 300;
+      letter-spacing: 0.14em; cursor: pointer;
+      transition: color 0.15s; z-index: 10;
+      padding: 4px 0; text-decoration: none;
+    }
+    .c-back:hover { color: #fff; }
+
+    .doc {
+      width: min(680px, 100%);
+    }
+
+    .doc-eyebrow {
+      font-size: 0.6rem; font-weight: 300;
+      letter-spacing: 0.32em; color: rgba(255,92,0,0.7);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-title {
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 700; letter-spacing: 0.06em;
+      line-height: 1.1; margin-bottom: clamp(6px, 1.2vh, 12px);
+    }
+
+    .doc-version {
+      font-size: 0.55rem; font-weight: 300;
+      letter-spacing: 0.24em; color: rgba(255,255,255,0.22);
+      margin-bottom: clamp(28px, 4.5vh, 44px);
+    }
+
+    .doc-rule {
+      border: none; border-top: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: clamp(28px, 4.5vh, 44px);
+    }
+
+    .doc-section {
+      margin-bottom: clamp(24px, 4vh, 40px);
+    }
+
+    .doc-section-heading {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.28em; color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .doc-section p {
+      font-size: 0.82rem; font-weight: 300;
+      letter-spacing: 0.04em; line-height: 1.85;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .doc-section ul {
+      list-style: none; padding: 0;
+      display: flex; flex-direction: column; gap: 0.55rem;
+      margin-top: 0.6rem;
+    }
+
+    .doc-section ul li {
+      font-size: 0.82rem; font-weight: 300;
+      letter-spacing: 0.04em; line-height: 1.7;
+      color: rgba(255,255,255,0.5);
+      padding-left: 1.1rem;
+      position: relative;
+    }
+    .doc-section ul li::before {
+      content: '—';
+      position: absolute; left: 0;
+      color: rgba(255,92,0,0.5);
+      font-weight: 400;
+    }
+
+    .doc-highlight {
+      border-left: 2px solid rgba(255,92,0,0.35);
+      padding-left: 1rem;
+      margin: 1rem 0;
+    }
+    .doc-highlight p {
+      color: rgba(255,255,255,0.7) !important;
+    }
+
+    .accept-zone {
+      margin-top: clamp(32px, 5vh, 52px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: clamp(24px, 4vh, 36px);
+    }
+
+    .accept-notice {
+      font-size: 0.65rem; font-weight: 300;
+      letter-spacing: 0.12em; color: rgba(255,255,255,0.28);
+      line-height: 1.8; margin-bottom: clamp(18px, 3vh, 28px);
+    }
+
+    .accept-row {
+      display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+    }
+
+    .btn-accept {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.78rem, 2vw, 0.92rem);
+      font-weight: 700; letter-spacing: 0.18em;
+      cursor: pointer;
+      padding: 0.9rem clamp(1.6rem, 4vw, 2.6rem);
+      background: #FF5C00; color: #000;
+      border: 2px solid #FF5C00;
+      border-radius: 4px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn-accept:hover { background: #fff; border-color: #fff; }
+    .btn-accept:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-decline {
+      font-size: 0.6rem; font-weight: 300;
+      letter-spacing: 0.18em; color: rgba(255,255,255,0.2);
+      background: none; border: none;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+      transition: color 0.15s;
+    }
+    .btn-decline:hover { color: rgba(255,255,255,0.5); }
+
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+  </style>
+</head>
+<body>
+  <div id="crt-scan"></div>
+  <div id="crt-vignette"></div>
+
+  <a href="about.html" class="c-back">← bACK</a>
+
+  <div class="doc">
+    <p class="doc-eyebrow">bOT oPERaTIONS</p>
+    <h1 class="doc-title">tERMS &amp; cONDITIONS<br>+ pRIVACY</h1>
+    <p class="doc-version">eFFFECTIVE: mARCH 2026 · v1.0</p>
+    <hr class="doc-rule">
+
+    <div class="doc-section">
+      <p class="doc-section-heading">01 — oVERVIEW</p>
+      <p>
+        [aRTS] Bot Operations provides automated agents that monitor listings, flag opportunities, and surface intelligence across art markets and trade networks. By activating bot services you agree to these terms and the privacy conditions set out below.
+      </p>
+    </div>
+
+    <div class="doc-section">
+      <p class="doc-section-heading">02 — wHAT bOTS dO</p>
+      <ul>
+        <li>Monitor public art market listings and pricing signals</li>
+        <li>Cross-reference trade histories and provenance data from open sources</li>
+        <li>Flag artworks matching your preference profile for review</li>
+        <li>Scan embedded code and asset metadata for anomalies</li>
+        <li>Deliver structured intelligence reports to your member dashboard</li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <p class="doc-section-heading">03 — wHAT bOTS dO nOT dO</p>
+      <ul>
+        <li>Bots do not execute transactions or commit funds on your behalf</li>
+        <li>Bots do not access private third-party accounts or credentials</li>
+        <li>Bots do not store personal data beyond your member session</li>
+        <li>Bots do not interact with any system without your activation</li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <p class="doc-section-heading">04 — dATA &amp; pRIVACY</p>
+      <div class="doc-highlight">
+        <p>Bot Operations processes only data you explicitly direct it to. No background collection occurs. All analysis is performed on publicly available or member-provided sources.</p>
+      </div>
+      <p>Your preference profile is stored locally in your browser session. No data is transmitted to external servers beyond the sources you instruct the bot to query. Session data is cleared on logout or tab close.</p>
+    </div>
+
+    <div class="doc-section">
+      <p class="doc-section-heading">05 — aUTHORIZED uSE</p>
+      <p>Bot Operations is provided exclusively for member use within the [aRTS] platform. Redistribution, reverse engineering, or use for bulk data harvesting outside the platform is prohibited. Misuse may result in immediate revocation of member access.</p>
+    </div>
+
+    <div class="doc-section">
+      <p class="doc-section-heading">06 — lIABILITY</p>
+      <p>Intelligence surfaces by bots is for informational purposes only. [aRTS] accepts no liability for decisions made on the basis of bot-generated reports. Market data may be incomplete or delayed.</p>
+    </div>
+
+    <div class="doc-section">
+      <p class="doc-section-heading">07 — cHANGES</p>
+      <p>These terms may be updated. Continued use of Bot Operations following any update constitutes acceptance of the revised terms. You will be prompted to re-accept on material changes.</p>
+    </div>
+
+    <div class="accept-zone">
+      <p class="accept-notice">
+        By selecting <strong style="color:rgba(255,255,255,0.55);font-weight:600;">aCCEPT &amp; aCtIVaTE</strong> you confirm you have read and agree to the terms and privacy conditions above. Acceptance is recorded in your local session only.
+      </p>
+      <div class="accept-row">
+        <button class="btn-accept" id="btn-accept">aCCEPT &amp; aCtIVaTE</button>
+        <button class="btn-decline" id="btn-decline">dECLINE</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    document.documentElement.style.background='#000';
+    if(sessionStorage.getItem('crt_transition')){
+      sessionStorage.removeItem('crt_transition');
+      doEnter();
+    }
+
+    var scan=document.getElementById('crt-scan');
+    var vig=document.getElementById('crt-vignette');
+    var busy=false;
+
+    function lerp(a,b,t){return a+(b-a)*t;}
+    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
+    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
+
+    function doEnter(){
+      var T1=130,T2=780,T3=1150,s0=null;
+      function run(ts){
+        if(!s0)s0=ts;
+        var e=ts-s0;
+        if(e<T1){
+          scan.style.opacity=String(lerp(0,1,e/T1));
+          vig.style.opacity='0.95';
+        }else if(e<T2){
+          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
+          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
+          scan.style.opacity='1';
+          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
+        }else if(e<T3){
+          var t2=(e-T2)/(T3-T2),et=smooth(t2);
+          document.documentElement.style.clipPath='';
+          scan.style.opacity=String(lerp(1,0,et));
+          vig.style.opacity=String(lerp(0.55,0,et));
+        }else{
+          document.documentElement.style.clipPath='';
+          scan.style.opacity='0'; vig.style.opacity='0';
+        }
+        if(e<T3) requestAnimationFrame(run);
+      }
+      requestAnimationFrame(run);
+    }
+
+    function doExit(dest){
+      if(busy)return; busy=true;
+      var TR=60,TS=320,s0=null;
+      function run(ts){
+        if(!s0)s0=ts;
+        var e=ts-s0;
+        if(e<TR){
+          scan.style.opacity=String(lerp(0,1,e/TR));
+          vig.style.opacity=String(lerp(0,0.95,e/TR));
+        }else if(e<TR+TS){
+          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
+          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
+          scan.style.opacity='1'; vig.style.opacity='0.95';
+        }else{
+          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
+          document.documentElement.style.background='#000';
+          sessionStorage.setItem('crt_transition','1');
+          window.location.href=dest;
+          return;
+        }
+        requestAnimationFrame(run);
+      }
+      requestAnimationFrame(run);
+    }
+
+    document.getElementById('btn-accept').addEventListener('click', function(){
+      localStorage.setItem('arts_bot_terms','1');
+      doExit('bots.html');
+    });
+
+    document.getElementById('btn-decline').addEventListener('click', function(){
+      doExit('about.html');
+    });
+
+    /* CRT on all internal links */
+    document.addEventListener('click', function(ev){
+      var a=ev.target.closest('a[href]');
+      if(!a) return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h)) return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey) return;
+      ev.preventDefault();
+      doExit(h);
+    }, true);
+  })();
+  </script>
+</body>
+</html>

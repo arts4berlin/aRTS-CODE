@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://4-arts.com/">
+  <meta property="og:title" content="[aRTS] — bOT oPERaTIONS">
+  <meta property="og:description" content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:image" content="https://4-arts.com/assets/og.png">
+  <title>[aRTS] — bOT oPERaTIONS</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+    if (!localStorage.getItem('arts_bot_terms')) {
+      window.location.replace('bot-terms.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000; color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: clamp(80px, 12vh, 120px) clamp(16px, 4vw, 32px);
+    }
+
+    #crt-scan {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);
+      opacity: 0; z-index: 9998; pointer-events: none;
+    }
+    #crt-vignette {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);
+      opacity: 0; z-index: 9997; pointer-events: none;
+    }
+
+    .c-back {
+      position: fixed; top: 22px; left: 28px;
+      background: none; border: none;
+      color: rgba(255,255,255,0.38);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem; font-weight: 300;
+      letter-spacing: 0.14em; cursor: pointer;
+      transition: color 0.15s; z-index: 10;
+      padding: 4px 0; text-decoration: none;
+    }
+    .c-back:hover { color: #fff; }
+
+    .hub {
+      width: min(640px, 100%);
+      display: flex; flex-direction: column; gap: clamp(28px, 5vh, 48px);
+    }
+
+    .hub-header {}
+    .hub-eyebrow {
+      font-size: 0.6rem; font-weight: 300;
+      letter-spacing: 0.32em; color: rgba(255,92,0,0.7);
+      text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .hub-title {
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      font-weight: 700; letter-spacing: 0.06em; line-height: 1;
+    }
+    .hub-subtitle {
+      font-size: 0.75rem; font-weight: 300;
+      letter-spacing: 0.12em; color: rgba(255,255,255,0.28);
+      margin-top: 0.6rem;
+    }
+
+    .hub-rule {
+      border: none; border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .bot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .bot-card {
+      background: #000;
+      padding: clamp(18px, 3vh, 28px) clamp(18px, 3vw, 24px);
+      display: flex; flex-direction: column; gap: 10px;
+      position: relative;
+      transition: background 0.15s;
+    }
+    .bot-card:hover { background: rgba(255,255,255,0.015); }
+
+    .bot-status {
+      font-size: 0.48rem; font-weight: 700;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 2px; align-self: flex-start;
+    }
+    .bot-status.soon {
+      color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .bot-status.active {
+      color: rgba(110,230,110,0.75);
+      background: rgba(110,230,110,0.06);
+      border: 1px solid rgba(110,230,110,0.18);
+    }
+
+    .bot-name {
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      font-weight: 700; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .bot-desc {
+      font-size: 0.72rem; font-weight: 300;
+      letter-spacing: 0.06em; line-height: 1.75;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .hub-footer {
+      font-size: 0.58rem; font-weight: 300;
+      letter-spacing: 0.16em; color: rgba(255,255,255,0.16);
+      line-height: 1.8;
+    }
+    .hub-footer a {
+      color: rgba(255,255,255,0.2);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .hub-footer a:hover { color: rgba(255,255,255,0.5); }
+
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
+    * { -webkit-user-select: none; user-select: none; }
+    html { touch-action: manipulation; }
+  </style>
+</head>
+<body>
+  <div id="crt-scan"></div>
+  <div id="crt-vignette"></div>
+
+  <a href="about.html" class="c-back">← bACK</a>
+
+  <div class="hub">
+    <div class="hub-header">
+      <p class="hub-eyebrow">mEMBER oPERaTIONS</p>
+      <h1 class="hub-title">bOT oPERaTIONS</h1>
+      <p class="hub-subtitle">aUTOMATED aGENTS · iNTELLIGENCE sURFACING · mARKET sCANNING</p>
+    </div>
+
+    <hr class="hub-rule">
+
+    <div class="bot-grid">
+      <div class="bot-card">
+        <span class="bot-status soon">cOMING sOON</span>
+        <p class="bot-name">mARKET sCOUT</p>
+        <p class="bot-desc">Monitors public listings across primary and secondary art markets. Flags pricing anomalies and emerging valuations matching your profile.</p>
+      </div>
+      <div class="bot-card">
+        <span class="bot-status soon">cOMING sOON</span>
+        <p class="bot-name">pROVENANCE cHECK</p>
+        <p class="bot-desc">Cross-references provenance records and exhibition histories against open databases. Surfaces discrepancies for review.</p>
+      </div>
+      <div class="bot-card">
+        <span class="bot-status soon">cOMING sOON</span>
+        <p class="bot-name">sECURITY sCAN</p>
+        <p class="bot-desc">Inspects embedded asset metadata and code payloads for anomalies. Flags suspicious patterns in digital artworks.</p>
+      </div>
+      <div class="bot-card">
+        <span class="bot-status soon">cOMING sOON</span>
+        <p class="bot-name">tRADE aLERT</p>
+        <p class="bot-desc">Delivers structured intelligence on trade activity within your network. Configurable thresholds and delivery cadence.</p>
+      </div>
+    </div>
+
+    <p class="hub-footer">
+      bOT oPERaTIONS is in early development. Active agents will appear here when released.<br>
+      <a href="bot-terms.html">tERMS &amp; pRIVACY</a> · <a href="about.html">aBOUT [aRTS]</a>
+    </p>
+  </div>
+
+  <script>
+  (function(){
+    document.documentElement.style.background='#000';
+    if(sessionStorage.getItem('crt_transition')){
+      sessionStorage.removeItem('crt_transition');
+      doEnter();
+    }
+
+    var scan=document.getElementById('crt-scan');
+    var vig=document.getElementById('crt-vignette');
+    var busy=false;
+
+    function lerp(a,b,t){return a+(b-a)*t;}
+    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
+    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
+
+    function doEnter(){
+      var T1=130,T2=780,T3=1150,s0=null;
+      function run(ts){
+        if(!s0)s0=ts;
+        var e=ts-s0;
+        if(e<T1){
+          scan.style.opacity=String(lerp(0,1,e/T1));
+          vig.style.opacity='0.95';
+        }else if(e<T2){
+          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
+          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
+          scan.style.opacity='1';
+          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
+        }else if(e<T3){
+          var t2=(e-T2)/(T3-T2),et=smooth(t2);
+          document.documentElement.style.clipPath='';
+          scan.style.opacity=String(lerp(1,0,et));
+          vig.style.opacity=String(lerp(0.55,0,et));
+        }else{
+          document.documentElement.style.clipPath='';
+          scan.style.opacity='0'; vig.style.opacity='0';
+        }
+        if(e<T3) requestAnimationFrame(run);
+      }
+      requestAnimationFrame(run);
+    }
+
+    function doExit(dest){
+      if(busy)return; busy=true;
+      var TR=60,TS=320,s0=null;
+      function run(ts){
+        if(!s0)s0=ts;
+        var e=ts-s0;
+        if(e<TR){
+          scan.style.opacity=String(lerp(0,1,e/TR));
+          vig.style.opacity=String(lerp(0,0.95,e/TR));
+        }else if(e<TR+TS){
+          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
+          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
+          scan.style.opacity='1'; vig.style.opacity='0.95';
+        }else{
+          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
+          document.documentElement.style.background='#000';
+          sessionStorage.setItem('crt_transition','1');
+          window.location.href=dest;
+          return;
+        }
+        requestAnimationFrame(run);
+      }
+      requestAnimationFrame(run);
+    }
+
+    document.addEventListener('click', function(ev){
+      var a=ev.target.closest('a[href]');
+      if(!a) return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h)) return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey) return;
+      ev.preventDefault();
+      doExit(h);
+    }, true);
+  })();
+  </script>
+</body>
+</html>

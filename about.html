@@ -96,6 +96,45 @@
     }
 
   
+    /* ── Documentation links ── */
+    .about-docs {
+      width: min(92vw, 1000px);
+      padding-top: clamp(28px, 5vh, 52px);
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .about-docs-label {
+      font-size: 0.55rem; font-weight: 300;
+      letter-spacing: 0.32em; color: rgba(255,255,255,0.18);
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .about-docs-links {
+      display: flex; flex-direction: column; gap: 1px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px; overflow: hidden;
+    }
+    .about-doc-link {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+      text-decoration: none;
+      padding: clamp(14px, 2.5vh, 20px) clamp(16px, 2.5vw, 22px);
+      background: #000;
+      transition: background 0.15s;
+    }
+    .about-doc-link:hover { background: rgba(255,255,255,0.02); }
+    .doc-link-title {
+      font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.55);
+      transition: color 0.15s;
+    }
+    .about-doc-link:hover .doc-link-title { color: rgba(255,255,255,0.85); }
+    .doc-link-sub {
+      font-size: 0.56rem; font-weight: 300;
+      letter-spacing: 0.18em; color: rgba(255,255,255,0.16);
+      transition: color 0.15s; text-align: right;
+    }
+    .about-doc-link:hover .doc-link-sub { color: rgba(255,255,255,0.3); }
+
     /* ── Mobile: safe area + text-size ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     .logo, .nav-about, header { touch-action: manipulation; }
@@ -132,6 +171,20 @@
   <main>
     <img class="photo" src="assets/about-2.jpg" alt="" fetchpriority="high">
     <img class="photo" src="assets/about-1.jpg" alt="" loading="lazy">
+
+    <div class="about-docs">
+      <p class="about-docs-label">dOCUMENTATION</p>
+      <div class="about-docs-links">
+        <a href="bot-terms.html" class="about-doc-link">
+          <span class="doc-link-title">bOT oPERaTIONS</span>
+          <span class="doc-link-sub">tERMS &amp; pRIVACY · v1.0</span>
+        </a>
+        <a href="bots.html" class="about-doc-link">
+          <span class="doc-link-title">bOT hUB</span>
+          <span class="doc-link-sub">aGENTS &amp; iNTELLIGENCE sERVICES</span>
+        </a>
+      </div>
+    </div>
   </main>
 
   <script>

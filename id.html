@@ -161,8 +161,8 @@
     /* ── Verify button ── */
     .verify-row {
       display: flex;
-      align-items: center;
-      gap: 1.4rem;
+      flex-direction: column;
+      gap: clamp(10px, 1.6vh, 16px);
       margin-bottom: clamp(14px, 2vh, 22px);
     }
 
@@ -172,7 +172,8 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       cursor: pointer;
-      padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
+      padding: 0.9rem 1rem;
+      width: 100%;
       background: #fff;
       color: #000;
       border: 2px solid #fff;
@@ -182,17 +183,18 @@
     .btn-verify:hover { background: #FF5C00; border-color: #FF5C00; }
 
     .not-member {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       font-weight: 300;
       letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.22);
+      color: rgba(255,255,255,0.2);
+      text-align: center;
     }
     .not-member a {
-      color: rgba(255,255,255,0.22);
+      color: rgba(255,255,255,0.2);
       text-decoration: none;
       transition: color 0.15s;
     }
-    .not-member a:hover { color: rgba(255,255,255,0.55); }
+    .not-member a:hover { color: rgba(255,255,255,0.5); }
 
     /* Error message */
     .error-msg {
@@ -426,33 +428,63 @@
     }
     .stealth-row {
       margin-top: clamp(14px, 2vh, 20px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.2vh, 12px);
     }
-    .btn-stealth {
+    .stealth-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
       font-family: 'Space Grotesk', sans-serif;
+    }
+    .stealth-pill {
+      position: relative;
+      width: 34px; height: 18px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .stealth-pill::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .stealth-toggle-btn.active .stealth-pill {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.35);
+    }
+    .stealth-toggle-btn.active .stealth-pill::after {
+      transform: translateX(16px);
+      background: #fff;
+    }
+    .stealth-toggle-label {
       font-size: 0.58rem;
       font-weight: 300;
       letter-spacing: 0.2em;
-      cursor: pointer;
-      background: transparent;
-      color: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 3px;
-      padding: 0.35rem 0.8rem;
-      transition: all 0.15s;
+      color: rgba(255,255,255,0.22);
       text-transform: uppercase;
+      transition: color 0.2s;
     }
-    .btn-stealth:hover { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.18); }
-    .btn-stealth.active {
-      color: rgba(255,255,255,0.65);
-      border-color: rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.04);
+    .stealth-toggle-btn.active .stealth-toggle-label {
+      color: rgba(255,255,255,0.55);
     }
+    .stealth-toggle-btn:hover .stealth-toggle-label { color: rgba(255,255,255,0.4); }
     .stealth-notice {
       font-size: 0.58rem;
       font-weight: 300;
       letter-spacing: 0.16em;
       color: rgba(255,255,255,0.22);
-      margin-top: clamp(8px,1.2vh,12px);
       line-height: 1.7;
     }
 
@@ -531,7 +563,7 @@
         <p class="section-label">mEMBER aCCESS</p>
         <h1 class="form-title">qUICK aCCESS</h1>
         <div class="bio-center">
-          <button class="btn-biometric" id="btn-bio" aria-label="Authenticate with Face ID or Touch ID">
+          <button class="btn-biometric" id="btn-bio" aria-label="Authenticate with biometrics">
             <svg class="bio-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M2 12V4h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M24 4h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -542,7 +574,7 @@
               <path d="M18 13v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               <path d="M12.5 22c1.8 2.4 9.2 2.4 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
-            <span class="bio-btn-label" id="bio-btn-lbl">FaCE iD</span>
+            <span class="bio-btn-label" id="bio-btn-lbl">bIOMETRiCS</span>
           </button>
           <p class="bio-hint">tOUCH iD · wINDOWS hELLO</p>
           <p class="bio-err" id="bio-err"></p>
@@ -580,12 +612,15 @@
               <path d="M18 13v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               <path d="M12.5 22c1.8 2.4 9.2 2.4 11 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
-            <span id="s1-bio-lbl">FaCE iD</span>
+            <span id="s1-bio-lbl">bIOMETRiCS</span>
           </button>
         </div>
 
         <div class="stealth-row">
-          <button class="btn-stealth" id="btn-stealth-toggle">◌ sTEaLTH mODE</button>
+          <button class="stealth-toggle-btn" id="btn-stealth-toggle" role="switch" aria-checked="false">
+            <span class="stealth-pill"></span>
+            <span class="stealth-toggle-label">sTEaLTH mODE</span>
+          </button>
           <p class="stealth-notice" id="stealth-notice" hidden>
             session-only — nothing stored after tab closes · works in incognito
           </p>
@@ -640,7 +675,7 @@
         </div>
 
         <div class="bio-enroll-row" id="bio-enroll-row" hidden>
-          <button class="btn-bio-enroll" id="btn-bio-enroll">ENaBlE FaCE iD →</button>
+          <button class="btn-bio-enroll" id="btn-bio-enroll">ENaBlE bIOMETRiCS →</button>
         </div>
 
         <div class="signout-row">
@@ -737,11 +772,11 @@
       var notice = document.getElementById('stealth-notice');
       if(stealthMode){
         btn.classList.add('active');
-        btn.textContent = '● sTEaLTH mODE';
+        btn.setAttribute('aria-checked','true');
         notice.hidden = false;
       } else {
         btn.classList.remove('active');
-        btn.textContent = '◌ sTEaLTH mODE';
+        btn.setAttribute('aria-checked','false');
         notice.hidden = true;
       }
     }
@@ -1122,7 +1157,7 @@
           bioEnrollBtn.textContent = 'ENaBLED ✓';
           bioEnrollBtn.classList.add('done');
         } else {
-          bioEnrollBtn.textContent = 'ENaBlE FaCE iD →';
+          bioEnrollBtn.textContent = 'ENaBlE bIOMETRiCS →';
           bioEnrollBtn.disabled = false;
         }
       });
