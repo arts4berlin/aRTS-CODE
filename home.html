@@ -233,17 +233,19 @@
       .burger { display: flex; }
       .burger-label { display: block; } /* show on mobile */
 
-      /* ── Hourglass reveal: clip-path alone controls visibility on mobile ── */
+      /* ── CRT power-on: overlay squeezes from a centre line, text squishes with it ── */
       .nav-overlay {
-        opacity: 1; /* override desktop opacity:0 — clip-path handles the reveal */
-        -webkit-clip-path: polygon(0% 50%, 100% 50%, 100% 50%, 0% 50%);
-                clip-path: polygon(0% 50%, 100% 50%, 100% 50%, 0% 50%);
-        -webkit-transition: -webkit-clip-path 0.46s cubic-bezier(0.34, 1.18, 0.64, 1);
-                transition: clip-path 0.46s cubic-bezier(0.34, 1.18, 0.64, 1);
+        opacity: 1;
+        -webkit-transform: scaleY(0);
+                transform: scaleY(0);
+        -webkit-transform-origin: center center;
+                transform-origin: center center;
+        -webkit-transition: -webkit-transform 0.46s cubic-bezier(0.34, 1.18, 0.64, 1);
+                transition:         transform 0.46s cubic-bezier(0.34, 1.18, 0.64, 1);
       }
       .nav-overlay.is-open {
-        -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-                clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        -webkit-transform: scaleY(1);
+                transform: scaleY(1);
       }
     }
   </style>
