@@ -470,17 +470,17 @@
         'background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.45) 3px,rgba(0,14,0,0.45) 4px);';
       ov.appendChild(sl);
 
-      /* Big number */
-      var num = document.createElement('div');
-      num.style.cssText = 'font-size:clamp(5rem,22vw,14rem);font-weight:700;color:#FF5C00;line-height:1;letter-spacing:0.05em;';
-      num.textContent   = '??';
-      ov.appendChild(num);
-
-      /* "// OFF" label */
+      /* "pAY" label — sits above the number */
       var off = document.createElement('div');
       off.style.cssText = 'font-size:clamp(1rem,3vw,1.6rem);font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3em;';
-      off.textContent   = '// pAY';
+      off.textContent   = 'pAY';
       ov.appendChild(off);
+
+      /* Big number */
+      var num = document.createElement('div');
+      num.style.cssText = 'font-size:clamp(5rem,22vw,14rem);font-weight:700;color:#FF5C00;line-height:1;letter-spacing:0.05em;user-select:none;-webkit-user-select:none;';
+      num.textContent   = '??';
+      ov.appendChild(num);
 
       /* Divider */
       var hr = document.createElement('div');
