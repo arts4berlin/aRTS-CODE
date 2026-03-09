@@ -6,7 +6,6 @@
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
-
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
@@ -17,8 +16,9 @@
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
-  <title>[aRTS] — aCT</title>
+  <title>[aRTS] — aSK</title>
   <script>
+    document.documentElement.style.background = '#000';
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
     }
@@ -48,6 +48,33 @@
       gap: clamp(1rem, 2.5vh, 2rem);
     }
 
+    .btn-row {
+      display: flex;
+      flex-direction: row;
+      gap: clamp(1rem, 3vw, 2.4rem);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-act {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(140px, 24vw, 240px);
+      height: clamp(70px, 12vh, 120px);
+      border: 2.5px solid #FF5C00;
+      border-radius: 4px;
+      background: transparent;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.1rem, 3.2vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      transition: background 0.18s, color 0.18s;
+    }
+    .btn-act:hover { background: #FF5C00; color: #000; }
+
     .tagline {
       font-size: 0.82rem;
       font-weight: 300;
@@ -55,28 +82,6 @@
       opacity: 0.5;
       white-space: nowrap;
     }
-
-
-    /* Big orange-bordered aCT button */
-    .btn-act {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: clamp(220px, 46vw, 430px);
-      height: clamp(80px, 14vh, 140px);
-      border: 2.5px solid #FF5C00;
-      border-radius: 4px;
-      background: transparent;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 5.5vw, 3.4rem);
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-decoration: none;
-      transition: background 0.18s, color 0.18s;
-    }
-    .btn-act:hover { background: #FF5C00; color: #000; }
-    .btn-act { font-variant-numeric: tabular-nums; }
 
     .logo {
       position: fixed;
@@ -90,11 +95,9 @@
       line-height: 1;
     }
 
-    /* aBOUT — subtle top-right nav link */
     .nav-about {
       position: fixed;
-      top: 28px;
-      right: 32px;
+      top: 28px; right: 32px;
       text-decoration: none;
       color: #fff;
       font-size: 0.9rem;
@@ -104,97 +107,93 @@
       transition: opacity 0.15s;
     }
     .nav-about:hover { opacity: 1; }
-  
-    /* ── dvh fix: excludes iOS Safari address bar ── */
-    @supports (height: 100dvh) {
-      body { height: 100dvh; }
+
+    @media (max-width: 480px) {
+      .btn-row { flex-direction: column; }
+      .btn-act  { width: clamp(200px, 72vw, 320px); }
     }
-    /* ── Mobile: safe area + text-size ── */
+
+    @supports (height: 100dvh) { body { height: 100dvh; } }
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
-    .logo, .nav-about, header { touch-action: manipulation; }
-    .btn, button, a { touch-action: manipulation; }
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
+    .logo, .nav-about { touch-action: manipulation; }
+    a { touch-action: manipulation; }
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
-</style>
+  </style>
 </head>
 <body>
-  <!-- CRT: prevent flash on arrival -->
   <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
   <a href="home.html" class="logo" data-inner="RTS">[a]</a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="stack">
-    <a href="act.html" class="btn-act">aSK</a>
-    <span class="tagline">... aND aNSWERS aPPEAR ...</span>
+    <div class="btn-row">
+      <a href="inquire.html" class="btn-act" id="btn-connect">cONNECT</a>
+      <a href="work.html"    class="btn-act" id="btn-work">wORK</a>
+    </div>
+    <span class="tagline">... aSK ...</span>
   </div>
 
   <script>
-    (function () {
-      const TARGET = 'aSK';
-      const POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
-      const btn    = document.querySelector('.btn-act');
-      let timer    = null;
-      let frame    = 0;
-      const FRAMES = 18;
-      const RATE   = 45;
+  (function () {
+    var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
+    var FRAMES = 18, RATE = 45;
+    var TOUCH  = window.matchMedia('(hover: none)').matches;
 
-      function rand() { return POOL[Math.floor(Math.random() * POOL.length)]; }
+    var btns = [
+      { id: 'btn-connect', target: 'cONNECT' },
+      { id: 'btn-work',    target: 'wORK'    }
+    ];
+
+    btns.forEach(function (b, idx) {
+      var el    = document.getElementById(b.id);
+      var timer = null, frame = 0;
 
       function runScramble() {
         clearInterval(timer);
         frame = 0;
-        timer = setInterval(() => {
-          const settled = Math.floor((frame / FRAMES) * TARGET.length);
-          btn.textContent = TARGET.split('').map((ch, i) =>
-            i < settled ? ch : rand()
-          ).join('');
+        timer = setInterval(function () {
+          var settled = Math.floor((frame / FRAMES) * b.target.length);
+          el.textContent = b.target.split('').map(function (ch, i) {
+            return i < settled ? ch : POOL[Math.floor(Math.random() * POOL.length)];
+          }).join('');
           frame++;
-          if (frame > FRAMES) {
-            clearInterval(timer);
-            btn.textContent = TARGET;
-          }
+          if (frame > FRAMES) { clearInterval(timer); el.textContent = b.target; }
         }, RATE);
       }
 
-      /* Always scramble immediately on load — no static "aSK" preview */
-      runScramble();
+      setTimeout(runScramble, idx * 180);
 
-      if (window.matchMedia('(hover: none)').matches) {
-        /* Touch: repeat every 3.5 s */
-        setInterval(runScramble, 3500);
+      if (TOUCH) {
+        setInterval(runScramble, 3800 + idx * 600);
       } else {
-        /* Desktop: re-scramble on hover; reset on leave */
-        btn.addEventListener('mouseenter', runScramble);
-        btn.addEventListener('mouseleave', () => {
-          clearInterval(timer);
-          btn.textContent = TARGET;
-        });
+        el.addEventListener('mouseenter', runScramble);
+        el.addEventListener('mouseleave', function () { clearInterval(timer); el.textContent = b.target; });
       }
-    })();
-  </script>
-  <script>
-    (function () {
-      function reveal() {
-        var c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
-        document.body.appendChild(c);
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            c.style.transition = 'opacity 0.22s ease';
-            c.style.opacity    = '0';
-            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
-          });
-        });
-      }
-      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
-    })();
+    });
+  })();
   </script>
 
-  <!-- CRT channel-change transition -->
+  <script>
+  (function () {
+    function reveal() {
+      var c = document.createElement('div');
+      c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+      document.body.appendChild(c);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          c.style.transition = 'opacity 0.22s ease';
+          c.style.opacity    = '0';
+          setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
+        });
+      });
+    }
+    window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
+  })();
+  </script>
+
   <script>
   (function(){
     var scan=null,vig=null,busy=false;
@@ -269,13 +268,11 @@
       requestAnimationFrame(run);
     }
 
-    /* Arrival */
     if(sessionStorage.getItem('crt_transition')){
       sessionStorage.removeItem('crt_transition');
       doEnter();
     }
 
-    /* Exit interceptor */
     document.addEventListener('click',function(ev){
       var a=ev.target.closest('a[href]');
       if(!a)return;
@@ -288,15 +285,11 @@
   })();
   </script>
 
-  <!-- Nav & logo hover -->
   <script>
   (function(){
     var DELAY = 40;
-
-    /* Nav links — lowercase left→right on enter, recapitalise right→left on leave */
     function navHover(el){
-      var orig = el.textContent;
-      var timers=[], state=0;
+      var orig=el.textContent, timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){
         var s=orig[0];
@@ -304,38 +297,31 @@
         el.textContent=s;
       }
       el.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=0;i<orig.length-1-from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));
         })(i);
       });
       el.addEventListener('mouseleave',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
       });
     }
-    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
+    document.querySelectorAll('a.nav-about').forEach(navHover);
     document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
+      var inner=logo.dataset.inner, timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
       logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=from;i<inner.length;i++)(function(i){
           timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
         })(i);
       });
       logo.addEventListener('mouseleave',function(){
-        clr();
-        var from=state;
+        clr(); var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
