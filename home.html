@@ -176,13 +176,35 @@
       font-size: clamp(2rem, 6vw, 3rem);
       font-weight: 700;
       letter-spacing: 0.25em;
-      cursor: pointer;
+      cursor: crosshair;
       user-select: none;
       -webkit-user-select: none;
       transition: opacity 0.15s;
     }
-    .berlin:hover { opacity: 0.82; }
-  
+
+    /* ── aCCESS gRaNTED badge (shown for logged-in members) ── */
+    .access-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.55s ease;
+    }
+    .access-badge.visible { opacity: 1; }
+    .access-check {
+      font-size: 1rem;
+      color: #FF5C00;
+      line-height: 1;
+    }
+    .access-label {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      color: rgba(255,92,0,0.75);
+      text-transform: uppercase;
+    }
+
     /* ── Hamburger button ── */
     .burger {
       display: none;
@@ -352,6 +374,10 @@
     <div class="tagline">
       <span class="born">born in</span>
       <span class="berlin">BERLIN</span>
+    </div>
+    <div class="access-badge" id="access-badge" hidden>
+      <span class="access-check">✓</span>
+      <span class="access-label">aCCESS gRaNTED</span>
     </div>
   </main>
   </div><!-- /crt-wrap -->
@@ -750,6 +776,10 @@
       var SUFFIX = loggedIn ? ' ID' : ' LOGIN';
       /* Subtle visual distinction when already logged in */
       if(loggedIn){ mark.style.opacity = '1'; mark.title = 'mEMBER iD'; }
+      if(loggedIn){
+        var badge = document.getElementById('access-badge');
+        if(badge){ badge.hidden = false; setTimeout(function(){ badge.classList.add('visible'); }, 80); }
+      }
       var timers = [], state = 0;
       function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
       function render(n){ mark.textContent = '[aRTS' + SUFFIX.slice(0, n) + ']'; }
