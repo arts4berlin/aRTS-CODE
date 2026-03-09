@@ -98,22 +98,49 @@
       line-height: 1;
     }
 
+    /* ── [aRTS] home mark (desktop left anchor) ── */
+    .home-mark {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: #fff;
+      opacity: 0.88;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
     nav {
       display: flex;
       align-items: center;
-      gap: 2.4rem;
+      gap: 2rem;
     }
 
     nav a {
+      position: relative;
       text-decoration: none;
       color: #fff;
       font-size: 0.9rem;
       font-weight: 300;
       letter-spacing: 0.1em;
-      opacity: 0.85;
-      transition: opacity 0.15s;
+      opacity: 0.78;
+      cursor: crosshair;
+      transition: opacity 0.18s;
     }
     nav a:hover { opacity: 1; }
+
+    /* Expanding underline — sweeps left→right on hover, mirroring decap cascade */
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.5);
+      transition: width 0.22s ease;
+    }
+    nav a:hover::after { width: 100%; }
 
     main {
       flex: 1;
@@ -233,6 +260,7 @@
     @media (max-width: 520px) {
       header  { padding: 18px 16px; }
       nav     { display: none; }
+      .home-mark { display: none; } /* burger-label [aRTS] covers this on mobile */
       .burger { display: flex; }
       .burger-label { display: block; } /* show on mobile */
 
@@ -245,6 +273,7 @@
 
   <div id="crt-wrap">
   <header>
+    <span class="home-mark">[aRTS]</span>
     <nav>
       <a href="about.html">aBOUT</a>
       <a href="ask.html">aCT</a>
@@ -569,6 +598,26 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
+
+    /* ── Idle static glitch — nav feels alive ── */
+    /* One random char in one random nav link briefly corrupts every ~4s   */
+    (function(){
+      var links   = Array.from(document.querySelectorAll('nav a'));
+      var origTxt = links.map(function(el){ return el.textContent; });
+      var glyphs  = '▓░▒│╌·×÷¬±';
+      function tick(){
+        var li  = Math.floor(Math.random() * links.length);
+        var el  = links[li];
+        var txt = origTxt[li];
+        var ci  = 1 + Math.floor(Math.random() * (txt.length - 1)); // skip index 0
+        var arr = txt.split('');
+        arr[ci] = glyphs[Math.floor(Math.random() * glyphs.length)];
+        el.textContent = arr.join('');
+        setTimeout(function(){ el.textContent = txt; }, 90);
+        setTimeout(tick, 2600 + Math.random() * 3800);
+      }
+      setTimeout(tick, 1200 + Math.random() * 1800);
+    })();
 
     /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
     document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
