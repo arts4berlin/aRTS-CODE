@@ -458,75 +458,114 @@
     }
 
     function showEgg() {
-      /* Overlay */
-      var ov = document.createElement('div');
-      ov.style.cssText = [
-        'position:fixed;inset:0;z-index:99999;background:#000;',
-        'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;',
-        'cursor:pointer;opacity:0;transition:opacity 0.25s ease;',
-        'font-family:"Space Grotesk",sans-serif;',
-      ].join('');
+      /* ── Inject card CSS once ── */
+      if (!document.getElementById('_ecStyle')) {
+        var st = document.createElement('style'); st.id = '_ecStyle';
+        st.textContent =
+          '#_eggOv{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:99999;' +
+            'display:flex;align-items:flex-end;justify-content:center;' +
+            'opacity:0;transition:opacity 0.28s ease;pointer-events:none;}' +
+          '#_eggOv.open{opacity:1;pointer-events:all;}' +
+          '#_eggCard{background:#0e0e0e;border-radius:24px 24px 0 0;' +
+            'width:min(440px,100vw);padding-bottom:max(env(safe-area-inset-bottom),32px);' +
+            'transform:translateY(100%);overflow:hidden;' +
+            'font-family:"Space Grotesk",sans-serif;' +
+            'transition:transform 0.48s cubic-bezier(0.34,1.2,0.64,1);}' +
+          '#_eggOv.open #_eggCard{transform:translateY(0);}' +
+          '._ec-stripe{height:5px;background:#FF5C00;}' +
+          '._ec-hdr{display:flex;justify-content:space-between;align-items:baseline;padding:20px 28px 0;}' +
+          '._ec-logo{font-size:1rem;font-weight:300;letter-spacing:0.08em;color:#fff;}' +
+          '._ec-type{font-size:0.56rem;font-weight:300;letter-spacing:0.22em;' +
+            'color:rgba(255,255,255,0.28);text-transform:uppercase;}' +
+          '._ec-pay{font-size:0.7rem;font-weight:300;letter-spacing:0.24em;' +
+            'color:rgba(255,255,255,0.35);text-transform:uppercase;text-align:center;margin-top:10px;}' +
+          '._ec-num{font-size:clamp(5.5rem,22vw,9rem);font-weight:700;letter-spacing:-0.02em;' +
+            'color:#FF5C00;line-height:1;text-align:center;padding:2px 28px 0;' +
+            'user-select:none;-webkit-user-select:none;}' +
+          '._ec-rule{height:1px;background:rgba(255,255,255,0.07);margin:22px 28px;}' +
+          '._ec-congrats{font-size:1rem;font-weight:700;letter-spacing:0.14em;color:#fff;text-align:center;}' +
+          '._ec-sub{font-size:0.65rem;font-weight:300;letter-spacing:0.16em;' +
+            'color:rgba(255,255,255,0.32);text-align:center;margin-top:4px;}' +
+          '._ec-codelabel{font-size:0.52rem;font-weight:300;letter-spacing:0.26em;' +
+            'color:rgba(255,255,255,0.22);text-align:center;margin-top:22px;text-transform:uppercase;}' +
+          '._ec-code{font-size:1.05rem;font-weight:700;letter-spacing:0.2em;color:#fff;' +
+            'text-align:center;margin-top:7px;cursor:pointer;' +
+            'transition:color 0.15s;touch-action:manipulation;}' +
+          '._ec-code:hover{color:#FF5C00;}' +
+          '._ec-dismiss{font-size:0.52rem;font-weight:300;letter-spacing:0.16em;' +
+            'color:rgba(255,255,255,0.15);text-align:center;margin-top:22px;text-transform:lowercase;}';
+        document.head.appendChild(st);
+      }
 
-      /* Scanlines over overlay */
-      var sl = document.createElement('div');
-      sl.style.cssText = 'position:absolute;inset:0;pointer-events:none;' +
-        'background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.45) 3px,rgba(0,14,0,0.45) 4px);';
-      ov.appendChild(sl);
+      /* ── Random code ── */
+      var CPOOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      var codeStr = 'aRTS-77-' + (function(){
+        var c=''; for(var i=0;i<6;i++) c+=CPOOL[Math.floor(Math.random()*CPOOL.length)]; return c;
+      })();
 
-      /* "pAY" label — sits above the number */
-      var off = document.createElement('div');
-      off.style.cssText = 'font-size:clamp(1rem,3vw,1.6rem);font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3em;';
-      off.textContent   = 'pAY';
-      ov.appendChild(off);
+      /* ── Build card DOM ── */
+      var ov      = document.createElement('div'); ov.id = '_eggOv';
+      var card    = document.createElement('div'); card.id = '_eggCard';
 
-      /* Big number */
-      var num = document.createElement('div');
-      num.style.cssText = 'font-size:clamp(5rem,22vw,14rem);font-weight:700;color:#FF5C00;line-height:1;letter-spacing:0.05em;user-select:none;-webkit-user-select:none;';
-      num.textContent   = '??';
-      ov.appendChild(num);
+      var stripe  = document.createElement('div'); stripe.className = '_ec-stripe';
+      var hdr     = document.createElement('div'); hdr.className = '_ec-hdr';
+      var logo    = document.createElement('span'); logo.className = '_ec-logo'; logo.textContent = '[aRTS]';
+      var type    = document.createElement('span'); type.className = '_ec-type'; type.textContent = 'member pass';
+      hdr.appendChild(logo); hdr.appendChild(type);
 
-      /* Divider */
-      var hr = document.createElement('div');
-      hr.style.cssText = 'width:clamp(180px,30vw,340px);height:1px;background:rgba(255,92,0,0.3);margin:0.5rem 0;';
-      ov.appendChild(hr);
+      var pay     = document.createElement('div'); pay.className = '_ec-pay'; pay.textContent = 'pAY';
+      var numEl   = document.createElement('div'); numEl.className = '_ec-num'; numEl.textContent = '??';
+      var rule    = document.createElement('div'); rule.className = '_ec-rule';
+      var congrats= document.createElement('div'); congrats.className = '_ec-congrats'; congrats.textContent = 'cONGRATULATIONS';
+      var sub     = document.createElement('div'); sub.className = '_ec-sub'; sub.textContent = 'you found the easter egg';
+      var clbl    = document.createElement('div'); clbl.className = '_ec-codelabel'; clbl.textContent = 'redemption code';
+      var codeEl  = document.createElement('div'); codeEl.className = '_ec-code'; codeEl.textContent = codeStr;
+      var dismiss = document.createElement('div'); dismiss.className = '_ec-dismiss'; dismiss.textContent = 'double tap to close';
 
-      /* Code */
-      var code = document.createElement('div');
-      code.style.cssText = 'font-size:clamp(1.1rem,3.5vw,2rem);font-weight:700;color:#FF5C00;letter-spacing:0.22em;opacity:0;transition:opacity 0.4s ease 0.2s;';
-      code.textContent   = '[aRTS-77]';
-      ov.appendChild(code);
-
-      /* Dismiss hint */
-      var hint = document.createElement('div');
-      hint.style.cssText = 'font-size:0.72rem;font-weight:300;color:rgba(255,255,255,0.25);letter-spacing:0.18em;margin-top:1.4rem;opacity:0;transition:opacity 0.4s ease 0.5s;';
-      hint.textContent   = 'double tap to close';
-      ov.appendChild(hint);
-
+      [stripe,hdr,pay,numEl,rule,congrats,sub,clbl,codeEl,dismiss].forEach(function(el){ card.appendChild(el); });
+      ov.appendChild(card);
       document.body.appendChild(ov);
 
-      /* Fade overlay in */
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          ov.style.opacity = '1';
-          /* Scramble "??" → "77" */
-          setTimeout(function () {
-            scrambleTo(num, '77', function () {
-              /* Reveal % */
-              setTimeout(function () {
-                scrambleTo(num, '77%', function () {
-                  code.style.opacity = '1';
-                  hint.style.opacity = '1';
-                });
-              }, 180);
-            });
-          }, 200);
-        });
+      /* ── Open: backdrop fades in, card slides up, then number scrambles ── */
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        ov.classList.add('open');
+        setTimeout(function(){
+          scrambleTo(numEl, '77', function(){
+            setTimeout(function(){
+              scrambleTo(numEl, '77%', function(){});
+            }, 180);
+          });
+        }, 400);
+      }); });
+
+      /* ── Copy code on click ── */
+      codeEl.addEventListener('click', function(e){
+        e.stopPropagation();
+        var txt = codeEl.textContent;
+        if(navigator.clipboard){ navigator.clipboard.writeText(txt); }
+        else {
+          var ta=document.createElement('textarea'); ta.value=txt;
+          ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta);
+          ta.select(); try{document.execCommand('copy');}catch(ee){}
+          document.body.removeChild(ta);
+        }
+        codeEl.textContent='cOPIED ✓'; codeEl.style.color='#FF5C00';
+        setTimeout(function(){ codeEl.textContent=txt; codeEl.style.color=''; }, 1600);
       });
 
-      /* Dismiss — double click/tap */
-      ov.addEventListener('dblclick', function () {
-        ov.style.opacity = '0';
-        setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 300);
+      /* ── Award points if member logged in ── */
+      try {
+        if(localStorage.getItem('arts_id_hash')){
+          var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
+          localStorage.setItem('arts_points',String(cur+77));
+        }
+      } catch(ee){}
+
+      /* ── Dismiss — double tap backdrop ── */
+      ov.addEventListener('dblclick', function(e){
+        if(codeEl.contains(e.target)) return;
+        ov.classList.remove('open');
+        setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 340);
       });
     }
 

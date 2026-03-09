@@ -213,7 +213,7 @@
         <span class="v-type">member pass</span>
       </div>
       <div class="v-label">pAY</div>
-      <div class="v-discount">77%</div>
+      <div class="v-discount">π%</div>
       <div class="v-rule"></div>
       <div class="v-congrats">cONGRATULATIONS</div>
       <div class="v-sublabel">you found the easter egg</div>
@@ -420,7 +420,7 @@
       var CPOOL  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       function randCode(){
         var c=''; for(var i=0;i<6;i++) c+=CPOOL[Math.floor(Math.random()*CPOOL.length)];
-        return 'aRTS-77-'+c;
+        return 'aRTS-PI-'+c;
       }
       var overlay = document.getElementById('voucher-overlay');
       var codeEl  = document.getElementById('v-code');
@@ -436,7 +436,7 @@
           try {
             if (localStorage.getItem('arts_id_hash')) {
               var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
-              localStorage.setItem('arts_points', String(cur + 77));
+              localStorage.setItem('arts_points', String(cur + 314));
             }
           } catch(e) {}
         }
