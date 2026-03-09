@@ -758,7 +758,7 @@
       <a href="about.html">aBOUT</a>
       <a href="articles.html">aRTICLES</a>
       <a href="assets.html">aSSETS</a>
-      <a href="ask.html">lETS TaLK</a>
+      <a href="ask.html">cONNECT</a>
       <a href="work.html">lETS wORK</a>
     </nav>
   </header>
@@ -1006,7 +1006,7 @@
 
       <div class="co-pay-row">
         <button class="co-btn-pay" id="co-btn-pay">
-          PaY — <span id="co-price-span">—</span>
+          <span id="co-action-span">PaY</span> — <span id="co-price-span">—</span>
         </button>
       </div>
 
@@ -1677,6 +1677,9 @@
       document.getElementById('co-tier-perks-el').textContent = info.perks || '';
       document.getElementById('co-email-val-el').textContent  = email || '—';
       document.getElementById('co-price-span').textContent    = (info.price || '') + ' ' + (info.period || '');
+      var _actionMap = { 'aLLY': 'jOIN', 'BRIGaDIER': 'eNLIST', 'CURaTOR': 'pROVIDE' };
+      var _actionSpan = document.getElementById('co-action-span');
+      if (_actionSpan) _actionSpan.textContent = _actionMap[tier] || 'PaY';
 
       /* Wallet detection */
       var w = detectWallets();
