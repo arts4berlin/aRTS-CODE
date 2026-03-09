@@ -226,13 +226,29 @@
     const wordWrap = document.getElementById('word-wrap');
 
     const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-    const WORDS       = ['sense','shift','signal','build','hold','move','speak','open','draw'];
     /* Scale speed to viewport — wider screens move faster, capped */
     const WORD_SPEED  = Math.max(85, Math.min(window.innerWidth * 0.115, 175));
     const SCRAMBLE_MS = 80;   // letter scramble interval
 
-    /* Shuffle for a unique experience every session */
-    (function(){ for (var si=WORDS.length-1; si>0; si--){ var sj=Math.floor(Math.random()*(si+1)); var t=WORDS[si]; WORDS[si]=WORDS[sj]; WORDS[sj]=t; } })();
+    /* Large brand-aligned pool — every visit draws a unique random selection */
+    const ALL_WORDS = [
+      'sense','shift','signal','build','hold','move','speak','open','draw',
+      'trade','connect','create','curate','collect','exchange','discover','reveal',
+      'place','find','shape','make','show','give','share','channel','bridge',
+      'craft','offer','gather','frame','direct','express','trace','value','seek'
+    ];
+
+    /* Pick 9 unique words at random, then use those for this session */
+    const WORDS = (function(){
+      var pool = ALL_WORDS.slice();
+      var picked = [];
+      var n = Math.min(9, pool.length);
+      for (var _i = 0; _i < n; _i++) {
+        var idx = Math.floor(Math.random() * pool.length);
+        picked.push(pool.splice(idx, 1)[0]);
+      }
+      return picked;
+    })();
 
     let wordIdx  = 0;
     let wordX    = 0;

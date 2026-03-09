@@ -9,15 +9,14 @@
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
-  <meta property="og:title"        content="[aRTS] — pIETRO">
-  <meta property="og:description"  content="pLASTER · mOUNTED cANVAS · fLOATING fRAME — 88.888.888 €">
-  <meta property="og:image"        content="https://4-arts.com/assets/piece-001.jpg">
-  <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="[aRTS] — pIETRO">
-  <meta name="twitter:description" content="pLASTER · mOUNTED cANVAS · fLOATING fRAME — 88.888.888 €">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/piece-001.jpg">
-  <title>[aRTS] — pIETRO</title>
-  <!-- Gate: redirect to CAPTCHA if not verified -->
+  <meta property="og:title"        content="[aRTS] — aDD aRT">
+  <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="[aRTS] — aDD aRT">
+  <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <title>[aRTS] — aDD aRT</title>
   <script>
     if (!sessionStorage.getItem('captcha_passed')) {
       window.location.replace('index.html');
@@ -45,7 +44,7 @@
       justify-content: space-between;
       padding: 26px 32px;
       z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 60%, transparent);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
     }
 
     .logo {
@@ -73,110 +72,199 @@
       transition: opacity 0.15s;
     }
     nav a:hover { opacity: 1; }
-    nav a.active { opacity: 1; font-weight: 600; }
 
     /* ── Main column ── */
     main {
-      padding-top: clamp(78px, 12vh, 110px);
+      padding-top: clamp(90px, 14vh, 120px);
       padding-bottom: clamp(80px, 10vh, 130px);
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    .art-col {
-      width: min(92vw, 680px);
+    .form-col {
+      width: min(92vw, 640px);
       display: flex;
       flex-direction: column;
     }
 
-    /* Piece index label */
-    .piece-index {
+    /* Section label */
+    .section-label {
       font-size: 0.68rem;
       font-weight: 300;
       letter-spacing: 0.28em;
       color: rgba(255,255,255,0.2);
       text-transform: uppercase;
-      margin-bottom: clamp(14px, 2.2vh, 22px);
+      margin-bottom: clamp(8px, 1.5vh, 14px);
     }
 
-    /* Artwork image */
-    .piece-img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    /* Title block sits right below image */
-    .title-block {
-      margin-top: clamp(28px, 4vh, 44px);
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .piece-title {
-      font-size: clamp(2.2rem, 6.5vw, 3.8rem);
+    /* Page title */
+    .form-title {
+      font-size: clamp(2rem, 6vw, 3.4rem);
       font-weight: 700;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       line-height: 1;
       color: #fff;
+      margin-bottom: clamp(28px, 4.5vh, 48px);
     }
 
-    .piece-year {
+    /* ── Upload zone ── */
+    .upload-zone {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      background: rgba(255,255,255,0.02);
+    }
+    .upload-zone:hover { border-color: rgba(255,255,255,0.35); }
+    .upload-zone.has-image { border-color: rgba(255,255,255,0.06); }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    #preview {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    #preview.visible { display: block; }
+
+    .upload-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .upload-zone.has-image .upload-hint { opacity: 0; }
+
+    .upload-icon {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 300;
+      color: rgba(255,255,255,0.18);
+      line-height: 1;
+    }
+    .upload-text {
       font-size: 0.68rem;
       font-weight: 300;
-      letter-spacing: 0.26em;
-      color: rgba(255,255,255,0.22);
-      text-transform: uppercase;
-      align-self: center;
-      flex-shrink: 0;
+      letter-spacing: 0.24em;
+      color: rgba(255,255,255,0.18);
     }
+    .upload-change {
+      display: none;
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.28);
+      background: rgba(0,0,0,0.55);
+      padding: 4px 8px;
+      border-radius: 3px;
+      pointer-events: none;
+    }
+    .upload-zone.has-image .upload-change { display: block; }
 
-    /* Divider */
+    /* ── Divider ── */
     .divider {
       width: 100%;
       height: 1px;
       background: rgba(255,255,255,0.07);
-      margin: clamp(28px, 4vh, 48px) 0;
+      margin: clamp(28px, 4vh, 44px) 0;
     }
 
-    /* Price block */
-    .price-block {
+    /* ── Form fields ── */
+    .field-group {
       display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
     }
 
-    .price {
-      font-size: clamp(1.9rem, 6.5vw, 3.8rem);
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      color: #fff;
-      line-height: 1;
-    }
-    .price .euro { color: #FF5C00; }
-
-    .status {
-      font-size: 0.65rem;
+    .field-group label {
+      font-size: 0.62rem;
       font-weight: 300;
-      letter-spacing: 0.28em;
-      color: #FF5C00;
+      letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.32);
       text-transform: uppercase;
-      align-self: center;
     }
 
-    /* Inquiry buttons */
-    .inquiry-row {
-      margin-top: clamp(28px, 4vh, 48px);
+    .field-group input,
+    .field-group textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2.6vw, 1.3rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.55rem 0;
+      outline: none;
+      transition: border-color 0.18s;
+      width: 100%;
+    }
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+      color: rgba(255,255,255,0.12);
+      font-weight: 300;
+    }
+    .field-group input:focus,
+    .field-group textarea:focus {
+      border-bottom-color: rgba(255,255,255,0.45);
+    }
+    .field-group textarea {
+      resize: none;
+      height: 80px;
+      font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+    }
+
+    /* ── Submit row ── */
+    .submit-row {
+      margin-top: clamp(24px, 3.5vh, 40px);
       display: flex;
       align-items: stretch;
     }
 
-    .btn-inq {
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.82rem, 2.2vw, 0.98rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
+      background: #fff;
+      color: #000;
+      border: 2px solid #fff;
+      border-radius: 4px 0 0 4px;
+      border-right: 1px solid rgba(0,0,0,0.18);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn-submit:hover { background: #FF5C00; border-color: #FF5C00; color: #000; }
+
+    .btn-back {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -185,31 +273,25 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       text-decoration: none;
-      padding: 0.85rem clamp(1.4rem, 4vw, 2.6rem);
+      padding: 0.85rem clamp(1.4rem, 3.5vw, 2.2rem);
+      background: transparent;
+      color: #fff;
       border: 2px solid #fff;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      border-left: none;
+      border-radius: 0 4px 4px 0;
+      transition: background 0.15s, color 0.15s;
     }
-    .btn-inq:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
-    .btn-inq:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
-    .btn-inq-fill  { background: #fff; color: #000; }
-    .btn-inq-fill:hover  { background: #FF5C00; border-color: #FF5C00; color: #000; }
-    .btn-inq-ghost { background: transparent; color: #fff; }
-    .btn-inq-ghost:hover { background: #fff; color: #000; }
+    .btn-back:hover { background: #fff; color: #000; }
 
-    /* Add art link */
-    .add-art-link {
-      margin-top: clamp(16px, 2.2vh, 26px);
-      text-align: right;
-    }
-    .add-art-link a {
-      font-size: 0.64rem;
+    /* Submit note */
+    .submit-note {
+      margin-top: clamp(16px, 2vh, 24px);
+      font-size: 0.62rem;
       font-weight: 300;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.2);
-      text-decoration: none;
-      transition: color 0.15s;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.22);
+      line-height: 1.6;
     }
-    .add-art-link a:hover { color: rgba(255,255,255,0.55); }
 
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -236,33 +318,98 @@
   </header>
 
   <main>
-    <div class="art-col">
+    <div class="form-col">
 
-      <p class="piece-index">aRT #000</p>
+      <p class="section-label">sUBMIT TO [aRTS]</p>
+      <h1 class="form-title">aDD aRT</h1>
 
-      <img class="piece-img" src="assets/piece-001.jpg" alt="pIETRO — [aRTS]" fetchpriority="high">
-
-      <div class="title-block">
-        <h1 class="piece-title">pIETRO</h1>
-        <span class="piece-year">2025</span>
+      <!-- Image upload -->
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="image/*">
+        <img id="preview" alt="preview">
+        <div class="upload-hint">
+          <span class="upload-icon">+</span>
+          <span class="upload-text">uPLOAD iMAGE</span>
+        </div>
+        <span class="upload-change">cHANGE</span>
       </div>
 
       <div class="divider"></div>
 
-      <div class="price-block">
-        <span class="price">88.888.888 <span class="euro">€</span></span>
-        <span class="status">aVAILABLE</span>
+      <!-- Form fields -->
+      <div class="field-group">
+        <label for="f-title">tITLE</label>
+        <input type="text" id="f-title" placeholder="aRTWORK tITLE" autocomplete="off">
       </div>
 
-      <div class="inquiry-row">
-        <a href="ask.html" class="btn-inq btn-inq-fill">iNQUiRE</a>
-        <a href="assets.html" class="btn-inq btn-inq-ghost">BaCK</a>
+      <div class="field-group">
+        <label for="f-price">pRICE (€)</label>
+        <input type="text" id="f-price" placeholder="0.000" autocomplete="off" inputmode="decimal">
       </div>
 
-      <p class="add-art-link"><a href="add.html">+ aDD yOUR aRT</a></p>
+      <div class="field-group">
+        <label for="f-email">yOUR eMaIL</label>
+        <input type="email" id="f-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="field-group">
+        <label for="f-note">nOTE</label>
+        <textarea id="f-note" placeholder="aNYTHING ELSE TO ADD..."></textarea>
+      </div>
+
+      <div class="submit-row">
+        <button class="btn-submit" id="btn-submit">sUBMiT</button>
+        <a href="art.html" class="btn-back">BaCK</a>
+      </div>
+
+      <p class="submit-note">* your email client will open with a pre-filled message —<br>attach your image file before sending.</p>
 
     </div>
   </main>
+
+  <!-- Image preview -->
+  <script>
+  (function(){
+    var zone   = document.getElementById('upload-zone');
+    var input  = document.getElementById('file-input');
+    var preview= document.getElementById('preview');
+    input.addEventListener('change', function(){
+      var file = input.files && input.files[0];
+      if(!file) return;
+      var url = URL.createObjectURL(file);
+      preview.src = url;
+      preview.classList.add('visible');
+      zone.classList.add('has-image');
+    });
+  })();
+  </script>
+
+  <!-- Submit → mailto -->
+  <script>
+  (function(){
+    document.getElementById('btn-submit').addEventListener('click', function(){
+      var title = document.getElementById('f-title').value.trim() || '(untitled)';
+      var price = document.getElementById('f-price').value.trim() || '—';
+      var email = document.getElementById('f-email').value.trim() || '—';
+      var note  = document.getElementById('f-note').value.trim();
+
+      var subject = '[aRTS] submission: ' + title;
+      var body = [
+        'TITLE:   ' + title,
+        'PRICE:   ' + price + ' \u20AC',
+        'CONTACT: ' + email,
+        note ? 'NOTE:    ' + note : '',
+        '',
+        '[ please attach your image file before sending ]'
+      ].filter(function(l){ return l !== undefined; }).join('\n');
+
+      window.location.href =
+        'mailto:art@4-arts.com' +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body='    + encodeURIComponent(body);
+    });
+  })();
+  </script>
 
   <script>
     (function () {
