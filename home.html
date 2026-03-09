@@ -627,5 +627,109 @@
     });
   })();
   </script>
+
+  <!-- ── Easter egg: type KNUP ── -->
+  <script>(function(){
+    var SEQ = 'knup', buf = '';
+
+    var WORDS = [
+      'BUY IT','USE IT','BREAK IT','FIX IT',
+      'TRASH IT','CHANGE IT','MAIL —','UPGRADE IT',
+      'CHARGE IT','POINT IT','ZOOM IT','PRESS IT',
+      'SNAP IT','WORK IT','QUICK — ERASE IT',
+      'WRITE IT','CUT IT','PASTE IT','SAVE IT',
+      'LOAD IT','CHECK IT','QUICK — REWRITE IT',
+      'PLUG IT','PLAY IT','BURN IT','RIP IT',
+      'DRAG AND DROP IT','ZIP —','UNZIP IT',
+      'LOCK IT','FILL IT','CALL IT','FIND IT',
+      'VIEW IT','CODE IT','JAM —','UNLOCK IT',
+      'SURF IT','SCROLL IT','PAUSE IT','CLICK IT',
+      'CROSS IT','CRACK IT','SWITCH —','UPDATE IT',
+      'NAME IT','READ IT','TUNE IT','PRINT IT',
+      'SCAN IT','SEND IT','FAX IT','RENAME IT',
+      'TOUCH IT','BRING IT','PAY IT','WATCH IT',
+      'TURN IT','LEAVE IT','START —','FORMAT IT'
+    ];
+
+    document.addEventListener('keydown', function(e){
+      if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      buf = (buf + e.key.toLowerCase()).slice(-SEQ.length);
+      if(buf === SEQ){ buf = ''; launch(); }
+    });
+
+    function launch(){
+      /* ── styles ── */
+      var s = document.createElement('style');
+      s.textContent =
+        '@keyframes tRgb{' +
+          '0%{text-shadow: 4px 0 #ff0000,-4px 0 #00ffff,0 0 18px #ff0000}' +
+          '25%{text-shadow:-4px 0 #00ff00, 4px 0 #ff00ff,0 0 18px #00ff00}' +
+          '50%{text-shadow: 4px 0 #0055ff,-4px 0 #ffff00,0 0 18px #0055ff}' +
+          '75%{text-shadow:-4px 0 #ff0000, 4px 0 #00ffff,0 0 18px #ff0000}' +
+          '100%{text-shadow:4px 0 #ff0000,-4px 0 #00ffff,0 0 18px #ff0000}' +
+        '}' +
+        '@keyframes tPop{' +
+          '0%{opacity:0;transform:scale(1.18) skewX(-3deg)}' +
+          '12%{opacity:1;transform:scale(1) skewX(0deg)}' +
+          '80%{opacity:1;transform:scale(1) skewX(0deg)}' +
+          '100%{opacity:0;transform:scale(0.9) skewX(2deg)}' +
+        '}' +
+        '#_techEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
+          'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+          'cursor:pointer;overflow:hidden;}' +
+        '#_techEgg::before{content:"KNUP";position:absolute;top:50%;left:50%;' +
+          'transform:translate(-50%,-50%);' +
+          'font-family:"Space Grotesk",sans-serif;font-size:clamp(6rem,30vw,18rem);' +
+          'font-weight:700;color:rgba(255,255,255,0.015);letter-spacing:0.1em;' +
+          'pointer-events:none;user-select:none;}' +
+        '#_techWord{font-family:"Space Grotesk",sans-serif;' +
+          'font-size:clamp(1.8rem,8vw,5rem);font-weight:700;letter-spacing:0.18em;' +
+          'color:#fff;text-align:center;padding:0 6vw;line-height:1.1;' +
+          'animation:tRgb 0.14s linear infinite,tPop 0.3s ease forwards;}' +
+        '#_techHint{position:absolute;bottom:28px;font-family:"Space Grotesk",sans-serif;' +
+          'font-size:0.52rem;letter-spacing:0.22em;color:rgba(255,255,255,0.18);' +
+          'text-transform:uppercase;}';
+      document.head.appendChild(s);
+
+      /* ── overlay ── */
+      var ov = document.createElement('div'); ov.id = '_techEgg';
+      var wEl = document.createElement('div'); wEl.id = '_techWord';
+      var hint = document.createElement('div'); hint.id = '_techHint';
+      hint.textContent = 'tAP OR pRESS eSC tO cLOSE';
+      ov.appendChild(wEl); ov.appendChild(hint);
+      document.body.appendChild(ov);
+
+      /* ── sequencer ── */
+      var idx = 0, timer;
+      var BPM = 124, MS = Math.round((60000 / BPM) / 2); /* 8th-note grid */
+
+      function tick(){
+        if(idx >= WORDS.length){ stop(600); return; }
+        wEl.style.animation = 'none';
+        void wEl.offsetWidth;
+        wEl.textContent = WORDS[idx++];
+        wEl.style.animation = 'tRgb 0.14s linear infinite, tPop '+MS+'ms ease forwards';
+        timer = setTimeout(tick, MS);
+      }
+
+      function stop(delay){
+        clearTimeout(timer);
+        setTimeout(function(){
+          ov.style.transition = 'opacity 0.5s ease';
+          ov.style.opacity = '0';
+          setTimeout(function(){
+            if(ov.parentNode) ov.parentNode.removeChild(ov);
+            if(s.parentNode)  s.parentNode.removeChild(s);
+          }, 550);
+        }, delay || 0);
+      }
+
+      tick();
+      ov.addEventListener('click', function(){ stop(); });
+      document.addEventListener('keydown', function esc(e){
+        if(e.key === 'Escape'){ stop(); document.removeEventListener('keydown', esc); }
+      });
+    }
+  })();</script>
 </body>
 </html>
