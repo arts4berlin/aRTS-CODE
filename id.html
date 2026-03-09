@@ -233,10 +233,10 @@
     }
 
     .vc-tier {
-      font-size: clamp(1.8rem, 5.5vw, 3rem);
+      font-size: clamp(0.82rem, 2.2vw, 1rem);
       font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #fff;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.35);
       line-height: 1;
     }
 
@@ -261,6 +261,90 @@
       color: rgba(255,255,255,0.14);
       line-height: 1.9;
       word-break: break-word;
+    }
+
+    /* ── Points, alias & milestone ── */
+    .vc-top-row { display: flex; align-items: center; gap: 1rem; }
+
+    .vc-remembered {
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #FF5C00;
+      background: rgba(255,92,0,0.08);
+      border: 1px solid rgba(255,92,0,0.22);
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    .vc-alias {
+      font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .vc-points-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-top: 2px;
+    }
+
+    .vc-pts-num {
+      font-size: clamp(1.9rem, 6vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #FF5C00;
+      line-height: 1;
+    }
+
+    .vc-pts-label {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .vc-milestone {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.38);
+      margin-top: 3px;
+    }
+
+    .vc-progress-bg {
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 2px;
+      margin-top: clamp(8px,1.2vh,12px);
+      overflow: hidden;
+    }
+
+    .vc-progress-fill {
+      height: 100%;
+      background: #FF5C00;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .vc-progress-label {
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.16);
+      margin-top: 4px;
+    }
+
+    .vc-since {
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.18);
     }
 
     /* Tier selector (new device) */
@@ -360,11 +444,26 @@
         <div class="verified-card">
           <div class="vc-stripe"></div>
           <div class="vc-body">
-            <div class="vc-check">✓</div>
+            <div class="vc-top-row">
+              <div class="vc-check">✓</div>
+              <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED ✓</span>
+            </div>
             <p class="vc-welcome">aCCESS gRaNTED</p>
-            <p class="vc-tier" id="vc-tier">mEMBER</p>
+            <p class="vc-alias" id="vc-alias">mEMBER</p>
+            <p class="vc-tier" id="vc-tier">—</p>
             <p class="vc-status" id="vc-status">aCTIVE</p>
             <div class="vc-rule"></div>
+            <div class="vc-points-row">
+              <span class="vc-pts-num" id="vc-pts-num">—</span>
+              <span class="vc-pts-label">pOINTS</span>
+            </div>
+            <p class="vc-milestone" id="vc-milestone">—</p>
+            <div class="vc-progress-bg">
+              <div class="vc-progress-fill" id="vc-progress-fill"></div>
+            </div>
+            <p class="vc-progress-label" id="vc-progress-label"></p>
+            <div class="vc-rule"></div>
+            <p class="vc-since" id="vc-since"></p>
             <p class="vc-phrase" id="vc-phrase"></p>
 
             <!-- Tier picker shown only on new device -->
@@ -419,6 +518,45 @@
       'vessel','void','volta','wake','weld',
       'wharf','wire','witness','zinc','zone'
     ]);
+
+    /* ── Milestones & points renderer ── */
+    var MILESTONES = [
+      { name: 'nOVICE',    min: 0    },
+      { name: 'PaTRON',    min: 100  },
+      { name: 'cOLLECTOR', min: 500  },
+      { name: 'aRCHIVIST', min: 1000 },
+      { name: 'mAESTRO',   min: 2500 }
+    ];
+
+    function getMilestoneIdx(pts) {
+      for (var i = MILESTONES.length - 1; i >= 0; i--) {
+        if (pts >= MILESTONES[i].min) return i;
+      }
+      return 0;
+    }
+
+    function renderPoints(pts, alias, tier, since, remembered) {
+      pts = parseInt(pts, 10) || 0;
+      var idx  = getMilestoneIdx(pts);
+      var m    = MILESTONES[idx];
+      var next = MILESTONES[idx + 1] || null;
+      document.getElementById('vc-alias').textContent     = alias || 'mEMBER';
+      document.getElementById('vc-tier').textContent      = tier  || '—';
+      document.getElementById('vc-pts-num').textContent   = pts;
+      document.getElementById('vc-milestone').textContent = m.name;
+      var pct = next
+        ? Math.min(100, Math.round((pts - m.min) / (next.min - m.min) * 100))
+        : 100;
+      /* Animate bar after short delay for visual effect */
+      setTimeout(function(){
+        document.getElementById('vc-progress-fill').style.width = pct + '%';
+      }, 120);
+      document.getElementById('vc-progress-label').textContent = next
+        ? ((next.min - pts) + ' pTS tO ' + next.name)
+        : '— mAESTRO — mAX TIER';
+      if (since) document.getElementById('vc-since').textContent = 'mEMBER sINCE ' + since;
+      if (remembered) document.getElementById('vc-remembered').hidden = false;
+    }
 
     /* SHA-256 */
     async function sha256(str) {
@@ -532,18 +670,27 @@
       /* Show phrase lightly */
       document.getElementById('vc-phrase').textContent = words.join(' — ');
 
+      var alias = null, since = null, pts = null;
+      try {
+        alias = localStorage.getItem('arts_alias');
+        since = localStorage.getItem('arts_since');
+        pts   = localStorage.getItem('arts_points');
+      } catch(e) {}
+
       if (storedTier && !newDevice) {
-        document.getElementById('vc-tier').textContent = storedTier;
+        document.getElementById('vc-status').textContent = 'aCTIVE';
+        renderPoints(pts || 0, alias, storedTier, since, false);
       } else {
-        /* New device: ask tier */
-        document.getElementById('vc-tier').textContent = 'mEMBER';
+        /* New device: show partial info and ask for tier */
+        document.getElementById('vc-status').textContent = 'nEW dEVICE';
+        renderPoints(pts || 0, alias, 'mEMBER', since, false);
         document.getElementById('tier-confirm').hidden = false;
         document.querySelectorAll('.btn-tier').forEach(function(btn) {
           btn.addEventListener('click', function() {
             document.querySelectorAll('.btn-tier').forEach(function(b){ b.classList.remove('active'); });
             btn.classList.add('active');
-            document.getElementById('vc-tier').textContent = btn.dataset.tier;
             try { localStorage.setItem('arts_tier', btn.dataset.tier); } catch(e) {}
+            renderPoints(pts || 0, alias, btn.dataset.tier, since, false);
           });
         });
       }
@@ -554,24 +701,34 @@
       try {
         localStorage.removeItem('arts_id_hash');
         localStorage.removeItem('arts_tier');
+        localStorage.removeItem('arts_alias');
+        localStorage.removeItem('arts_since');
+        localStorage.removeItem('arts_points');
       } catch(e) {}
       document.getElementById('s2').hidden = true;
       document.getElementById('s1').hidden = false;
+      document.getElementById('vc-remembered').hidden = true;
+      document.getElementById('vc-progress-fill').style.width = '0%';
       inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
       document.getElementById('err-msg').textContent = '';
     });
 
-    /* Auto-login if hash stored and user visits again */
+    /* Auto-login: if hash stored, skip word entry and show personalised dashboard */
     (async function() {
-      var h = null, t = null;
-      try { h = localStorage.getItem('arts_id_hash'); t = localStorage.getItem('arts_tier'); } catch(e) {}
+      var h = null, t = null, a = null, s = null, p = null;
+      try {
+        h = localStorage.getItem('arts_id_hash');
+        t = localStorage.getItem('arts_tier');
+        a = localStorage.getItem('arts_alias');
+        s = localStorage.getItem('arts_since');
+        p = localStorage.getItem('arts_points');
+      } catch(e) {}
       if (!h) return;
-      /* Show returning member instantly */
       document.getElementById('s1').hidden = true;
       document.getElementById('s2').hidden = false;
-      document.getElementById('vc-tier').textContent = t || 'mEMBER';
-      document.getElementById('vc-phrase').textContent = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
-      document.getElementById('vc-status').textContent = 'rETURNING mEMBER';
+      document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
+      document.getElementById('vc-phrase').textContent  = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
+      renderPoints(p || 0, a, t, s, true);
     })();
   })();
   </script>

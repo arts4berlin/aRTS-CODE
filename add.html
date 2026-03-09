@@ -423,6 +423,18 @@
           btn.style.background  = '#FF5C00';
           btn.style.borderColor = '#FF5C00';
           note.textContent = '* submission received \u2014 we\'ll be in touch.';
+          /* Award +50 points if member is logged in */
+          try {
+            if (localStorage.getItem('arts_id_hash')) {
+              var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+              localStorage.setItem('arts_points', String(cur + 50));
+              var ptsMsg = document.createElement('p');
+              ptsMsg.style.cssText = 'font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:#FF5C00;margin-top:6px;';
+              ptsMsg.textContent = '+ 50 pTS aWaRDED — cHECK yOUR iD';
+              note.insertAdjacentElement('afterend', ptsMsg);
+              setTimeout(function(){ if (ptsMsg.parentNode) ptsMsg.parentNode.removeChild(ptsMsg); }, 3500);
+            }
+          } catch(e) {}
           setTimeout(function(){
             btn.textContent       = 'sUBMiT';
             btn.style.background  = '';

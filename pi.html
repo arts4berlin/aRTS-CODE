@@ -431,6 +431,13 @@
           codeEl.textContent = randCode();
           codeEl.style.color = '';
           overlay.classList.add('open');
+          /* Award +77 points if member logged in */
+          try {
+            if (localStorage.getItem('arts_id_hash')) {
+              var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+              localStorage.setItem('arts_points', String(cur + 77));
+            }
+          } catch(e) {}
         }
       });
 
