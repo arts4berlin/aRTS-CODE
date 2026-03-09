@@ -325,7 +325,7 @@
 
       <!-- Image upload -->
       <div class="upload-zone" id="upload-zone">
-        <input type="file" id="file-input" accept="image/*">
+        <input type="file" id="file-input" name="image" accept="image/*">
         <img id="preview" alt="preview">
         <div class="upload-hint">
           <span class="upload-icon">+</span>
@@ -339,22 +339,22 @@
       <!-- Form fields -->
       <div class="field-group">
         <label for="f-title">tITLE</label>
-        <input type="text" id="f-title" placeholder="aRTWORK tITLE" autocomplete="off">
+        <input type="text" id="f-title" name="title" placeholder="aRTWORK tITLE" autocomplete="off">
       </div>
 
       <div class="field-group">
         <label for="f-price">pRICE (€)</label>
-        <input type="text" id="f-price" placeholder="0.000" autocomplete="off" inputmode="decimal">
+        <input type="text" id="f-price" name="price" placeholder="0.000" autocomplete="off" inputmode="decimal">
       </div>
 
       <div class="field-group">
         <label for="f-email">yOUR eMaIL</label>
-        <input type="email" id="f-email" placeholder="you@example.com" autocomplete="email">
+        <input type="email" id="f-email" name="email" placeholder="you@example.com" autocomplete="email">
       </div>
 
       <div class="field-group">
         <label for="f-note">nOTE</label>
-        <textarea id="f-note" placeholder="aNYTHING ELSE TO ADD..."></textarea>
+        <textarea id="f-note" name="note" placeholder="aNYTHING ELSE TO ADD..."></textarea>
       </div>
 
       <div class="submit-row">
@@ -362,7 +362,7 @@
         <a href="art.html" class="btn-back">BaCK</a>
       </div>
 
-      <p class="submit-note">* your email client will open with a pre-filled message —<br>attach your image file before sending.</p>
+      <p class="submit-note" id="submit-note">* image, title, price + contact sent directly to [aRTS].</p>
 
     </div>
   </main>
@@ -384,29 +384,69 @@
   })();
   </script>
 
-  <!-- Submit → mailto -->
+  <!-- Submit → Formspree -->
   <script>
   (function(){
-    document.getElementById('btn-submit').addEventListener('click', function(){
-      var title = document.getElementById('f-title').value.trim() || '(untitled)';
-      var price = document.getElementById('f-price').value.trim() || '—';
-      var email = document.getElementById('f-email').value.trim() || '—';
-      var note  = document.getElementById('f-note').value.trim();
+    var btn  = document.getElementById('btn-submit');
+    var note = document.getElementById('submit-note');
 
-      var subject = '[aRTS] submission: ' + title;
-      var body = [
-        'TITLE:   ' + title,
-        'PRICE:   ' + price + ' \u20AC',
-        'CONTACT: ' + email,
-        note ? 'NOTE:    ' + note : '',
-        '',
-        '[ please attach your image file before sending ]'
-      ].filter(function(l){ return l !== undefined; }).join('\n');
+    btn.addEventListener('click', async function(){
+      var title = document.getElementById('f-title').value.trim();
+      var email = document.getElementById('f-email').value.trim();
 
-      window.location.href =
-        'mailto:art@4-arts.com' +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body='    + encodeURIComponent(body);
+      if (!title) { document.getElementById('f-title').focus(); return; }
+      if (!email) { document.getElementById('f-email').focus(); return; }
+
+      var data = new FormData();
+      data.append('title',    title);
+      data.append('price',    document.getElementById('f-price').value.trim() || '—');
+      data.append('email',    email);
+      data.append('note',     document.getElementById('f-note').value.trim());
+      data.append('_subject', '[aRTS] art submission: ' + title);
+
+      var fileInput = document.getElementById('file-input');
+      if (fileInput.files && fileInput.files[0]) {
+        data.append('image', fileInput.files[0]);
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'sENDING...';
+
+      try {
+        var res = await fetch('https://formspree.io/f/xlgpgbeq', {
+          method:  'POST',
+          body:    data,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          btn.textContent = 'sENT \u2713';
+          btn.style.background  = '#FF5C00';
+          btn.style.borderColor = '#FF5C00';
+          note.textContent = '* submission received \u2014 we\'ll be in touch.';
+          setTimeout(function(){
+            btn.textContent       = 'sUBMiT';
+            btn.style.background  = '';
+            btn.style.borderColor = '';
+            btn.disabled          = false;
+            document.getElementById('f-title').value    = '';
+            document.getElementById('f-price').value    = '';
+            document.getElementById('f-email').value    = '';
+            document.getElementById('f-note').value     = '';
+            document.getElementById('file-input').value = '';
+            document.getElementById('preview').classList.remove('visible');
+            document.getElementById('upload-zone').classList.remove('has-image');
+            note.textContent = '* image, title, price + contact sent directly to [aRTS].';
+          }, 3000);
+        } else {
+          btn.textContent = 'sUBMiT';
+          btn.disabled    = false;
+          note.textContent = '* something went wrong \u2014 please try again.';
+        }
+      } catch (_) {
+        btn.textContent  = 'sUBMiT';
+        btn.disabled     = false;
+        note.textContent = '* something went wrong \u2014 please try again.';
+      }
     });
   })();
   </script>
