@@ -718,28 +718,28 @@
         </div>
 
         <div class="field-group">
-          <label for="j-email">yOUR eMaIL</label>
+          <label for="j-email">yOUR EMaIL</label>
           <input type="email" id="j-email" placeholder="you@example.com" autocomplete="email">
         </div>
 
         <div class="field-group">
-          <label for="j-alias">yOUR naME / aLIaS <span style="font-size:0.5rem;opacity:0.45;letter-spacing:0.1em;">(oPTIONAL)</span></label>
-          <input type="text" id="j-alias" placeholder="hoW dO yOU gO?" autocomplete="off" maxlength="40">
+          <label for="j-alias">yOUR NaME / aLIAS <span style="font-size:0.5rem;opacity:0.45;letter-spacing:0.1em;">(OPTIONaL)</span></label>
+          <input type="text" id="j-alias" placeholder="hOW dO yOU gO?" autocomplete="off" maxlength="40">
         </div>
 
         <div class="gen-row">
-          <button class="btn-gen" id="btn-gen" disabled>gENERaTE iD</button>
+          <button class="btn-gen" id="btn-gen" disabled>GENERaTE iD</button>
           <p class="already-member"><a href="id.html">already a member? →</a></p>
         </div>
       </div>
 
       <!-- ── STAGE 2: word display ── -->
       <div id="s2" hidden>
-        <p class="section-label" id="s2-label">mEMBER iD — gENERaTED</p>
+        <p class="section-label" id="s2-label">mEMBER iD — GENERaTED</p>
         <h1 class="form-title" id="s2-tier">—</h1>
 
         <p style="font-size:0.65rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.32);margin-bottom:4px;">
-          yOUR 12-wORD aCCESS kEY — sAVE tHIS BEFORE pAYING
+          yOUR 12-wORD aCCESS kEY — SaVE tHIS bEFORE PaYING
         </p>
         <p id="s2-pts" style="font-size:0.65rem;font-weight:700;letter-spacing:0.14em;color:#FF5C00;margin-bottom:10px;display:none;"></p>
 
@@ -759,7 +759,7 @@
 
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
           <div class="pay-trigger-wrap">
-            <button class="btn-access" id="btn-access">pAY & aCTIVaTE →</button>
+            <button class="btn-access" id="btn-access">PaY & aCTIVATE →</button>
           </div>
         </div>
 
@@ -772,22 +772,22 @@
 
       <!-- ── RETURNING MEMBER: iD generated, not yet paid ── -->
       <div id="s1-inactive" hidden>
-        <p class="section-label" id="ri-label">wELCOME bACK</p>
+        <p class="section-label" id="ri-label">wELCOME BaCK</p>
         <h1 class="form-title" id="ri-tier-title">—</h1>
 
         <div class="rm-status" id="ri-status">
           <span class="rm-dot"></span>
-          <span>iD rEaDY · pENDING aCTIVaTION</span>
+          <span>iD REaDY · pENDING aCTIVATION</span>
         </div>
 
         <!-- 12-word reveal (shown only if arts_words stored) -->
         <div id="ri-words-section" hidden>
-          <button class="btn-words-toggle" id="ri-words-toggle">⬤ rEVEaL 12 wORDS</button>
+          <button class="btn-words-toggle" id="ri-words-toggle">⬤ REVEaL 12 wORDS</button>
           <div class="words-grid words-hidden" id="ri-words-grid"></div>
         </div>
 
         <p style="font-size:0.65rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.26);margin:clamp(12px,1.8vh,20px) 0 clamp(4px,0.8vh,8px);line-height:1.8;">
-          sELECT a pLaN aND aCTIVaTE yOUR iD.
+          sELECT a PLaN aND aCTIVATE yOUR iD.
         </p>
 
         <div class="tiers" id="ri-tiers">
@@ -818,7 +818,7 @@
         </div>
 
         <div class="gen-row" style="margin-top:clamp(22px,3.2vh,36px);">
-          <button class="btn-access" id="ri-btn-pay">pAY & aCTIVaTE →</button>
+          <button class="btn-access" id="ri-btn-pay">PaY & aCTIVATE →</button>
           <button class="btn-gen" id="ri-btn-regen" style="background:transparent;color:rgba(255,255,255,0.28);border-color:rgba(255,255,255,0.1);font-size:0.62rem;padding:0.55rem 1rem;">nEW iD</button>
         </div>
 
@@ -840,7 +840,7 @@
 
         <a href="id.html" class="btn-access" style="display:inline-flex;">aCCESS mEMBER iD →</a>
 
-        <p class="upgrade-label" id="ra-upgrade-label">uPGRADE yOUR pLaN</p>
+        <p class="upgrade-label" id="ra-upgrade-label">UPGRaDE yOUR PLaN</p>
         <div class="tiers" id="ra-upgrade-tiers" style="margin-top:clamp(10px,1.5vh,14px);"></div>
       </div>
 
@@ -899,7 +899,7 @@
 
       <div class="co-pay-row">
         <button class="co-btn-pay" id="co-btn-pay">
-          pAY — <span id="co-price-span">—</span>
+          PaY — <span id="co-price-span">—</span>
         </button>
       </div>
 
@@ -1009,8 +1009,8 @@
       s2.hidden = false;
       document.getElementById('s2-tier').textContent = selectedTier;
       document.getElementById('s2-label').textContent = alias
-        ? ('wELCOME ' + alias.toUpperCase() + ' — sAVE yOUR kEY')
-        : '02 — sAVE yOUR kEY nOW';
+        ? ('wELCOME ' + alias.toUpperCase() + ' — SaVE yOUR kEY')
+        : '02 — SaVE yOUR kEY nOW';
 
       /* Render word grid with stagger */
       var grid = document.getElementById('words-grid');
@@ -1054,7 +1054,7 @@
       } catch(e) {}
       /* Show starting points */
       var ptsEl = document.getElementById('s2-pts');
-      ptsEl.textContent = '+ ' + startPts + ' sTaRTING pOINTS aWaRDED';
+      ptsEl.textContent = '+ ' + startPts + ' STaRTING pOINTS aWARDED';
       ptsEl.style.display = 'block';
 
       /* Mount Stripe Buy Button for the selected tier (off-screen, triggered by btn-access click) */
@@ -1244,7 +1244,7 @@
       /* Personalise header */
       if (storedAlias && storedAlias !== 'mEMBER') {
         var labelEl = document.getElementById('ri-label');
-        if (labelEl) labelEl.textContent = 'wELCOME bACK ' + storedAlias.toUpperCase();
+        if (labelEl) labelEl.textContent = 'wELCOME BaCK ' + storedAlias.toUpperCase();
       }
       var titleEl = document.getElementById('ri-tier-title');
       if (titleEl && storedTier) titleEl.textContent = storedTier;
@@ -1274,7 +1274,7 @@
               riToggle.textContent = '◉ hIDE 12 wORDS';
             } else {
               riGrid.classList.add('words-hidden');
-              riToggle.textContent = '⬤ rEVEaL 12 wORDS';
+              riToggle.textContent = '⬤ REVEaL 12 wORDS';
             }
           });
         }
