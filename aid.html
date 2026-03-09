@@ -120,7 +120,7 @@
   <div class="heading">
     <span class="small">YOUR</span>
     <span class="large">aID.</span>
-    <span class="iban-line" id="iban-copy">LT60 3250 0080 4650 5173</span>
+    <span class="iban-line" id="iban-copy">IBAN: LT60 3250 0080 4650 5173</span>
   </div>
 
   <script>
@@ -163,7 +163,8 @@
     var el = document.getElementById('iban-copy');
     el.addEventListener('click', function(){
       var text = 'LT60 3250 0080 4650 5173';
-      function confirm(){ el.classList.add('copied'); el.textContent='cOPIED'; setTimeout(function(){ el.classList.remove('copied'); el.textContent=text; }, 1800); }
+      var label = 'IBAN: ' + text;
+      function confirm(){ el.classList.add('copied'); el.textContent='cOPIED'; setTimeout(function(){ el.classList.remove('copied'); el.textContent=label; }, 1800); }
       if(navigator.clipboard){ navigator.clipboard.writeText(text).then(confirm).catch(function(){ fallback(); confirm(); }); } else { fallback(); confirm(); }
       function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
     });
