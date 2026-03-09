@@ -137,6 +137,7 @@
     let lastTs   = null;
     let streaming= false;
     let speedMult= 1.0;     // multiplier for post-decipher acceleration
+    let accelTime= 0;       // seconds elapsed since word fully deciphered
 
     /* ══════════════════════════════════════════════
        PHASE 1 — single char scrambles → settles to I
@@ -211,6 +212,7 @@
       wordX = window.innerWidth + 60;
       wordWrap.style.left = wordX + 'px';
       speedMult = 1.0;
+      accelTime = 0;
     }
 
     /* ══════════════════════════════════════════════
@@ -222,9 +224,10 @@
       lastTs = ts;
 
       if (streaming && spans.length && !exited) {
-        /* Accelerate after all letters decoded */
+        /* Accelerate after all letters decoded — quadratic: slow start, rockets at end */
         if (decrypted.length && decrypted.every(function(d){ return d; })) {
-          speedMult = Math.min(speedMult + dt * 4, 3.2);
+          accelTime += dt;
+          speedMult = Math.min(1 + accelTime * accelTime * 0.55, 12);
         }
 
         /* Move word left */
