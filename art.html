@@ -306,12 +306,36 @@
           return;
         }
         main.innerHTML = shown.map(function(p, i){ return renderPiece(p, i, shown.length); }).join('');
+        bindEuroScramble(main);
       })
       .catch(function(){
         /* Fallback to hardcoded piece if JSON unavailable */
         var main = document.getElementById('art-main');
         main.innerHTML = renderPiece({id:'000',title:'pIETRO',year:'2025',price:'88.888.888',currency:'€',status:'aVAILABLE',image:'assets/piece-001.jpg',media:'pLASTER · mOUNTED cANVAS · fLOATING fRAME'}, 0, 1);
+        bindEuroScramble(main);
       });
+
+    /* ── € hover: scramble through world currencies, return to € ── */
+    function bindEuroScramble(container){
+      var CURRENCIES = ['¥','£','$','₿','₽','¢','₩','₺','₴','₦','₫','₱','฿','₸','₾','﷼','₡'];
+      var FRAMES = 14, RATE = 42;
+      container.addEventListener('mouseover', function(e){
+        var el = e.target.closest('.euro');
+        if (!el || el._scrambling) return;
+        el._scrambling = true;
+        var step = 0;
+        var t = setInterval(function(){
+          if (step < FRAMES - 1){
+            el.textContent = CURRENCIES[Math.floor(Math.random() * CURRENCIES.length)];
+          } else {
+            el.textContent = '€';
+            el._scrambling = false;
+            clearInterval(t);
+          }
+          step++;
+        }, RATE);
+      });
+    }
   })();
   </script>
 

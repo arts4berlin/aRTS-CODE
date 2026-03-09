@@ -98,7 +98,7 @@
       line-height: 1;
     }
 
-    /* ── [aRTS] home mark (desktop left anchor) ── */
+    /* ── [aRTS] home mark (desktop left anchor — links to login) ── */
     .home-mark {
       font-size: 1rem;
       font-weight: 300;
@@ -107,8 +107,12 @@
       opacity: 0.88;
       line-height: 1;
       user-select: none;
-      pointer-events: none;
+      text-decoration: none;
+      cursor: crosshair;
+      white-space: nowrap;
+      transition: opacity 0.15s;
     }
+    .home-mark:hover { opacity: 1; }
 
     nav {
       display: flex;
@@ -273,7 +277,7 @@
 
   <div id="crt-wrap">
   <header>
-    <span class="home-mark">[aRTS]</span>
+    <a href="id.html" class="home-mark" id="home-mark">[aRTS]</a>
     <nav>
       <a href="about.html">aBOUT</a>
       <a href="ask.html">aCT</a>
@@ -619,6 +623,30 @@
       setTimeout(tick, 1200 + Math.random() * 1800);
     })();
 
+    /* ── [aRTS] home mark — expand to [aRTS LOGIN] on hover ── */
+    (function(){
+      var mark   = document.getElementById('home-mark');
+      if (!mark) return;
+      var SUFFIX = ' LOGIN';   // chars inserted between 'aRTS' and ']'
+      var timers = [], state = 0;
+      function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
+      function render(n){ mark.textContent = '[aRTS' + SUFFIX.slice(0, n) + ']'; }
+      mark.addEventListener('mouseenter', function(){
+        clr();
+        var from = state;
+        for (var i = from; i < SUFFIX.length; i++)(function(i){
+          timers.push(setTimeout(function(){ render(state = i + 1); }, (i - from) * DELAY));
+        })(i);
+      });
+      mark.addEventListener('mouseleave', function(){
+        clr();
+        var from = state;
+        for (var i = 0; i < from; i++)(function(i){
+          timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
+        })(i);
+      });
+    })();
+
     /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
     document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
       var inner=logo.dataset.inner;
@@ -749,69 +777,91 @@
     });
 
     function launch(){
+      /* ── BPM: Technologic runs at ~120 — 8th-note grid = 250ms ── */
+      var BPM = 120, MS = Math.round(60000 / BPM / 2); /* 250ms */
+
       /* ── styles ── */
       var s = document.createElement('style');
       s.textContent =
+        /* RGB aberration — one full cycle = 1 word duration, stays in sync */
         '@keyframes tRgb{' +
-          '0%{text-shadow: 4px 0 #ff0000,-4px 0 #00ffff,0 0 18px #ff0000}' +
-          '25%{text-shadow:-4px 0 #00ff00, 4px 0 #ff00ff,0 0 18px #00ff00}' +
-          '50%{text-shadow: 4px 0 #0055ff,-4px 0 #ffff00,0 0 18px #0055ff}' +
-          '75%{text-shadow:-4px 0 #ff0000, 4px 0 #00ffff,0 0 18px #ff0000}' +
-          '100%{text-shadow:4px 0 #ff0000,-4px 0 #00ffff,0 0 18px #ff0000}' +
+          '0%  {text-shadow: 3px 0 1px rgba(255,20,20,0.92), -3px 0 1px rgba(20,200,255,0.92)}' +
+          '33% {text-shadow:-3px 0 1px rgba(20,255,20,0.92),  3px 0 1px rgba(200,20,255,0.92)}' +
+          '66% {text-shadow: 3px 0 1px rgba(20,60,255,0.92), -3px 0 1px rgba(255,220,20,0.92)}' +
+          '100%{text-shadow: 3px 0 1px rgba(255,20,20,0.92), -3px 0 1px rgba(20,200,255,0.92)}' +
         '}' +
+        /* Pop: snap in, hold, fade cleanly — no skew jitter */
         '@keyframes tPop{' +
-          '0%{opacity:0;transform:scale(1.18) skewX(-3deg)}' +
-          '12%{opacity:1;transform:scale(1) skewX(0deg)}' +
-          '80%{opacity:1;transform:scale(1) skewX(0deg)}' +
-          '100%{opacity:0;transform:scale(0.9) skewX(2deg)}' +
+          '0%  {opacity:0; transform:scale(1.08)}' +
+          '9%  {opacity:1; transform:scale(1)}' +
+          '82% {opacity:1; transform:scale(1)}' +
+          '100%{opacity:0; transform:scale(0.94)}' +
         '}' +
+        /* Overlay entrance */
+        '@keyframes tFadeIn{0%{opacity:0}100%{opacity:1}}' +
         '#_techEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
           'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
-          'cursor:pointer;overflow:hidden;}' +
+          'cursor:pointer;overflow:hidden;' +
+          'animation:tFadeIn 0.18s ease forwards;}' +
+        /* CRT scanlines on overlay */
+        '#_techEgg::after{content:"";position:absolute;inset:0;pointer-events:none;' +
+          'background:repeating-linear-gradient(to bottom,' +
+            'transparent 0px,transparent 3px,rgba(0,14,0,0.45) 3px,rgba(0,14,0,0.45) 4px);' +
+          'z-index:1;}' +
+        /* Giant KNUP watermark */
         '#_techEgg::before{content:"KNUP";position:absolute;top:50%;left:50%;' +
-          'transform:translate(-50%,-50%);' +
+          'transform:translate(-50%,-50%);z-index:0;' +
           'font-family:"Space Grotesk",sans-serif;font-size:clamp(6rem,30vw,18rem);' +
-          'font-weight:700;color:rgba(255,255,255,0.015);letter-spacing:0.1em;' +
+          'font-weight:700;color:rgba(255,255,255,0.012);letter-spacing:0.1em;' +
           'pointer-events:none;user-select:none;}' +
-        '#_techWord{font-family:"Space Grotesk",sans-serif;' +
+        '#_techWord{position:relative;z-index:2;' +
+          'font-family:"Space Grotesk",sans-serif;' +
           'font-size:clamp(1.8rem,8vw,5rem);font-weight:700;letter-spacing:0.18em;' +
-          'color:#fff;text-align:center;padding:0 6vw;line-height:1.1;' +
-          'animation:tRgb 0.14s linear infinite,tPop 0.3s ease forwards;}' +
-        '#_techHint{position:absolute;bottom:28px;font-family:"Space Grotesk",sans-serif;' +
-          'font-size:0.52rem;letter-spacing:0.22em;color:rgba(255,255,255,0.18);' +
+          'color:#fff;text-align:center;padding:0 6vw;line-height:1.1;}' +
+        '#_techHint{position:absolute;bottom:28px;z-index:2;' +
+          'font-family:"Space Grotesk",sans-serif;' +
+          'font-size:0.52rem;letter-spacing:0.22em;color:rgba(255,255,255,0.15);' +
           'text-transform:uppercase;}';
       document.head.appendChild(s);
 
       /* ── overlay ── */
-      var ov = document.createElement('div'); ov.id = '_techEgg';
-      var wEl = document.createElement('div'); wEl.id = '_techWord';
+      var ov   = document.createElement('div'); ov.id = '_techEgg';
+      var wEl  = document.createElement('div'); wEl.id = '_techWord';
       var hint = document.createElement('div'); hint.id = '_techHint';
-      hint.textContent = 'tAP OR pRESS eSC tO cLOSE';
+      hint.textContent = 'tAP · eSC · cLOSE';
       ov.appendChild(wEl); ov.appendChild(hint);
       document.body.appendChild(ov);
 
-      /* ── sequencer ── */
-      var idx = 0, timer;
-      var BPM = 124, MS = Math.round((60000 / BPM) / 2); /* 8th-note grid */
+      /* ── sequencer — rAF-based reset for clean per-word animation ── */
+      var idx = 0, timer, stopped = false;
 
       function tick(){
-        if(idx >= WORDS.length){ stop(600); return; }
+        if(stopped || idx >= WORDS.length){ if(!stopped) stop(500); return; }
+        var word = WORDS[idx++];
         wEl.style.animation = 'none';
-        void wEl.offsetWidth;
-        wEl.textContent = WORDS[idx++];
-        wEl.style.animation = 'tRgb 0.14s linear infinite, tPop '+MS+'ms ease forwards';
-        timer = setTimeout(tick, MS);
+        /* rAF gives browser one frame to commit 'none' before restarting */
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+            if(stopped) return;
+            wEl.textContent = word;
+            wEl.style.animation =
+              'tRgb ' + MS + 'ms linear infinite, ' +
+              'tPop ' + MS + 'ms ease both';
+            timer = setTimeout(tick, MS);
+          });
+        });
       }
 
       function stop(delay){
+        stopped = true;
         clearTimeout(timer);
         setTimeout(function(){
-          ov.style.transition = 'opacity 0.5s ease';
+          ov.style.transition = 'opacity 0.38s ease';
           ov.style.opacity = '0';
           setTimeout(function(){
             if(ov.parentNode) ov.parentNode.removeChild(ov);
             if(s.parentNode)  s.parentNode.removeChild(s);
-          }, 550);
+          }, 420);
         }, delay || 0);
       }
 
@@ -819,6 +869,131 @@
       ov.addEventListener('click', function(){ stop(); });
       document.addEventListener('keydown', function esc(e){
         if(e.key === 'Escape'){ stop(); document.removeEventListener('keydown', esc); }
+      });
+    }
+  })();</script>
+
+  <!-- ── Easter egg: type ZENO — Zeno's Dichotomy Paradox ── -->
+  <script>(function(){
+    var SEQ = 'zeno', buf = '';
+
+    document.addEventListener('keydown', function(e){
+      if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      buf = (buf + e.key.toLowerCase()).slice(-SEQ.length);
+      if(buf === SEQ){ buf = ''; launchZeno(); }
+    });
+
+    function launchZeno(){
+      var s = document.createElement('style');
+      s.textContent =
+        '@keyframes zFade{0%{opacity:0}100%{opacity:1}}' +
+        '@keyframes zPulse{0%,100%{opacity:0.18}50%{opacity:0.38}}' +
+        '#_zenoEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
+          'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' +
+          'cursor:pointer;overflow:hidden;animation:zFade 0.28s ease forwards;}' +
+        /* CRT scanlines */
+        '#_zenoEgg::after{content:"";position:absolute;inset:0;pointer-events:none;' +
+          'background:repeating-linear-gradient(to bottom,' +
+            'transparent 0px,transparent 3px,rgba(0,14,0,0.42) 3px,rgba(0,14,0,0.42) 4px);}' +
+        '#_zenoQuote{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.72rem,2vw,0.9rem);' +
+          'font-weight:300;letter-spacing:0.18em;color:rgba(255,255,255,0.28);' +
+          'text-align:center;max-width:min(80vw,540px);line-height:1.7;' +
+          'margin-bottom:clamp(36px,6vh,64px);text-transform:uppercase;}' +
+        '#_zenoName{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.52rem,1.4vw,0.66rem);' +
+          'font-weight:300;letter-spacing:0.32em;color:rgba(255,255,255,0.14);' +
+          'margin-bottom:clamp(48px,8vh,80px);text-transform:uppercase;}' +
+        /* Progress track */
+        '#_zenoTrack{position:relative;width:min(72vw,520px);height:1px;' +
+          'background:rgba(255,255,255,0.07);}' +
+        '#_zenoBar{position:absolute;left:0;top:0;height:1px;width:0%;' +
+          'background:#fff;transition:width 0.68s cubic-bezier(0.25,0.46,0.45,0.94);}' +
+        '#_zenoBar::after{content:"";position:absolute;right:-1px;top:-2px;' +
+          'width:3px;height:5px;background:#fff;' +
+          'box-shadow:0 0 6px 2px rgba(255,255,255,0.6);}' +
+        '#_zenoPct{font-family:"Space Grotesk",sans-serif;' +
+          'font-size:clamp(3rem,12vw,7rem);font-weight:700;letter-spacing:0.04em;' +
+          'color:#fff;margin-top:clamp(32px,5vh,56px);line-height:1;' +
+          'text-shadow:0 0 40px rgba(255,255,255,0.12);}' +
+        '#_zenoSub{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.5rem,1.3vw,0.62rem);' +
+          'font-weight:300;letter-spacing:0.3em;color:rgba(255,255,255,0.16);' +
+          'margin-top:0.6rem;text-transform:uppercase;animation:zPulse 2.2s ease infinite;}' +
+        '#_zenoHint{position:absolute;bottom:28px;font-family:"Space Grotesk",sans-serif;' +
+          'font-size:0.5rem;letter-spacing:0.22em;color:rgba(255,255,255,0.12);' +
+          'text-transform:uppercase;}';
+      document.head.appendChild(s);
+
+      var ov    = document.createElement('div'); ov.id = '_zenoEgg';
+      var quote = document.createElement('p');   quote.id = '_zenoQuote';
+      var name  = document.createElement('p');   name.id  = '_zenoName';
+      var track = document.createElement('div'); track.id = '_zenoTrack';
+      var bar   = document.createElement('div'); bar.id   = '_zenoBar';
+      var pct   = document.createElement('div'); pct.id   = '_zenoPct';
+      var sub   = document.createElement('div'); sub.id   = '_zenoSub';
+      var hint  = document.createElement('div'); hint.id  = '_zenoHint';
+
+      quote.textContent = 'That which is in locomotion must arrive at the half-way stage before it arrives at the goal.';
+      name.textContent  = '— Zeno of Elea · 490 BC';
+      sub.textContent   = 'approaching…';
+      hint.textContent  = 'tAP · eSC · cLOSE';
+      track.appendChild(bar);
+      ov.appendChild(quote);
+      ov.appendChild(name);
+      ov.appendChild(track);
+      ov.appendChild(pct);
+      ov.appendChild(sub);
+      ov.appendChild(hint);
+      document.body.appendChild(ov);
+
+      /* ── Zeno's halving: each step covers half the remaining distance ── */
+      var current = 0;         // current % (0–100)
+      var stepIdx = 0;
+      var STEPS   = 22;        // how many halvings to perform
+      var DELAY   = 820;       // ms between steps (slows as it approaches)
+
+      function fmt(v){ return v.toFixed(v < 10 ? 4 : v < 99 ? 3 : 5) + '%'; }
+
+      function step(){
+        if(stopped) return;
+        var remaining = 100 - current;
+        current += remaining / 2;          // halve remaining distance
+        stepIdx++;
+
+        /* Smoothly animate bar + number */
+        bar.style.width = current + '%';
+        pct.textContent = fmt(current);
+
+        /* Each subsequent step takes proportionally longer — the paradox deepens */
+        var nextDelay = DELAY + stepIdx * 60;
+
+        if(stepIdx < STEPS){
+          timer = setTimeout(step, nextDelay);
+        } else {
+          /* Forever stuck just shy of 100% */
+          sub.textContent = 'never arriving.';
+          sub.style.animationPlayState = 'paused';
+          sub.style.opacity = '0.32';
+        }
+      }
+
+      var stopped = false, timer;
+
+      /* Brief pause before paradox starts — let quote breathe */
+      setTimeout(step, 1100);
+
+      function close(){
+        stopped = true;
+        clearTimeout(timer);
+        ov.style.transition = 'opacity 0.34s ease';
+        ov.style.opacity = '0';
+        setTimeout(function(){
+          if(ov.parentNode) ov.parentNode.removeChild(ov);
+          if(s.parentNode)  s.parentNode.removeChild(s);
+        }, 380);
+      }
+
+      ov.addEventListener('click', close);
+      document.addEventListener('keydown', function esc(e){
+        if(e.key === 'Escape'){ close(); document.removeEventListener('keydown', esc); }
       });
     }
   })();</script>
