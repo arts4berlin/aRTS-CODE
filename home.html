@@ -644,11 +644,16 @@
       setTimeout(tick, 1200 + Math.random() * 1800);
     })();
 
-    /* ── [aRTS] home mark — expand to [aRTS LOGIN] on hover ── */
+    /* ── [aRTS] home mark — expand to [aRTS LOGIN] or [aRTS ID] if logged in ── */
     (function(){
       var mark   = document.getElementById('home-mark');
       if (!mark) return;
-      var SUFFIX = ' LOGIN';   // chars inserted between 'aRTS' and ']'
+      /* If member hash stored → already logged in → show ID instead of LOGIN */
+      var loggedIn = false;
+      try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
+      var SUFFIX = loggedIn ? ' ID' : ' LOGIN';
+      /* Subtle visual distinction when already logged in */
+      if(loggedIn){ mark.style.opacity = '1'; mark.title = 'mEMBER iD'; }
       var timers = [], state = 0;
       function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
       function render(n){ mark.textContent = '[aRTS' + SUFFIX.slice(0, n) + ']'; }
@@ -908,7 +913,8 @@
       var s = document.createElement('style');
       s.textContent =
         '@keyframes zFade{0%{opacity:0}100%{opacity:1}}' +
-        '@keyframes zPulse{0%,100%{opacity:0.18}50%{opacity:0.38}}' +
+        '@keyframes zPulse{0%,100%{opacity:0.22}50%{opacity:0.45}}' +
+        /* Overlay */
         '#_zenoEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
           'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' +
           'cursor:pointer;overflow:hidden;animation:zFade 0.28s ease forwards;}' +
@@ -916,31 +922,47 @@
         '#_zenoEgg::after{content:"";position:absolute;inset:0;pointer-events:none;' +
           'background:repeating-linear-gradient(to bottom,' +
             'transparent 0px,transparent 3px,rgba(0,14,0,0.42) 3px,rgba(0,14,0,0.42) 4px);}' +
+        /* Watermark — faint orange entity tint */
+        '#_zenoEgg::before{content:"ZENO";position:absolute;top:50%;left:50%;' +
+          'transform:translate(-50%,-50%);z-index:0;' +
+          'font-family:"Space Grotesk",sans-serif;font-size:clamp(6rem,30vw,18rem);' +
+          'font-weight:700;color:rgba(255,92,0,0.018);letter-spacing:0.1em;' +
+          'pointer-events:none;user-select:none;}' +
         '#_zenoQuote{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.72rem,2vw,0.9rem);' +
-          'font-weight:300;letter-spacing:0.18em;color:rgba(255,255,255,0.28);' +
+          'font-weight:300;letter-spacing:0.18em;color:rgba(255,255,255,0.38);' +
           'text-align:center;max-width:min(80vw,540px);line-height:1.7;' +
-          'margin-bottom:clamp(36px,6vh,64px);text-transform:uppercase;}' +
+          'margin-bottom:clamp(36px,6vh,64px);text-transform:uppercase;' +
+          'position:relative;z-index:1;}' +
         '#_zenoName{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.52rem,1.4vw,0.66rem);' +
-          'font-weight:300;letter-spacing:0.32em;color:rgba(255,255,255,0.14);' +
-          'margin-bottom:clamp(48px,8vh,80px);text-transform:uppercase;}' +
+          'font-weight:300;letter-spacing:0.32em;color:rgba(255,255,255,0.22);' +
+          'margin-bottom:clamp(48px,8vh,80px);text-transform:uppercase;' +
+          'position:relative;z-index:1;}' +
         /* Progress track */
         '#_zenoTrack{position:relative;width:min(72vw,520px);height:1px;' +
-          'background:rgba(255,255,255,0.07);}' +
+          'background:rgba(255,255,255,0.10);z-index:1;}' +
         '#_zenoBar{position:absolute;left:0;top:0;height:1px;width:0%;' +
-          'background:#fff;transition:width 0.68s cubic-bezier(0.25,0.46,0.45,0.94);}' +
+          'background:#fff;' +
+          'transition:width 0.55s cubic-bezier(0.25,0.46,0.45,0.94),background 0.6s ease;}' +
         '#_zenoBar::after{content:"";position:absolute;right:-1px;top:-2px;' +
-          'width:3px;height:5px;background:#fff;' +
+          'width:3px;height:5px;background:inherit;' +
           'box-shadow:0 0 6px 2px rgba(255,255,255,0.6);}' +
+        /* Giant percentage / fraction counter */
         '#_zenoPct{font-family:"Space Grotesk",sans-serif;' +
           'font-size:clamp(3rem,12vw,7rem);font-weight:700;letter-spacing:0.04em;' +
           'color:#fff;margin-top:clamp(32px,5vh,56px);line-height:1;' +
-          'text-shadow:0 0 40px rgba(255,255,255,0.12);}' +
+          'text-shadow:0 0 40px rgba(255,255,255,0.12);' +
+          'transition:color 0.65s ease,text-shadow 0.65s ease;' +
+          'position:relative;z-index:1;}' +
         '#_zenoSub{font-family:"Space Grotesk",sans-serif;font-size:clamp(0.5rem,1.3vw,0.62rem);' +
-          'font-weight:300;letter-spacing:0.3em;color:rgba(255,255,255,0.16);' +
-          'margin-top:0.6rem;text-transform:uppercase;animation:zPulse 2.2s ease infinite;}' +
+          'font-weight:300;letter-spacing:0.3em;color:rgba(255,255,255,0.22);' +
+          'margin-top:0.6rem;text-transform:uppercase;animation:zPulse 2.2s ease infinite;' +
+          'position:relative;z-index:1;}' +
         '#_zenoHint{position:absolute;bottom:28px;font-family:"Space Grotesk",sans-serif;' +
           'font-size:0.5rem;letter-spacing:0.22em;color:rgba(255,255,255,0.12);' +
-          'text-transform:uppercase;}';
+          'text-transform:uppercase;}' +
+        /* ── Fraction mode: orange shift ── */
+        '._zenoFrac #_zenoPct{color:#FF5C00;text-shadow:0 0 40px rgba(255,92,0,0.32);}' +
+        '._zenoFrac #_zenoBar{background:#FF5C00;}';
       document.head.appendChild(s);
 
       var ov    = document.createElement('div'); ov.id = '_zenoEgg';
@@ -957,53 +979,63 @@
       sub.textContent   = 'approaching…';
       hint.textContent  = 'tAP · eSC · cLOSE';
       track.appendChild(bar);
-      ov.appendChild(quote);
-      ov.appendChild(name);
-      ov.appendChild(track);
-      ov.appendChild(pct);
-      ov.appendChild(sub);
-      ov.appendChild(hint);
+      ov.appendChild(quote); ov.appendChild(name);
+      ov.appendChild(track); ov.appendChild(pct);
+      ov.appendChild(sub);   ov.appendChild(hint);
       document.body.appendChild(ov);
 
+      /* ── Superscript helper for fraction display ── */
+      function toSup(n){
+        return String(n).replace(/[0-9]/g, function(c){
+          return ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'][parseInt(c)];
+        });
+      }
+
       /* ── Zeno's halving: each step covers half the remaining distance ── */
-      var current = 0;         // current % (0–100)
-      var stepIdx = 0;
-      var STEPS   = 22;        // how many halvings to perform
-      var DELAY   = 820;       // ms between steps (slows as it approaches)
+      var current    = 0;
+      var stepIdx    = 0;
+      var STEPS      = 35;       /* more steps — reaches deep into fraction territory    */
+      var DELAY      = 480;      /* faster base — builds tension sooner                  */
+      var THRESHOLD  = 99.99999; /* beyond here: switch from % to fraction display       */
+      var inFraction = false;
 
       function fmt(v){ return v.toFixed(v < 10 ? 4 : v < 99 ? 3 : 5) + '%'; }
 
       function step(){
         if(stopped) return;
         var remaining = 100 - current;
-        current += remaining / 2;          // halve remaining distance
+        current += remaining / 2;   /* halve remaining distance */
         stepIdx++;
 
-        /* Smoothly animate bar + number */
         bar.style.width = current + '%';
-        pct.textContent = fmt(current);
 
-        /* Each subsequent step takes proportionally longer — the paradox deepens */
-        var nextDelay = DELAY + stepIdx * 60;
+        /* Enter fraction mode when percentage becomes philosophically absurd */
+        if(!inFraction && current > THRESHOLD){
+          inFraction = true;
+          ov.classList.add('_zenoFrac');
+          sub.textContent = '∞  —  approaching';
+        }
 
+        /* Display: % in normal mode, 1/2ⁿ in fraction mode */
+        pct.textContent = inFraction
+          ? '1/2' + toSup(stepIdx)
+          : fmt(current);
+
+        /* Each step takes slightly longer — the paradox deepens */
         if(stepIdx < STEPS){
-          timer = setTimeout(step, nextDelay);
+          timer = setTimeout(step, DELAY + stepIdx * 25);
         } else {
-          /* Forever stuck just shy of 100% */
-          sub.textContent = 'never arriving.';
+          sub.textContent = 'undefined.';
           sub.style.animationPlayState = 'paused';
-          sub.style.opacity = '0.32';
+          sub.style.opacity = '0.38';
         }
       }
 
       var stopped = false, timer;
-
-      /* Brief pause before paradox starts — let quote breathe */
-      setTimeout(step, 1100);
+      setTimeout(step, 800);   /* brief pause — let quote breathe before paradox begins */
 
       function close(){
-        stopped = true;
-        clearTimeout(timer);
+        stopped = true; clearTimeout(timer);
         ov.style.transition = 'opacity 0.34s ease';
         ov.style.opacity = '0';
         setTimeout(function(){
@@ -1011,7 +1043,6 @@
           if(s.parentNode)  s.parentNode.removeChild(s);
         }, 380);
       }
-
       ov.addEventListener('click', close);
       document.addEventListener('keydown', function esc(e){
         if(e.key === 'Escape'){ close(); document.removeEventListener('keydown', esc); }

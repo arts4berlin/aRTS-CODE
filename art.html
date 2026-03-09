@@ -286,7 +286,7 @@
             '<span class="status">'+ esc(p.status || 'aVAILABLE') +'</span>',
           '</div>',
           '<div class="inquiry-row">',
-            '<a href="ask.html" class="btn-inq btn-inq-fill">iNQUiRE</a>',
+            '<a href="inquire.html?piece=' + encodeURIComponent(p.title) + '" class="btn-inq btn-inq-fill">iNQUiRE</a>',
             '<a href="assets.html" class="btn-inq btn-inq-ghost">BaCK</a>',
           '</div>',
           (idx === total - 1)

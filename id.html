@@ -396,6 +396,10 @@
     /* sign out */
     .signout-row {
       margin-top: clamp(18px, 2.5vh, 28px);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
     }
     .btn-signout {
       font-family: 'Space Grotesk', sans-serif;
@@ -411,6 +415,49 @@
       transition: all 0.15s;
     }
     .btn-signout:hover { color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.3); }
+
+    /* ── STEaLTH MODE ── */
+    .vc-stealth {
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+    .stealth-row {
+      margin-top: clamp(14px, 2vh, 20px);
+    }
+    .btn-stealth {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 3px;
+      padding: 0.35rem 0.8rem;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+    .btn-stealth:hover { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.18); }
+    .btn-stealth.active {
+      color: rgba(255,255,255,0.65);
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.04);
+    }
+    .stealth-notice {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.22);
+      margin-top: clamp(8px,1.2vh,12px);
+      line-height: 1.7;
+    }
 
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
@@ -453,6 +500,13 @@
           <button class="btn-verify" id="btn-verify">vERiFY</button>
           <p class="not-member"><a href="join.html">not a member? →</a></p>
         </div>
+
+        <div class="stealth-row">
+          <button class="btn-stealth" id="btn-stealth-toggle">◌ sTEaLTH mODE</button>
+          <p class="stealth-notice" id="stealth-notice" hidden>
+            session-only — nothing stored after tab closes · works in incognito
+          </p>
+        </div>
       </div>
 
       <!-- ── STAGE 2: verified ── -->
@@ -466,6 +520,7 @@
             <div class="vc-top-row">
               <div class="vc-check">✓</div>
               <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED ✓</span>
+              <span class="vc-stealth"   id="vc-stealth"   hidden>sTEaLTH mODE</span>
             </div>
             <p class="vc-welcome">aCCESS gRaNTED</p>
             <p class="vc-alias" id="vc-alias">mEMBER</p>
@@ -511,6 +566,45 @@
 
   <script>
   (function(){
+    /* ── Storage mode: localStorage (normal) or sessionStorage (STEaLTH / incognito) ── */
+    var stealthMode = false;
+
+    /* Auto-detect: if localStorage is blocked (Firefox private etc), force stealth */
+    try {
+      localStorage.setItem('_arts_test', '1');
+      localStorage.removeItem('_arts_test');
+    } catch(e) {
+      stealthMode = true;
+    }
+
+    /* Unified store helper — swaps backend transparently */
+    var store = {
+      get: function(k){ try{ return (stealthMode ? sessionStorage : localStorage).getItem(k); }catch(e){ return null; } },
+      set: function(k,v){ try{ (stealthMode ? sessionStorage : localStorage).setItem(k,v); }catch(e){} },
+      del: function(k){ try{ (stealthMode ? sessionStorage : localStorage).removeItem(k); }catch(e){} }
+    };
+
+    function applyStealthUI(){
+      var btn = document.getElementById('btn-stealth-toggle');
+      var notice = document.getElementById('stealth-notice');
+      if(stealthMode){
+        btn.classList.add('active');
+        btn.textContent = '● sTEaLTH mODE';
+        notice.hidden = false;
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '◌ sTEaLTH mODE';
+        notice.hidden = true;
+      }
+    }
+    applyStealthUI();
+
+    /* Manual toggle */
+    document.getElementById('btn-stealth-toggle').addEventListener('click', function(){
+      stealthMode = !stealthMode;
+      applyStealthUI();
+    });
+
     /* ── Stripe payment links (same as join.html) ── */
     var PAYMENT_LINKS = {
       'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
@@ -689,15 +783,11 @@
       inputs.forEach(function(inp){ inp.classList.add('ok'); });
 
       var hash = await sha256(words.join('-'));
-      var storedHash = null;
-      var storedTier = null;
-      try {
-        storedHash = localStorage.getItem('arts_id_hash');
-        storedTier = localStorage.getItem('arts_tier');
-      } catch(e) {}
+      var storedHash = store.get('arts_id_hash');
+      var storedTier = store.get('arts_tier');
 
-      /* Store for this device */
-      try { localStorage.setItem('arts_id_hash', hash); } catch(e) {}
+      /* Store for this session / device */
+      store.set('arts_id_hash', hash);
 
       var newDevice = !storedHash || storedHash !== hash;
 
@@ -709,19 +799,19 @@
       /* Show phrase lightly */
       document.getElementById('vc-phrase').textContent = words.join(' — ');
 
-      var alias = null, since = null, pts = null;
-      try {
-        alias = localStorage.getItem('arts_alias');
-        since = localStorage.getItem('arts_since');
-        pts   = localStorage.getItem('arts_points');
-      } catch(e) {}
+      /* Show STEaLTH badge if in stealth mode */
+      document.getElementById('vc-stealth').hidden = !stealthMode;
+
+      var alias = store.get('arts_alias');
+      var since = store.get('arts_since');
+      var pts   = store.get('arts_points');
 
       if (storedTier && !newDevice) {
         document.getElementById('vc-status').textContent = 'aCTIVE';
         renderPoints(pts || 0, alias, storedTier, since, false);
         showActivateLink(storedTier);
       } else {
-        /* New device: show partial info and ask for tier */
+        /* New device / session: show partial info and ask for tier */
         document.getElementById('vc-status').textContent = 'vERIFIED';
         renderPoints(pts || 0, alias, 'mEMBER', since, false);
         document.getElementById('tier-confirm').hidden = false;
@@ -729,7 +819,7 @@
           btn.addEventListener('click', function() {
             document.querySelectorAll('.btn-tier').forEach(function(b){ b.classList.remove('active'); });
             btn.classList.add('active');
-            try { localStorage.setItem('arts_tier', btn.dataset.tier); } catch(e) {}
+            store.set('arts_tier', btn.dataset.tier);
             renderPoints(pts || 0, alias, btn.dataset.tier, since, false);
             showActivateLink(btn.dataset.tier);
           });
@@ -739,13 +829,11 @@
 
     /* Sign out */
     document.getElementById('btn-signout').addEventListener('click', function() {
-      try {
-        localStorage.removeItem('arts_id_hash');
-        localStorage.removeItem('arts_tier');
-        localStorage.removeItem('arts_alias');
-        localStorage.removeItem('arts_since');
-        localStorage.removeItem('arts_points');
-      } catch(e) {}
+      store.del('arts_id_hash');
+      store.del('arts_tier');
+      store.del('arts_alias');
+      store.del('arts_since');
+      store.del('arts_points');
       document.getElementById('s2').hidden = true;
       document.getElementById('s1').hidden = false;
       document.getElementById('vc-remembered').hidden = true;
@@ -758,19 +846,17 @@
 
     /* Auto-login: if hash stored, skip word entry and show personalised dashboard */
     (async function() {
-      var h = null, t = null, a = null, s = null, p = null;
-      try {
-        h = localStorage.getItem('arts_id_hash');
-        t = localStorage.getItem('arts_tier');
-        a = localStorage.getItem('arts_alias');
-        s = localStorage.getItem('arts_since');
-        p = localStorage.getItem('arts_points');
-      } catch(e) {}
+      var h = store.get('arts_id_hash');
       if (!h) return;
+      var t = store.get('arts_tier');
+      var a = store.get('arts_alias');
+      var s = store.get('arts_since');
+      var p = store.get('arts_points');
       document.getElementById('s1').hidden = true;
       document.getElementById('s2').hidden = false;
       document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
       document.getElementById('vc-phrase').textContent  = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
+      document.getElementById('vc-stealth').hidden      = !stealthMode;
       renderPoints(p || 0, a, t, s, true);
       if (t) showActivateLink(t);
     })();
