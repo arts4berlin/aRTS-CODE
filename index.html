@@ -308,7 +308,7 @@
     #q-mark:hover { color: #FF5C00; }
 
     /* ── Mobile: safe area + text-size ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     .logo, .nav-about, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
   </style>
@@ -599,7 +599,12 @@
       /* TV channel-change: captcha itself squishes to center line, then home boots up */
       setTimeout(() => {
         document.getElementById('c-overlay').style.pointerEvents = 'none';
-        runCRTCollapse(function () { window.location.href = 'home.html'; });
+        runCRTCollapse(function () {
+          /* Ensure the viewport is black before navigation to prevent white flash */
+          document.documentElement.style.background = '#000';
+          document.body.style.background = '#000';
+          window.location.href = 'home.html';
+        });
       }, 300);
     }
 
