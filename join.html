@@ -135,6 +135,32 @@
     }
     .tp-price .euro { color: #FF5C00; }
 
+    .tp-perks {
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.18);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    .tier-pick.selected .tp-perks { color: rgba(255,255,255,0.32); }
+
+    .btn-already-paid {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      margin-top: clamp(12px, 1.8vh, 18px);
+      color: rgba(255,255,255,0.42);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 4px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-already-paid:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+
     .tp-dot {
       width: 10px;
       height: 10px;
@@ -345,6 +371,7 @@
             <div class="tp-info">
               <span class="tp-name">aLLY</span>
               <span class="tp-price"><span class="euro">€</span>3 / month</span>
+              <span class="tp-perks">member card · community access · trading network</span>
             </div>
             <div class="tp-dot"></div>
           </div>
@@ -352,6 +379,7 @@
             <div class="tp-info">
               <span class="tp-name">BRIGaDIER</span>
               <span class="tp-price"><span class="euro">€</span>33 / month</span>
+              <span class="tp-perks">all above · submission slots · 2 guest invites</span>
             </div>
             <div class="tp-dot"></div>
           </div>
@@ -359,6 +387,7 @@
             <div class="tp-info">
               <span class="tp-name">CURaTOR</span>
               <span class="tp-price"><span class="euro">€</span>333 / month</span>
+              <span class="tp-perks">all above · editorial seat · private archive · patronage</span>
             </div>
             <div class="tp-dot"></div>
           </div>
@@ -370,7 +399,7 @@
         </div>
 
         <div class="field-group">
-          <label for="j-alias">yOUR naME / aLIaS</label>
+          <label for="j-alias">yOUR naME / aLIaS <span style="font-size:0.5rem;opacity:0.45;letter-spacing:0.1em;">(oPTIONAL)</span></label>
           <input type="text" id="j-alias" placeholder="hoW dO yOU gO?" autocomplete="off" maxlength="40">
         </div>
 
@@ -386,7 +415,7 @@
         <h1 class="form-title" id="s2-tier">—</h1>
 
         <p style="font-size:0.65rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.32);margin-bottom:4px;">
-          yOUR 12-wORD aCCESS kEY
+          yOUR 12-wORD aCCESS kEY — sAVE tHIS BEFORE pAYING
         </p>
         <p id="s2-pts" style="font-size:0.65rem;font-weight:700;letter-spacing:0.14em;color:#FF5C00;margin-bottom:10px;display:none;"></p>
 
@@ -397,9 +426,10 @@
         </div>
 
         <p class="id-warning">
-          <strong>save these 12 words now.</strong><br>
-          they are your only access key — write them down or store them safely.<br>
-          they cannot be recovered if lost. do not share them.
+          <strong>write these down or copy before you pay.</strong><br>
+          these 12 words are your only login on any device — they cannot be recovered.<br>
+          do not share them with anyone.<br>
+          <span style="color:rgba(255,92,0,0.7);">once saved → click the button below to activate.</span>
         </p>
 
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
@@ -407,10 +437,10 @@
         </div>
 
         <p class="payment-note">
-          * clicking above opens stripe checkout in a new tab.<br>
-          your ID is active once payment is confirmed.<br>
-          <a href="id.html" style="color:rgba(255,255,255,0.22);text-decoration:none;letter-spacing:0.1em;transition:color 0.15s;" onmouseover="this.style.color='rgba(255,255,255,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.22)'">already paid? → aCCESS iD</a>
+          stripe checkout opens in a new tab · your iD activates once payment is confirmed.<br>
+          on this device your key is remembered — just return to your member area after paying.
         </p>
+        <a href="id.html" class="btn-already-paid">already paid? → aCCESS mEMBER iD</a>
       </div>
 
     </div>
@@ -514,8 +544,8 @@
       s2.hidden = false;
       document.getElementById('s2-tier').textContent = selectedTier;
       document.getElementById('s2-label').textContent = alias
-        ? ('wELCOME, ' + alias.toUpperCase())
-        : (selectedTier + ' — iD gENERaTED');
+        ? ('wELCOME ' + alias.toUpperCase() + ' — sAVE yOUR kEY')
+        : '02 — sAVE yOUR kEY nOW';
 
       /* Render word grid with stagger */
       var grid = document.getElementById('words-grid');

@@ -374,6 +374,25 @@
     }
     .btn-tier:hover, .btn-tier.active { background: #fff; color: #000; border-color: #fff; }
 
+    /* activate row */
+    .activate-row {
+      margin-top: clamp(10px, 1.5vh, 16px);
+    }
+    .btn-activate-pay {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      color: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-activate-pay:hover { color: #FF5C00; border-color: rgba(255,92,0,0.35); }
+
     /* sign out */
     .signout-row {
       margin-top: clamp(18px, 2.5vh, 28px);
@@ -468,7 +487,7 @@
 
             <!-- Tier picker shown only on new device -->
             <div class="tier-confirm" id="tier-confirm" hidden>
-              <p>cONFIRM yOUR tIER:</p>
+              <p>wHICH tIER aRE yOU?</p>
               <div class="tier-btns">
                 <button class="btn-tier" data-tier="aLLY">aLLY</button>
                 <button class="btn-tier" data-tier="BRIGaDIER">BRIGaDIER</button>
@@ -476,6 +495,10 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="activate-row" id="activate-row" hidden>
+          <a href="#" class="btn-activate-pay" id="btn-activate-pay" target="_blank" rel="noopener">nOT yET aCTIVE? pAY →</a>
         </div>
 
         <div class="signout-row">
@@ -488,6 +511,21 @@
 
   <script>
   (function(){
+    /* ── Stripe payment links (same as join.html) ── */
+    var PAYMENT_LINKS = {
+      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+    };
+
+    function showActivateLink(tier) {
+      var link = PAYMENT_LINKS[tier];
+      if (!link) return;
+      var row = document.getElementById('activate-row');
+      row.hidden = false;
+      document.getElementById('btn-activate-pay').href = link;
+    }
+
     /* ── Same word pool as join.html ── */
     var POOL = new Set([
       'amber','archive','atlas','axiom','azure',
@@ -586,19 +624,20 @@
       inputs.push(inp);
     }
 
-    /* Paste → distribute across all 12 cells */
-    inputs[0].addEventListener('paste', function(e) {
-      var text = (e.clipboardData || window.clipboardData).getData('text');
-      var parts = text.trim().split(/[\s\-—,]+/).slice(0, 12);
-      if (parts.length > 1) {
-        e.preventDefault();
-        parts.forEach(function(w, i){ if(inputs[i]) inputs[i].value = w.toLowerCase().trim(); });
-        (inputs[parts.length] || inputs[11]).focus();
-      }
-    });
-
-    /* Tab / enter navigation between cells */
+    /* Tab / enter navigation + paste on every cell */
     inputs.forEach(function(inp, i) {
+      /* Paste on any cell: if 12 words detected, always fill from 0; otherwise fill from cursor */
+      inp.addEventListener('paste', function(e) {
+        var text = (e.clipboardData || window.clipboardData).getData('text');
+        var parts = text.trim().split(/[\s\-—,]+/).filter(Boolean).slice(0, 12);
+        if (parts.length > 1) {
+          e.preventDefault();
+          var start = parts.length === 12 ? 0 : i;
+          parts.forEach(function(w, j){ if (inputs[start + j]) inputs[start + j].value = w.toLowerCase().trim(); });
+          var nextFocus = inputs[start + parts.length] || inputs[11];
+          if (nextFocus) nextFocus.focus();
+        }
+      });
       inp.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === 'Tab') {
           e.preventDefault();
@@ -680,9 +719,10 @@
       if (storedTier && !newDevice) {
         document.getElementById('vc-status').textContent = 'aCTIVE';
         renderPoints(pts || 0, alias, storedTier, since, false);
+        showActivateLink(storedTier);
       } else {
         /* New device: show partial info and ask for tier */
-        document.getElementById('vc-status').textContent = 'nEW dEVICE';
+        document.getElementById('vc-status').textContent = 'vERIFIED';
         renderPoints(pts || 0, alias, 'mEMBER', since, false);
         document.getElementById('tier-confirm').hidden = false;
         document.querySelectorAll('.btn-tier').forEach(function(btn) {
@@ -691,6 +731,7 @@
             btn.classList.add('active');
             try { localStorage.setItem('arts_tier', btn.dataset.tier); } catch(e) {}
             renderPoints(pts || 0, alias, btn.dataset.tier, since, false);
+            showActivateLink(btn.dataset.tier);
           });
         });
       }
@@ -709,6 +750,8 @@
       document.getElementById('s1').hidden = false;
       document.getElementById('vc-remembered').hidden = true;
       document.getElementById('vc-progress-fill').style.width = '0%';
+      document.getElementById('activate-row').hidden = true;
+      document.getElementById('tier-confirm').hidden = true;
       inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
       document.getElementById('err-msg').textContent = '';
     });
@@ -729,6 +772,7 @@
       document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
       document.getElementById('vc-phrase').textContent  = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
       renderPoints(p || 0, a, t, s, true);
+      if (t) showActivateLink(t);
     })();
   })();
   </script>
