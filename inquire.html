@@ -218,6 +218,7 @@
       display: flex;
       flex-direction: column;
       gap: clamp(10px, 1.5vh, 16px);
+      transition: opacity 0.22s ease;
     }
 
     .success-check {
@@ -311,11 +312,11 @@
       <!-- ── Success state ── -->
       <div id="success" hidden>
         <p class="section-label">sENT ✓</p>
-        <h1 class="form-title">mESSAGE<br>rECEIVED</h1>
+        <h1 class="form-title">mESSAGE<br>sENT</h1>
         <div class="success-check">✓</div>
         <p class="success-sub">
-          yOUR iNQUIRY HAS BEEN<br>
-          fORWARDED tO [aRTS]<br>
+          iNQUIRY dELIVERED tO [aRTS]<br>
+          cHECK yOUR iNBOX fOR cONFIRMATION<br>
           wE'LL bE iN tOUCH sOON
         </p>
         <div class="divider-thin"></div>
@@ -369,6 +370,9 @@
 
       btn.disabled    = true;
       btn.textContent = 'sENDING…';
+      /* Dim the form fields while request is in-flight */
+      form.style.opacity = '0.4';
+      form.style.pointerEvents = 'none';
 
       try {
         var res = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ID', {
@@ -378,17 +382,32 @@
         });
 
         if(res.ok){
-          document.getElementById('inq-form-wrap').hidden = true;
-          document.getElementById('success').hidden       = false;
+          /* Fade out form, fade in success */
+          var wrap = document.getElementById('inq-form-wrap');
+          wrap.style.transition = 'opacity 0.22s ease';
+          wrap.style.opacity = '0';
+          setTimeout(function(){
+            wrap.hidden = true;
+            var suc = document.getElementById('success');
+            suc.style.opacity = '0';
+            suc.hidden = false;
+            requestAnimationFrame(function(){
+              requestAnimationFrame(function(){ suc.style.opacity = '1'; });
+            });
+          }, 240);
         } else {
           errEl.textContent = '— sEND fAILED · tRY aGAIN';
           btn.disabled    = false;
           btn.textContent = 'sEND iNQUIRY';
+          form.style.opacity = '1';
+          form.style.pointerEvents = '';
         }
       } catch(err){
         errEl.textContent = '— nETWORK eRROR · cHECK cONNECTION';
         btn.disabled    = false;
         btn.textContent = 'sEND iNQUIRY';
+        form.style.opacity = '1';
+        form.style.pointerEvents = '';
       }
     });
   })();

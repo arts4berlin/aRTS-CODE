@@ -454,5 +454,19 @@
     });
   })();
   </script>
+
+  <!-- ── Login-aware: returning members see a personalised CTA, not 'already a member?' ── -->
+  <script>
+  (function(){
+    var loggedIn = false;
+    try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
+    if (!loggedIn) return;
+    /* Swap the dim 'already a member?' link for a clear member-area CTA */
+    var amDiv = document.querySelector('.membership div[style*="text-align:center"]');
+    if (amDiv) {
+      amDiv.innerHTML = '<a href="id.html" style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;color:rgba(255,92,0,0.82);text-decoration:none;">✓ aCCESS yOUR mEMBER iD →</a>';
+    }
+  })();
+  </script>
 </body>
 </html>

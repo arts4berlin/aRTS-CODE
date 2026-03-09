@@ -459,6 +459,9 @@
       line-height: 1.7;
     }
 
+    /* ── Stage fade transitions ── */
+    #s1, #s2 { transition: opacity 0.22s ease; }
+
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     header, nav, a, button { touch-action: manipulation; }
@@ -598,6 +601,16 @@
       }
     }
     applyStealthUI();
+
+    /* Hide 'not a member?' for returning members — s1 briefly shows during fade */
+    (function(){
+      var loggedIn = false;
+      try { loggedIn = !!store.get('arts_id_hash'); } catch(e) {}
+      if (loggedIn) {
+        var nm = document.querySelector('.not-member');
+        if (nm) nm.style.display = 'none';
+      }
+    })();
 
     /* Manual toggle */
     document.getElementById('btn-stealth-toggle').addEventListener('click', function(){
@@ -791,13 +804,21 @@
 
       var newDevice = !storedHash || storedHash !== hash;
 
-      /* Switch to verified view */
-      document.getElementById('s1').hidden = true;
-      var s2 = document.getElementById('s2');
-      s2.hidden = false;
-
-      /* Show phrase lightly */
+      /* Populate s2 content before showing */
       document.getElementById('vc-phrase').textContent = words.join(' — ');
+
+      /* Switch to verified view — smooth cross-fade */
+      var s1El = document.getElementById('s1');
+      s1El.style.opacity = '0';
+      setTimeout(function() {
+        s1El.hidden = true;
+        var s2 = document.getElementById('s2');
+        s2.style.opacity = '0';
+        s2.hidden = false;
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() { s2.style.opacity = '1'; });
+        });
+      }, 230);
 
       /* Show STEaLTH badge if in stealth mode */
       document.getElementById('vc-stealth').hidden = !stealthMode;
@@ -827,15 +848,24 @@
       }
     });
 
-    /* Sign out */
+    /* Sign out — smooth reverse fade */
     document.getElementById('btn-signout').addEventListener('click', function() {
       store.del('arts_id_hash');
       store.del('arts_tier');
       store.del('arts_alias');
       store.del('arts_since');
       store.del('arts_points');
-      document.getElementById('s2').hidden = true;
-      document.getElementById('s1').hidden = false;
+      var s2Out = document.getElementById('s2');
+      s2Out.style.opacity = '0';
+      setTimeout(function() {
+        s2Out.hidden = true;
+        var s1Back = document.getElementById('s1');
+        s1Back.style.opacity = '0';
+        s1Back.hidden = false;
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() { s1Back.style.opacity = '1'; });
+        });
+      }, 230);
       document.getElementById('vc-remembered').hidden = true;
       document.getElementById('vc-progress-fill').style.width = '0%';
       document.getElementById('activate-row').hidden = true;
@@ -843,6 +873,27 @@
       inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
       document.getElementById('err-msg').textContent = '';
     });
+
+    /* ── Scramble title on arrival ── */
+    (function(){
+      var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ@#!?';
+      function scrambleTo(el, target) {
+        var FRAMES = 18, RATE = 42, step = 0;
+        var orig = el.textContent;
+        var t = setInterval(function() {
+          var settled = Math.floor((step / FRAMES) * target.length);
+          el.textContent = target.split('').map(function(ch, i) {
+            return i < settled ? ch : POOL[Math.floor(Math.random() * POOL.length)];
+          }).join('');
+          step++;
+          if (step > FRAMES) { clearInterval(t); el.textContent = target; }
+        }, RATE);
+      }
+      setTimeout(function() {
+        var titleEl = document.querySelector('#s1 .form-title');
+        if (titleEl) scrambleTo(titleEl, titleEl.textContent);
+      }, 320);
+    })();
 
     /* Auto-login: if hash stored, skip word entry and show personalised dashboard */
     (async function() {
@@ -852,8 +903,18 @@
       var a = store.get('arts_alias');
       var s = store.get('arts_since');
       var p = store.get('arts_points');
-      document.getElementById('s1').hidden = true;
-      document.getElementById('s2').hidden = false;
+      /* Auto-login cross-fade */
+      var s1El = document.getElementById('s1');
+      s1El.style.opacity = '0';
+      setTimeout(function() { s1El.hidden = true; }, 180);
+      var s2El = document.getElementById('s2');
+      s2El.style.opacity = '0';
+      s2El.hidden = false;
+      setTimeout(function() {
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() { s2El.style.opacity = '1'; });
+        });
+      }, 200);
       document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
       document.getElementById('vc-phrase').textContent  = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
       document.getElementById('vc-stealth').hidden      = !stealthMode;

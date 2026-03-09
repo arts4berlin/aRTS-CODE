@@ -211,7 +211,7 @@
         <span class="v-type">member pass</span>
       </div>
       <div class="v-discount">77%</div>
-      <div class="v-label">OFF — any purchase</div>
+      <div class="v-label">pAY — any purchase</div>
       <div class="v-rule"></div>
       <div class="v-congrats">cONGRATULATIONS</div>
       <div class="v-sublabel">you found the easter egg</div>
@@ -230,7 +230,7 @@
 
     const POOL        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
     /* Scale speed to viewport — wider screens move faster, capped */
-    const WORD_SPEED  = Math.max(85, Math.min(window.innerWidth * 0.115, 175));
+    const WORD_SPEED  = Math.max(140, Math.min(window.innerWidth * 0.18, 260));
     const SCRAMBLE_MS = 80;   // letter scramble interval
 
     /* Large brand-aligned pool — every visit draws a unique random selection */
@@ -261,8 +261,7 @@
     let sTimers  = [];
     let lastTs   = null;
     let streaming= false;
-    let speedMult= 1.0;     // multiplier for post-decipher acceleration
-    let accelTime= 0;       // seconds elapsed since word fully deciphered
+    let speedMult= 1.0;     // 0.32× near gate, 1.0× elsewhere
 
     /* ══════════════════════════════════════════════
        PHASE 1 — single char scrambles → settles to I
@@ -337,7 +336,6 @@
       wordX = window.innerWidth + 60;
       wordWrap.style.left = wordX + 'px';
       speedMult = 1.0;
-      accelTime = 0;
     }
 
     /* ══════════════════════════════════════════════
@@ -349,30 +347,34 @@
       lastTs = ts;
 
       if (streaming && spans.length && !exited) {
-        /* Accelerate after all letters decoded — quadratic: slow start, rockets at end */
-        if (decrypted.length && decrypted.every(function(d){ return d; })) {
-          accelTime += dt;
-          speedMult = Math.min(1 + accelTime * accelTime * 0.55, 12);
-        }
+        /* I centre X + proximity threshold */
+        const iRect = bigI.getBoundingClientRect();
+        const iCX   = iRect.left + iRect.width / 2;
+        const NEAR  = Math.max(70, iRect.width);
+
+        /* Pre-scan: is any undecrypted letter approaching the gate?
+           If so, throttle speed for dramatic decryption moment */
+        let gateActive = false;
+        spans.forEach((span, i) => {
+          if (decrypted[i]) return;
+          const r = span.getBoundingClientRect();
+          if (Math.abs(r.left + r.width / 2 - iCX) < NEAR) gateActive = true;
+        });
+
+        /* Speed: 32% through gate, full pace everywhere else */
+        speedMult = gateActive ? 0.32 : 1.0;
 
         /* Move word left */
         wordX -= WORD_SPEED * speedMult * dt;
         wordWrap.style.left = wordX + 'px';
 
-        /* I centre X */
-        const iRect = bigI.getBoundingClientRect();
-        const iCX   = iRect.left + iRect.width / 2;
-
-        /* Check each letter for crossing + idle detection */
+        /* Decrypt letters + track I blink */
         let anyNear = false;
-        const NEAR  = Math.max(70, iRect.width);
-
         spans.forEach((span, i) => {
           if (decrypted[i]) return;
           const lr  = span.getBoundingClientRect();
           const lcx = lr.left + lr.width / 2;
 
-          /* Mark I as active when a letter is close */
           if (Math.abs(lcx - iCX) < NEAR) anyNear = true;
 
           if (lcx < iCX) {
@@ -391,11 +393,8 @@
         });
 
         /* Blink I when idle, solid when a letter is passing through */
-        if (anyNear) {
-          bigI.classList.remove('idle');
-        } else {
-          bigI.classList.add('idle');
-        }
+        if (anyNear) { bigI.classList.remove('idle'); }
+        else         { bigI.classList.add('idle'); }
 
         /* Advance to next word once last letter exits left */
         const last = spans[spans.length - 1];
@@ -406,7 +405,7 @@
           setTimeout(() => {
             wordIdx = (wordIdx + 1) % WORDS.length;
             loadWord(WORDS[wordIdx]);
-          }, 480);
+          }, 300);
         }
       }
 

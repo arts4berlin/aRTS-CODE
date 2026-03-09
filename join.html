@@ -679,6 +679,20 @@
   })();
   </script>
 
+  <!-- ── Login-aware: returning members see their status, not "already a member?" ── -->
+  <script>
+  (function(){
+    var loggedIn = false;
+    try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
+    if (!loggedIn) return;
+    /* Replace the generic "already a member?" link with a personalised returning-member CTA */
+    var amEl = document.querySelector('.already-member');
+    if (amEl) {
+      amEl.innerHTML = '<a href="id.html" style="color:rgba(255,92,0,0.82);font-size:0.65rem;font-weight:700;letter-spacing:0.16em;text-decoration:none;">✓ rETURNING mEMBER · aCCESS iD →</a>';
+    }
+  })();
+  </script>
+
   <script>
     (function () {
       function reveal() {

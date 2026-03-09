@@ -227,7 +227,7 @@
       letter-spacing: 0.16em;
       opacity: 0.85;
       line-height: 1;
-      padding: 0.2em 0;
+      padding: 0.55em 1.6em;     /* large tap target — mobile-friendly */
       transition: opacity 0.12s, color 0.12s;
       touch-action: manipulation;
     }
@@ -479,7 +479,7 @@
       /* "// OFF" label */
       var off = document.createElement('div');
       off.style.cssText = 'font-size:clamp(1rem,3vw,1.6rem);font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3em;';
-      off.textContent   = '// OFF';
+      off.textContent   = '// pAY';
       ov.appendChild(off);
 
       /* Divider */
@@ -994,8 +994,8 @@
       /* ── Zeno's halving: each step covers half the remaining distance ── */
       var current    = 0;
       var stepIdx    = 0;
-      var STEPS      = 35;       /* more steps — reaches deep into fraction territory    */
-      var DELAY      = 480;      /* faster base — builds tension sooner                  */
+      var STEPS      = 35;       /* deep into fraction territory                          */
+      var DELAY      = 340;      /* snappy base — paradox builds quickly                  */
       var THRESHOLD  = 99.99999; /* beyond here: switch from % to fraction display       */
       var inFraction = false;
 
@@ -1009,11 +1009,24 @@
 
         bar.style.width = current + '%';
 
+        /* ── Visual paradox: density tick marks on the track ──
+           Each step adds a mark at the current position. Marks pile up
+           near 100%, making the infinite series visible as increasing density. */
+        var tk = document.createElement('div');
+        tk.style.cssText = 'position:absolute;left:' + current.toFixed(4) + '%;top:-3px;' +
+          'width:1px;height:7px;background:rgba(255,92,0,' + (inFraction ? '0.75' : '0.45') + ');' +
+          'transform:translateX(-50%);pointer-events:none;border-radius:1px;';
+        track.appendChild(tk);
+
         /* Enter fraction mode when percentage becomes philosophically absurd */
         if(!inFraction && current > THRESHOLD){
           inFraction = true;
           ov.classList.add('_zenoFrac');
           sub.textContent = '∞  —  approaching';
+          /* Make existing tick marks orange when entering fraction mode */
+          Array.from(track.querySelectorAll('div')).forEach(function(t){
+            t.style.background = 'rgba(255,92,0,0.55)';
+          });
         }
 
         /* Display: % in normal mode, 1/2ⁿ in fraction mode */
@@ -1023,7 +1036,7 @@
 
         /* Each step takes slightly longer — the paradox deepens */
         if(stepIdx < STEPS){
-          timer = setTimeout(step, DELAY + stepIdx * 25);
+          timer = setTimeout(step, DELAY + stepIdx * 18);
         } else {
           sub.textContent = 'undefined.';
           sub.style.animationPlayState = 'paused';
