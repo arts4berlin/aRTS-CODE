@@ -183,18 +183,46 @@
     .btn-verify:hover { background: #FF5C00; border-color: #FF5C00; }
 
     .not-member {
-      font-size: 0.6rem;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.2);
       text-align: center;
     }
     .not-member a {
-      color: rgba(255,255,255,0.2);
+      display: inline-block;
+      color: rgba(255,255,255,0.4);
       text-decoration: none;
-      transition: color 0.15s;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 4px;
+      padding: 0.6rem 1.2rem;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .not-member a:hover { color: rgba(255,255,255,0.5); }
+    .not-member a:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+
+    /* ── Paste cell (first cell, inverted) ── */
+    .id-cell.paste-cell {
+      background: #fff;
+    }
+    .id-cell.paste-cell .id-num {
+      color: rgba(0,0,0,0.3);
+    }
+    .id-cell.paste-cell .id-input {
+      color: #000;
+      border-bottom-color: rgba(0,0,0,0.12);
+    }
+    .id-cell.paste-cell .id-input::placeholder {
+      color: rgba(0,0,0,0.35);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      font-size: 0.65rem;
+    }
+    .id-cell.paste-cell .id-input:focus { border-bottom-color: rgba(0,0,0,0.35); }
+
+    /* ── Privacy scramble toggle ── */
+    .privacy-row {
+      margin-bottom: clamp(12px, 1.8vh, 18px);
+      display: flex; align-items: center;
+    }
 
     /* Error message */
     .error-msg {
@@ -532,6 +560,13 @@
         <h1 class="form-title">eNTER iD</h1>
         <p class="sub-label">type or paste your 12-word access key</p>
 
+        <div class="privacy-row">
+          <button class="stealth-toggle-btn active" id="btn-privacy-toggle" role="switch" aria-checked="true">
+            <span class="stealth-pill"></span>
+            <span class="stealth-toggle-label">pRIVaCY mODE</span>
+          </button>
+        </div>
+
         <div class="id-grid" id="id-grid"></div>
 
         <p class="error-msg" id="err-msg"></p>
@@ -775,12 +810,62 @@
       return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
     }
 
+    /* ── Privacy scramble mode ── */
+    var privacyMode = true;
+    var privReal = new Array(12).fill('');
+    var _privPool = 'abcdefghijklmnopqrstuvwxyz';
+    var _privFocused = -1;
+    var _privInterval = null;
+
+    function _randWord(len) {
+      if (!len) return '';
+      var s = '';
+      for (var k = 0; k < len; k++) s += _privPool[Math.floor(Math.random() * _privPool.length)];
+      return s;
+    }
+    function scrambleInput(inp, idx) {
+      if (!privacyMode || _privFocused === idx) return;
+      var real = privReal[idx];
+      if (!real) return;
+      inp.value = _randWord(real.length);
+    }
+    function rescrambleAll() {
+      if (!privacyMode) return;
+      inputs.forEach(function(inp, idx) { scrambleInput(inp, idx); });
+    }
+    function startPrivacyInterval() {
+      if (_privInterval) return;
+      _privInterval = setInterval(rescrambleAll, 2200);
+    }
+    function stopPrivacyInterval() {
+      if (_privInterval) { clearInterval(_privInterval); _privInterval = null; }
+    }
+    function applyPrivacyMode() {
+      var btn = document.getElementById('btn-privacy-toggle');
+      if (privacyMode) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-checked','true');
+        rescrambleAll();
+        startPrivacyInterval();
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-checked','false');
+        stopPrivacyInterval();
+        /* restore real values */
+        inputs.forEach(function(inp, idx) { inp.value = privReal[idx]; });
+      }
+    }
+    document.getElementById('btn-privacy-toggle').addEventListener('click', function() {
+      privacyMode = !privacyMode;
+      applyPrivacyMode();
+    });
+
     /* Build the 12-input grid */
     var grid = document.getElementById('id-grid');
     var inputs = [];
     for (var i = 0; i < 12; i++) {
       var cell = document.createElement('div');
-      cell.className = 'id-cell';
+      cell.className = i === 0 ? 'id-cell paste-cell' : 'id-cell';
       var num = (i+1) < 10 ? '0'+(i+1) : ''+(i+1);
       var inp = document.createElement('input');
       inp.type = 'text';
@@ -789,9 +874,9 @@
       inp.autocorrect = 'off';
       inp.autocapitalize = 'none';
       inp.spellcheck = false;
-      inp.placeholder = '· · ·';
+      inp.placeholder = i === 0 ? 'pASTe' : '· · ·';
       inp.dataset.idx = i;
-      cell.innerHTML = '<span class="id-num">' + num + '</span>';
+      cell.innerHTML = '<span class="id-num">' + (i === 0 ? '' : num) + '</span>';
       cell.appendChild(inp);
       grid.appendChild(cell);
       inputs.push(inp);
@@ -799,6 +884,16 @@
 
     /* Tab / enter navigation + paste on every cell */
     inputs.forEach(function(inp, i) {
+      /* Focus: reveal real value, pause scramble for this cell */
+      inp.addEventListener('focus', function() {
+        _privFocused = i;
+        if (privacyMode) inp.value = privReal[i];
+      });
+      /* Blur: scramble back */
+      inp.addEventListener('blur', function() {
+        _privFocused = -1;
+        if (privacyMode) scrambleInput(inp, i);
+      });
       /* Paste on any cell: if 12 words detected, always fill from 0; otherwise fill from cursor */
       inp.addEventListener('paste', function(e) {
         var text = (e.clipboardData || window.clipboardData).getData('text');
@@ -806,7 +901,13 @@
         if (parts.length > 1) {
           e.preventDefault();
           var start = parts.length === 12 ? 0 : i;
-          parts.forEach(function(w, j){ if (inputs[start + j]) inputs[start + j].value = w.toLowerCase().trim(); });
+          parts.forEach(function(w, j){
+            if (inputs[start + j]) {
+              var word = w.toLowerCase().trim();
+              privReal[start + j] = word;
+              inputs[start + j].value = privacyMode ? _randWord(word.length) : word;
+            }
+          });
           var nextFocus = inputs[start + parts.length] || inputs[11];
           if (nextFocus) nextFocus.focus();
         }
@@ -819,14 +920,18 @@
         }
       });
       inp.addEventListener('input', function() {
-        inp.value = inp.value.toLowerCase().replace(/[^a-z]/g, '');
+        var v = inp.value.toLowerCase().replace(/[^a-z]/g, '');
+        inp.value = v;
+        privReal[i] = v;
         inp.classList.remove('err', 'ok');
       });
     });
+    /* Start privacy mode on load */
+    applyPrivacyMode();
 
     /* Verify */
     document.getElementById('btn-verify').addEventListener('click', async function() {
-      var words = inputs.map(function(inp){ return inp.value.trim().toLowerCase(); });
+      var words = privReal.map(function(v){ return v.trim().toLowerCase(); });
       var errEl = document.getElementById('err-msg');
       errEl.textContent = '';
       inputs.forEach(function(inp){ inp.classList.remove('err','ok'); });
@@ -940,6 +1045,7 @@
       document.getElementById('vc-progress-fill').style.width = '0%';
       document.getElementById('activate-row').hidden = true;
       document.getElementById('tier-confirm').hidden = true;
+      privReal = new Array(12).fill('');
       inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
       document.getElementById('err-msg').textContent = '';
     });
