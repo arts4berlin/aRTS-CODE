@@ -212,7 +212,7 @@
     .add-art-link a:hover { color: #ff7a2e; }
 
     /* ── Mobile ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     header, nav, a, button { touch-action: manipulation; }
 
     @media (max-width: 520px) {
@@ -224,7 +224,7 @@
 </head>
 <body>
   <!-- CRT: prevent flash on arrival -->
-  <script>(function(){if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
+  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
   <header>
     <a href="home.html" class="logo" data-inner="RTS">[a]</a>
@@ -346,6 +346,8 @@
           vig.style.opacity='0.95';
         }else{
           document.documentElement.style.clipPath='inset(50% 0 50% 0)';
+          document.documentElement.style.background='#000';
+          document.body.style.background='#000';
           sessionStorage.setItem('crt_transition','1');
           window.location.href=dest;
           return;

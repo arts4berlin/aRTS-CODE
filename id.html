@@ -413,7 +413,7 @@
     .btn-signout:hover { color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.3); }
 
     /* ── Mobile ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     header, nav, a, button { touch-action: manipulation; }
 
     @media (max-width: 520px) {
@@ -425,7 +425,7 @@
   </style>
 </head>
 <body>
-  <script>(function(){if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
+  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
   <header>
     <a href="home.html" class="logo" data-inner="RTS">[a]</a>
@@ -824,7 +824,7 @@
       function run(ts){if(!s0)s0=ts;var e=ts-s0;
         if(e<TR){scan.style.opacity=String(lerp(0,1,e/TR));vig.style.opacity=String(lerp(0,0.95,e/TR));}
         else if(e<TR+TS){var t=(e-TR)/TS,p=lerp(0,50,smooth(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity='0.95';}
-        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';sessionStorage.setItem('crt_transition','1');window.location.href=dest;return;}
+        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';document.documentElement.style.background='#000';document.body.style.background='#000';sessionStorage.setItem('crt_transition','1');window.location.href=dest;return;}
         requestAnimationFrame(run);}
       requestAnimationFrame(run);}
     if(sessionStorage.getItem('crt_transition')){sessionStorage.removeItem('crt_transition');doEnter();}

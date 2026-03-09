@@ -516,6 +516,8 @@
           vig.style.opacity='0.95';
         }else{
           document.documentElement.style.clipPath='inset(50% 0 50% 0)';
+          document.documentElement.style.background='#000';
+          document.body.style.background='#000';
           sessionStorage.setItem('crt_transition','1');
           window.location.href=dest;
           return;
