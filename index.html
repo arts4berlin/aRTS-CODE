@@ -19,117 +19,176 @@
   <title>[aRTS]</title>
   <script>
     document.documentElement.style.background = '#000';
-    /* Already verified — skip straight to home */
     if (localStorage.getItem('captcha_passed')) {
       window.location.replace('home.html');
     }
   </script>
+  <link rel="preload" as="image" href="assets/bear.png">
+  <link rel="prefetch" href="captcha.html">
+  <link rel="prefetch" href="home.html">
+  <link rel="prefetch" href="pi.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
-  <link rel="prefetch" href="captcha.html">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #000; color: #fff; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
 
-    html, body {
-      height: 100%;
-      background: #000;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      overflow: hidden;
-      cursor: crosshair;
+    #crt-wrap { min-height: 100vh; display: flex; flex-direction: column; }
+
+    #crt-scan {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,14,0,0.50) 3px, rgba(0,14,0,0.50) 4px);
+      opacity: 0; z-index: 9998; pointer-events: none;
+    }
+    #crt-vignette {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.88) 100%);
+      opacity: 0; z-index: 9997; pointer-events: none;
     }
 
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .captcha-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 80px 24px 60px; position: relative; z-index: 2;
     }
 
-    .wordmark {
-      font-size: clamp(2.8rem, 10vw, 7rem);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      line-height: 1;
-      opacity: 0;
-      animation: wFade 0.7s 0.2s ease forwards;
-      user-select: none;
-      -webkit-user-select: none;
-    }
+    .bear { width: clamp(160px, 28vw, 280px); margin-bottom: 2.4rem; display: block; }
 
-    .sub {
-      position: fixed;
-      bottom: clamp(28px, 5vh, 48px);
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      opacity: 0;
-      white-space: nowrap;
-      animation: wFade 0.5s 0.7s ease forwards;
-      user-select: none;
-      -webkit-user-select: none;
-    }
+    .question { text-align: center; margin-bottom: 2rem; }
+    .question .small { font-size: 0.85rem; font-weight: 300; letter-spacing: 0.12em; display: block; margin-bottom: 0.2rem; }
+    .question .large { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.04em; display: block; }
 
-    @keyframes wFade {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 0.45; transform: translateY(0); }
-    }
-    .wordmark { animation: wFadeB 0.7s 0.2s ease forwards; }
-    @keyframes wFadeB {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+    .buttons { display: flex; align-items: stretch; }
+    .buttons .btn:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
+    .buttons .btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
 
-    @supports (height: 100dvh) { html, body { height: 100dvh; } }
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    * { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+    .btn {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600;
+      letter-spacing: 0.12em; cursor: pointer; padding: 0.85rem 2.6rem;
+      border: 2px solid #fff; border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+      text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-yes     { background: #fff; color: #000; }
+    .btn-yes:hover { background: #ddd; border-color: #ddd; }
+    .btn-captcha { background: transparent; color: #fff; }
+    .btn-captcha:hover { background: #fff; color: #000; }
+
+    #q-mark { cursor: default; display: inline; color: inherit; transition: color 0.18s; }
+    #q-mark:hover { color: #FF5C00; }
+
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
+    .btn, button, a { touch-action: manipulation; }
+    * { -webkit-user-select: none; user-select: none; }
+    html { touch-action: manipulation; }
   </style>
 </head>
 <body>
-  <span class="wordmark">[aRTS]</span>
-  <span class="sub">BERLIN · TRaDE + CONNeCT</span>
+  <div id="crt-wrap">
+    <main class="captcha-wrap">
+      <img src="assets/bear.png" class="bear" alt="[aRTS] bear" draggable="false">
+      <div class="question">
+        <span class="small">aRE YOU</span>
+        <span class="large">a ROBOT <span id="q-mark">¿</span></span>
+      </div>
+      <div class="buttons">
+        <button class="btn btn-yes" onclick="window.location.href='pi.html'">YES</button>
+        <button class="btn btn-captcha">CaPTCHa</button>
+      </div>
+    </main>
+  </div>
+
+  <div id="crt-scan"></div>
+  <div id="crt-vignette"></div>
 
   <script>
   (function () {
-    /* Navigate to captcha on any interaction, or auto after 1.8s */
-    var gone = false;
-    function go() {
-      if (gone) return;
-      gone = true;
-
-      /* CRT exit */
+    /* CaPTCHa button → navigate to captcha.html with CRT exit */
+    var busy = false;
+    function doExit(dest) {
+      if (busy) return; busy = true;
       var scan = document.createElement('div');
-      scan.style.cssText = 'position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      document.body.appendChild(scan);
-
-      var s0 = null, TR = 60, TS = 320;
-      function run(ts) {
-        if (!s0) s0 = ts;
-        var e = ts - s0;
-        var p = Math.min(1, e < TR ? 0 : (e - TR) / TS);
-        scan.style.opacity = String(Math.min(1, e / TR));
-        document.documentElement.style.clipPath = 'inset(' + (p * 50).toFixed(2) + '% 0 ' + (p * 50).toFixed(2) + '% 0)';
-        if (e < TR + TS) {
-          requestAnimationFrame(run);
-        } else {
-          document.documentElement.style.clipPath = 'inset(50% 0 50% 0)';
-          document.documentElement.style.background = '#000';
-          sessionStorage.setItem('crt_transition', '1');
-          window.location.href = 'captcha.html';
-        }
+      scan.style.cssText = 'position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:9998;pointer-events:none;';
+      var vig = document.createElement('div');
+      vig.style.cssText = 'position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:9997;pointer-events:none;';
+      document.body.appendChild(scan); document.body.appendChild(vig);
+      var TR=60,TS=320,s0=null;
+      function lerp(a,b,t){return a+(b-a)*t;}
+      function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
+      function run(ts){
+        if(!s0)s0=ts;var e=ts-s0;
+        if(e<TR){scan.style.opacity=String(lerp(0,1,e/TR));vig.style.opacity=String(lerp(0,0.95,e/TR));}
+        else if(e<TR+TS){var t=(e-TR)/TS,p=lerp(0,50,smooth(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity='0.95';}
+        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';document.documentElement.style.background='#000';document.body.style.background='#000';sessionStorage.setItem('crt_transition','1');window.location.href=dest;return;}
+        requestAnimationFrame(run);
       }
       requestAnimationFrame(run);
     }
 
-    /* Auto-advance */
-    setTimeout(go, 1800);
+    document.querySelector('.btn-captcha').addEventListener('click', function(){ doExit('captcha.html'); });
 
-    /* Or on any tap/click */
-    document.addEventListener('click',     go, { once: true });
-    document.addEventListener('touchstart', go, { once: true, passive: true });
-    document.addEventListener('keydown',   go, { once: true });
+    /* q-mark scramble */
+    var qm = document.getElementById('q-mark');
+    var POOL = '?!@#%&ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var qtimer = null;
+    qm.addEventListener('mouseenter', function(){
+      qtimer = setInterval(function(){ qm.textContent = POOL[Math.floor(Math.random()*POOL.length)]; }, 55);
+    });
+    qm.addEventListener('mouseleave', function(){ clearInterval(qtimer); qm.textContent = '¿'; });
+
+    /* CaPTCHa button scramble */
+    (function(){
+      var btn = document.querySelector('.btn-captcha');
+      var TARGET = 'CaPTCHa';
+      var SPOOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+      var FRAMES=18,RATE=45,timer=null;
+      function runScramble(){
+        clearInterval(timer); var step=0;
+        timer=setInterval(function(){
+          var out='';
+          for(var i=0;i<TARGET.length;i++) out+=(i<Math.floor(step*TARGET.length/FRAMES))?TARGET[i]:SPOOL[Math.floor(Math.random()*SPOOL.length)];
+          btn.textContent=out;
+          if(++step>FRAMES){clearInterval(timer);btn.textContent=TARGET;}
+        },RATE);
+      }
+      if(window.matchMedia('(hover: none)').matches){ setTimeout(runScramble,1200); setInterval(runScramble,7000); }
+      else{ btn.addEventListener('mouseenter',runScramble); btn.addEventListener('mouseleave',function(){clearInterval(timer);btn.textContent=TARGET;}); }
+    })();
+  })();
+  </script>
+
+  <!-- CRT turn-on boot animation -->
+  <script>
+  (function(){
+    var scan=document.getElementById('crt-scan');
+    var vignette=document.getElementById('crt-vignette');
+    var wrap=document.getElementById('crt-wrap');
+    var isIAB=/Instagram|FBAN|FBAV|Snapchat|Twitter|Line\/|WhatsApp/i.test(navigator.userAgent);
+    if(isIAB){wrap.style.clipPath='';wrap.style.filter='';try{scan.remove();}catch(e){}try{vignette.remove();}catch(e){}return;}
+    var topCover=document.createElement('div');
+    topCover.style.cssText='position:fixed;left:0;right:0;top:0;height:50%;background:#000;z-index:9995;pointer-events:none;';
+    var botCover=document.createElement('div');
+    botCover.style.cssText='position:fixed;left:0;right:0;bottom:0;height:50%;background:#000;z-index:9995;pointer-events:none;';
+    document.body.appendChild(topCover);document.body.appendChild(botCover);
+    var T_FLICKER=130,T_EXPAND=780,T_FADE_END=1150,start=null;
+    function lerp(a,b,t){return a+(b-a)*t;}
+    function easeOut(t){return 1-Math.pow(1-t,3);}
+    function smoothstep(t){return t*t*(3-2*t);}
+    function setRGB(px,alpha){
+      if(alpha<0.01||px<0.1){wrap.style.filter='';return;}
+      var p=px.toFixed(1),a=alpha.toFixed(3),b=(px*0.5).toFixed(1);
+      wrap.style.filter='drop-shadow(-'+p+'px 0 '+b+'px rgba(255,20,20,'+a+')) drop-shadow('+p+'px 0 '+b+'px rgba(20,30,255,'+a+')) drop-shadow(0 -'+b+'px '+b+'px rgba(20,255,20,'+(alpha*0.4).toFixed(3)+'))';
+    }
+    function tick(ts){
+      if(!start)start=ts;var e=ts-start;
+      if(e<T_FLICKER){scan.style.opacity=String(lerp(0,1.0,e/T_FLICKER));vignette.style.opacity='0.95';setRGB(9,0.75);}
+      else if(e<T_EXPAND){var t=(e-T_FLICKER)/(T_EXPAND-T_FLICKER),et=easeOut(t),pct=lerp(50,0,et);topCover.style.height=pct.toFixed(2)+'%';botCover.style.height=pct.toFixed(2)+'%';setRGB(lerp(9,0,smoothstep(t)),lerp(0.75,0,smoothstep(t)));scan.style.opacity='1.0';vignette.style.opacity=String(lerp(0.95,0.55,et));}
+      else if(e<T_FADE_END){var t2=(e-T_EXPAND)/(T_FADE_END-T_EXPAND),et2=smoothstep(t2);topCover.style.height='0%';botCover.style.height='0%';wrap.style.filter='';scan.style.opacity=String(lerp(1.0,0,et2));vignette.style.opacity=String(lerp(0.55,0,et2));}
+      else{wrap.style.filter='';topCover.remove();botCover.remove();scan.remove();vignette.remove();return;}
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
   })();
   </script>
 </body>
