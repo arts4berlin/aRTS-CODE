@@ -363,6 +363,64 @@
       line-height: 1.7;
     }
 
+    /* ── 12-word reveal toggle ── */
+    .btn-words-toggle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.3);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: color 0.15s, border-color 0.15s;
+      margin-bottom: clamp(10px, 1.6vh, 16px);
+      display: block;
+    }
+    .btn-words-toggle:hover { color: rgba(255,255,255,0.65); border-color: rgba(255,255,255,0.28); }
+    .words-grid.words-hidden .word-val {
+      filter: blur(7px);
+      -webkit-filter: blur(7px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── Returning member: status pill ── */
+    .rm-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 0.32rem 0.85rem;
+      margin-bottom: clamp(20px, 3vh, 32px);
+    }
+    .rm-status .rm-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      flex-shrink: 0;
+    }
+    .rm-status.active { color: rgba(110,227,110,0.65); border-color: rgba(110,227,110,0.16); }
+    .rm-status.active .rm-dot { background: #6ee36e; }
+
+    /* ── Upgrade plan label ── */
+    .upgrade-label {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.24em;
+      color: rgba(255,255,255,0.14);
+      margin-top: clamp(30px, 4vh, 46px);
+      text-transform: uppercase;
+    }
+
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     header, nav, a, button { touch-action: manipulation; }
@@ -685,6 +743,7 @@
         </p>
         <p id="s2-pts" style="font-size:0.65rem;font-weight:700;letter-spacing:0.14em;color:#FF5C00;margin-bottom:10px;display:none;"></p>
 
+        <button class="btn-words-toggle" id="s2-words-toggle" style="display:none;">hIDE 12 wORDS</button>
         <div class="words-grid" id="words-grid"></div>
 
         <div class="gen-row">
@@ -700,9 +759,6 @@
 
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
           <div class="pay-trigger-wrap">
-            <!-- Stripe buy-button: invisible base layer, handles the actual click -->
-            <div id="stripe-btn-mount"></div>
-            <!-- Visual button: sits on top, pointer-events:none so clicks fall through -->
             <button class="btn-access" id="btn-access">pAY & aCTIVaTE →</button>
           </div>
         </div>
@@ -714,8 +770,85 @@
         <a href="id.html" class="btn-already-paid">already paid? → aCCESS mEMBER iD</a>
       </div>
 
+      <!-- ── RETURNING MEMBER: iD generated, not yet paid ── -->
+      <div id="s1-inactive" hidden>
+        <p class="section-label" id="ri-label">wELCOME bACK</p>
+        <h1 class="form-title" id="ri-tier-title">—</h1>
+
+        <div class="rm-status" id="ri-status">
+          <span class="rm-dot"></span>
+          <span>iD rEaDY · pENDING aCTIVaTION</span>
+        </div>
+
+        <!-- 12-word reveal (shown only if arts_words stored) -->
+        <div id="ri-words-section" hidden>
+          <button class="btn-words-toggle" id="ri-words-toggle">⬤ rEVEaL 12 wORDS</button>
+          <div class="words-grid words-hidden" id="ri-words-grid"></div>
+        </div>
+
+        <p style="font-size:0.65rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.26);margin:clamp(12px,1.8vh,20px) 0 clamp(4px,0.8vh,8px);line-height:1.8;">
+          sELECT a pLaN aND aCTIVaTE yOUR iD.
+        </p>
+
+        <div class="tiers" id="ri-tiers">
+          <div class="tier-pick" data-tier="aLLY">
+            <div class="tp-info">
+              <span class="tp-name">aLLY</span>
+              <span class="tp-price"><span class="euro">€</span>3 / month</span>
+              <span class="tp-perks">member card · community access · trading network</span>
+            </div>
+            <div class="tp-dot"></div>
+          </div>
+          <div class="tier-pick" data-tier="BRIGaDIER">
+            <div class="tp-info">
+              <span class="tp-name">BRIGaDIER</span>
+              <span class="tp-price"><span class="euro">€</span>33 / month</span>
+              <span class="tp-perks">all above · submission slots · 2 guest invites</span>
+            </div>
+            <div class="tp-dot"></div>
+          </div>
+          <div class="tier-pick" data-tier="CURaTOR">
+            <div class="tp-info">
+              <span class="tp-name">CURaTOR</span>
+              <span class="tp-price"><span class="euro">€</span>333 / month</span>
+              <span class="tp-perks">all above · editorial seat · private archive · patronage</span>
+            </div>
+            <div class="tp-dot"></div>
+          </div>
+        </div>
+
+        <div class="gen-row" style="margin-top:clamp(22px,3.2vh,36px);">
+          <button class="btn-access" id="ri-btn-pay">pAY & aCTIVaTE →</button>
+          <button class="btn-gen" id="ri-btn-regen" style="background:transparent;color:rgba(255,255,255,0.28);border-color:rgba(255,255,255,0.1);font-size:0.62rem;padding:0.55rem 1rem;">nEW iD</button>
+        </div>
+
+        <p class="payment-note" style="margin-top:clamp(12px,1.8vh,18px);">
+          secure checkout · activates once payment confirmed.<br>
+          tap <em>nEW iD</em> only if you lost your 12 words.
+        </p>
+      </div>
+
+      <!-- ── RETURNING MEMBER: active (paid) ── -->
+      <div id="s1-active" hidden>
+        <p class="section-label">aCTIVE mEMBER</p>
+        <h1 class="form-title" id="ra-tier-title">—</h1>
+
+        <div class="rm-status active">
+          <span class="rm-dot"></span>
+          <span>mEMBERSHIP aCTIVE</span>
+        </div>
+
+        <a href="id.html" class="btn-access" style="display:inline-flex;">aCCESS mEMBER iD →</a>
+
+        <p class="upgrade-label" id="ra-upgrade-label">uPGRADE yOUR pLaN</p>
+        <div class="tiers" id="ra-upgrade-tiers" style="margin-top:clamp(10px,1.5vh,14px);"></div>
+      </div>
+
     </div>
   </main>
+
+  <!-- Stripe buy-button: always in DOM (off-screen), triggered by checkout sheet -->
+  <div id="stripe-btn-mount" aria-hidden="true"></div>
 
   <!-- ══════════════════════════════════════════
        aRTS CHECKOUT SHEET — sits above everything
@@ -891,6 +1024,22 @@
         setTimeout(function(){ slot.classList.add('visible'); }, i * 90 + 80);
       });
 
+      /* Show and wire the words toggle (hides/blurs the grid for privacy) */
+      var s2Toggle = document.getElementById('s2-words-toggle');
+      var s2WordsVisible = true;
+      s2Toggle.style.display = '';
+      s2Toggle.textContent = 'hIDE 12 wORDS';
+      s2Toggle.onclick = function() {
+        s2WordsVisible = !s2WordsVisible;
+        if (s2WordsVisible) {
+          grid.classList.remove('words-hidden');
+          s2Toggle.textContent = 'hIDE 12 wORDS';
+        } else {
+          grid.classList.add('words-hidden');
+          s2Toggle.textContent = 'sHOW 12 wORDS';
+        }
+      };
+
       /* Store hash locally + member profile */
       var hash = await sha256(generatedWords.join('-'));
       var startPts = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000 }[selectedTier] || 100;
@@ -901,6 +1050,7 @@
         localStorage.setItem('arts_since',   new Date().toISOString().split('T')[0]);
         localStorage.setItem('arts_points',  String(startPts));
         localStorage.setItem('arts_email',   email); /* store for Stripe pre-fill on return visits */
+        localStorage.setItem('arts_words',   generatedWords.join(' ')); /* store for returning-member reveal */
       } catch(e) {}
       /* Show starting points */
       var ptsEl = document.getElementById('s2-pts');
@@ -982,40 +1132,203 @@
   })();
   </script>
 
-  <!-- ── Login-aware: returning members see their status + email auto-fills ── -->
+  <!-- ── Smart member flow: detects returning vs new, active vs inactive ── -->
   <script>
   (function(){
-    var loggedIn = false;
-    try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
-    if (!loggedIn) return;
+    /* ── Read stored member data ── */
+    var idHash = null, isActive = false;
+    var storedTier = '', storedEmail = '', storedAlias = '', storedWords = '';
+    try {
+      idHash      = localStorage.getItem('arts_id_hash') || null;
+      isActive    = localStorage.getItem('arts_active') === 'true';
+      storedTier  = localStorage.getItem('arts_tier')   || '';
+      storedEmail = localStorage.getItem('arts_email')  || '';
+      storedAlias = localStorage.getItem('arts_alias')  || '';
+      storedWords = localStorage.getItem('arts_words')  || '';
+    } catch(e) {}
 
-    /* Replace the generic "already a member?" link with a personalised returning-member CTA */
-    var amEl = document.querySelector('.already-member');
-    if (amEl) {
-      amEl.innerHTML = '<a href="id.html" style="color:rgba(255,92,0,0.82);font-size:0.65rem;font-weight:700;letter-spacing:0.16em;text-decoration:none;">✓ rETURNING mEMBER · aCCESS iD →</a>';
+    if (!idHash) return; /* First-time visitor — normal join flow */
+
+    /* Hide the standard new-member form */
+    document.getElementById('s1').hidden = true;
+
+    /* ── Stripe constants (mirrors main script) ── */
+    var BUY_BUTTON_IDS = {
+      'aLLY':      'buy_btn_1T91bMI8psszE3dFoxBrQXua',
+      'BRIGaDIER': 'buy_btn_1T91c5I8psszE3dFVtEVoJmv',
+      'CURaTOR':   'buy_btn_1T91cZI8psszE3dFbAwvt3rd'
+    };
+    var STRIPE_PK = 'pk_live_51T8zziI8psszE3dF4p0Q2rhSPPkwM0Kt201hFS8chVDXytZXnyLPMyOmDHMBrb9vNhgFn5a7q0RDUNcsz2xrK7Ah00edv6x7e1';
+    var PAYMENT_LINKS = {
+      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+    };
+    var TIER_PRICES = { 'aLLY': '3', 'BRIGaDIER': '33', 'CURaTOR': '333' };
+    var TIER_PERKS  = {
+      'aLLY':      'member card · community access · trading network',
+      'BRIGaDIER': 'all above · submission slots · 2 guest invites',
+      'CURaTOR':   'all above · editorial seat · private archive · patronage'
+    };
+
+    /* ── Mount a Stripe buy-button in the shared off-screen mount point ── */
+    function mountStripe(tier) {
+      var mount = document.getElementById('stripe-btn-mount');
+      if (!mount || !BUY_BUTTON_IDS[tier]) return;
+      mount.innerHTML = '';
+      var sbb = document.createElement('stripe-buy-button');
+      sbb.setAttribute('buy-button-id', BUY_BUTTON_IDS[tier]);
+      sbb.setAttribute('publishable-key', STRIPE_PK);
+      if (storedEmail) sbb.setAttribute('customer-email', storedEmail);
+      mount.appendChild(sbb);
     }
 
-    /* ── Restore stored email so Stripe checkout pre-fills automatically ── */
-    try {
-      var storedEmail = localStorage.getItem('arts_email') || '';
-      if (storedEmail) {
-        var emailInput = document.getElementById('j-email');
-        if (emailInput && !emailInput.value) {
-          emailInput.value = storedEmail;
-          /* Fire input event so checkReady() updates the generate button state */
-          emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+    /* ── Route based on active flag ── */
+    if (isActive) {
+      showActiveView();
+    } else {
+      showInactiveView();
+    }
+
+    /* ══════════════════════════════════════
+       ACTIVE MEMBER
+       ══════════════════════════════════════ */
+    function showActiveView() {
+      var el = document.getElementById('s1-active');
+      el.hidden = false;
+
+      var titleEl = document.getElementById('ra-tier-title');
+      if (titleEl && storedTier) titleEl.textContent = storedTier;
+
+      /* Populate only the tiers above the current one */
+      var tierOrder = ['aLLY', 'BRIGaDIER', 'CURaTOR'];
+      var currentIdx = tierOrder.indexOf(storedTier);
+      var upgradeTiers = currentIdx >= 0 ? tierOrder.slice(currentIdx + 1) : [];
+      var upgradeLabel = document.getElementById('ra-upgrade-label');
+      var upgradeContainer = document.getElementById('ra-upgrade-tiers');
+
+      if (upgradeTiers.length === 0) {
+        if (upgradeLabel) upgradeLabel.hidden = true;
+      } else {
+        upgradeTiers.forEach(function(tier) {
+          var div = document.createElement('div');
+          div.className = 'tier-pick';
+          div.setAttribute('data-tier', tier);
+          div.innerHTML =
+            '<div class="tp-info">' +
+              '<span class="tp-name">' + tier + '</span>' +
+              '<span class="tp-price"><span class="euro">€</span>' + (TIER_PRICES[tier] || '?') + ' / month</span>' +
+              '<span class="tp-perks">' + (TIER_PERKS[tier] || '') + '</span>' +
+            '</div>' +
+            '<div class="tp-dot"></div>';
+          div.addEventListener('click', function() {
+            mountStripe(tier);
+            if (typeof window.openCheckoutSheet === 'function') {
+              window.openCheckoutSheet(tier, storedEmail);
+            } else {
+              window.location.href = PAYMENT_LINKS[tier] || '#';
+            }
+          });
+          upgradeContainer.appendChild(div);
+        });
+      }
+    }
+
+    /* ══════════════════════════════════════
+       INACTIVE MEMBER (has ID, not yet paid)
+       ══════════════════════════════════════ */
+    function showInactiveView() {
+      var el = document.getElementById('s1-inactive');
+      el.hidden = false;
+
+      /* Personalise header */
+      if (storedAlias && storedAlias !== 'mEMBER') {
+        var labelEl = document.getElementById('ri-label');
+        if (labelEl) labelEl.textContent = 'wELCOME bACK ' + storedAlias.toUpperCase();
+      }
+      var titleEl = document.getElementById('ri-tier-title');
+      if (titleEl && storedTier) titleEl.textContent = storedTier;
+
+      /* 12-word reveal section — only if words were stored */
+      if (storedWords) {
+        var wordsSection = document.getElementById('ri-words-section');
+        if (wordsSection) {
+          wordsSection.hidden = false;
+          var words = storedWords.split(' ').filter(Boolean);
+          var riGrid = document.getElementById('ri-words-grid');
+          riGrid.innerHTML = '';
+          words.forEach(function(word, i) {
+            var slot = document.createElement('div');
+            slot.className = 'word-slot visible';
+            var num = (i + 1) < 10 ? '0' + (i + 1) : '' + (i + 1);
+            slot.innerHTML = '<span class="word-num">' + num + '</span><span class="word-val">' + word + '</span>';
+            riGrid.appendChild(slot);
+          });
+          /* Toggle: starts hidden (words-hidden), reveal on click */
+          var riToggle = document.getElementById('ri-words-toggle');
+          var riRevealed = false;
+          riToggle.addEventListener('click', function() {
+            riRevealed = !riRevealed;
+            if (riRevealed) {
+              riGrid.classList.remove('words-hidden');
+              riToggle.textContent = '◉ hIDE 12 wORDS';
+            } else {
+              riGrid.classList.add('words-hidden');
+              riToggle.textContent = '⬤ rEVEaL 12 wORDS';
+            }
+          });
         }
       }
-    } catch(e) {}
 
-    /* ── Restore stored tier so returning member doesn't have to re-pick ── */
-    try {
-      var storedTier = localStorage.getItem('arts_tier') || '';
-      if (storedTier) {
-        var tierCard = document.querySelector('.tier-pick[data-tier="' + storedTier + '"]');
-        if (tierCard) { tierCard.click(); }
+      /* Tier selection in inactive view.
+         The main IIFE already added global .tier-pick listeners for visual selection.
+         Here we track riSelectedTier separately for the pay flow. */
+      var riSelectedTier = storedTier || null;
+
+      /* Pre-select stored tier visually */
+      document.querySelectorAll('#ri-tiers .tier-pick').forEach(function(card) {
+        if (card.dataset.tier === riSelectedTier) card.classList.add('selected');
+        card.addEventListener('click', function() {
+          riSelectedTier = card.dataset.tier;
+          mountStripe(riSelectedTier);
+        });
+      });
+
+      /* Mount Stripe for the pre-selected tier */
+      if (riSelectedTier) mountStripe(riSelectedTier);
+
+      /* Pay & Activate button */
+      var payBtn = document.getElementById('ri-btn-pay');
+      if (payBtn) {
+        payBtn.addEventListener('click', function() {
+          if (!riSelectedTier) return;
+          if (typeof window.openCheckoutSheet === 'function') {
+            window.openCheckoutSheet(riSelectedTier, storedEmail);
+          } else {
+            var sbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
+            if (sbb) { sbb.click(); } else { window.location.href = PAYMENT_LINKS[riSelectedTier] || '#'; }
+          }
+        });
       }
-    } catch(e) {}
+
+      /* "nEW iD" button: drop back to fresh generate form with data pre-filled */
+      var regenBtn = document.getElementById('ri-btn-regen');
+      if (regenBtn) {
+        regenBtn.addEventListener('click', function() {
+          el.hidden = true;
+          document.getElementById('s1').hidden = false;
+          var emailInput = document.getElementById('j-email');
+          if (emailInput && storedEmail) {
+            emailInput.value = storedEmail;
+            emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+          if (storedTier) {
+            var tierCard = document.querySelector('#s1 .tier-pick[data-tier="' + storedTier + '"]');
+            if (tierCard) tierCard.click();
+          }
+        });
+      }
+    }
   })();
   </script>
 
