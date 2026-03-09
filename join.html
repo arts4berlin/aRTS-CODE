@@ -25,6 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -307,7 +308,13 @@
     }
     .id-warning strong { color: rgba(255,255,255,0.65); font-weight: 600; }
 
-    /* access button */
+    /* ── Pay button & Stripe overlay ── */
+    .pay-trigger-wrap {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
     .btn-access {
       display: inline-flex;
       align-items: center;
@@ -321,9 +328,29 @@
       color: #000;
       border: 2px solid #FF5C00;
       border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      pointer-events: none;
+      user-select: none;
     }
-    .btn-access:hover { background: #000; color: #FF5C00; }
+    .pay-trigger-wrap:hover .btn-access {
+      background: #000;
+      color: #FF5C00;
+      border-color: #FF5C00;
+    }
+
+    /* Stripe buy-button lives under the visual button and catches clicks */
+    #stripe-btn-mount {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    #stripe-btn-mount stripe-buy-button {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
 
     .payment-note {
       margin-top: clamp(16px, 2vh, 24px);
@@ -433,12 +460,17 @@
         </p>
 
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
-          <a href="#" class="btn-access" id="btn-access">pAY & aCTIVaTE →</a>
+          <div class="pay-trigger-wrap">
+            <!-- Stripe buy-button: invisible base layer, handles the actual click -->
+            <div id="stripe-btn-mount"></div>
+            <!-- Visual button: sits on top, pointer-events:none so clicks fall through -->
+            <button class="btn-access">pAY & aCTIVaTE →</button>
+          </div>
         </div>
 
         <p class="payment-note">
-          you will be redirected to stripe · your iD activates once payment is confirmed.<br>
-          on this device your key is remembered — just return to your member area after paying.
+          secure checkout · stays on this page · your iD activates once payment is confirmed.<br>
+          on this device your key is remembered — return to your member area after paying.
         </p>
         <a href="id.html" class="btn-already-paid">already paid? → aCCESS mEMBER iD</a>
       </div>
@@ -482,12 +514,13 @@
     var selectedTier = null;
     var generatedWords = [];
 
-    /* ── Stripe payment links ── */
-    var PAYMENT_LINKS = {
-      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
-      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
-      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+    /* ── Stripe Buy Button IDs ── */
+    var BUY_BUTTON_IDS = {
+      'aLLY':      'buy_btn_1T91bMI8psszE3dFoxBrQXua',
+      'BRIGaDIER': 'buy_btn_1T91c5I8psszE3dFVtEVoJmv',
+      'CURaTOR':   'buy_btn_1T91cZI8psszE3dFbAwvt3rd'
     };
+    var STRIPE_PK = 'pk_live_51T8zziI8psszE3dF4p0Q2rhSPPkwM0Kt201hFS8chVDXytZXnyLPMyOmDHMBrb9vNhgFn5a7q0RDUNcsz2xrK7Ah00edv6x7e1';
 
     /* Pre-select tier from URL param */
     var urlTier = new URLSearchParams(window.location.search).get('tier');
@@ -574,9 +607,14 @@
       ptsEl.textContent = '+ ' + startPts + ' sTaRTING pOINTS aWaRDED';
       ptsEl.style.display = 'block';
 
-      /* Wire Stripe payment link with pre-filled email */
-      var payUrl = PAYMENT_LINKS[selectedTier] + '?prefilled_email=' + encodeURIComponent(email);
-      document.getElementById('btn-access').href = payUrl;
+      /* Mount Stripe Buy Button for the selected tier */
+      var mount = document.getElementById('stripe-btn-mount');
+      mount.innerHTML = '';
+      var sbb = document.createElement('stripe-buy-button');
+      sbb.setAttribute('buy-button-id', BUY_BUTTON_IDS[selectedTier]);
+      sbb.setAttribute('publishable-key', STRIPE_PK);
+      sbb.setAttribute('customer-email', email);
+      mount.appendChild(sbb);
 
       /* Backlog → Formspree (fire and forget) */
       var data = new FormData();
