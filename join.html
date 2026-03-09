@@ -900,6 +900,7 @@
         localStorage.setItem('arts_alias',   alias || 'mEMBER');
         localStorage.setItem('arts_since',   new Date().toISOString().split('T')[0]);
         localStorage.setItem('arts_points',  String(startPts));
+        localStorage.setItem('arts_email',   email); /* store for Stripe pre-fill on return visits */
       } catch(e) {}
       /* Show starting points */
       var ptsEl = document.getElementById('s2-pts');
@@ -981,17 +982,40 @@
   })();
   </script>
 
-  <!-- ── Login-aware: returning members see their status, not "already a member?" ── -->
+  <!-- ── Login-aware: returning members see their status + email auto-fills ── -->
   <script>
   (function(){
     var loggedIn = false;
     try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
     if (!loggedIn) return;
+
     /* Replace the generic "already a member?" link with a personalised returning-member CTA */
     var amEl = document.querySelector('.already-member');
     if (amEl) {
       amEl.innerHTML = '<a href="id.html" style="color:rgba(255,92,0,0.82);font-size:0.65rem;font-weight:700;letter-spacing:0.16em;text-decoration:none;">✓ rETURNING mEMBER · aCCESS iD →</a>';
     }
+
+    /* ── Restore stored email so Stripe checkout pre-fills automatically ── */
+    try {
+      var storedEmail = localStorage.getItem('arts_email') || '';
+      if (storedEmail) {
+        var emailInput = document.getElementById('j-email');
+        if (emailInput && !emailInput.value) {
+          emailInput.value = storedEmail;
+          /* Fire input event so checkReady() updates the generate button state */
+          emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+    } catch(e) {}
+
+    /* ── Restore stored tier so returning member doesn't have to re-pick ── */
+    try {
+      var storedTier = localStorage.getItem('arts_tier') || '';
+      if (storedTier) {
+        var tierCard = document.querySelector('.tier-pick[data-tier="' + storedTier + '"]');
+        if (tierCard) { tierCard.click(); }
+      }
+    } catch(e) {}
   })();
   </script>
 
