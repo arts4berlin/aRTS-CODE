@@ -668,6 +668,83 @@
       transition: color 0.15s;
     }
     .co-cancel-btn:hover { color: rgba(255,255,255,0.5); }
+
+    /* ── aUDIENCE free tier ── */
+    .tp-free {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: #FF5C00;
+    }
+    .tier-pick.tier-free .tp-dot { border-color: rgba(255,92,0,0.25); }
+    .tier-pick.tier-free.selected .tp-dot { background: rgba(255,92,0,0.55); border-color: rgba(255,92,0,0.55); }
+
+    /* ── aUDIENCE register button ── */
+    .btn-audience {
+      background: transparent !important;
+      color: #FF5C00 !important;
+      border-color: #FF5C00 !important;
+    }
+    .btn-audience:hover { background: rgba(255,92,0,0.08) !important; }
+    .btn-audience.done { color: rgba(110,227,110,0.75) !important; border-color: rgba(110,227,110,0.22) !important; pointer-events: none; }
+
+    /* ── Promo code ── */
+    .co-promo-row { margin-top: clamp(14px,2vh,22px); }
+    .co-promo-toggle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.22);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .co-promo-toggle:hover { color: rgba(255,255,255,0.5); }
+    .co-promo-fields { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+    .co-promo-inp {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.3rem 0;
+      outline: none;
+      flex: 1;
+      min-width: 0;
+      text-transform: uppercase;
+    }
+    .co-promo-inp:focus { border-bottom-color: rgba(255,255,255,0.4); }
+    .co-promo-apply {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255,255,255,0.38);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 3px;
+      padding: 0.35rem 0.75rem;
+      flex-shrink: 0;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .co-promo-apply:hover { color: #fff; border-color: rgba(255,255,255,0.38); }
+    .co-promo-msg {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      margin-top: 6px;
+      min-height: 1em;
+    }
+    .co-promo-msg.ok   { color: rgba(110,227,110,0.75); }
+    .co-promo-msg.warn { color: rgba(255,200,60,0.75); }
+    .co-promo-msg.err  { color: rgba(255,80,80,0.72); }
 </style>
 </head>
 <body>
@@ -715,6 +792,14 @@
             </div>
             <div class="tp-dot"></div>
           </div>
+          <div class="tier-pick tier-free" data-tier="aUDIENCE">
+            <div class="tp-info">
+              <span class="tp-name">aUDIENCE</span>
+              <span class="tp-free">fREE</span>
+              <span class="tp-perks">cOMMUNITY aCCESS · eVENT aLERTS · nEWSLETTER</span>
+            </div>
+            <div class="tp-dot"></div>
+          </div>
         </div>
 
         <div class="field-group">
@@ -757,17 +842,27 @@
           <span style="color:rgba(255,92,0,0.7);">once saved → click the button below to activate.</span>
         </p>
 
+        <div class="co-promo-row" id="promo-row" hidden>
+          <button class="co-promo-toggle" id="promo-toggle">+ hAVE a pROMO cODE?</button>
+          <div class="co-promo-fields" id="promo-fields" style="display:none;">
+            <input class="co-promo-inp" id="promo-inp" type="text" placeholder="CODE"
+                   maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false">
+            <button class="co-promo-apply" id="promo-apply">aPPLY</button>
+          </div>
+          <p class="co-promo-msg" id="promo-msg"></p>
+        </div>
+
         <div class="gen-row" style="margin-top: clamp(24px,3.5vh,40px);">
           <div class="pay-trigger-wrap">
             <button class="btn-access" id="btn-access">PaY & aCTIVATE →</button>
           </div>
         </div>
 
-        <p class="payment-note">
+        <p class="payment-note" id="payment-note">
           secure checkout · stays on this page · your iD activates once payment is confirmed.<br>
           on this device your key is remembered — return to your member area after paying.
         </p>
-        <a href="id.html" class="btn-already-paid">already paid? → aCCESS mEMBER iD</a>
+        <a href="id.html" class="btn-already-paid" id="already-paid-link">already paid? → aCCESS mEMBER iD</a>
       </div>
 
       <!-- ── RETURNING MEMBER: iD generated, not yet paid ── -->
@@ -812,6 +907,14 @@
               <span class="tp-name">CURaTOR</span>
               <span class="tp-price"><span class="euro">€</span>333 / month</span>
               <span class="tp-perks">all above · editorial seat · private archive · patronage</span>
+            </div>
+            <div class="tp-dot"></div>
+          </div>
+          <div class="tier-pick tier-free" data-tier="aUDIENCE">
+            <div class="tp-info">
+              <span class="tp-name">aUDIENCE</span>
+              <span class="tp-free">fREE</span>
+              <span class="tp-perks">cOMMUNITY aCCESS · eVENT aLERTS · nEWSLETTER</span>
             </div>
             <div class="tp-dot"></div>
           </div>
@@ -984,6 +1087,39 @@
       return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
     }
 
+    /* ── Coupon system ── */
+    var COUPONS = {
+      'ARTS24':  { label: '— fIRST mONTH fREE', cooldownDays: 180 },
+      'WELCOME': { label: '— 20% oFF',           cooldownDays: 180 },
+      'BERLIN':  { label: '— bERLIN sPECIAL',    cooldownDays: 180 },
+      'FRIEND':  { label: '— fRIEND rEFERRAL',   cooldownDays: 180 }
+    };
+    var appliedPromoCode = null;
+
+    function couponKey(code) {
+      var h = '';
+      try { h = localStorage.getItem('arts_id_hash') || ''; } catch(e) {}
+      return 'arts_cpn_' + code + '_' + (h ? h.slice(0, 8) : 'anon');
+    }
+    function checkCoupon(code) {
+      var def = COUPONS[code];
+      if (!def) return { ok: false, msg: '— iNVaLID cODE', cls: 'err' };
+      var cd = def.cooldownDays * 86400000, usedAt = 0;
+      try { usedAt = parseInt(localStorage.getItem(couponKey(code)), 10) || 0; } catch(e) {}
+      if (usedAt) {
+        var left = cd - (Date.now() - usedAt);
+        if (left > 0) {
+          var d = Math.ceil(left / 86400000);
+          var t = d >= 30 ? Math.ceil(d / 30) + ' mONTHS' : d + ' DaYS';
+          return { ok: false, msg: '— cOME BaCK iN ' + t, cls: 'warn' };
+        }
+      }
+      return { ok: true, msg: '✓ ' + def.label, cls: 'ok' };
+    }
+    function recordCouponUse(code) {
+      try { localStorage.setItem(couponKey(code), String(Date.now())); } catch(e) {}
+    }
+
     /* Pick 12 unique words */
     function pickWords() {
       var pool = POOL.slice();
@@ -1042,7 +1178,7 @@
 
       /* Store hash locally + member profile */
       var hash = await sha256(generatedWords.join('-'));
-      var startPts = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000 }[selectedTier] || 100;
+      var startPts = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000, 'aUDIENCE': 50 }[selectedTier] || 50;
       try {
         localStorage.setItem('arts_id_hash', hash);
         localStorage.setItem('arts_tier',    selectedTier);
@@ -1057,39 +1193,82 @@
       ptsEl.textContent = '+ ' + startPts + ' STaRTING pOINTS aWARDED';
       ptsEl.style.display = 'block';
 
-      /* Mount Stripe Buy Button for the selected tier (off-screen, triggered by btn-access click) */
-      var mount = document.getElementById('stripe-btn-mount');
-      mount.innerHTML = '';
-      var sbb = document.createElement('stripe-buy-button');
-      sbb.setAttribute('buy-button-id', BUY_BUTTON_IDS[selectedTier]);
-      sbb.setAttribute('publishable-key', STRIPE_PK);
-      sbb.setAttribute('customer-email', email);
-      mount.appendChild(sbb);
+      var isAudience = selectedTier === 'aUDIENCE';
 
-      /* Wire btn-access to open the aRTS checkout sheet; replace any prior listener */
-      var tierForPay = selectedTier;
-      var emailForPay = email; /* capture current email in closure */
+      /* Clone btn-access to clear prior listeners */
       var btnAccess = document.getElementById('btn-access');
-      var newBtn = btnAccess.cloneNode(true); /* remove previous event listeners */
+      var newBtn = btnAccess.cloneNode(true);
       btnAccess.parentNode.replaceChild(newBtn, btnAccess);
-      newBtn.addEventListener('click', function() {
-        if (typeof window.openCheckoutSheet === 'function') {
-          window.openCheckoutSheet(tierForPay, emailForPay);
-        } else {
-          /* Fallback: trigger Stripe directly if sheet not available */
-          var liveSbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
-          if (liveSbb) {
-            liveSbb.click();
-          } else {
-            var PAYMENT_LINKS = {
+
+      if (isAudience) {
+        /* ── aUDIENCE: free tier — activate immediately, skip Stripe ── */
+        try { localStorage.setItem('arts_active', 'true'); } catch(e) {}
+        var pNote = document.getElementById('payment-note');
+        if (pNote) pNote.textContent = 'fREE aCCESS — no payment required · save your 12 words · they are your login key on any device.';
+        var alreadyLink = document.getElementById('already-paid-link');
+        if (alreadyLink) alreadyLink.style.display = 'none';
+        document.getElementById('promo-row').hidden = true;
+        newBtn.textContent = 'rEGISTER fREE →';
+        newBtn.classList.add('btn-audience');
+        newBtn.addEventListener('click', function() {
+          newBtn.textContent = '✓ rEGISTERED';
+          newBtn.classList.add('done');
+          setTimeout(function() { window.location.href = 'id.html'; }, 700);
+        });
+      } else {
+        /* ── Paid tier: mount Stripe + show promo-row ── */
+        document.getElementById('promo-row').hidden = false;
+        /* Reset promo state */
+        appliedPromoCode = null;
+        var promoMsg = document.getElementById('promo-msg');
+        promoMsg.textContent = ''; promoMsg.className = 'co-promo-msg';
+        document.getElementById('promo-inp').value = '';
+        document.getElementById('promo-fields').style.display = 'none';
+        document.getElementById('promo-toggle').textContent = '+ hAVE a pROMO cODE?';
+        /* Restore default note + link */
+        var pNote2 = document.getElementById('payment-note');
+        if (pNote2) pNote2.innerHTML = 'secure checkout · stays on this page · your iD activates once payment is confirmed.<br>on this device your key is remembered — return to your member area after paying.';
+        var alreadyLink2 = document.getElementById('already-paid-link');
+        if (alreadyLink2) alreadyLink2.style.display = '';
+
+        var mount = document.getElementById('stripe-btn-mount');
+        mount.innerHTML = '';
+        var sbb = document.createElement('stripe-buy-button');
+        sbb.setAttribute('buy-button-id', BUY_BUTTON_IDS[selectedTier]);
+        sbb.setAttribute('publishable-key', STRIPE_PK);
+        sbb.setAttribute('customer-email', email);
+        mount.appendChild(sbb);
+
+        var tierForPay = selectedTier;
+        var emailForPay = email;
+        newBtn.textContent = 'PaY & aCTIVATE →';
+        newBtn.classList.remove('btn-audience', 'done');
+        newBtn.addEventListener('click', function() {
+          if (appliedPromoCode) {
+            var PL = {
               'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
               'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
               'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
             };
-            window.location.href = PAYMENT_LINKS[tierForPay];
+            recordCouponUse(appliedPromoCode);
+            window.location.href = (PL[tierForPay] || '#') + '?prefilled_promo_code=' + appliedPromoCode;
+          } else if (typeof window.openCheckoutSheet === 'function') {
+            window.openCheckoutSheet(tierForPay, emailForPay);
+          } else {
+            var liveSbb = document.querySelector('#stripe-btn-mount stripe-buy-button');
+            if (liveSbb) {
+              liveSbb.click();
+            } else {
+              var PL2 = {
+                'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
+                'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
+                'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
+              };
+              window.location.href = PL2[tierForPay];
+            }
           }
-        }
-      });
+        });
+      }
 
       /* Backlog → Formspree (fire and forget) */
       var data = new FormData();
@@ -1102,6 +1281,26 @@
       fetch('https://formspree.io/f/xlgpgbeq', {
         method: 'POST', body: data, headers: { 'Accept': 'application/json' }
       }).catch(function(){});
+    });
+
+    /* ── Promo code UI wiring ── */
+    document.getElementById('promo-toggle').addEventListener('click', function() {
+      var fields = document.getElementById('promo-fields');
+      var showing = fields.style.display !== 'none';
+      fields.style.display = showing ? 'none' : 'flex';
+      this.textContent = showing ? '+ hAVE a pROMO cODE?' : '— hIDE';
+    });
+    document.getElementById('promo-apply').addEventListener('click', function() {
+      var code = (document.getElementById('promo-inp').value || '').trim().toUpperCase();
+      var msgEl = document.getElementById('promo-msg');
+      if (!code) { msgEl.textContent = '— eNTER a cODE'; msgEl.className = 'co-promo-msg err'; return; }
+      var result = checkCoupon(code);
+      msgEl.textContent = result.msg;
+      msgEl.className = 'co-promo-msg ' + result.cls;
+      appliedPromoCode = result.ok ? code : null;
+    });
+    document.getElementById('promo-inp').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('promo-apply').click(); }
     });
 
     /* Copy all 12 */
@@ -1286,11 +1485,24 @@
       var riSelectedTier = storedTier || null;
 
       /* Pre-select stored tier visually */
+      var riPayBtn = document.getElementById('ri-btn-pay');
+      function updateRiPayBtn(tier) {
+        if (!riPayBtn) return;
+        if (tier === 'aUDIENCE') {
+          riPayBtn.textContent = 'aCTIVATE fREE →';
+        } else {
+          riPayBtn.textContent = 'PaY & aCTIVATE →';
+        }
+      }
+      /* Set initial pay button label */
+      updateRiPayBtn(riSelectedTier);
+
       document.querySelectorAll('#ri-tiers .tier-pick').forEach(function(card) {
         if (card.dataset.tier === riSelectedTier) card.classList.add('selected');
         card.addEventListener('click', function() {
           riSelectedTier = card.dataset.tier;
           mountStripe(riSelectedTier);
+          updateRiPayBtn(riSelectedTier);
         });
       });
 
@@ -1302,6 +1514,14 @@
       if (payBtn) {
         payBtn.addEventListener('click', function() {
           if (!riSelectedTier) return;
+          if (riSelectedTier === 'aUDIENCE') {
+            /* Free tier: activate immediately */
+            try { localStorage.setItem('arts_active', 'true'); } catch(e) {}
+            payBtn.textContent = '✓ aCTIVATED';
+            payBtn.classList.add('btn-audience', 'done');
+            setTimeout(function() { window.location.href = 'id.html'; }, 700);
+            return;
+          }
           if (typeof window.openCheckoutSheet === 'function') {
             window.openCheckoutSheet(riSelectedTier, storedEmail);
           } else {
