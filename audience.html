@@ -473,7 +473,7 @@
       var a=ev.target.closest('a[href]');
       if(!a)return;
       var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\\/\\/)/.test(h))return;
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
       if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
       ev.preventDefault();
       doExit(h);

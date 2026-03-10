@@ -823,11 +823,11 @@
       var loggedIn = false;
       try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
       var SUFFIX = loggedIn ? ' ID' : ' LOGIN';
-      /* Subtle visual distinction when already logged in */
-      if(loggedIn){ mark.style.opacity = '1'; mark.title = 'mEMBER iD'; }
+      /* [aRTS] turns orange when logged in */
       if(loggedIn){
-        var badge = document.getElementById('access-badge');
-        if(badge){ badge.hidden = false; setTimeout(function(){ badge.classList.add('visible'); }, 80); }
+        mark.style.opacity = '1';
+        mark.style.color = '#FF5C00';
+        mark.title = 'mEMBER iD';
       }
       var timers = [], state = 0;
       function clr(){ timers.forEach(clearTimeout); timers.length = 0; }

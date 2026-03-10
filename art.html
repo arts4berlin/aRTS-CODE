@@ -112,33 +112,18 @@
     /* ── Card ── */
     .piece-card {
       background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,92,0,0.18);
+      border: none;
       border-radius: 14px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      transition: box-shadow 0.3s, transform 0.3s;
       position: relative;
     }
-    .piece-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 14px;
-      background: radial-gradient(ellipse at 50% 0%, rgba(255,92,0,0.055) 0%, transparent 65%);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.35s;
-    }
     .piece-card:hover {
-      border-color: rgba(255,92,0,0.48);
-      box-shadow:
-        0 0 0 1px rgba(255,92,0,0.10),
-        0 0 36px rgba(255,92,0,0.10),
-        0 8px 32px rgba(0,0,0,0.55);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55);
       transform: translateY(-3px);
     }
-    .piece-card:hover::before { opacity: 1; }
 
     /* ── Image ── */
     .card-img-wrap {
@@ -171,6 +156,9 @@
       flex-direction: column;
       flex: 1;
       gap: clamp(10px, 1.5vh, 16px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-top: none;
+      border-radius: 0 0 14px 14px;
     }
 
     .card-index {
