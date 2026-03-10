@@ -282,6 +282,46 @@
       margin: 4px 0;
     }
 
+    /* ── Tier row with change link ── */
+    .vc-tier-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.9rem;
+    }
+    .vc-tier-change {
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.18);
+      text-decoration: none;
+      cursor: crosshair;
+      transition: color 0.15s;
+    }
+    .vc-tier-change:hover { color: rgba(255, 92, 0, 0.7); }
+
+    /* ── Alias no-name state ── */
+    .vc-alias.no-name {
+      color: rgba(255,255,255,0.2);
+      cursor: crosshair;
+      transition: color 0.15s;
+    }
+    .vc-alias.no-name:hover { color: rgba(255, 92, 0, 0.7); }
+
+    .vc-alias-input {
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      outline: none;
+      width: 100%;
+      padding: 2px 0;
+    }
+    .vc-alias-input::placeholder { color: rgba(255,255,255,0.2); }
+
     .vc-benefit-row {
       display: flex;
       align-items: center;
@@ -625,18 +665,27 @@
       <!-- ── STAGE 2: verified ── -->
       <div id="s2" hidden>
         <p class="section-label">vERiFIED</p>
-        <h1 class="form-title">wELCOME</h1>
+        <h1 class="form-title" id="s2-welcome">wELCOME</h1>
+
+        <div class="privacy-row">
+          <button class="stealth-toggle-btn active" id="btn-privacy-toggle-s2" role="switch" aria-checked="true">
+            <span class="stealth-pill"></span>
+            <span class="stealth-toggle-label">pRIVaCY mODE</span>
+          </button>
+        </div>
 
         <div class="verified-card">
           <div class="vc-stripe"></div>
           <div class="vc-body">
             <div class="vc-top-row">
-              
               <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED</span>
               <span class="vc-stealth"   id="vc-stealth"   hidden>sTEaLTH mODE</span>
             </div>
-            <p class="vc-alias" id="vc-alias">mEMBER</p>
-            <p class="vc-tier" id="vc-tier">—</p>
+            <p class="vc-alias" id="vc-alias">—</p>
+            <div class="vc-tier-row">
+              <p class="vc-tier" id="vc-tier">—</p>
+              <a href="join.html" class="vc-tier-change">cHANGE →</a>
+            </div>
             <p class="vc-status" id="vc-status">aCTIVE</p>
             <div class="vc-rule"></div>
             <div class="vc-points-row">
@@ -668,8 +717,8 @@
           </div>
         </div>
 
-        <div class="activate-row" id="activate-row" hidden>
-          <a href="#" class="btn-activate-pay" id="btn-activate-pay">nOT yET aCTIVE? pAY →</a>
+        <div class="activate-row" id="activate-row">
+          <a href="join.html" class="btn-activate-pay" id="btn-activate-pay">wANT tO pRESTIGE? →</a>
         </div>
 
         <div class="signout-row">
@@ -765,12 +814,46 @@
     };
 
     function showActivateLink(tier) {
-      var link = PAYMENT_LINKS[tier];
-      if (!link) return;
-      var row = document.getElementById('activate-row');
-      row.hidden = false;
-      document.getElementById('btn-activate-pay').href = link;
+      /* prestige link always visible — no-op kept for call-site compat */
     }
+
+    /* ── s2 privacy mode: scrambles alias display ── */
+    var s2PrivacyMode = true;
+    var _s2AliasReal = '';
+    var _s2PrivPool = 'abcdefghijklmnopqrstuvwxyz';
+    var _s2PrivInterval = null;
+
+    function _s2RandWord(len) {
+      var s = '';
+      for (var k = 0; k < len; k++) s += _s2PrivPool[Math.floor(Math.random() * _s2PrivPool.length)];
+      return s;
+    }
+    function s2ScrambleAlias() {
+      var el = document.getElementById('vc-alias');
+      if (!el || el.classList.contains('no-name') || el.querySelector('input')) return;
+      el.textContent = _s2AliasReal ? _s2RandWord(_s2AliasReal.length) : el.textContent;
+    }
+    function applyS2Privacy() {
+      var btn = document.getElementById('btn-privacy-toggle-s2');
+      if (!btn) return;
+      if (s2PrivacyMode) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-checked','true');
+        if (_s2PrivInterval) clearInterval(_s2PrivInterval);
+        _s2PrivInterval = setInterval(s2ScrambleAlias, 2200);
+        s2ScrambleAlias();
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-checked','false');
+        if (_s2PrivInterval) { clearInterval(_s2PrivInterval); _s2PrivInterval = null; }
+        var el = document.getElementById('vc-alias');
+        if (el && _s2AliasReal && !el.classList.contains('no-name')) el.textContent = _s2AliasReal;
+      }
+    }
+    document.getElementById('btn-privacy-toggle-s2').addEventListener('click', function() {
+      s2PrivacyMode = !s2PrivacyMode;
+      applyS2Privacy();
+    });
 
     /* ── Same word pool as join.html ── */
     var POOL = new Set([
@@ -819,12 +902,76 @@
       return 0;
     }
 
+    /* ── Welcome greetings (3rd visit+) ── */
+    var WELCOME_GREETINGS = [
+      'bACK iN tHE nETWORK',
+      'sIGNAL aCQUIRED',
+      'eYES oPEN',
+      'tHE nETWORK rEMEMBERS',
+      'bACK iN tHE fRAME',
+      'rEADY tO tRADE',
+      'cONNECTION sTABLE',
+      'wELCOME bACK',
+      'tHE SIGNaL iS sTRONG',
+    ];
+
+    function setWelcomeHeading(visitCount, milestoneName) {
+      var el = document.getElementById('s2-welcome');
+      if (!el) return;
+      var target;
+      if (visitCount <= 1)   target = 'wELCOME ' + milestoneName;
+      else if (visitCount === 2) target = 'wELCOME bACK';
+      else target = WELCOME_GREETINGS[(visitCount - 3) % WELCOME_GREETINGS.length];
+      scrambleTo(el, target);
+    }
+
+    function setupAliasCell(alias) {
+      var el = document.getElementById('vc-alias');
+      if (!el) return;
+      _s2AliasReal = alias || '';
+      if (alias) {
+        el.textContent = s2PrivacyMode ? _s2RandWord(alias.length) : alias;
+        el.classList.remove('no-name');
+        el.onclick = null;
+        return;
+      }
+      /* No alias — show hoverable prompt */
+      el.textContent = 'aNONYMOUS';
+      el.classList.add('no-name');
+      el.onclick = function() {
+        el.onclick = null;
+        el.classList.remove('no-name');
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'vc-alias-input';
+        inp.placeholder = 'yOUR nAME / aLIAS';
+        inp.maxLength = 40;
+        inp.autocomplete = 'off';
+        el.textContent = '';
+        el.appendChild(inp);
+        inp.focus();
+        inp.addEventListener('blur', function() {
+          var v = inp.value.trim();
+          if (v) {
+            store.set('arts_alias', v);
+            el.textContent = v;
+          } else {
+            setupAliasCell(null);
+          }
+        });
+        inp.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') inp.blur();
+          if (e.key === 'Escape') { el.removeChild(inp); setupAliasCell(null); }
+        });
+      };
+    }
+
     function renderPoints(pts, alias, tier, since, remembered) {
       pts = parseInt(pts, 10) || 0;
       var idx  = getMilestoneIdx(pts);
       var m    = MILESTONES[idx];
       var next = MILESTONES[idx + 1] || null;
-      document.getElementById('vc-alias').textContent     = alias || 'mEMBER';
+      setupAliasCell(alias);
       document.getElementById('vc-tier').textContent      = tier  || '—';
       document.getElementById('vc-pts-num').textContent   = pts;
       document.getElementById('vc-milestone').textContent = m.name;
@@ -975,15 +1122,44 @@
         if (parts.length > 1) {
           e.preventDefault();
           var start = parts.length === 12 ? 0 : i;
-          parts.forEach(function(w, j){
+          /* Fill privReal immediately */
+          parts.forEach(function(w, j) {
             if (inputs[start + j]) {
-              var word = w.toLowerCase().trim();
-              privReal[start + j] = word;
-              inputs[start + j].value = privacyMode ? _randWord(word.length) : word;
+              privReal[start + j] = w.toLowerCase().trim();
+              inputs[start + j].value = _randWord(privReal[start + j].length || 5);
             }
           });
+          /* Cascade settle: right-to-left within each word, bottom-to-top across cells */
+          var cellCount = Math.min(parts.length, 12 - start);
+          var CELL_DELAY = 55; /* ms between each cell starting */
+          var FRAMES = 12, RATE = 36;
+          for (var jj = cellCount - 1; jj >= 0; jj--) {
+            (function(jj) {
+              var cellIdx = start + jj;
+              var target = privReal[cellIdx] || '';
+              if (!target) return;
+              /* Delay: bottom cell starts first (reversed cascade) */
+              setTimeout(function() {
+                var frame = 0;
+                var t = setInterval(function() {
+                  /* settle right-to-left: chars from end settle first */
+                  var settled = Math.floor((frame / FRAMES) * target.length);
+                  inputs[cellIdx].value = target.split('').map(function(ch, k) {
+                    var fromRight = target.length - 1 - k;
+                    return fromRight < settled ? ch : _privPool[Math.floor(Math.random() * _privPool.length)];
+                  }).join('');
+                  frame++;
+                  if (frame > FRAMES) {
+                    clearInterval(t);
+                    /* After settling, keep scrambled (privacy mode) */
+                    if (privacyMode) inputs[cellIdx].value = _randWord(target.length);
+                  }
+                }, RATE);
+              }, (cellCount - 1 - jj) * CELL_DELAY);
+            })(jj);
+          }
           var nextFocus = inputs[start + parts.length] || inputs[11];
-          if (nextFocus) nextFocus.focus();
+          if (nextFocus) setTimeout(function(){ nextFocus.focus(); }, cellCount * CELL_DELAY + 100);
         }
       });
       inp.addEventListener('keydown', function(e) {
@@ -1066,15 +1242,20 @@
 
       /* Show STEaLTH badge if in stealth mode */
       document.getElementById('vc-stealth').hidden = !stealthMode;
+      applyS2Privacy();
 
       var alias = store.get('arts_alias');
       var since = store.get('arts_since');
       var pts   = store.get('arts_points');
 
+      var _vc2 = store.get('arts_visit_count') || 0;
+      _vc2 = parseInt(_vc2, 10) + 1;
+      store.set('arts_visit_count', _vc2);
+
       if (storedTier && !newDevice) {
         document.getElementById('vc-status').textContent = 'aCTIVE';
         renderPoints(pts || 0, alias, storedTier, since, false);
-        showActivateLink(storedTier);
+        setWelcomeHeading(_vc2, MILESTONES[getMilestoneIdx(parseInt(pts,10)||0)].name);
       } else {
         /* New device / session: show partial info and ask for tier */
         document.getElementById('vc-status').textContent = 'vERIFIED';
@@ -1190,8 +1371,12 @@
       }, 200);
       document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
       document.getElementById('vc-stealth').hidden      = !stealthMode;
+      applyS2Privacy();
+      var _vc = store.get('arts_visit_count') || 0;
+      _vc = parseInt(_vc, 10) + 1;
+      store.set('arts_visit_count', _vc);
       renderPoints(p || 0, a, t, s, true);
-      if (t) showActivateLink(t);
+      setWelcomeHeading(_vc, getMilestoneIdx(parseInt(p,10)||0) >= 0 ? MILESTONES[getMilestoneIdx(parseInt(p,10)||0)].name : 'mEMBER');
     })();
   })();
   </script>
