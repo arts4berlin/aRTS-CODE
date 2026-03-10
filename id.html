@@ -518,6 +518,100 @@
     }
     .btn-signout:hover { color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.3); }
 
+    .btn-destroy {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255, 60, 60, 0.35);
+      border: 1px solid rgba(255, 60, 60, 0.15);
+      border-radius: 3px;
+      padding: 0.4rem 0.9rem;
+      transition: all 0.15s;
+    }
+    .btn-destroy:hover { color: rgba(255, 60, 60, 0.8); border-color: rgba(255, 60, 60, 0.45); }
+
+    /* ── Destroy modal ── */
+    .destroy-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 99990;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .destroy-overlay[hidden] { display: none; }
+    .destroy-modal {
+      width: min(480px, 100%);
+      background: #0a0a0a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: clamp(28px, 5vh, 44px) clamp(24px, 4vw, 36px);
+      display: flex; flex-direction: column; gap: 1.2rem;
+    }
+    .destroy-eyebrow {
+      font-size: 0.5rem; font-weight: 700;
+      letter-spacing: 0.3em; color: rgba(255,60,60,0.55);
+      text-transform: uppercase;
+    }
+    .destroy-heading {
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 700; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.85); line-height: 1;
+    }
+    .destroy-sub {
+      font-size: 0.72rem; font-weight: 300;
+      letter-spacing: 0.06em; line-height: 1.8;
+      color: rgba(255,255,255,0.35);
+    }
+    .destroy-sub strong { color: rgba(255,255,255,0.6); font-weight: 600; }
+    .destroy-input {
+      width: 100%;
+      background: none;
+      border: none; border-bottom: 1px solid rgba(255,60,60,0.3);
+      color: rgba(255,60,60,0.85);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 0.22em;
+      outline: none; padding: 6px 0;
+    }
+    .destroy-input::placeholder { color: rgba(255,60,60,0.2); letter-spacing: 0.22em; }
+    .destroy-btns {
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+      margin-top: 0.4rem;
+    }
+    .btn-destroy-cancel {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.62rem; font-weight: 300; letter-spacing: 0.18em;
+      cursor: pointer; background: none;
+      color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px; padding: 0.5rem 1rem;
+      transition: all 0.15s;
+    }
+    .btn-destroy-cancel:hover { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.25); }
+    .btn-destroy-confirm {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
+      cursor: pointer;
+      color: rgba(255,60,60,0.7); background: none;
+      border: 1px solid rgba(255,60,60,0.3);
+      border-radius: 3px; padding: 0.5rem 1rem;
+      transition: all 0.15s;
+    }
+    .btn-destroy-confirm:hover { color: rgba(255,60,60,1); border-color: rgba(255,60,60,0.6); }
+    .btn-destroy-execute {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
+      cursor: pointer;
+      color: #000; background: rgba(255,60,60,0.85);
+      border: 1px solid rgba(255,60,60,0.85);
+      border-radius: 3px; padding: 0.5rem 1rem;
+      transition: all 0.15s;
+    }
+    .btn-destroy-execute:hover:not(:disabled) { background: rgb(255,60,60); border-color: rgb(255,60,60); }
+    .btn-destroy-execute:disabled { opacity: 0.3; cursor: not-allowed; }
+
     /* ── STEaLTH MODE ── */
     .vc-stealth {
       font-size: 0.5rem;
@@ -723,11 +817,39 @@
 
         <div class="signout-row">
           <button class="btn-signout" id="btn-signout">sIGN OuT</button>
+          <button class="btn-destroy" id="btn-destroy">dESTROY iD</button>
         </div>
       </div>
 
     </div>
   </main>
+
+  <!-- ── Destroy ID modal ── -->
+  <div class="destroy-overlay" id="destroy-overlay" hidden>
+    <div class="destroy-modal">
+      <!-- Step 1 -->
+      <div id="destroy-step1">
+        <p class="destroy-eyebrow">⚠ iRREVERSIBLE</p>
+        <p class="destroy-heading">aRE yOU sURE?</p>
+        <p class="destroy-sub">yOUR mEMBER iD, pOINTS, aND sESSION dATA wILL bE pERMANENTLY dELETED. tHIS cANNOT bE uNDONE.</p>
+        <div class="destroy-btns">
+          <button class="btn-destroy-cancel" id="destroy-cancel-1">cANCEL</button>
+          <button class="btn-destroy-confirm" id="destroy-next">cONFIRM →</button>
+        </div>
+      </div>
+      <!-- Step 2 -->
+      <div id="destroy-step2" hidden>
+        <p class="destroy-eyebrow">fINAL wARNING</p>
+        <p class="destroy-heading">cONFIRM dELETION</p>
+        <p class="destroy-sub">tYPE <strong>DELETE</strong> tO cONFIRM.</p>
+        <input type="text" class="destroy-input" id="destroy-input" placeholder="DELETE" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+        <div class="destroy-btns">
+          <button class="btn-destroy-cancel" id="destroy-cancel-2">cANCEL</button>
+          <button class="btn-destroy-execute" id="destroy-execute" disabled>dESTROY</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
   (function(){
@@ -1272,6 +1394,70 @@
         });
       }
     });
+
+    /* ── Destroy ID modal ── */
+    function closeDestroyModal() {
+      var ov = document.getElementById('destroy-overlay');
+      ov.hidden = true;
+      document.getElementById('destroy-step1').hidden = false;
+      document.getElementById('destroy-step2').hidden = true;
+      var inp = document.getElementById('destroy-input');
+      if (inp) { inp.value = ''; }
+      document.getElementById('destroy-execute').disabled = true;
+    }
+
+    function nukeAndSign() {
+      /* Clear all arts_ keys from both storages */
+      var keys = [];
+      for (var k in localStorage) { if (k.indexOf('arts_') === 0) keys.push(k); }
+      keys.forEach(function(k){ localStorage.removeItem(k); });
+      try {
+        var sKeys = [];
+        for (var sk in sessionStorage) { if (sk.indexOf('arts_') === 0) sKeys.push(sk); }
+        sKeys.forEach(function(sk){ sessionStorage.removeItem(sk); });
+      } catch(e){}
+      closeDestroyModal();
+      /* Transition back to s1 */
+      var s2Out = document.getElementById('s2');
+      s2Out.style.opacity = '0';
+      setTimeout(function() {
+        s2Out.hidden = true;
+        var s1Back = document.getElementById('s1');
+        s1Back.style.opacity = '0';
+        s1Back.hidden = false;
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            s1Back.style.opacity = '1';
+            if (typeof scrambleLoginText === 'function') scrambleLoginText();
+          });
+        });
+      }, 230);
+      document.getElementById('vc-remembered').hidden = true;
+      document.getElementById('vc-progress-fill').style.width = '0%';
+      document.getElementById('activate-row').hidden = true;
+      document.getElementById('tier-confirm').hidden = true;
+      privReal = new Array(12).fill('');
+      inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
+      document.getElementById('err-msg').textContent = '';
+    }
+
+    document.getElementById('btn-destroy').addEventListener('click', function() {
+      document.getElementById('destroy-overlay').hidden = false;
+    });
+    document.getElementById('destroy-cancel-1').addEventListener('click', closeDestroyModal);
+    document.getElementById('destroy-cancel-2').addEventListener('click', closeDestroyModal);
+    document.getElementById('destroy-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeDestroyModal();
+    });
+    document.getElementById('destroy-next').addEventListener('click', function() {
+      document.getElementById('destroy-step1').hidden = true;
+      document.getElementById('destroy-step2').hidden = false;
+      setTimeout(function(){ document.getElementById('destroy-input').focus(); }, 60);
+    });
+    document.getElementById('destroy-input').addEventListener('input', function() {
+      document.getElementById('destroy-execute').disabled = this.value.trim().toUpperCase() !== 'DELETE';
+    });
+    document.getElementById('destroy-execute').addEventListener('click', nukeAndSign);
 
     /* Sign out — smooth reverse fade */
     document.getElementById('btn-signout').addEventListener('click', function() {
