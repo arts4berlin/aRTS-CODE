@@ -28,7 +28,7 @@
   </script>
   <link rel="preload" as="image" href="assets/bear.png">
   <link rel="prefetch" href="about.html">
-  <link rel="prefetch" href="access.html">
+  <link rel="prefetch" href="audience.html">
   <link rel="prefetch" href="aid.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -181,6 +181,54 @@
       user-select: none;
       -webkit-user-select: none;
       transition: opacity 0.15s;
+    }
+
+    /* ── aSSETS priority button ── */
+    .btn-assets {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: clamp(20px, 4vh, 36px);
+      width: clamp(180px, 40vw, 320px);
+      height: clamp(52px, 9vh, 76px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 3px;
+      background: transparent;
+      color: rgba(255,255,255,0.55);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 3.5vw, 1.5rem);
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-decoration: none;
+      cursor: crosshair;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.22s, border-color 0.22s;
+    }
+    .btn-assets::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-assets:hover::before { transform: scaleX(1); }
+    .btn-assets:hover {
+      color: #000;
+      border-color: #fff;
+    }
+    .btn-assets span { position: relative; z-index: 1; }
+
+    /* ── ask hint ── */
+    .ask-hint {
+      margin-top: clamp(10px, 2vh, 18px);
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.32em;
+      color: rgba(255,255,255,0.14);
+      text-transform: uppercase;
     }
 
     /* ── aCCESS gRaNTED badge (shown for logged-in members) ── */
@@ -347,10 +395,9 @@
     <a href="id.html" class="home-mark" id="home-mark">[aRTS]</a>
     <nav>
       <a href="about.html">aBOUT</a>
-      <a href="access.html">aCCESS</a>
+      <a href="audience.html">aUDIENCE</a>
       <a href="aid.html">aID</a>
       <a href="ask.html">cONNECT</a>
-      <a href="work.html">wORK</a>
     </nav>
     <button class="burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
@@ -364,10 +411,9 @@
       <span class="burger-label">[×]</span>
     </button>
     <a href="about.html">aBOUT</a>
-    <a href="access.html">aCCESS</a>
+    <a href="audience.html">aUDIENCE</a>
     <a href="aid.html">aID</a>
     <a href="ask.html">cONNECT</a>
-    <a href="work.html">wORK</a>
   </div>
 
   <main>
@@ -377,9 +423,12 @@
       <span class="berlin">BERLIN</span>
     </div>
     <div class="access-badge" id="access-badge" hidden>
-      
       <span class="access-label">aCCESS gRaNTED</span>
     </div>
+
+    <a href="assets.html" class="btn-assets" id="btn-assets"><span>aSSETS</span></a>
+
+    <p class="ask-hint">… aSK aND aNSWERS aPPEAR …</p>
   </main>
   </div><!-- /crt-wrap -->
 
@@ -798,6 +847,78 @@
           timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
         })(i);
       });
+    })();
+
+    /* ── aSSETS button — word-cycle scramble on hover ── */
+    (function(){
+      var btn  = document.getElementById('btn-assets');
+      var span = btn && btn.querySelector('span');
+      if (!btn || !span) return;
+
+      /* Words to cycle through — all same visual weight as "aSSETS" */
+      var WORDS = ['aSSETS', 'tRADE', 'cOLLECT', 'vIEW', 'aSSETS'];
+      var GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789▓░▒×';
+      var SCRAMBLE_FRAMES = 8;   /* scramble steps per char */
+      var CHAR_DELAY = 28;       /* ms between char slots */
+      var WORD_HOLD  = 520;      /* ms to hold each word before cycling */
+
+      var timer = null, wordIdx = 0, cycling = false;
+
+      function randChar() {
+        return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+      }
+
+      /* Scramble from current text to `target`, then call `done()` */
+      function scrambleToWord(target, done) {
+        var steps = [];
+        var maxLen = Math.max(span.textContent.length, target.length);
+        for (var i = 0; i < maxLen; i++) {
+          (function(i){
+            var frames = 0;
+            var iv = setInterval(function(){
+              var cur = span.textContent.split('');
+              /* Pad or truncate display to match target length mid-scramble */
+              while (cur.length < target.length) cur.push(randChar());
+              if (cur.length > target.length) cur = cur.slice(0, target.length);
+              if (i < cur.length) cur[i] = (frames < SCRAMBLE_FRAMES) ? randChar() : (target[i] || '');
+              span.textContent = cur.join('');
+              if (++frames > SCRAMBLE_FRAMES) {
+                clearInterval(iv);
+                /* When last char settles, call done */
+                if (i === target.length - 1) done();
+              }
+            }, CHAR_DELAY);
+            steps.push(iv);
+          })(i);
+        }
+        return steps;
+      }
+
+      function stopCycle() {
+        cycling = false;
+        clearTimeout(timer);
+        /* Snap back to aSSETS immediately on leave — no scramble, clean exit */
+        span.textContent = 'aSSETS';
+        wordIdx = 0;
+      }
+
+      function nextWord() {
+        if (!cycling) return;
+        wordIdx = (wordIdx + 1) % WORDS.length;
+        scrambleToWord(WORDS[wordIdx], function(){
+          if (!cycling) return;
+          timer = setTimeout(nextWord, WORD_HOLD);
+        });
+      }
+
+      btn.addEventListener('mouseenter', function(){
+        if (cycling) return;
+        cycling = true;
+        wordIdx = 0;
+        timer = setTimeout(nextWord, WORD_HOLD);
+      });
+
+      btn.addEventListener('mouseleave', stopCycle);
     })();
 
     /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
