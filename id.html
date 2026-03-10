@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
@@ -281,13 +282,47 @@
       margin: 4px 0;
     }
 
-    .vc-phrase {
-      font-size: 0.6rem;
+    .vc-benefit-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+    .vc-benefit-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255, 92, 0, 0.55);
+      flex-shrink: 0;
+    }
+    .vc-benefit-label {
+      font-size: 0.62rem;
       font-weight: 300;
-      letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.14);
-      line-height: 1.9;
-      word-break: break-word;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.4);
+    }
+    .vc-voucher-btn {
+      margin-left: auto;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: rgba(255, 92, 0, 0.65);
+      background: none;
+      border: 1px solid rgba(255, 92, 0, 0.3);
+      border-radius: 2px;
+      padding: 3px 8px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .vc-voucher-btn:hover {
+      color: #FF5C00;
+      border-color: rgba(255, 92, 0, 0.7);
+    }
+    .vc-voucher-btn.claimed {
+      color: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.08);
+      cursor: default;
+      pointer-events: none;
     }
 
     /* ── Points, alias & milestone ── */
@@ -600,7 +635,6 @@
               <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED</span>
               <span class="vc-stealth"   id="vc-stealth"   hidden>sTEaLTH mODE</span>
             </div>
-            <p class="vc-welcome">aCCESS gRaNTED</p>
             <p class="vc-alias" id="vc-alias">mEMBER</p>
             <p class="vc-tier" id="vc-tier">—</p>
             <p class="vc-status" id="vc-status">aCTIVE</p>
@@ -616,7 +650,11 @@
             <p class="vc-progress-label" id="vc-progress-label"></p>
             <div class="vc-rule"></div>
             <p class="vc-since" id="vc-since"></p>
-            <p class="vc-phrase" id="vc-phrase"></p>
+            <div class="vc-benefit-row" id="vc-benefit-row">
+              <span class="vc-benefit-dot"></span>
+              <span class="vc-benefit-label">1 vOUCHER</span>
+              <button class="vc-voucher-btn" id="vc-voucher-btn">cLAIM</button>
+            </div>
 
             <!-- Tier picker shown only on new device -->
             <div class="tier-confirm" id="tier-confirm" hidden>
@@ -802,6 +840,22 @@
         : '— mAESTRO — mAX TIER';
       if (since) document.getElementById('vc-since').textContent = 'mEMBER sINCE ' + since;
       if (remembered) document.getElementById('vc-remembered').hidden = false;
+
+      /* Voucher: one per prestige level — tracks per milestone name */
+      var vBtn = document.getElementById('vc-voucher-btn');
+      var vKey = 'arts_voucher_' + m.name.replace(/\s+/g, '_');
+      if (store.get(vKey)) {
+        vBtn.textContent = 'cLAIMED';
+        vBtn.classList.add('claimed');
+      } else {
+        vBtn.textContent = 'cLAIM';
+        vBtn.classList.remove('claimed');
+        vBtn.onclick = function() {
+          store.set(vKey, '1');
+          vBtn.textContent = 'cLAIMED';
+          vBtn.classList.add('claimed');
+        };
+      }
     }
 
     /* SHA-256 */
@@ -813,6 +867,7 @@
     /* ── Privacy scramble mode ── */
     var privacyMode = true;
     var privReal = new Array(12).fill('');
+    var _privRevealTimers = new Array(12).fill(null);
     var _privPool = 'abcdefghijklmnopqrstuvwxyz';
     var _privFocused = -1;
     var _privInterval = null;
@@ -828,6 +883,24 @@
       var real = privReal[idx];
       if (!real) return;
       inp.value = _randWord(real.length);
+    }
+    function cascadeReveal(inp, idx) {
+      if (_privRevealTimers[idx]) { clearInterval(_privRevealTimers[idx]); _privRevealTimers[idx] = null; }
+      var target = privReal[idx] || '';
+      if (!target) { inp.value = ''; return; }
+      var frame = 0, FRAMES = 10, RATE = 38;
+      _privRevealTimers[idx] = setInterval(function() {
+        var settled = Math.floor((frame / FRAMES) * target.length);
+        inp.value = target.split('').map(function(ch, k) {
+          return k < settled ? ch : _privPool[Math.floor(Math.random() * _privPool.length)];
+        }).join('');
+        frame++;
+        if (frame > FRAMES) {
+          clearInterval(_privRevealTimers[idx]);
+          _privRevealTimers[idx] = null;
+          inp.value = target;
+        }
+      }, RATE);
     }
     function rescrambleAll() {
       if (!privacyMode) return;
@@ -884,13 +957,14 @@
 
     /* Tab / enter navigation + paste on every cell */
     inputs.forEach(function(inp, i) {
-      /* Focus: reveal real value, pause scramble for this cell */
+      /* Focus: cascade-scramble reveal, pause interval for this cell */
       inp.addEventListener('focus', function() {
         _privFocused = i;
-        if (privacyMode) inp.value = privReal[i];
+        if (privacyMode) cascadeReveal(inp, i);
       });
-      /* Blur: scramble back */
+      /* Blur: cancel any reveal in progress, scramble back */
       inp.addEventListener('blur', function() {
+        if (_privRevealTimers[i]) { clearInterval(_privRevealTimers[i]); _privRevealTimers[i] = null; }
         _privFocused = -1;
         if (privacyMode) scrambleInput(inp, i);
       });
@@ -976,7 +1050,6 @@
       var newDevice = !storedHash || storedHash !== hash;
 
       /* Populate s2 content before showing */
-      document.getElementById('vc-phrase').textContent = words.join(' — ');
 
       /* Switch to verified view — smooth cross-fade */
       var s1El = document.getElementById('s1');
@@ -1116,7 +1189,6 @@
         });
       }, 200);
       document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
-      document.getElementById('vc-phrase').textContent  = '·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ·· ··';
       document.getElementById('vc-stealth').hidden      = !stealthMode;
       renderPoints(p || 0, a, t, s, true);
       if (t) showActivateLink(t);
