@@ -20,6 +20,7 @@
   <title>[aRTS] — aSK</title>
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -27,6 +28,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -84,6 +86,64 @@
       white-space: nowrap;
     }
 
+    /* ── FAQ accordion ── */
+    .faq {
+      width: clamp(300px, 65vw, 560px);
+      margin-top: clamp(1.4rem, 3vh, 2.4rem);
+    }
+    .faq-item {
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .faq-item:last-child {
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.78rem, 1.8vw, 0.92rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-align: left;
+      padding: clamp(0.7rem, 1.4vh, 1rem) 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: opacity 0.15s;
+    }
+    .faq-q:hover { opacity: 0.7; }
+    .faq-q::after {
+      content: '+';
+      font-weight: 300;
+      font-size: 1.1em;
+      opacity: 0.5;
+      transition: transform 0.25s;
+    }
+    .faq-item.open .faq-q::after {
+      transform: rotate(45deg);
+    }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 0;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 0 clamp(0.7rem, 1.4vh, 1rem) 0;
+    }
+    .faq-a p {
+      font-size: clamp(0.72rem, 1.5vw, 0.82rem);
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+      opacity: 0.6;
+    }
+
     .logo {
       position: fixed;
       top: 28px; left: 32px;
@@ -124,8 +184,6 @@
   </style>
 </head>
 <body>
-  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
-
   <a href="home.html" class="logo" data-inner="RTS">[a]</a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
@@ -135,7 +193,46 @@
       <a href="work.html"    class="btn-act" id="btn-work">wORK<sup style="font-size:0.45em;opacity:0.55;font-weight:300;vertical-align:super;margin-left:2px">?</sup></a>
     </div>
     <span class="tagline">… aSK aND aNSWERS aPPEAR …</span>
+
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q">WHaT IS [aRTS]?</button>
+        <div class="faq-a"><p>[aRTS] is a platform for trading, collecting, and connecting around art and culture in Berlin and beyond.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">HOW DO I LIST?</button>
+        <div class="faq-a"><p>Head to your dashboard and tap "aDD" to create a listing. Upload images, set your price, and publish — it goes live instantly.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">IS IT FREE?</button>
+        <div class="faq-a"><p>Browsing and connecting is free. Listing and trading features are available through our membership tiers.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">HOW DO I CONTaCT SuPPORT?</button>
+        <div class="faq-a"><p>Use the TaLK button above to reach us directly, or head to wORK for business inquiries.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">CaN I TRaDE OUTSIDE BERLIN?</button>
+        <div class="faq-a"><p>Yes — [aRTS] supports international trading. Shipping and logistics are arranged between parties.</p></div>
+      </div>
+    </div>
   </div>
+
+  <!-- FAQ accordion toggle -->
+  <script>
+  (function(){
+    document.querySelectorAll('.faq-q').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var item = btn.parentElement;
+        var wasOpen = item.classList.contains('open');
+        /* Close all */
+        document.querySelectorAll('.faq-item.open').forEach(function(el){ el.classList.remove('open'); });
+        /* Toggle clicked */
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  })();
+  </script>
 
   <script>
   (function () {
@@ -197,97 +294,6 @@
 
   <script>
   (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);
-      document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-
-    function doEnter(){
-      mkL();
-      var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<T1){
-          scan.style.opacity=String(lerp(0,1,e/T1));
-          vig.style.opacity='0.95';
-        }else if(e<T2){
-          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
-        }else if(e<T3){
-          var t2=(e-T2)/(T3-T2),et=smooth(t2);
-          document.documentElement.style.clipPath='';
-          scan.style.opacity=String(lerp(1,0,et));
-          vig.style.opacity=String(lerp(0.55,0,et));
-        }else{
-          document.documentElement.style.clipPath='';
-          if(scan&&scan.parentNode)scan.parentNode.removeChild(scan);
-          if(vig&&vig.parentNode)vig.parentNode.removeChild(vig);
-          scan=null;vig=null;busy=false;return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
-    function doExit(dest){
-      if(busy)return;busy=true;
-      mkL();
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<TR){
-          scan.style.opacity=String(lerp(0,1,e/TR));
-          vig.style.opacity=String(lerp(0,0.95,e/TR));
-        }else if(e<TR+TS){
-          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity='0.95';
-        }else{
-          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
-          document.documentElement.style.background='#000';
-          document.body.style.background='#000';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
-    if(sessionStorage.getItem('crt_transition')){
-      sessionStorage.removeItem('crt_transition');
-      doEnter();
-    }
-
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');
-      if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();
-      doExit(h);
-    },true);
-  })();
-  </script>
-
-  <script>
-  (function(){
     var DELAY = 40;
     function navHover(el){
       var orig=el.textContent, timers=[], state=0;
@@ -330,5 +336,7 @@
     });
   })();
   </script>
+<script src="theme.js?v=4"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

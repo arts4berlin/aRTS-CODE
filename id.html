@@ -26,6 +26,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <!-- Firebase Auth (compat SDK — works with existing var-based code) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -78,110 +81,128 @@
     }
 
     .form-col {
-      width: min(92vw, 560px);
+      width: min(92vw, 680px);
       display: flex;
       flex-direction: column;
     }
 
     .section-label {
-      font-size: 0.62rem;
+      font-size: 0.55rem;
       font-weight: 300;
-      letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.36em;
+      color: rgba(255, 92, 0, 0.65);
       text-transform: uppercase;
       margin-bottom: clamp(6px, 1vh, 10px);
     }
 
     .form-title {
-      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-size: clamp(3.4rem, 12vw, 6.5rem);
       font-weight: 700;
-      letter-spacing: 0.08em;
-      line-height: 1;
+      letter-spacing: 0.06em;
+      line-height: 0.95;
       color: #fff;
       margin-bottom: clamp(20px, 3.5vh, 36px);
     }
 
     .sub-label {
-      font-size: 0.65rem;
+      font-size: 0.78rem;
       font-weight: 300;
       letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.32);
       margin-bottom: clamp(16px, 2.5vh, 24px);
     }
 
-    /* ── 12-word input grid ── */
-    .id-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: clamp(20px, 3vh, 32px);
-    }
-
-    .id-cell {
-      background: #000;
-      padding: clamp(9px,1.6vh,14px) clamp(10px,1.8vw,16px);
+    /* ── OAuth sign-in buttons ── */
+    .oauth-row {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-    }
-
-    .id-num {
-      font-size: 0.44rem;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.18);
-    }
-
-    .id-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.78rem, 2vw, 0.95rem);
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      outline: none;
-      padding: 0.25rem 0;
-      width: 100%;
-      transition: border-color 0.15s;
-      text-transform: lowercase;
-    }
-    .id-input::placeholder {
-      color: rgba(255,255,255,0.08);
-      font-weight: 300;
-    }
-    .id-input:focus { border-bottom-color: rgba(255,255,255,0.35); }
-    .id-input.err   { border-bottom-color: rgba(255,80,80,0.5); }
-    .id-input.ok    { border-bottom-color: #FF5C00; }
-
-    /* ── Verify button ── */
-    .verify-row {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(10px, 1.6vh, 16px);
+      gap: clamp(8px, 1.2vh, 12px);
       margin-bottom: clamp(14px, 2vh, 22px);
     }
 
-    .btn-verify {
+    .btn-oauth {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.82rem, 2vw, 0.96rem);
+      font-size: clamp(0.82rem, 2vw, 0.93rem);
       font-weight: 700;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       cursor: pointer;
       padding: 0.9rem 1rem;
       width: 100%;
-      background: #fff;
-      color: #000;
-      border: 2px solid #fff;
+      background: transparent;
+      color: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 4px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .btn-verify:hover { background: #FF5C00; border-color: #FF5C00; }
+    .btn-oauth:hover { color: #fff; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.03); }
+    .btn-oauth.google:hover { border-color: rgba(66,133,244,0.85); color: #fff; background: rgba(66,133,244,0.14); }
+    .btn-oauth.apple:hover  { border-color: rgba(255,255,255,0.85); color: #fff; background: rgba(255,255,255,0.09); }
+
+    .oauth-divider {
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.14);
+      text-align: center;
+      padding: 2px 0;
+    }
+
+    .error-msg {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,80,80,0.75);
+      min-height: 1.2em;
+      margin-bottom: 8px;
+    }
+
+    /* ── Email sign-in ── */
+    .email-section { display: flex; flex-direction: column; gap: clamp(6px,1vh,10px); }
+    #email-section[hidden] { display: none; }
+    .email-input-row { display: flex; gap: 8px; }
+    .email-input-row input[type="email"] {
+      flex: 1;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.82rem, 2vw, 0.9rem);
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 0.9rem 0.85rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .email-input-row input[type="email"]::placeholder { color: rgba(255,255,255,0.25); }
+    .email-input-row input[type="email"]:focus { border-color: rgba(255,255,255,0.5); }
+    .btn-oauth.email-send { min-width: max-content; }
+    .btn-oauth.email-send:hover { border-color: rgba(255,92,0,0.85); color: #FF5C00; background: rgba(255,92,0,0.07); }
+    .email-sent-msg {
+      font-size: 0.68rem;
+      font-weight: 300;
+      letter-spacing: 0.13em;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .email-toggle-link {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.28);
+      text-align: center;
+      padding: 4px 0;
+      margin-top: 2px;
+      transition: color 0.15s;
+    }
+    .email-toggle-link:hover { color: rgba(255,255,255,0.7); }
 
     .not-member {
       text-align: center;
@@ -218,6 +239,29 @@
       font-size: 0.65rem;
     }
     .id-cell.paste-cell .id-input:focus { border-bottom-color: rgba(0,0,0,0.35); }
+
+    /* ── Paste clear button ── */
+    .id-cell.paste-cell { position: relative; }
+    .paste-clear {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: rgba(0,0,0,0.25);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 6px;
+      line-height: 1;
+      transition: color 0.15s;
+      display: none;
+      z-index: 2;
+    }
+    .paste-clear:hover { color: rgba(0,0,0,0.7); }
+    .id-cell.paste-cell.has-words .paste-clear { display: block; }
+    .id-cell.paste-cell.has-words .id-input::placeholder { color: transparent; }
 
     /* ── Privacy scramble toggle ── */
     .privacy-row {
@@ -365,6 +409,113 @@
       pointer-events: none;
     }
 
+    /* ── Voucher reveal card ── */
+    .vc-voucher-reveal {
+      margin-top: 10px;
+      background: rgba(255,92,0,0.05);
+      border: 1px solid rgba(255,92,0,0.2);
+      border-radius: 4px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .vc-voucher-reveal[hidden] { display: none; }
+    .vc-voucher-code {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #FF5C00;
+      font-family: 'Courier New', monospace;
+    }
+    .vc-voucher-desc {
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.45);
+    }
+    .vc-voucher-timer {
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: rgba(255,92,0,0.5);
+    }
+    .vc-voucher-link {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #FF5C00;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,92,0,0.3);
+      padding-bottom: 1px;
+      transition: color 0.15s, border-color 0.15s;
+      width: fit-content;
+    }
+    .vc-voucher-link:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    /* ── Favourites section ── */
+    .vc-favs-title {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 10px;
+    }
+    .vc-favs-empty {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.22);
+    }
+    .vc-fav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .vc-fav-item:last-child { border-bottom: none; }
+    .vc-fav-thumb {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .vc-fav-info { flex: 1; min-width: 0; }
+    .vc-fav-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .vc-fav-price {
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.35);
+    }
+    .vc-fav-remove {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.35);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.45rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      padding: 3px 8px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .vc-fav-remove:hover { color: #FF5C00; border-color: rgba(255,92,0,0.5); }
+
     /* ── Points, alias & milestone ── */
     .vc-top-row { display: flex; align-items: center; gap: 1rem; }
 
@@ -432,6 +583,40 @@
       border-radius: 2px;
       width: 0%;
       transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ── XP Toast ── */
+    .xp-toast-wrap {
+      position: fixed;
+      top: 28px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .xp-toast {
+      background: #FF5C00;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      padding: 8px 18px;
+      border-radius: 4px;
+      white-space: nowrap;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+    }
+    .xp-toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .xp-toast.hide {
+      transform: translateX(120%);
+      opacity: 0;
     }
 
     .vc-progress-label {
@@ -693,11 +878,26 @@
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     header, nav, a, button { touch-action: manipulation; }
 
+    /* ── Mobile hamburger + overlay ── */
+    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
+    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
+    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
+    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
+    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
+    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
+    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
+    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
+
     @media (max-width: 520px) {
       header { padding: 18px 16px; }
-      nav    { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
-      nav a  { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
-      .id-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { display: none; }
+      .burger { display:flex; gap:0; }
+      .burger span:not(.burger-label) { display:none; }
+      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
+      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
+      .mobile-id { display:block; }
+      .nav-overlay, .nav-overlay.is-open { transition:none; }
     }
   
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
@@ -705,44 +905,76 @@
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
 </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
+  <div class="xp-toast-wrap" id="xp-toast-wrap"></div>
 
   <header>
     <a href="home.html" class="logo" data-inner="RTS">[a]</a>
     <nav>
+      <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
-      <a href="articles.html">aRTICLES</a>
-      <a href="assets.html">aSSETS</a>
-      <a href="ask.html">cONNECT</a>
+      <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
+    <a href="id.html" class="mobile-id">[iD]</a>
+    <button class="burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
   </header>
+
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[×]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="id.html" style="color:#FF5C00">[iD]</a>
+  </div>
 
   <main>
     <div class="form-col">
 
-      <!-- ── STAGE 1: word entry ── -->
+      <!-- ── STAGE 1: OAuth sign-in ── -->
       <div id="s1">
         <p class="section-label">mEMBER aCCESS</p>
-        <h1 class="form-title">eNTER iD</h1>
-        <p class="sub-label">type or paste your 12-word access key</p>
-
-        <div class="privacy-row">
-          <button class="stealth-toggle-btn active" id="btn-privacy-toggle" role="switch" aria-checked="true">
-            <span class="stealth-pill"></span>
-            <span class="stealth-toggle-label">pRIVaCY mODE</span>
-          </button>
-        </div>
-
-        <div class="id-grid" id="id-grid"></div>
+        <h1 class="form-title">sIGN iN</h1>
+        <p class="sub-label">continue with your connected account</p>
 
         <p class="error-msg" id="err-msg"></p>
 
-        <div class="verify-row">
-          <button class="btn-verify" id="btn-verify">vERiFY</button>
-          <p class="not-member"><a href="join.html">not a member? →</a></p>
+        <div class="oauth-row">
+          <button class="btn-oauth google" id="btn-google">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex-shrink:0">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="rgba(66,133,244,0.75)"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="rgba(52,168,83,0.75)"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="rgba(251,188,5,0.75)"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="rgba(234,67,53,0.75)"/>
+            </svg>
+            cONTINUE wITH gOOGLE
+          </button>
+
+          <p class="not-member" style="text-align:center;margin-top:6px;"><a href="join.html">not a member? →</a></p>
+
+          <!-- email magic-link section (hidden until toggle) -->
+          <button id="btn-email-toggle" class="email-toggle-link">or use email →</button>
+          <div id="email-section" class="email-section" hidden>
+            <p class="oauth-divider" style="margin:2px 0">— cONTINUE wITH eMaIL —</p>
+            <div class="email-input-row">
+              <input type="email" id="email-input" placeholder="your@email.com" autocomplete="email" spellcheck="false" />
+              <button class="btn-oauth email-send" id="btn-email-send">sEND</button>
+            </div>
+            <p id="email-sent-msg" class="email-sent-msg" hidden>
+              cHECK yOUR eMaIL — tap the link to sign in<br>
+              <span style="color:rgba(255,255,255,0.2);font-size:0.6rem">link expires in 1 hour · same browser preferred</span>
+            </p>
+          </div>
         </div>
 
         <div class="stealth-row">
@@ -795,8 +1027,23 @@
             <p class="vc-since" id="vc-since"></p>
             <div class="vc-benefit-row" id="vc-benefit-row">
               <span class="vc-benefit-dot"></span>
-              <span class="vc-benefit-label">1 vOUCHER</span>
+              <span class="vc-benefit-label">11% aPPaREL vOUCHER</span>
               <button class="vc-voucher-btn" id="vc-voucher-btn">cLAIM</button>
+            </div>
+            <div class="vc-voucher-reveal" id="vc-voucher-reveal" hidden>
+              <p class="vc-voucher-code" id="vc-voucher-code">ARTS-11-APPAREL</p>
+              <p class="vc-voucher-desc">11% off your next aPPaREL order</p>
+              <p class="vc-voucher-timer" id="vc-voucher-timer"></p>
+              <a href="apparel.html" class="vc-voucher-link">sHOP aPPaREL →</a>
+            </div>
+
+            <!-- Favourites section -->
+            <div class="vc-rule"></div>
+            <div class="vc-favs-section" id="vc-favs-section">
+              <p class="vc-favs-title">fAVOURITES</p>
+              <div class="vc-favs-list" id="vc-favs-list">
+                <p class="vc-favs-empty" id="vc-favs-empty">nO fAVOURITES yET — bROWSE <a href="art.html" style="color:#FF5C00;text-decoration:none">aRT</a> oR <a href="boutique.html" style="color:#FF5C00;text-decoration:none">bOUTIQUE</a></p>
+              </div>
             </div>
 
             <!-- Tier picker shown only on new device -->
@@ -915,7 +1162,7 @@
     /* Hide 'not a member?' for returning members — s1 briefly shows during fade */
     (function(){
       var loggedIn = false;
-      try { loggedIn = !!store.get('arts_id_hash'); } catch(e) {}
+      try { loggedIn = !!store.get('arts_oauth_sub'); } catch(e) {}
       if (loggedIn) {
         var nm = document.querySelector('.not-member');
         if (nm) nm.style.display = 'none';
@@ -977,36 +1224,35 @@
       applyS2Privacy();
     });
 
-    /* ── Same word pool as join.html ── */
-    var POOL = new Set([
-      'amber','archive','atlas','axiom','azure',
-      'beacon','bridge','canal','canvas','cedar',
-      'cipher','cobalt','coral','current','datum',
-      'delta','dusk','echo','ember','epoch',
-      'ether','ferry','flare','flux','fractal',
-      'frame','ghost','grain','granite','harbor',
-      'haze','helix','hollow','horizon','indigo',
-      'iris','ivory','jade','lacuna','lance',
-      'layer','lens','linden','locus','loop',
-      'lumen','margin','matrix','mesa','mirror',
-      'mist','module','moat','moss','nave',
-      'nexus','node','nomad','notch','nova',
-      'oasis','ochre','orbit','origin','oxide',
-      'paper','passage','pearl','phase','pillar',
-      'pivot','plane','prism','pulse','quartz',
-      'radius','rail','raven','relay','ridge',
-      'ripple','root','route','rubric','rust',
-      'salt','shard','shore','signal','silk',
-      'slate','socket','soot','spark','spine',
-      'spool','spore','spur','steel','stem',
-      'stencil','stone','strand','stratum','stream',
-      'string','strobe','surge','symbol','taper',
-      'tide','timber','token','tome','torch',
-      'torque','track','transit','tread','trove',
-      'tunnel','umbra','vale','valve','vector',
-      'vessel','void','volta','wake','weld',
-      'wharf','wire','witness','zinc','zone'
-    ]);
+    /* ════════════════════════════════════════════
+       FIREBASE CONFIG — paste your project config here
+       console.firebase.google.com → Project settings → Your apps → SDK setup
+       Enable in Firebase Authentication:
+         • Google  (2 clicks — just enable it)
+         • Apple   (needs Apple Developer account → Service ID → key)
+         • Email/Password → enable "Email link (passwordless sign-in)"
+       Add 4-arts.com + localhost to Authorized domains
+    ═══════════════════════════════════════════════ */
+    var FIREBASE_CONFIG = {
+      apiKey:            'AIzaSyAjSw3GSNvS48gP51beBy4xyxgBFuMoM_c',
+      authDomain:        'arts-platform.firebaseapp.com',
+      projectId:         'arts-platform',
+      storageBucket:     'arts-platform.firebasestorage.app',
+      messagingSenderId: '25346415951',
+      appId:             '1:25346415951:web:e717f0b6210bc84ec7793a',
+    };
+    var PROXY_BASE = 'https://4-arts.com';
+
+    /* Init Firebase — no-ops gracefully when config is still placeholder */
+    var _fbAuth = null;
+    (function() {
+      try {
+        if (FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf('YOUR_') === -1) {
+          firebase.initializeApp(FIREBASE_CONFIG);
+          _fbAuth = firebase.auth();
+        }
+      } catch(e) { console.warn('Firebase init skipped:', e.message); }
+    })();
 
     /* ── Milestones & points renderer ── */
     var MILESTONES = [
@@ -1088,18 +1334,68 @@
       };
     }
 
+    /* ── XP Toast system ── */
+    function playXPToasts() {
+      try {
+        var raw = sessionStorage.getItem('arts_xp_pending');
+        if (!raw) return;
+        var pending = JSON.parse(raw);
+        sessionStorage.removeItem('arts_xp_pending');
+        if (!pending.length) return;
+        var wrap = document.getElementById('xp-toast-wrap');
+        if (!wrap) return;
+        pending.forEach(function(item, i) {
+          setTimeout(function() {
+            var el = document.createElement('div');
+            el.className = 'xp-toast';
+            el.textContent = '+ ' + item.pts + ' XP · ' + item.label;
+            wrap.appendChild(el);
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() { el.classList.add('show'); });
+            });
+            setTimeout(function() {
+              el.classList.remove('show');
+              el.classList.add('hide');
+              setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 450);
+            }, 2000);
+          }, i * 700);
+        });
+      } catch(e) {}
+    }
+
     function renderPoints(pts, alias, tier, since, remembered) {
       pts = parseInt(pts, 10) || 0;
+      var prevPts = parseInt(sessionStorage.getItem('arts_xp_prev') || '0', 10);
+      sessionStorage.setItem('arts_xp_prev', String(pts));
       var idx  = getMilestoneIdx(pts);
       var m    = MILESTONES[idx];
       var next = MILESTONES[idx + 1] || null;
       setupAliasCell(alias);
       document.getElementById('vc-tier').textContent      = tier  || '—';
-      document.getElementById('vc-pts-num').textContent   = pts;
       document.getElementById('vc-milestone').textContent = m.name;
       var pct = next
         ? Math.min(100, Math.round((pts - m.min) / (next.min - m.min) * 100))
         : 100;
+
+      /* Animate points number counting up */
+      var ptsEl = document.getElementById('vc-pts-num');
+      if (prevPts && prevPts < pts) {
+        var startVal = prevPts;
+        var diff = pts - prevPts;
+        var steps = Math.min(diff, 30);
+        var stepTime = Math.max(20, Math.floor(800 / steps));
+        var step = 0;
+        (function tick() {
+          step++;
+          var v = Math.round(startVal + (diff * step / steps));
+          ptsEl.textContent = Math.min(v, pts);
+          if (step < steps) setTimeout(tick, stepTime);
+          else ptsEl.textContent = pts;
+        })();
+      } else {
+        ptsEl.textContent = pts;
+      }
+
       /* Animate bar after short delay for visual effect */
       setTimeout(function(){
         document.getElementById('vc-progress-fill').style.width = pct + '%';
@@ -1110,21 +1406,109 @@
       if (since) document.getElementById('vc-since').textContent = 'mEMBER sINCE ' + since;
       if (remembered) document.getElementById('vc-remembered').hidden = false;
 
-      /* Voucher: one per prestige level — tracks per milestone name */
-      var vBtn = document.getElementById('vc-voucher-btn');
-      var vKey = 'arts_voucher_' + m.name.replace(/\s+/g, '_');
-      if (store.get(vKey)) {
-        vBtn.textContent = 'cLAIMED';
-        vBtn.classList.add('claimed');
-      } else {
-        vBtn.textContent = 'cLAIM';
-        vBtn.classList.remove('claimed');
-        vBtn.onclick = function() {
-          store.set(vKey, '1');
+      /* Play queued XP toasts */
+      setTimeout(playXPToasts, 500);
+
+      /* Voucher: 11% apparel discount — 30-day renewable cycle */
+      var vBtn    = document.getElementById('vc-voucher-btn');
+      var vReveal = document.getElementById('vc-voucher-reveal');
+      var vTimer  = document.getElementById('vc-voucher-timer');
+      var VOUCHER_KEY      = 'arts_apparel_voucher_ts';
+      var VOUCHER_DURATION = 30 * 24 * 60 * 60 * 1000; /* 30 days in ms */
+      function renderVoucher() {
+        var raw = store.get(VOUCHER_KEY);
+        var claimedAt = raw ? parseInt(raw, 10) : 0;
+        var now = Date.now();
+        if (claimedAt && now - claimedAt < VOUCHER_DURATION) {
+          /* Active voucher */
+          var daysLeft = Math.ceil((VOUCHER_DURATION - (now - claimedAt)) / (24 * 60 * 60 * 1000));
           vBtn.textContent = 'cLAIMED';
           vBtn.classList.add('claimed');
-        };
+          if (vReveal) vReveal.hidden = false;
+          if (vTimer)  vTimer.textContent = daysLeft + ' dAY' + (daysLeft !== 1 ? 'S' : '') + ' rEMAINING';
+        } else {
+          /* Expired or never claimed */
+          var isRenew = claimedAt > 0;
+          vBtn.textContent = isRenew ? 'rENEW' : 'cLAIM';
+          vBtn.classList.remove('claimed');
+          if (vReveal) vReveal.hidden = true;
+          vBtn.onclick = function() {
+            store.set(VOUCHER_KEY, String(Date.now()));
+            renderVoucher();
+          };
+        }
       }
+      renderVoucher();
+      /* Render favourites list */
+      renderFavourites();
+    }
+
+    /* ── Favourites rendering ── */
+    var FAV_KEY = 'arts_favourites_enc';
+    var FAV_SALT = new Uint8Array([97,82,84,83,95,102,97,118,95,115,97,108,116,95,118,49]);
+    async function _favDeriveKey() {
+      var hash = localStorage.getItem('arts_id_hash');
+      if (!hash) return null;
+      var enc = new TextEncoder();
+      var km = await crypto.subtle.importKey('raw', enc.encode(hash), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey({ name:'PBKDF2', salt:FAV_SALT, iterations:100000, hash:'SHA-256' }, km, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']);
+    }
+    async function _favDecrypt() {
+      var key = await _favDeriveKey(); if (!key) return { v:1, items:[] };
+      var raw = localStorage.getItem(FAV_KEY); if (!raw) return { v:1, items:[] };
+      try { var b = Uint8Array.from(atob(raw), function(c){ return c.charCodeAt(0); }); var dec = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b.slice(0,12) }, key, b.slice(12)); return JSON.parse(new TextDecoder().decode(dec)); } catch(e) { return { v:1, items:[] }; }
+    }
+    async function _favEncrypt(data) {
+      var key = await _favDeriveKey(); if (!key) return;
+      var enc = new TextEncoder(), iv = crypto.getRandomValues(new Uint8Array(12));
+      var ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv:iv }, key, enc.encode(JSON.stringify(data)));
+      var buf = new Uint8Array(iv.length + ct.byteLength); buf.set(iv); buf.set(new Uint8Array(ct), iv.length);
+      localStorage.setItem(FAV_KEY, btoa(String.fromCharCode.apply(null, buf)));
+    }
+    function _esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    async function renderFavourites() {
+      var list = document.getElementById('vc-favs-list');
+      var empty = document.getElementById('vc-favs-empty');
+      if (!list) return;
+      var data = await _favDecrypt();
+      if (!data.items.length) { if (empty) empty.hidden = false; return; }
+      if (empty) empty.hidden = true;
+
+      /* Load pieces.json to get piece info */
+      var pieces = [];
+      try {
+        var stored = JSON.parse(localStorage.getItem('arts_my_pieces') || '[]');
+        var resp = await fetch('data/pieces.json');
+        if (resp.ok) pieces = await resp.json();
+        pieces = pieces.concat(stored);
+      } catch(e) {}
+
+      var html = '';
+      data.items.forEach(function(fav) {
+        var p = null;
+        for (var i = 0; i < pieces.length; i++) { if (pieces[i].id === fav.id) { p = pieces[i]; break; } }
+        if (!p) return;
+        var thumb = p.image || (p.images && p.images[0]) || '';
+        html += '<div class="vc-fav-item" data-fav-id="' + _esc(fav.id) + '">';
+        if (thumb) html += '<img class="vc-fav-thumb" src="' + _esc(thumb) + '" alt="">';
+        html += '<div class="vc-fav-info"><p class="vc-fav-title">' + _esc(p.title) + '</p>';
+        html += '<p class="vc-fav-price">' + _esc(p.price || '\u2014') + ' ' + _esc(p.currency || '\u20ac') + '</p></div>';
+        html += '<button class="vc-fav-remove" data-remove-id="' + _esc(fav.id) + '">rEMOVE</button>';
+        html += '</div>';
+      });
+      list.innerHTML = html + (empty ? empty.outerHTML : '');
+
+      /* Remove button handlers */
+      list.querySelectorAll('.vc-fav-remove').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          var id = btn.dataset.removeId;
+          var d = await _favDecrypt();
+          d.items = d.items.filter(function(f) { return f.id !== id; });
+          await _favEncrypt(d);
+          renderFavourites();
+        });
+      });
     }
 
     /* SHA-256 */
@@ -1133,223 +1517,52 @@
       return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
     }
 
-    /* ── Privacy scramble mode ── */
-    var privacyMode = true;
-    var privReal = new Array(12).fill('');
-    var _privRevealTimers = new Array(12).fill(null);
-    var _privPool = 'abcdefghijklmnopqrstuvwxyz';
-    var _privFocused = -1;
-    var _privInterval = null;
+    /* ════════════════════════════════════════════
+       OAUTH SIGN-IN HANDLERS
+    ═══════════════════════════════════════════════ */
 
-    function _randWord(len) {
-      if (!len) return '';
-      var s = '';
-      for (var k = 0; k < len; k++) s += _privPool[Math.floor(Math.random() * _privPool.length)];
-      return s;
-    }
-    function scrambleInput(inp, idx) {
-      if (!privacyMode || _privFocused === idx) return;
-      var real = privReal[idx];
-      if (!real) return;
-      inp.value = _randWord(real.length);
-    }
-    function cascadeReveal(inp, idx) {
-      if (_privRevealTimers[idx]) { clearInterval(_privRevealTimers[idx]); _privRevealTimers[idx] = null; }
-      var target = privReal[idx] || '';
-      if (!target) { inp.value = ''; return; }
-      var frame = 0, FRAMES = 10, RATE = 38;
-      _privRevealTimers[idx] = setInterval(function() {
-        var settled = Math.floor((frame / FRAMES) * target.length);
-        inp.value = target.split('').map(function(ch, k) {
-          return k < settled ? ch : _privPool[Math.floor(Math.random() * _privPool.length)];
-        }).join('');
-        frame++;
-        if (frame > FRAMES) {
-          clearInterval(_privRevealTimers[idx]);
-          _privRevealTimers[idx] = null;
-          inp.value = target;
-        }
-      }, RATE);
-    }
-    function rescrambleAll() {
-      if (!privacyMode) return;
-      inputs.forEach(function(inp, idx) { scrambleInput(inp, idx); });
-    }
-    function startPrivacyInterval() {
-      if (_privInterval) return;
-      _privInterval = setInterval(rescrambleAll, 2200);
-    }
-    function stopPrivacyInterval() {
-      if (_privInterval) { clearInterval(_privInterval); _privInterval = null; }
-    }
-    function applyPrivacyMode() {
-      var btn = document.getElementById('btn-privacy-toggle');
-      if (privacyMode) {
-        btn.classList.add('active');
-        btn.setAttribute('aria-checked','true');
-        rescrambleAll();
-        startPrivacyInterval();
-      } else {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-checked','false');
-        stopPrivacyInterval();
-        /* restore real values */
-        inputs.forEach(function(inp, idx) { inp.value = privReal[idx]; });
-      }
-    }
-    document.getElementById('btn-privacy-toggle').addEventListener('click', function() {
-      privacyMode = !privacyMode;
-      applyPrivacyMode();
-    });
+    async function onOAuthSuccess(provider, sub, oauthEmail, oauthName) {
+      var hash      = await sha256('arts_oauth_' + sub);
+      var wasSub    = store.get('arts_oauth_sub');
+      store.set('arts_oauth_sub',      sub);
+      store.set('arts_oauth_provider', provider);
+      store.set('arts_id_hash',        hash);
+      if (oauthEmail) store.set('arts_oauth_email', oauthEmail);
+      if (oauthName)  store.set('arts_oauth_name',  oauthName);
 
-    /* Build the 12-input grid */
-    var grid = document.getElementById('id-grid');
-    var inputs = [];
-    for (var i = 0; i < 12; i++) {
-      var cell = document.createElement('div');
-      cell.className = i === 0 ? 'id-cell paste-cell' : 'id-cell';
-      var num = (i+1) < 10 ? '0'+(i+1) : ''+(i+1);
-      var inp = document.createElement('input');
-      inp.type = 'text';
-      inp.className = 'id-input';
-      inp.autocomplete = 'off';
-      inp.autocorrect = 'off';
-      inp.autocapitalize = 'none';
-      inp.spellcheck = false;
-      inp.placeholder = i === 0 ? 'pASTe' : '· · ·';
-      inp.dataset.idx = i;
-      cell.innerHTML = '<span class="id-num">' + (i === 0 ? '' : num) + '</span>';
-      cell.appendChild(inp);
-      grid.appendChild(cell);
-      inputs.push(inp);
-    }
-
-    /* Tab / enter navigation + paste on every cell */
-    inputs.forEach(function(inp, i) {
-      /* Focus: cascade-scramble reveal, pause interval for this cell */
-      inp.addEventListener('focus', function() {
-        _privFocused = i;
-        if (privacyMode) cascadeReveal(inp, i);
-      });
-      /* Blur: cancel any reveal in progress, scramble back */
-      inp.addEventListener('blur', function() {
-        if (_privRevealTimers[i]) { clearInterval(_privRevealTimers[i]); _privRevealTimers[i] = null; }
-        _privFocused = -1;
-        if (privacyMode) scrambleInput(inp, i);
-      });
-      /* Paste on any cell: if 12 words detected, always fill from 0; otherwise fill from cursor */
-      inp.addEventListener('paste', function(e) {
-        var text = (e.clipboardData || window.clipboardData).getData('text');
-        var parts = text.trim().split(/[\s\-—,]+/).filter(Boolean).slice(0, 12);
-        if (parts.length > 1) {
-          e.preventDefault();
-          var start = parts.length === 12 ? 0 : i;
-          /* Fill privReal immediately */
-          parts.forEach(function(w, j) {
-            if (inputs[start + j]) {
-              privReal[start + j] = w.toLowerCase().trim();
-              inputs[start + j].value = _randWord(privReal[start + j].length || 5);
-            }
-          });
-          /* Cascade settle: right-to-left within each word, bottom-to-top across cells */
-          var cellCount = Math.min(parts.length, 12 - start);
-          var CELL_DELAY = 55; /* ms between each cell starting */
-          var FRAMES = 12, RATE = 36;
-          for (var jj = cellCount - 1; jj >= 0; jj--) {
-            (function(jj) {
-              var cellIdx = start + jj;
-              var target = privReal[cellIdx] || '';
-              if (!target) return;
-              /* Delay: bottom cell starts first (reversed cascade) */
-              setTimeout(function() {
-                var frame = 0;
-                var t = setInterval(function() {
-                  /* settle right-to-left: chars from end settle first */
-                  var settled = Math.floor((frame / FRAMES) * target.length);
-                  inputs[cellIdx].value = target.split('').map(function(ch, k) {
-                    var fromRight = target.length - 1 - k;
-                    return fromRight < settled ? ch : _privPool[Math.floor(Math.random() * _privPool.length)];
-                  }).join('');
-                  frame++;
-                  if (frame > FRAMES) {
-                    clearInterval(t);
-                    /* After settling, keep scrambled (privacy mode) */
-                    if (privacyMode) inputs[cellIdx].value = _randWord(target.length);
-                  }
-                }, RATE);
-              }, (cellCount - 1 - jj) * CELL_DELAY);
-            })(jj);
-          }
-          var nextFocus = inputs[start + parts.length] || inputs[11];
-          if (nextFocus) setTimeout(function(){ nextFocus.focus(); }, cellCount * CELL_DELAY + 100);
-        }
-      });
-      inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === 'Tab') {
-          e.preventDefault();
-          var next = inputs[i + 1];
-          if (next) next.focus(); else document.getElementById('btn-verify').focus();
-        }
-      });
-      inp.addEventListener('input', function() {
-        var v = inp.value.toLowerCase().replace(/[^a-z]/g, '');
-        inp.value = v;
-        privReal[i] = v;
-        inp.classList.remove('err', 'ok');
-      });
-    });
-    /* Start privacy mode on load */
-    applyPrivacyMode();
-
-    /* Verify */
-    document.getElementById('btn-verify').addEventListener('click', async function() {
-      var words = privReal.map(function(v){ return v.trim().toLowerCase(); });
-      var errEl = document.getElementById('err-msg');
-      errEl.textContent = '';
-      inputs.forEach(function(inp){ inp.classList.remove('err','ok'); });
-
-      /* All 12 filled? */
-      var empty = words.some(function(w){ return !w; });
-      if (empty) {
-        errEl.textContent = '— eNTER aLL 12 wORDS';
-        inputs.forEach(function(inp,i){ if(!words[i]) inp.classList.add('err'); });
-        return;
-      }
-
-      /* All in pool? */
-      var bad = words.filter(function(w){ return !POOL.has(w); });
-      if (bad.length) {
-        errEl.textContent = '— wORD' + (bad.length > 1 ? 'S' : '') + ' nOT rECOGNISED: ' + bad.join(', ');
-        inputs.forEach(function(inp,i){ if(!POOL.has(words[i])) inp.classList.add('err'); else inp.classList.add('ok'); });
-        return;
-      }
-
-      /* No duplicates? */
-      if (new Set(words).size !== 12) {
-        errEl.textContent = '— dUPLICaTE wORDS dETECTED';
-        var seen = {};
-        words.forEach(function(w,i){
-          if(seen[w] !== undefined){ inputs[i].classList.add('err'); inputs[seen[w]].classList.add('err'); }
-          else seen[w] = i;
+      /* Session ping */
+      try {
+        fetch(PROXY_BASE + '/api/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event:    'login',
+            provider: provider,
+            user_id:  hash.slice(0, 16),
+            tier:     store.get('arts_tier') || '',
+          })
         });
-        return;
-      }
+      } catch(e) {}
 
-      /* Valid — mark all ok */
-      inputs.forEach(function(inp){ inp.classList.add('ok'); });
+      /* Sync encrypted user profile to backend (fire-and-forget) */
+      try {
+        fetch(PROXY_BASE + '/api/user/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id:   hash,
+            email:     oauthEmail || store.get('arts_email') || '',
+            name:      oauthName || store.get('arts_oauth_name') || '',
+            alias:     store.get('arts_alias') || 'mEMBER',
+            tier:      store.get('arts_tier') || '',
+            provider:  provider,
+            oauth_sub: sub,
+            since:     store.get('arts_since') || ''
+          })
+        }).catch(function(){});
+      } catch(e) {}
 
-      var hash = await sha256(words.join('-'));
-      var storedHash = store.get('arts_id_hash');
-      var storedTier = store.get('arts_tier');
-
-      /* Store for this session / device */
-      store.set('arts_id_hash', hash);
-
-      var newDevice = !storedHash || storedHash !== hash;
-
-      /* Populate s2 content before showing */
-
-      /* Switch to verified view — smooth cross-fade */
+      /* Cross-fade to dashboard */
       var s1El = document.getElementById('s1');
       s1El.style.opacity = '0';
       setTimeout(function() {
@@ -1362,38 +1575,123 @@
         });
       }, 230);
 
-      /* Show STEaLTH badge if in stealth mode */
       document.getElementById('vc-stealth').hidden = !stealthMode;
       applyS2Privacy();
 
-      var alias = store.get('arts_alias');
+      var alias = store.get('arts_alias') || oauthName || '';
       var since = store.get('arts_since');
       var pts   = store.get('arts_points');
-
-      var _vc2 = store.get('arts_visit_count') || 0;
+      var tier  = store.get('arts_tier');
+      var _vc2  = store.get('arts_visit_count') || 0;
       _vc2 = parseInt(_vc2, 10) + 1;
       store.set('arts_visit_count', _vc2);
 
-      if (storedTier && !newDevice) {
-        document.getElementById('vc-status').textContent = 'aCTIVE';
-        renderPoints(pts || 0, alias, storedTier, since, false);
+      if (wasSub === sub && tier) {
+        document.getElementById('vc-status').textContent = 'rETURNING mEMBER';
+        renderPoints(pts || 0, alias, tier, since, false);
         setWelcomeHeading(_vc2, MILESTONES[getMilestoneIdx(parseInt(pts,10)||0)].name);
       } else {
-        /* New device / session: show partial info and ask for tier */
         document.getElementById('vc-status').textContent = 'vERIFIED';
-        renderPoints(pts || 0, alias, 'mEMBER', since, false);
+        renderPoints(pts || 0, alias || oauthName, 'mEMBER', since, false);
         document.getElementById('tier-confirm').hidden = false;
         document.querySelectorAll('.btn-tier').forEach(function(btn) {
           btn.addEventListener('click', function() {
             document.querySelectorAll('.btn-tier').forEach(function(b){ b.classList.remove('active'); });
             btn.classList.add('active');
             store.set('arts_tier', btn.dataset.tier);
-            renderPoints(pts || 0, alias, btn.dataset.tier, since, false);
+            renderPoints(pts || 0, alias || oauthName, btn.dataset.tier, since, false);
             showActivateLink(btn.dataset.tier);
           });
         });
       }
+    }
+
+    /* ── Firebase: Google sign-in ── */
+    document.getElementById('btn-google').addEventListener('click', function() {
+      var errEl = document.getElementById('err-msg');
+      if (errEl) errEl.textContent = '';
+      if (!_fbAuth) {
+        /* Dev fallback — remove once Firebase is configured */
+        onOAuthSuccess('google', 'dev_google_' + Date.now(), 'dev@example.com', 'Dev User');
+        return;
+      }
+      var provider = new firebase.auth.GoogleAuthProvider();
+      _fbAuth.signInWithPopup(provider).then(function(result) {
+        var u = result.user;
+        onOAuthSuccess('google', u.uid, u.email, u.displayName || '');
+      }).catch(function(err) {
+        if (err.code !== 'auth/popup-closed-by-user' && errEl) errEl.textContent = '— ' + err.message;
+      });
     });
+
+
+    /* ── Firebase: Email magic link ── */
+    var EMAIL_LINK_SETTINGS = {
+      url: (window.location.origin || 'https://4-arts.com') + '/id.html',
+      handleCodeInApp: true,
+    };
+
+    /* Toggle email section */
+    document.getElementById('btn-email-toggle').addEventListener('click', function() {
+      var sec = document.getElementById('email-section');
+      var hidden = sec.hidden;
+      sec.hidden = !hidden;
+      this.textContent = hidden ? 'hide email ↑' : 'or use email →';
+      if (!hidden) return;
+      setTimeout(function() {
+        var inp = document.getElementById('email-input');
+        if (inp) inp.focus();
+      }, 50);
+    });
+
+    document.getElementById('btn-email-send').addEventListener('click', function() {
+      var errEl = document.getElementById('err-msg');
+      var sentEl = document.getElementById('email-sent-msg');
+      var email = (document.getElementById('email-input').value || '').trim().toLowerCase();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (errEl) errEl.textContent = '— enter a valid email address';
+        return;
+      }
+      if (errEl) errEl.textContent = '';
+      if (!_fbAuth) {
+        /* Dev fallback */
+        if (sentEl) sentEl.hidden = false;
+        return;
+      }
+      this.disabled = true;
+      var btn = this;
+      _fbAuth.sendSignInLinkToEmail(email, EMAIL_LINK_SETTINGS).then(function() {
+        /* Store email so we can complete sign-in on return */
+        try { (stealthMode ? sessionStorage : localStorage).setItem('arts_email_signin', email); } catch(e) {}
+        if (sentEl) sentEl.hidden = false;
+        btn.textContent = 'sENT ✓';
+      }).catch(function(err) {
+        btn.disabled = false;
+        if (errEl) errEl.textContent = '— ' + err.message;
+      });
+    });
+
+    /* ── Handle magic-link return (runs on page load) ── */
+    (function handleEmailLinkReturn() {
+      if (!_fbAuth) return;
+      if (!_fbAuth.isSignInWithEmailLink(window.location.href)) return;
+      var storedEmail = null;
+      try { storedEmail = localStorage.getItem('arts_email_signin') || sessionStorage.getItem('arts_email_signin'); } catch(e) {}
+      if (!storedEmail) {
+        storedEmail = window.prompt('Please confirm your email to complete sign-in:');
+      }
+      if (!storedEmail) return;
+      _fbAuth.signInWithEmailLink(storedEmail, window.location.href).then(function(result) {
+        try { localStorage.removeItem('arts_email_signin'); sessionStorage.removeItem('arts_email_signin'); } catch(e) {}
+        history.replaceState(null, '', '/id.html');
+        var u = result.user;
+        onOAuthSuccess('email', u.uid, u.email, u.displayName || '');
+      }).catch(function(err) {
+        var errEl = document.getElementById('err-msg');
+        if (errEl) errEl.textContent = '— ' + err.message;
+        history.replaceState(null, '', '/id.html');
+      });
+    })();
 
     /* ── Destroy ID modal ── */
     function closeDestroyModal() {
@@ -1436,9 +1734,6 @@
       document.getElementById('vc-progress-fill').style.width = '0%';
       document.getElementById('activate-row').hidden = true;
       document.getElementById('tier-confirm').hidden = true;
-      privReal = new Array(12).fill('');
-      inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
-      document.getElementById('err-msg').textContent = '';
     }
 
     document.getElementById('btn-destroy').addEventListener('click', function() {
@@ -1461,6 +1756,10 @@
 
     /* Sign out — smooth reverse fade */
     document.getElementById('btn-signout').addEventListener('click', function() {
+      store.del('arts_oauth_sub');
+      store.del('arts_oauth_provider');
+      store.del('arts_oauth_email');
+      store.del('arts_oauth_name');
       store.del('arts_id_hash');
       store.del('arts_tier');
       store.del('arts_alias');
@@ -1476,7 +1775,6 @@
         requestAnimationFrame(function() {
           requestAnimationFrame(function() {
             s1Back.style.opacity = '1';
-            /* Re-scramble login text on sign-out */
             if (typeof scrambleLoginText === 'function') scrambleLoginText();
           });
         });
@@ -1485,9 +1783,6 @@
       document.getElementById('vc-progress-fill').style.width = '0%';
       document.getElementById('activate-row').hidden = true;
       document.getElementById('tier-confirm').hidden = true;
-      privReal = new Array(12).fill('');
-      inputs.forEach(function(inp){ inp.value = ''; inp.classList.remove('ok','err'); });
-      document.getElementById('err-msg').textContent = '';
     });
 
     /* ── Cascading scramble on login page text ── */
@@ -1534,9 +1829,9 @@
     /* Fire on page load */
     scrambleLoginText();
 
-    /* Auto-login: if hash stored, skip word entry and show personalised dashboard */
+    /* Auto-login: if OAuth sub stored, skip sign-in and show personalised dashboard */
     (async function() {
-      var h = store.get('arts_id_hash');
+      var h = store.get('arts_oauth_sub');
       if (!h) return;
 
       var t = store.get('arts_tier');
@@ -1585,48 +1880,6 @@
     })();
   </script>
 
-  <!-- CRT transition -->
-  <script>
-  (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-    function doEnter(){
-      mkL();var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){if(!s0)s0=ts;var e=ts-s0;
-        if(e<T1){scan.style.opacity=String(lerp(0,1,e/T1));vig.style.opacity='0.95';}
-        else if(e<T2){var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));}
-        else if(e<T3){var t2=(e-T2)/(T3-T2),et=smooth(t2);document.documentElement.style.clipPath='';scan.style.opacity=String(lerp(1,0,et));vig.style.opacity=String(lerp(0.55,0,et));}
-        else{document.documentElement.style.clipPath='';if(scan&&scan.parentNode)scan.parentNode.removeChild(scan);if(vig&&vig.parentNode)vig.parentNode.removeChild(vig);scan=null;vig=null;busy=false;return;}
-        requestAnimationFrame(run);}
-      requestAnimationFrame(run);}
-    function doExit(dest){
-      if(busy)return;busy=true;mkL();var TR=60,TS=320,s0=null;
-      function run(ts){if(!s0)s0=ts;var e=ts-s0;
-        if(e<TR){scan.style.opacity=String(lerp(0,1,e/TR));vig.style.opacity=String(lerp(0,0.95,e/TR));}
-        else if(e<TR+TS){var t=(e-TR)/TS,p=lerp(0,50,smooth(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity='0.95';}
-        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';document.documentElement.style.background='#000';document.body.style.background='#000';sessionStorage.setItem('crt_transition','1');window.location.href=dest;return;}
-        requestAnimationFrame(run);}
-      requestAnimationFrame(run);}
-    if(sessionStorage.getItem('crt_transition')){sessionStorage.removeItem('crt_transition');doEnter();}
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();doExit(h);},true);
-  })();
-  </script>
-
   <!-- Nav hover -->
   <script>
   (function(){
@@ -1648,5 +1901,18 @@
     });
   })();
   </script>
+  <!-- Mobile burger menu -->
+  <script>
+  (function(){
+    var burger=document.getElementById('burger'),overlay=document.getElementById('nav-overlay'),close=document.getElementById('burger-close');
+    if(!burger||!overlay)return;
+    burger.addEventListener('click',function(){overlay.classList.add('is-open');});
+    close.addEventListener('click',function(){overlay.classList.remove('is-open');});
+    overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('is-open');});
+  })();
+  </script>
+<script src="theme.js?v=4"></script>
+<script src="btn-fx.js"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

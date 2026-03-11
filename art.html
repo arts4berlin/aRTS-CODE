@@ -20,6 +20,7 @@
   <title>[aRTS] — aRT</title>
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -27,285 +28,275 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
-    }
-
-    /* ── Header ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
-    }
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
-    }
-    nav { display: flex; align-items: center; gap: 2.4rem; }
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
-
-    /* ── Main ── */
-    main {
-      padding-top: clamp(88px, 13vh, 120px);
-      padding-bottom: clamp(80px, 10vh, 130px);
-      padding-left: clamp(16px, 4vw, 48px);
-      padding-right: clamp(16px, 4vw, 48px);
-    }
-
-    /* ── Section header ── */
-    .listing-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: clamp(28px, 4vh, 48px);
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .listing-label {
-      font-size: 0.64rem;
-      font-weight: 300;
-      letter-spacing: 0.32em;
-      color: rgba(255,255,255,0.22);
-      text-transform: uppercase;
-    }
-    .listing-count {
-      font-size: 0.64rem;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      color: rgba(255,92,0,0.55);
-    }
-
-    /* ── Grid ── */
-    .art-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
-      gap: clamp(20px, 3vw, 36px);
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* ── Card ── */
-    .piece-card {
-      background: rgba(255,255,255,0.025);
-      border: none;
-      border-radius: 14px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: box-shadow 0.3s, transform 0.3s;
-      position: relative;
-    }
-    .piece-card:hover {
-      box-shadow: 0 8px 32px rgba(0,0,0,0.55);
-      transform: translateY(-3px);
-    }
-
-    /* ── Image ── */
-    .card-img-wrap {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      overflow: hidden;
-      background: rgba(255,255,255,0.03);
-      border-radius: 14px 14px 0 0;
-      position: relative;
-    }
-    .card-img-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.55) 100%);
-    }
-    .piece-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .piece-card:hover .piece-img { transform: scale(1.04); }
-
-    /* ── Card body ── */
-    .card-body {
-      padding: clamp(18px, 3vh, 26px) clamp(18px, 3vw, 26px);
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      gap: clamp(10px, 1.5vh, 16px);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-top: none;
-      border-radius: 0 0 14px 14px;
-    }
-
-    .card-index {
-      font-size: 0.58rem;
-      font-weight: 300;
-      letter-spacing: 0.30em;
-      color: rgba(255,255,255,0.2);
-      text-transform: uppercase;
-    }
-
-    .card-title {
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      line-height: 1;
-      color: #fff;
-    }
-
-    .card-media {
-      font-size: 0.6rem;
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.22);
-      line-height: 1.6;
-    }
-
-    .card-rule {
-      height: 1px;
-      background: rgba(255,92,0,0.12);
-      margin: 4px 0;
-    }
-
-    .card-price-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 0.8rem;
-      flex-wrap: wrap;
-    }
-    .card-price {
-      font-size: clamp(1.4rem, 3.5vw, 2rem);
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      line-height: 1;
-    }
-    .card-price .euro { color: #FF5C00; }
-    .card-status {
-      font-size: 0.58rem;
-      font-weight: 300;
-      letter-spacing: 0.26em;
-      color: rgba(255,255,255,0.30);
-      text-transform: uppercase;
-      align-self: center;
-    }
-    .card-status.sold {
-      color: rgba(255,92,0,0.5);
-    }
-
-    /* ── Buttons ── */
-    .card-actions {
-      display: flex;
-      gap: 0;
-      margin-top: auto;
-    }
-    .btn-inq {
-      flex: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.72rem, 1.8vw, 0.86rem);
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-decoration: none;
-      padding: 0.8rem 1rem;
-      border: 1.5px solid rgba(255,255,255,0.18);
-      transition: background 0.18s, color 0.18s, border-color 0.18s;
-    }
-    .btn-inq:first-child {
-      border-radius: 8px 0 0 8px;
-      border-right: none;
-    }
-    .btn-inq:last-child  {
-      border-radius: 0 8px 8px 0;
-    }
-    .btn-inq:only-child  {
-      border-radius: 8px;
-    }
-    .btn-inq-fill  { background: #FF5C00; border-color: #FF5C00; color: #000; }
-    .btn-inq-fill:hover  { background: #fff; border-color: #fff; color: #000; }
-    .btn-inq-ghost { background: transparent; color: rgba(255,255,255,0.6); }
-    .btn-inq-ghost:hover { background: rgba(255,255,255,0.07); color: #fff; border-color: rgba(255,255,255,0.38); }
-
-    /* ── Add art link ── */
+    /* ── Page-specific: art gallery layout ── */
     .add-row {
-      max-width: 1200px;
+      max-width: var(--content-max);
       margin: clamp(28px, 4vh, 48px) auto 0;
       text-align: right;
     }
     .add-row a {
-      font-size: 0.64rem;
-      font-weight: 300;
+      font-size: 0.62rem;
+      font-weight: var(--fw-light);
       letter-spacing: 0.22em;
-      color: rgba(255,92,0,0.55);
-      text-decoration: none;
-      transition: color 0.15s;
+      color: var(--c-accent-muted);
+      transition: color var(--dur-fast);
     }
-    .add-row a:hover { color: #FF5C00; }
+    .add-row a:hover { color: var(--c-accent); }
 
-    /* ── Loading / empty ── */
     .art-state {
-      max-width: 1200px;
+      max-width: var(--content-max);
       margin: 0 auto;
       font-size: 0.7rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.2);
+      color: var(--c-text-tertiary);
     }
 
-    /* ── Mobile ── */
-    @media (max-width: 520px) {
-      header { padding: 18px 16px; }
-      nav    { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
-      nav a  { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+    /* Bid system layout */
+    .bid-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: var(--s-2);
+      animation: bidFadeIn 0.22s ease;
+    }
+    @keyframes bidFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .bid-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .bid-currency {
+      font-family: var(--font);
+      font-size: 1.1rem;
+      font-weight: var(--fw-bold);
+      padding: 0.6rem 0.7rem 0.6rem 0;
+      line-height: 1;
+    }
+    .bid-input {
+      flex: 1;
+      font-size: 1.1rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.04em;
+      padding: 0.6rem 0;
+    }
+    .btn-bid-submit {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      padding: 0.7rem 1.2rem;
+      margin-left: var(--s-3);
+      white-space: nowrap;
+    }
+    .btn-bid-submit:disabled { opacity: 0.3; cursor: default; }
+
+    .bid-back {
+      font-size: 0.52rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.22em;
+      padding: 0;
+      align-self: flex-start;
+    }
+    .bid-error {
+      font-size: 0.54rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      min-height: 1em;
     }
 
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
-    * { -webkit-user-select: none; user-select: none; }
-    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
-    html { touch-action: manipulation; }
-    header, nav, a, button { touch-action: manipulation; }
+    .bid-status-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: var(--s-2);
+      animation: bidFadeIn 0.22s ease;
+    }
+    .bid-current {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .bid-current-label {
+      font-size: 0.48rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+    .bid-current-amount {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.03em;
+      line-height: 1;
+    }
+
+    .bid-timer-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bid-timer-bar-wrap {
+      flex: 1;
+      height: 3px;
+    }
+    .bid-timer-text {
+      font-family: var(--font);
+      font-size: 0.58rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.22em;
+      white-space: nowrap;
+    }
+
+    .bid-history {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .bid-entry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+    .bid-entry-alias {
+      font-size: 0.54rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.14em;
+    }
+    .bid-entry-amount {
+      font-size: 0.68rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+    }
+    .bid-entry-time {
+      font-size: 0.46rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+    }
+
+    .bid-actions {
+      display: flex;
+      gap: 0;
+    }
+    .bid-actions .btn-inq { flex: 1; }
+
+    .bid-closed-label {
+      font-size: 0.54rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 6px 0;
+    }
+
+    /* Detail actions row */
+    .detail-actions {
+      display: flex;
+      gap: 0;
+      margin-top: var(--s-2);
+    }
+    .detail-actions .btn-inq { flex: 1; }
+
+    /* Favorite button in detail (override shared for inline layout) */
+    .detail-actions .btn-fav,
+    .bid-actions .btn-fav {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: clamp(0.72rem, 1.8vw, 0.82rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.14em;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--c-border-hover);
+      border-radius: 0;
+      flex: 1;
+      border-left: none;
+    }
+    .detail-actions .btn-fav svg,
+    .bid-actions .btn-fav svg {
+      width: 14px; height: 14px;
+      fill: none;
+      stroke: var(--c-text-tertiary);
+      stroke-width: 1.5px;
+      transition: fill var(--dur-fast), stroke var(--dur-fast);
+    }
+    .detail-actions .btn-fav.is-fav svg,
+    .bid-actions .btn-fav.is-fav svg { fill: var(--c-accent); stroke: var(--c-accent); }
+
+    /* Share button */
+    .btn-share {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: var(--font);
+      font-size: clamp(0.62rem, 1.5vw, 0.72rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.14em;
+      padding: 0.75rem 0.7rem;
+      border: 1.5px solid var(--c-border-hover);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      background: transparent;
+      color: var(--c-text-tertiary);
+      cursor: crosshair;
+      transition: background var(--dur-normal), color var(--dur-normal), border-color var(--dur-normal);
+      border-left: none;
+    }
+    .btn-share:hover { background: var(--c-accent-subtle); color: var(--c-text); border-color: var(--c-border-strong); }
+
+    /* Page entrance */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .site-main > * {
+      animation: pageIn 0.5s var(--ease-out) backwards;
+    }
+    .site-main .listing-header { animation-delay: 0.05s; }
+    .site-main .art-grid { animation-delay: 0.12s; }
+    .site-main .add-row { animation-delay: 0.18s; }
   </style>
 </head>
 <body>
-  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
-  <header>
-    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-    <nav>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
+      <a href="art.html" aria-current="page">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
-      <a href="articles.html">aRTICLES</a>
-      <a href="ask.html">cONNECT</a>
+      <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
+    <button class="site-burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
   </header>
 
-  <main id="art-main">
+  <!-- Mobile overlay menu -->
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[×]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html" style="color:var(--c-accent)">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+  </div>
+
+  <!-- Ambient effects -->
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+  <div class="ambient-orb ambient-orb--bottom"></div>
+
+  <main class="site-main" id="art-main">
     <p class="art-state" id="art-loading">LOADING…</p>
   </main>
 
@@ -313,10 +304,17 @@
   (function(){
     function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    function getUserPieces() {
+      try { return JSON.parse(localStorage.getItem('arts_my_pieces') || '[]'); } catch(e) { return []; }
+    }
+    function isMember() {
+      try { return !!localStorage.getItem('arts_id_hash'); } catch(e) { return false; }
+    }
+
     function renderGrid(pieces){
       var shown = pieces.filter(function(p){ return p.status !== 'pENDING'; });
       if (!shown.length) {
-        return '<p class="art-state">nO piECES yET — <a href="add.html" style="color:#FF5C00;text-decoration:none">+ aDD yOURS</a></p>';
+        return '<p class="art-state">nO piECES yET — <a href="add.html" style="color:var(--c-accent);text-decoration:none">+ aDD yOURS</a></p>';
       }
 
       var cards = shown.map(function(p, i){
@@ -326,15 +324,25 @@
           : '<span style="opacity:0.3">—</span>';
         var imgHtml = p.image
           ? '<img class="piece-img" src="'+ esc(p.image) +'" alt="'+ esc(p.title) +'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+'>'
-          : '<div class="piece-img" style="background:rgba(255,255,255,.04);height:100%"></div>';
+          : '<div class="piece-img" style="background:var(--c-bg-surface);height:100%"></div>';
         var mediaHtml = p.media
           ? '<p class="card-media">'+ esc(p.media) +'</p>'
           : '';
-        var inquireHref = 'inquire.html?piece=' + encodeURIComponent(p.title);
+
+        /* User listing badge */
+        var badgeHtml = p.userListing ? '<span class="user-badge">yOUR LiSTiNG</span>' : '';
+
+        /* Edit / remove row for user's own pieces */
+        var userActionsHtml = p.userListing
+          ? '<div class="card-user-actions">' +
+              '<button class="btn-user-action btn-edit" data-piece-id="' + esc(p.id) + '">eDIT</button>' +
+              '<button class="btn-user-action btn-remove" data-piece-id="' + esc(p.id) + '">rEMOVE</button>' +
+            '</div>'
+          : '';
 
         return [
           '<div class="piece-card">',
-            '<div class="card-img-wrap">'+ imgHtml +'</div>',
+            '<div class="card-img-wrap">'+ badgeHtml + imgHtml +'</div>',
             '<div class="card-body">',
               '<p class="card-index">aRT #'+ esc(String(p.id).padStart(3,'0')) +' · '+ esc(p.year||'') +'</p>',
               '<h2 class="card-title">'+ esc(p.title) +'</h2>',
@@ -345,23 +353,65 @@
                 '<span class="card-status'+(isSold?' sold':'')+'">'+esc(p.status||'aVAILABLE')+'</span>',
               '</div>',
               '<div class="card-actions">',
-                isSold
-                  ? '<a href="'+ inquireHref +'" class="btn-inq btn-inq-ghost" style="border-radius:8px">iNQUiRE</a>'
-                  : '<a href="'+ inquireHref +'" class="btn-inq btn-inq-fill">iNQUiRE</a><a href="ask.html" class="btn-inq btn-inq-ghost">cONNECT</a>',
+                '<button class="btn-inq btn-inq-fill" style="border-radius:var(--r-md)" data-view-id="'+ esc(p.id) +'">vIEW</button>',
               '</div>',
+              userActionsHtml,
             '</div>',
           '</div>'
         ].join('');
       }).join('');
 
+      var savedView = (localStorage.getItem('arts_view_art') || 'grid');
       return [
         '<div class="listing-header">',
-          '<span class="listing-label">aRT LiSTiNG</span>',
-          '<span class="listing-count">'+ shown.length +' piECE'+(shown.length!==1?'S':'')+'</span>',
+          '<div class="listing-header-left">',
+            '<span class="listing-label">aRT LiSTiNG</span>',
+            '<span class="listing-count">'+ shown.length +' piECE'+(shown.length!==1?'S':'')+'</span>',
+          '</div>',
+          '<div class="view-toggle">',
+            '<button class="view-toggle-btn'+(savedView==='grid'?' active':'')+'" data-view="grid">gRID</button>',
+            '<button class="view-toggle-btn'+(savedView==='list'?' active':'')+'" data-view="list">LiST</button>',
+          '</div>',
         '</div>',
-        '<div class="art-grid" id="art-grid">'+ cards +'</div>',
+        '<div class="art-grid'+(savedView==='list'?' view-list':'')+'" id="art-grid">'+ cards +'</div>',
         '<div class="add-row"><a href="add.html">+ aDD yOUR aRT</a></div>'
       ].join('');
+    }
+
+    /* ── View toggle logic ── */
+    function bindViewToggle(container) {
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.view-toggle-btn');
+        if (!btn) return;
+        var view = btn.getAttribute('data-view');
+        localStorage.setItem('arts_view_art', view);
+        var grid = document.getElementById('art-grid');
+        var btns = container.querySelectorAll('.view-toggle-btn');
+        btns.forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-view') === view); });
+        if (grid) {
+          grid.classList.toggle('view-list', view === 'list');
+        }
+      });
+    }
+
+    /* ── User listing actions: edit + remove ── */
+    function bindUserActions(container) {
+      container.addEventListener('click', function(e) {
+        var removeBtn = e.target.closest('.btn-remove');
+        if (removeBtn) {
+          var pieceId = removeBtn.dataset.pieceId;
+          if (!confirm('rEMOVE tHIS LISTiNG?')) return;
+          var pieces = getUserPieces().filter(function(p) { return p.id !== pieceId; });
+          try { localStorage.setItem('arts_my_pieces', JSON.stringify(pieces)); } catch(e){}
+          location.reload();
+          return;
+        }
+        var editBtn = e.target.closest('.btn-edit');
+        if (editBtn) {
+          var pieceId2 = editBtn.dataset.pieceId;
+          window.location.href = 'add.html?edit=' + encodeURIComponent(pieceId2);
+        }
+      });
     }
 
     var FALLBACK = [{id:'000',title:'pIETRO',year:'2025',price:'88.888.888',currency:'€',status:'aVAILABLE',image:'assets/piece-001.jpg',media:'pLASTER · mOUNTED cANVAS · fLOATING fRAME'}];
@@ -369,15 +419,566 @@
     fetch('data/pieces.json?v=' + Date.now())
       .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
       .then(function(pieces){
+        _allPieces = pieces.concat(getUserPieces());
         var main = document.getElementById('art-main');
-        main.innerHTML = renderGrid(pieces);
+        main.innerHTML = renderGrid(_allPieces);
         bindEuroScramble(main);
+        bindUserActions(main);
+        bindCardClicks(main);
+        bindViewToggle(main);
       })
       .catch(function(){
+        _allPieces = FALLBACK.concat(getUserPieces());
         var main = document.getElementById('art-main');
-        main.innerHTML = renderGrid(FALLBACK);
+        main.innerHTML = renderGrid(_allPieces);
         bindEuroScramble(main);
+        bindUserActions(main);
+        bindCardClicks(main);
+        bindViewToggle(main);
       });
+
+    /* ── Store all pieces for detail view lookup ── */
+    var _allPieces = [];
+
+    /* ── Detail modal (lazy-init since DOM not ready yet) ── */
+    var detailBackdrop, detailSheet, detailGallery, detailDots, detailInfo, detailCloseBtn;
+    var _detailInited = false;
+    var _currentDetailPiece = null;
+
+    /* ── Encrypted favourites (Web Crypto API) ── */
+    var FAV_KEY = 'arts_favourites_enc';
+    var FAV_SALT = new Uint8Array([97,82,84,83,95,102,97,118,95,115,97,108,116,95,118,49]);
+
+    function _isMember() {
+      try { return !!localStorage.getItem('arts_id_hash'); } catch(e) { return false; }
+    }
+
+    async function _deriveKey() {
+      var hash = localStorage.getItem('arts_id_hash');
+      if (!hash) return null;
+      var enc = new TextEncoder();
+      var keyMaterial = await crypto.subtle.importKey('raw', enc.encode(hash), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: FAV_SALT, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    async function _encryptFavs(data) {
+      var key = await _deriveKey();
+      if (!key) return;
+      var enc = new TextEncoder();
+      var iv = crypto.getRandomValues(new Uint8Array(12));
+      var ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, enc.encode(JSON.stringify(data)));
+      var buf = new Uint8Array(iv.length + ct.byteLength);
+      buf.set(iv); buf.set(new Uint8Array(ct), iv.length);
+      localStorage.setItem(FAV_KEY, btoa(String.fromCharCode.apply(null, buf)));
+    }
+
+    async function _decryptFavs() {
+      var key = await _deriveKey();
+      if (!key) return { v: 1, items: [] };
+      var raw = localStorage.getItem(FAV_KEY);
+      if (!raw) return { v: 1, items: [] };
+      try {
+        var bytes = Uint8Array.from(atob(raw), function(c){ return c.charCodeAt(0); });
+        var iv = bytes.slice(0, 12);
+        var ct = bytes.slice(12);
+        var dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, ct);
+        return JSON.parse(new TextDecoder().decode(dec));
+      } catch(e) { return { v: 1, items: [] }; }
+    }
+
+    async function toggleFav(pieceId) {
+      var data = await _decryptFavs();
+      var idx = -1;
+      for (var i = 0; i < data.items.length; i++) {
+        if (data.items[i].id === pieceId) { idx = i; break; }
+      }
+      if (idx >= 0) {
+        data.items.splice(idx, 1);
+      } else {
+        data.items.push({ id: pieceId, at: Date.now() });
+      }
+      await _encryptFavs(data);
+      return idx < 0;
+    }
+
+    async function isFav(pieceId) {
+      var data = await _decryptFavs();
+      for (var i = 0; i < data.items.length; i++) {
+        if (data.items[i].id === pieceId) return true;
+      }
+      return false;
+    }
+
+    function _updateFavBtn(btn, active) {
+      var svg = btn.querySelector('svg');
+      if (active) {
+        btn.classList.add('is-fav');
+        if (svg) { svg.style.fill = 'var(--c-accent)'; svg.style.stroke = 'var(--c-accent)'; }
+      } else {
+        btn.classList.remove('is-fav');
+        if (svg) { svg.style.fill = 'none'; svg.style.stroke = 'var(--c-text-tertiary)'; }
+      }
+    }
+
+    /* ── Bid system ── */
+    var BID_KEY = 'arts_bids';
+    var BID_DURATION = 24 * 60 * 60 * 1000;
+    var _bidTimerInterval = null;
+
+    function getBids() {
+      try { return JSON.parse(localStorage.getItem(BID_KEY) || '{}'); } catch(e) { return {}; }
+    }
+    function saveBids(data) {
+      try { localStorage.setItem(BID_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+    function getPieceBid(pieceId) {
+      var all = getBids();
+      return all[pieceId] || null;
+    }
+    function placeBid(pieceId, amount) {
+      var all = getBids();
+      var existing = all[pieceId];
+      var alias = localStorage.getItem('arts_alias') || 'aNON';
+      var now = Date.now();
+      if (!existing) {
+        existing = {
+          bids: [],
+          openedAt: now,
+          expiresAt: now + BID_DURATION,
+          status: 'open'
+        };
+      }
+      existing.bids.push({ alias: alias, amount: amount, ts: now });
+      existing.bids.sort(function(a, b) { return b.amount - a.amount; });
+      all[pieceId] = existing;
+      saveBids(all);
+      return existing;
+    }
+    function getHighestBid(bidData) {
+      if (!bidData || !bidData.bids.length) return 0;
+      return bidData.bids[0].amount;
+    }
+    function isBidExpired(bidData) {
+      if (!bidData) return false;
+      return Date.now() >= bidData.expiresAt;
+    }
+    function formatCountdown(ms) {
+      if (ms <= 0) return '0h 0m 0s';
+      var h = Math.floor(ms / 3600000);
+      var m = Math.floor((ms % 3600000) / 60000);
+      var s = Math.floor((ms % 60000) / 1000);
+      return h + 'h ' + m + 'm ' + s + 's';
+    }
+    function formatBidAmount(n) {
+      return n.toLocaleString('de-DE');
+    }
+    function parseBidInput(str) {
+      var cleaned = str.replace(/[^\d.,]/g, '');
+      cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+      var n = parseFloat(cleaned);
+      return isNaN(n) || n <= 0 ? null : n;
+    }
+    function timeSince(ts) {
+      var diff = Date.now() - ts;
+      if (diff < 60000) return 'jUST nOW';
+      if (diff < 3600000) return Math.floor(diff / 60000) + 'm aGO';
+      return Math.floor(diff / 3600000) + 'h aGO';
+    }
+
+    function stopBidTimer() {
+      if (_bidTimerInterval) { clearInterval(_bidTimerInterval); _bidTimerInterval = null; }
+    }
+
+    function renderBidInput(pieceId, isCounter) {
+      var bidData = getPieceBid(pieceId);
+      var highest = getHighestBid(bidData);
+      var placeholder = isCounter ? ('> ' + formatBidAmount(highest)) : 'yOUR bID';
+      return [
+        '<div class="bid-panel">',
+          '<div class="bid-input-row">',
+            '<span class="bid-currency">\u20ac</span>',
+            '<input type="text" class="bid-input" id="bid-amount" placeholder="' + placeholder + '" inputmode="numeric" autocomplete="off">',
+            '<button class="btn-bid-submit" id="bid-submit">' + (isCounter ? 'cOUNTERBID' : 'pLACE bID') + '</button>',
+          '</div>',
+          '<p class="bid-error" id="bid-error"></p>',
+          '<button class="bid-back" id="bid-back">\u2190 bACK</button>',
+        '</div>'
+      ].join('');
+    }
+
+    function renderBidStatus(pieceId, piece) {
+      var bidData = getPieceBid(pieceId);
+      if (!bidData || !bidData.bids.length) return '';
+      var expired = isBidExpired(bidData);
+      var highest = bidData.bids[0];
+      var remaining = Math.max(0, bidData.expiresAt - Date.now());
+      var pct = (remaining / BID_DURATION) * 100;
+
+      var historyHtml = bidData.bids.map(function(b) {
+        return '<div class="bid-entry">' +
+          '<span class="bid-entry-alias">' + esc(b.alias) + '</span>' +
+          '<span class="bid-entry-amount">' + formatBidAmount(b.amount) + ' \u20ac</span>' +
+          '<span class="bid-entry-time">' + timeSince(b.ts) + '</span>' +
+        '</div>';
+      }).join('');
+
+      var inquireHref = 'inquire.html?piece=' + encodeURIComponent(piece.title);
+
+      if (expired) {
+        return [
+          '<div class="bid-status-panel">',
+            '<span class="bid-current-label">fINAL bID</span>',
+            '<span class="bid-current-amount">' + formatBidAmount(highest.amount) + ' <span class="euro">\u20ac</span></span>',
+            '<p class="bid-closed-label">bID cLOSED</p>',
+            '<div class="bid-history">' + historyHtml + '</div>',
+            '<div class="bid-actions">',
+              '<a href="' + inquireHref + '" class="btn-inq btn-inq-ghost" style="border-radius:var(--r-md)">iNQUiRE</a>',
+            '</div>',
+          '</div>'
+        ].join('');
+      }
+
+      return [
+        '<div class="bid-status-panel">',
+          '<span class="bid-current-label">cURRENT bID</span>',
+          '<div class="bid-current">',
+            '<span class="bid-current-amount">' + formatBidAmount(highest.amount) + ' <span class="euro">\u20ac</span></span>',
+          '</div>',
+          '<div class="bid-timer-row">',
+            '<div class="bid-timer-bar-wrap"><div class="bid-timer-bar" id="bid-timer-bar" style="width:' + pct.toFixed(1) + '%"></div></div>',
+            '<span class="bid-timer-text" id="bid-timer-text">' + formatCountdown(remaining) + '</span>',
+          '</div>',
+          '<div class="bid-history">' + historyHtml + '</div>',
+          '<div class="bid-actions">',
+            '<button class="btn-inq btn-inq-fill" id="btn-counterbid" style="border-radius:var(--r-md) 0 0 var(--r-md)">cOUNTERBID</button>',
+            '<a href="' + inquireHref + '" class="btn-inq btn-inq-ghost" style="border-radius:0">iNQUiRE</a>',
+            '<button class="btn-fav" data-fav-id="' + esc(piece.id) + '" style="border-radius:0 var(--r-md) var(--r-md) 0">',
+              '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+              'fAVOURITe',
+            '</button>',
+          '</div>',
+        '</div>'
+      ].join('');
+    }
+
+    function startBidTimer(pieceId, piece) {
+      stopBidTimer();
+      _bidTimerInterval = setInterval(function() {
+        var bidData = getPieceBid(pieceId);
+        if (!bidData) { stopBidTimer(); return; }
+        var remaining = Math.max(0, bidData.expiresAt - Date.now());
+        var pct = (remaining / BID_DURATION) * 100;
+        var barEl = document.getElementById('bid-timer-bar');
+        var textEl = document.getElementById('bid-timer-text');
+        if (barEl) barEl.style.width = pct.toFixed(1) + '%';
+        if (textEl) textEl.textContent = formatCountdown(remaining);
+        if (remaining <= 0) {
+          stopBidTimer();
+          var actionsEl = document.getElementById('detail-info');
+          if (actionsEl) {
+            var actionsDiv = actionsEl.querySelector('.bid-status-panel');
+            if (actionsDiv) {
+              actionsDiv.outerHTML = renderBidStatus(pieceId, piece);
+            }
+          }
+        }
+      }, 1000);
+    }
+
+    function showBidInput(pieceId, piece, isCounter) {
+      var actionsEl = document.querySelector('.detail-actions') || document.querySelector('.bid-status-panel') || document.querySelector('.bid-actions');
+      var parent = actionsEl ? actionsEl.parentNode : document.getElementById('detail-info');
+      if (actionsEl) actionsEl.outerHTML = renderBidInput(pieceId, isCounter);
+      else parent.insertAdjacentHTML('beforeend', renderBidInput(pieceId, isCounter));
+
+      var input = document.getElementById('bid-amount');
+      var submitBtn = document.getElementById('bid-submit');
+      var errorEl = document.getElementById('bid-error');
+      var backBtn = document.getElementById('bid-back');
+
+      if (input) input.focus();
+
+      submitBtn.addEventListener('click', function() {
+        var val = parseBidInput(input.value);
+        if (!val) { errorEl.textContent = 'eNTER a vALID aMOUNT'; return; }
+        if (isCounter) {
+          var highest = getHighestBid(getPieceBid(pieceId));
+          if (val <= highest) { errorEl.textContent = 'mUST bE hIGHER tHAN ' + formatBidAmount(highest) + ' \u20ac'; return; }
+        }
+        placeBid(pieceId, val);
+        var panel = document.querySelector('.bid-panel');
+        if (panel) panel.outerHTML = renderBidStatus(pieceId, piece);
+        startBidTimer(pieceId, piece);
+        var favBtn = document.querySelector('.btn-fav[data-fav-id]');
+        if (favBtn && _isMember()) {
+          isFav(piece.id).then(function(active) { _updateFavBtn(favBtn, active); });
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') submitBtn.click();
+      });
+
+      backBtn.addEventListener('click', function() {
+        stopBidTimer();
+        var panel = document.querySelector('.bid-panel');
+        if (panel) {
+          var bidData = getPieceBid(pieceId);
+          if (bidData && bidData.bids.length) {
+            panel.outerHTML = renderBidStatus(pieceId, piece);
+            startBidTimer(pieceId, piece);
+          } else {
+            panel.outerHTML = renderDefaultActions(pieceId, piece);
+          }
+          var favBtn = document.querySelector('.btn-fav[data-fav-id]');
+          if (favBtn && _isMember()) {
+            isFav(piece.id).then(function(active) { _updateFavBtn(favBtn, active); });
+          }
+        }
+      });
+    }
+
+    function renderDefaultActions(pieceId, piece) {
+      var inquireHref = 'inquire.html?piece=' + encodeURIComponent(piece.title);
+      var isSold = /sold|nOT aVAILABLE/i.test(piece.status || '');
+      return [
+        '<div class="detail-actions">',
+          isSold ? '' : '<button class="btn-inq btn-inq-fill" id="btn-bid" style="border-radius:var(--r-md) 0 0 var(--r-md)">bID</button>',
+          '<a href="' + inquireHref + '" class="btn-inq btn-inq-ghost" style="border-radius:' + (isSold ? 'var(--r-md) 0 0 var(--r-md)' : '0') + '">iNQUiRE</a>',
+          '<button class="btn-fav" data-fav-id="' + esc(piece.id) + '" style="border-radius:0">',
+            '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+            'fAVOURITe',
+          '</button>',
+          '<button class="btn-share" data-share-title="' + esc(piece.title) + '" data-share-id="' + esc(piece.id) + '">',
+            '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>',
+            ' sHARE',
+          '</button>',
+        '</div>'
+      ].join('');
+    }
+
+    function initDetailEls() {
+      if (_detailInited) return;
+      detailBackdrop = document.getElementById('detail-backdrop');
+      detailSheet    = document.getElementById('detail-sheet');
+      detailGallery  = document.getElementById('detail-gallery');
+      detailDots     = document.getElementById('detail-dots');
+      detailInfo     = document.getElementById('detail-info');
+      detailCloseBtn = document.getElementById('detail-close');
+      if (!detailBackdrop) return;
+      _detailInited = true;
+      detailCloseBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeDetail();
+      });
+      detailBackdrop.addEventListener('click', function(e) {
+        if (e.target === detailBackdrop && !detailBackdrop._opening) closeDetail();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && detailBackdrop.classList.contains('is-open')) closeDetail();
+      });
+      /* Favourite button click (event delegation) */
+      detailSheet.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn-fav');
+        if (!btn) return;
+        e.stopPropagation();
+        if (!_isMember()) {
+          btn.textContent = 'jOIN tO sAVE';
+          btn.style.color = 'var(--c-accent)';
+          setTimeout(function() { window.location.href = 'join.html'; }, 1200);
+          return;
+        }
+        toggleFav(btn.dataset.favId).then(function(added) {
+          _updateFavBtn(btn, added);
+          if (added) _awardXP(10, 'fAVOURITE');
+        });
+      });
+
+      /* Bid / Counterbid button click (event delegation) */
+      detailSheet.addEventListener('click', function(e) {
+        var bidBtn = e.target.closest('#btn-bid');
+        if (bidBtn) {
+          e.stopPropagation();
+          var pieceId = _currentDetailPiece ? _currentDetailPiece.id : null;
+          if (pieceId && _currentDetailPiece) showBidInput(pieceId, _currentDetailPiece, false);
+          return;
+        }
+        var counterBtn = e.target.closest('#btn-counterbid');
+        if (counterBtn) {
+          e.stopPropagation();
+          var pieceId2 = _currentDetailPiece ? _currentDetailPiece.id : null;
+          if (pieceId2 && _currentDetailPiece) showBidInput(pieceId2, _currentDetailPiece, true);
+          return;
+        }
+      });
+
+      /* Share button click (event delegation) */
+      detailSheet.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn-share');
+        if (!btn) return;
+        e.stopPropagation();
+        var piece = _currentDetailPiece;
+        if (!piece) return;
+        var url = window.location.origin + '/art.html?piece=' + encodeURIComponent(piece.id);
+        var title = piece.title + ' \u2014 [aRTS]';
+        if (navigator.share) {
+          navigator.share({ title: title, url: url }).then(function() { _awardXP(30, 'sHARE'); }).catch(function(){});
+        } else {
+          navigator.clipboard.writeText(url).then(function() {
+            btn.textContent = 'cOPIED';
+            setTimeout(function() { btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> sHARE'; }, 1600);
+            _awardXP(30, 'sHARE');
+          }).catch(function(){});
+        }
+      });
+    }
+
+    /* ── XP helper ── */
+    function _awardXP(pts, label) {
+      try {
+        if (!localStorage.getItem('arts_id_hash')) return;
+        var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+        localStorage.setItem('arts_points', String(cur + pts));
+        var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
+        pending.push({ label: label, pts: pts });
+        sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
+      } catch(e) {}
+    }
+
+    function openDetail(pieceId) {
+      initDetailEls();
+      var p = null;
+      for (var i = 0; i < _allPieces.length; i++) {
+        if (_allPieces[i].id === pieceId) { p = _allPieces[i]; break; }
+      }
+      if (!p) return;
+      _currentDetailPiece = p;
+
+      /* Gallery */
+      var imgs = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
+      detailGallery.innerHTML = imgs.map(function(src, idx) {
+        return '<img src="' + esc(src) + '" alt="' + esc(p.title) + ' ' + (idx+1) + '" ' + (idx===0?'':'loading="lazy"') + '>';
+      }).join('');
+      detailDots.innerHTML = imgs.length > 1 ? imgs.map(function(_, idx) {
+        return '<span' + (idx===0?' class="active"':'') + '></span>';
+      }).join('') : '';
+
+      /* Scroll dot tracking */
+      if (imgs.length > 1) {
+        detailGallery.onscroll = function() {
+          var scrollLeft = detailGallery.scrollLeft;
+          var imgWidth = detailGallery.querySelector('img') ? detailGallery.querySelector('img').offsetWidth : 1;
+          var activeIdx = Math.round(scrollLeft / imgWidth);
+          var dots = detailDots.querySelectorAll('span');
+          for (var d = 0; d < dots.length; d++) {
+            dots[d].className = d === activeIdx ? 'active' : '';
+          }
+        };
+      }
+
+      var isSold = /sold|nOT aVAILABLE/i.test(p.status || '');
+      var priceHtml = p.price && p.price !== '\u2014'
+        ? esc(p.price) + ' <span class="euro">' + esc(p.currency || '\u20ac') + '</span>'
+        : '<span style="opacity:0.3">\u2014</span>';
+
+      /* Meta fields */
+      var meta = '';
+      function addMeta(label, val, cls) {
+        if (!val) return;
+        meta += '<div class="detail-meta-item"><span class="detail-meta-label">' + label + '</span><span class="detail-meta-val' + (cls?' '+cls:'') + '">' + esc(val) + '</span></div>';
+      }
+      addMeta('dIMENSIONS', p.dimensions);
+      addMeta('eDITION', p.edition);
+      addMeta('cONDITION', p.condition);
+      addMeta('pROVENANCE', p.provenance);
+      addMeta('cERTIFICATE', p.certificate ? 'yES' : (p.certificate === false ? 'nO' : ''), p.certificate ? 'cert-yes' : '');
+      addMeta('lOCATION', p.location);
+      addMeta('sHIPPING', p.shipping);
+
+      /* Determine bid state for this piece */
+      var bidData = getPieceBid(p.id);
+      var hasBid = bidData && bidData.bids.length > 0;
+      var bidExpired = hasBid && isBidExpired(bidData);
+      var actionsHtml;
+
+      if (hasBid) {
+        actionsHtml = renderBidStatus(p.id, p);
+      } else {
+        actionsHtml = renderDefaultActions(p.id, p);
+      }
+
+      detailInfo.innerHTML = [
+        '<p class="detail-index">aRT #' + esc(String(p.id).padStart(3,'0')) + ' \xB7 ' + esc(p.year||'') + '</p>',
+        '<h2 class="detail-title">' + esc(p.title) + '</h2>',
+        p.artist ? '<p class="detail-artist">' + esc(p.artist) + '</p>' : '',
+        p.media ? '<p class="detail-media">' + esc(p.media) + '</p>' : '',
+        '<div class="detail-rule"></div>',
+        meta ? '<div class="detail-meta">' + meta + '</div><div class="detail-rule"></div>' : '',
+        '<div class="detail-price-row">',
+          '<span class="detail-price">' + priceHtml + '</span>',
+          '<span class="detail-status' + (isSold?' sold':'') + '">' + esc(p.status||'aVAILABLE') + '</span>',
+        '</div>',
+        actionsHtml
+      ].join('');
+
+      /* Start timer if there's an active bid */
+      if (hasBid && !bidExpired) {
+        startBidTimer(p.id, p);
+      }
+
+      /* Update favourite button state */
+      var favBtn = detailInfo.querySelector('.btn-fav');
+      if (favBtn && _isMember()) {
+        isFav(p.id).then(function(active) { _updateFavBtn(favBtn, active); });
+      } else if (favBtn) {
+        var svg = favBtn.querySelector('svg');
+        if (svg) { svg.style.fill = 'none'; svg.style.stroke = 'var(--c-text-tertiary)'; }
+      }
+
+      detailBackdrop.hidden = false;
+      detailBackdrop._opening = true;
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          detailBackdrop.classList.add('is-open');
+          detailBackdrop._opening = false;
+        });
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDetail() {
+      if (detailBackdrop._opening) return;
+      stopBidTimer();
+      _currentDetailPiece = null;
+      detailBackdrop.classList.remove('is-open');
+      setTimeout(function() {
+        detailBackdrop.hidden = true;
+        detailGallery.innerHTML = '';
+        detailInfo.innerHTML = '';
+        document.body.style.overflow = '';
+      }, 260);
+    }
+
+    /* Bind card clicks → open detail */
+    function bindCardClicks(container) {
+      container.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-edit') || e.target.closest('.btn-remove') || e.target.closest('a[href]')) return;
+        var card = e.target.closest('.piece-card');
+        if (!card) return;
+        var viewBtn = card.querySelector('[data-view-id]');
+        if (viewBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          openDetail(viewBtn.dataset.viewId);
+        }
+      });
+    }
 
     /* ── € hover: scramble through world currencies ── */
     function bindEuroScramble(container){
@@ -399,70 +1000,7 @@
   })();
   </script>
 
-  <script>
-  (function(){
-    function reveal(){
-      var c=document.createElement('div');
-      c.style.cssText='position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
-      document.body.appendChild(c);
-      requestAnimationFrame(function(){requestAnimationFrame(function(){
-        c.style.transition='opacity 0.22s ease';c.style.opacity='0';
-        setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},320);
-      });});
-    }
-    window.addEventListener('pageshow',function(e){if(e.persisted)reveal();});
-  })();
-  </script>
-
-  <script>
-  (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-    function doEnter(){
-      mkL();var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;var e=ts-s0;
-        if(e<T1){scan.style.opacity=String(lerp(0,1,e/T1));vig.style.opacity='0.95';}
-        else if(e<T2){var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));}
-        else if(e<T3){var t2=(e-T2)/(T3-T2),et=smooth(t2);document.documentElement.style.clipPath='';scan.style.opacity=String(lerp(1,0,et));vig.style.opacity=String(lerp(0.55,0,et));}
-        else{document.documentElement.style.clipPath='';if(scan&&scan.parentNode)scan.parentNode.removeChild(scan);if(vig&&vig.parentNode)vig.parentNode.removeChild(vig);scan=null;vig=null;busy=false;return;}
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-    function doExit(dest){
-      if(busy)return;busy=true;mkL();
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;var e=ts-s0;
-        if(e<TR){scan.style.opacity=String(lerp(0,1,e/TR));vig.style.opacity=String(lerp(0,0.95,e/TR));}
-        else if(e<TR+TS){var t=(e-TR)/TS,p=lerp(0,50,smooth(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity='0.95';}
-        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';document.documentElement.style.background='#000';document.body.style.background='#000';sessionStorage.setItem('crt_transition','1');window.location.href=dest;return;}
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-    if(sessionStorage.getItem('crt_transition')){sessionStorage.removeItem('crt_transition');doEnter();}
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();doExit(h);
-    },true);
-  })();
-  </script>
-
+  <!-- Nav hover lowercase animation -->
   <script>
   (function(){
     var DELAY=40;
@@ -473,15 +1011,120 @@
       el.addEventListener('mouseenter',function(){clr();var from=state;for(var i=0;i<orig.length-1-from;i++)(function(i){timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));})(i);});
       el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
-    document.querySelectorAll('nav a').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner,timers=[],state=0;
+    document.querySelectorAll('.site-nav a').forEach(navHover);
+
+    /* Idle static glitch */
+    (function(){
+      var links=Array.from(document.querySelectorAll('.site-nav a'));
+      var origTxt=links.map(function(el){return el.textContent;});
+      var glyphs='▓░▒│╌·×÷¬±';
+      function tick(){
+        var li=Math.floor(Math.random()*links.length);
+        var el=links[li];
+        var txt=origTxt[li];
+        var ci=1+Math.floor(Math.random()*(txt.length-1));
+        var arr=txt.split('');
+        arr[ci]=glyphs[Math.floor(Math.random()*glyphs.length)];
+        el.textContent=arr.join('');
+        setTimeout(function(){el.textContent=txt;},90);
+        setTimeout(tick,2600+Math.random()*3800);
+      }
+      setTimeout(tick,1200+Math.random()*1800);
+    })();
+
+    /* Logo [a] expand */
+    document.querySelectorAll('a.logo[data-inner], a.site-logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
+      var timers=[],state=0;
       function clr(){timers.forEach(clearTimeout);timers.length=0;}
       function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
-      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+      logo.addEventListener('mouseenter',function(){
+        clr();var from=state;
+        for(var i=from;i<inner.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave',function(){
+        clr();var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
     });
   })();
   </script>
+
+  <!-- Hamburger toggle with decap cascade -->
+  <script>
+  (function(){
+    var burger=document.getElementById('burger');
+    var overlay=document.getElementById('nav-overlay');
+    var closer=document.getElementById('burger-close');
+    if(!burger||!overlay)return;
+    var oLinks=Array.from(overlay.querySelectorAll('a'));
+    var oLabels=oLinks.map(function(el){return el.textContent;});
+
+    function decapCascade(){
+      oLinks.forEach(function(el,li){
+        var target=oLabels[li];
+        el.textContent=target.toLowerCase();
+        var base=li*100+120;
+        Array.from(target).forEach(function(ch,i){
+          setTimeout(function(){
+            if(!overlay.classList.contains('is-open'))return;
+            var chars=el.textContent.split('');
+            chars[i]=ch;
+            el.textContent=chars.join('');
+          },base+i*50);
+        });
+      });
+    }
+
+    function openMenu(){
+      overlay.classList.add('is-open');
+      burger.classList.add('is-open');
+      decapCascade();
+    }
+    function closeMenu(){
+      oLinks.forEach(function(el,i){el.textContent=oLabels[i];});
+      overlay.classList.remove('is-open');
+      burger.classList.remove('is-open');
+    }
+    burger.addEventListener('click',openMenu);
+    closer.addEventListener('click',closeMenu);
+    overlay.addEventListener('click',function(e){if(e.target===overlay)closeMenu();});
+  })();
+  </script>
+
+  <!-- Page transition (replaces CRT) -->
+  <script>
+  (function(){
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest('a[href]');if(!a)return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
+      ev.preventDefault();
+      document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
+      document.body.style.opacity='0';
+      document.body.style.transform='scale(0.99)';
+      setTimeout(function(){ window.location.href=h; },220);
+    },true);
+  })();
+  </script>
+
+  <!-- Detail modal -->
+  <div class="detail-backdrop" id="detail-backdrop" hidden>
+    <div class="detail-sheet" id="detail-sheet">
+      <button class="detail-close" id="detail-close">[×]</button>
+      <div class="detail-gallery" id="detail-gallery"></div>
+      <div class="detail-gallery-dots" id="detail-dots"></div>
+      <div class="detail-info" id="detail-info"></div>
+    </div>
+  </div>
+
+<script src="theme.js?v=4"></script>
+<script src="btn-fx.js"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

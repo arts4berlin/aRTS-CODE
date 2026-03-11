@@ -16,6 +16,7 @@
   <title>[aRTS] — bOT oPERaTIONS</title>
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -26,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,17 +36,6 @@
       min-height: 100vh; min-height: 100dvh;
       display: flex; align-items: center; justify-content: center;
       padding: clamp(80px, 12vh, 120px) clamp(16px, 4vw, 32px);
-    }
-
-    #crt-scan {
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);
-      opacity: 0; z-index: 9998; pointer-events: none;
-    }
-    #crt-vignette {
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);
-      opacity: 0; z-index: 9997; pointer-events: none;
     }
 
     .c-back {
@@ -101,7 +92,16 @@
       position: relative;
       transition: background 0.15s;
     }
-    .bot-card:hover { background: rgba(255,255,255,0.015); }
+    .bot-card.unlocked { cursor: pointer; }
+    .bot-card.unlocked:hover { background: rgba(255,255,255,0.025); }
+    .bot-card.locked { opacity: 0.45; cursor: default; }
+
+    .bot-tier-badge {
+      font-size: 0.42rem; font-weight: 600;
+      letter-spacing: 0.2em; padding: 2px 7px;
+      border-radius: 2px; text-transform: uppercase;
+      align-self: flex-start;
+    }
 
     .bot-status {
       font-size: 0.48rem; font-weight: 700;
@@ -118,6 +118,11 @@
       background: rgba(110,230,110,0.06);
       border: 1px solid rgba(110,230,110,0.18);
     }
+    .bot-status.locked-st {
+      color: rgba(255,80,80,0.5);
+      background: rgba(255,80,80,0.04);
+      border: 1px solid rgba(255,80,80,0.12);
+    }
 
     .bot-name {
       font-size: clamp(0.9rem, 2.5vw, 1.1rem);
@@ -130,6 +135,126 @@
       letter-spacing: 0.06em; line-height: 1.75;
       color: rgba(255,255,255,0.28);
     }
+
+    .bot-limit {
+      font-size: 0.52rem; font-weight: 300;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.2);
+      margin-top: auto;
+    }
+    .bot-upgrade {
+      display: inline-block; font-size: 0.52rem; font-weight: 700;
+      letter-spacing: 0.18em; color: #FF5C00;
+      text-decoration: none; margin-top: auto;
+      transition: color 0.15s;
+    }
+    .bot-upgrade:hover { color: #fff; }
+
+    /* ── Tier bar ── */
+    .tier-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+    }
+    .tier-bar-label {
+      font-size: 0.52rem; font-weight: 300;
+      letter-spacing: 0.26em; color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+    .tier-bar-value {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.14em; color: #FF5C00;
+    }
+    .tier-bar-change {
+      font-size: 0.52rem; font-weight: 300;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.25);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .tier-bar-change:hover { color: rgba(255,255,255,0.5); }
+
+    /* ── Bot panel (chat) ── */
+    .bot-panel { display: none; flex-direction: column; gap: clamp(12px, 2vh, 20px); }
+    .bot-panel.active { display: flex; }
+    .bot-panel-header { display: flex; align-items: center; justify-content: space-between; }
+    .bot-panel-name { font-size: clamp(1rem, 3vw, 1.4rem); font-weight: 700; letter-spacing: 0.1em; }
+    .bot-panel-close {
+      background: none; border: none; color: rgba(255,255,255,0.4);
+      font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem;
+      font-weight: 300; letter-spacing: 0.14em;
+      cursor: pointer; transition: color 0.15s;
+    }
+    .bot-panel-close:hover { color: #fff; }
+    .bot-panel-info {
+      font-size: 0.58rem; font-weight: 300;
+      letter-spacing: 0.12em; color: rgba(255,255,255,0.2);
+    }
+    .bot-chat {
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      min-height: 200px; max-height: 400px; overflow-y: auto;
+      padding: clamp(12px, 2vw, 18px);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .bot-msg {
+      font-size: 0.72rem; font-weight: 300; letter-spacing: 0.06em;
+      line-height: 1.7; padding: 10px 14px; border-radius: 6px; max-width: 85%;
+    }
+    .bot-msg.user {
+      align-self: flex-end;
+      background: rgba(255,92,0,0.1); border: 1px solid rgba(255,92,0,0.15);
+      color: rgba(255,255,255,0.7);
+    }
+    .bot-msg.bot {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.45);
+    }
+    .bot-input-row { display: flex; gap: 0; }
+    .bot-input {
+      flex: 1; background: transparent;
+      border: 1px solid rgba(255,255,255,0.12); border-right: none;
+      border-radius: 4px 0 0 4px; color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem; font-weight: 300;
+      padding: 0.7rem 0.9rem; outline: none;
+    }
+    .bot-input::placeholder { color: rgba(255,255,255,0.12); font-weight: 300; }
+    .bot-input:focus { border-color: rgba(255,255,255,0.3); }
+    .bot-send {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+      padding: 0.7rem 1.2rem; background: #FF5C00; color: #000;
+      border: 1px solid #FF5C00; border-radius: 0 4px 4px 0;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .bot-send:hover { background: #fff; border-color: #fff; }
+
+    /* ── CURaTOR: custom bot builder ── */
+    .custom-bot-section { margin-top: clamp(12px, 2vh, 20px); }
+    .custom-bot-section .section-label {
+      font-size: 0.58rem; font-weight: 300;
+      letter-spacing: 0.28em; color: rgba(255,92,0,0.45);
+      margin-bottom: clamp(8px, 1.2vh, 14px); text-transform: uppercase;
+    }
+    .custom-bot-form { display: flex; flex-direction: column; gap: clamp(10px, 1.5vh, 16px); }
+    .custom-bot-form input, .custom-bot-form textarea {
+      background: transparent; border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em;
+      padding: 0.5rem 0; outline: none; width: 100%;
+      -webkit-user-select: text; user-select: text;
+    }
+    .custom-bot-form textarea { resize: none; height: 80px; font-size: 0.75rem; font-weight: 300; }
+    .custom-bot-form input::placeholder, .custom-bot-form textarea::placeholder {
+      color: rgba(255,255,255,0.1); font-weight: 300;
+    }
+    .btn-create-bot {
+      align-self: flex-start; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em;
+      padding: 0.65rem 1.4rem; background: transparent; color: #FF5C00;
+      border: 1px solid rgba(255,92,0,0.3); border-radius: 4px;
+      cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-create-bot:hover { background: rgba(255,92,0,0.08); border-color: rgba(255,92,0,0.5); }
 
     .hub-footer {
       font-size: 0.58rem; font-weight: 300;
@@ -145,12 +270,99 @@
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     * { -webkit-user-select: none; user-select: none; }
     html { touch-action: manipulation; }
+
+    /* ─────────────────────────────────────────
+       DAY MODE OVERRIDES  (bots.html)
+       To update: match each selector below to
+       its night-mode counterpart above.
+       Orange accent = #FF5C00
+    ───────────────────────────────────────── */
+
+    /* Page base */
+    [data-theme="day"] body { background: #fff !important; color: #000 !important; }
+
+    /* Back link */
+    [data-theme="day"] .c-back { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .c-back:hover { color: #000 !important; }
+
+    /* Hub header */
+    [data-theme="day"] .hub-eyebrow { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .hub-title   { color: #000 !important; }
+    [data-theme="day"] .hub-subtitle { color: rgba(0,0,0,0.38) !important; }
+
+    /* Divider */
+    [data-theme="day"] .hub-rule { border-top-color: rgba(0,0,0,0.12) !important; }
+
+    /* Tier bar */
+    [data-theme="day"] .tier-bar { border-color: rgba(0,0,0,0.12) !important; }
+    [data-theme="day"] .tier-bar-label { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .tier-bar-change { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .tier-bar-change:hover { color: rgba(0,0,0,0.6) !important; }
+
+    /* Bot grid container */
+    [data-theme="day"] .bot-grid {
+      background: rgba(0,0,0,0.08) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+    }
+
+    /* Bot cards */
+    [data-theme="day"] .bot-card { background: #fff !important; }
+    [data-theme="day"] .bot-card.unlocked:hover { background: rgba(0,0,0,0.03) !important; }
+
+    /* Status badges */
+    [data-theme="day"] .bot-status.soon {
+      color: rgba(0,0,0,0.35) !important;
+      background: rgba(0,0,0,0.04) !important;
+      border-color: rgba(0,0,0,0.12) !important;
+    }
+
+    /* Bot name / desc / limit */
+    [data-theme="day"] .bot-name  { color: rgba(0,0,0,0.7)  !important; }
+    [data-theme="day"] .bot-desc  { color: rgba(0,0,0,0.42) !important; }
+    [data-theme="day"] .bot-limit { color: rgba(0,0,0,0.3)  !important; }
+
+    /* Bot panel */
+    [data-theme="day"] .bot-panel-close { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .bot-panel-close:hover { color: #000 !important; }
+    [data-theme="day"] .bot-panel-info { color: rgba(0,0,0,0.38) !important; }
+
+    /* Chat window */
+    [data-theme="day"] .bot-chat {
+      border-color: rgba(0,0,0,0.12) !important;
+    }
+    [data-theme="day"] .bot-msg.bot {
+      background: rgba(0,0,0,0.04) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+      color: rgba(0,0,0,0.55) !important;
+    }
+
+    /* Input row */
+    [data-theme="day"] .bot-input {
+      border-color: rgba(0,0,0,0.18) !important;
+      color: #000 !important;
+    }
+    [data-theme="day"] .bot-input::placeholder { color: rgba(0,0,0,0.22) !important; }
+    [data-theme="day"] .bot-input:focus { border-color: rgba(0,0,0,0.45) !important; }
+
+    /* Send CTA — stays orange ✓ */
+
+    /* Custom bot builder */
+    [data-theme="day"] .custom-bot-section .section-label { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .custom-bot-form input,
+    [data-theme="day"] .custom-bot-form textarea {
+      border-bottom-color: rgba(0,0,0,0.14) !important;
+      color: #000 !important;
+    }
+    [data-theme="day"] .custom-bot-form input::placeholder,
+    [data-theme="day"] .custom-bot-form textarea::placeholder { color: rgba(0,0,0,0.2) !important; }
+
+    /* Footer */
+    [data-theme="day"] .hub-footer { color: rgba(0,0,0,0.3) !important; }
+    [data-theme="day"] .hub-footer a { color: rgba(0,0,0,0.32) !important; }
+    [data-theme="day"] .hub-footer a:hover { color: rgba(0,0,0,0.6) !important; }
   </style>
 </head>
 <body>
-  <div id="crt-scan"></div>
-  <div id="crt-vignette"></div>
-
   <a href="about.html" class="c-back">← bACK</a>
 
   <div class="hub">
@@ -160,120 +372,230 @@
       <p class="hub-subtitle">aUTOMATED aGENTS · iNTELLIGENCE sURFACING · mARKET sCANNING</p>
     </div>
 
+    <!-- Tier bar -->
+    <div class="tier-bar" id="tier-bar">
+      <span class="tier-bar-label">yOUR tIER</span>
+      <span class="tier-bar-value" id="tier-bar-value">—</span>
+      <a href="join.html" class="tier-bar-change">cHANGE →</a>
+    </div>
+
     <hr class="hub-rule">
 
-    <div class="bot-grid">
-      <div class="bot-card">
-        <span class="bot-status soon">cOMING sOON</span>
-        <p class="bot-name">mARKET sCOUT</p>
-        <p class="bot-desc">Monitors public listings across primary and secondary art markets. Flags pricing anomalies and emerging valuations matching your profile.</p>
+    <!-- Bot grid (populated by JS) -->
+    <div class="bot-grid" id="bot-grid"></div>
+
+    <!-- Bot chat panel (hidden by default) -->
+    <div class="bot-panel" id="bot-panel">
+      <div class="bot-panel-header">
+        <span class="bot-panel-name" id="bot-panel-name">—</span>
+        <button class="bot-panel-close" id="bot-panel-close">← bACK</button>
       </div>
-      <div class="bot-card">
-        <span class="bot-status soon">cOMING sOON</span>
-        <p class="bot-name">pROVENANCE cHECK</p>
-        <p class="bot-desc">Cross-references provenance records and exhibition histories against open databases. Surfaces discrepancies for review.</p>
+      <p class="bot-panel-info" id="bot-panel-info"></p>
+      <div class="bot-chat" id="bot-chat"></div>
+      <div class="bot-input-row">
+        <input type="text" class="bot-input" id="bot-input" placeholder="aSK sOMETHING..." autocomplete="off" style="-webkit-user-select:text;user-select:text;">
+        <button class="bot-send" id="bot-send">sEND</button>
       </div>
-      <div class="bot-card">
-        <span class="bot-status soon">cOMING sOON</span>
-        <p class="bot-name">sECURITY sCAN</p>
-        <p class="bot-desc">Inspects embedded asset metadata and code payloads for anomalies. Flags suspicious patterns in digital artworks.</p>
-      </div>
-      <div class="bot-card">
-        <span class="bot-status soon">cOMING sOON</span>
-        <p class="bot-name">tRADE aLERT</p>
-        <p class="bot-desc">Delivers structured intelligence on trade activity within your network. Configurable thresholds and delivery cadence.</p>
-      </div>
-      <div class="bot-card">
-        <span class="bot-status soon">cOMING sOON</span>
-        <p class="bot-name">cONTENT mODERATOR</p>
-        <p class="bot-desc">Scans submitted listing images for improper or prohibited content before publication. Flags violations directly within the listing for moderator review — no external routing.</p>
+    </div>
+
+    <!-- CURaTOR: custom bot builder (hidden unless CURaTOR) -->
+    <div class="custom-bot-section" id="custom-bot-section" hidden>
+      <p class="section-label">cUSTOM bOT bUILDER</p>
+      <div class="custom-bot-form">
+        <input type="text" id="custom-bot-name" placeholder="bOT nAME" autocomplete="off" maxlength="30">
+        <textarea id="custom-bot-purpose" placeholder="dESCRIBE iTS pURPOSE / iNSTRUCTIONS..."></textarea>
+        <button class="btn-create-bot" id="btn-create-bot">+ cREATE bOT</button>
       </div>
     </div>
 
     <p class="hub-footer">
-      bOT oPERaTIONS is in early development. Active agents will appear here when released.<br>
+      bOT oPERaTIONS · tier-gated access · <a href="join.html">uPGRaDE</a> for more.<br>
       <a href="bot-terms.html">tERMS &amp; pRIVACY</a> · <a href="about.html">aBOUT [aRTS]</a>
     </p>
   </div>
 
+  <!-- Bot operations logic -->
   <script>
   (function(){
-    document.documentElement.style.background='#000';
-    if(sessionStorage.getItem('crt_transition')){
-      sessionStorage.removeItem('crt_transition');
-      doEnter();
-    }
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    var scan=document.getElementById('crt-scan');
-    var vig=document.getElementById('crt-vignette');
-    var busy=false;
+    /* ── Bot definitions ── */
+    var BOTS = [
+      { id:'market-scout',     name:'mARKET sCOUT',      desc:'Monitors public listings across primary and secondary art markets. Flags pricing anomalies and emerging valuations matching your profile.', tier:'aUDIENCE', limit:5 },
+      { id:'provenance-check', name:'pROVENANCE cHECK',  desc:'Cross-references provenance records and exhibition histories against open databases. Surfaces discrepancies for review.',                   tier:'aLLY',     limit:20 },
+      { id:'security-scan',    name:'sECURITY sCAN',     desc:'Inspects embedded asset metadata and code payloads for anomalies. Flags suspicious patterns in digital artworks.',                         tier:'aLLY',     limit:20 },
+      { id:'trade-alert',      name:'tRADE aLERT',       desc:'Delivers structured intelligence on trade activity within your network. Configurable thresholds and delivery cadence.',                    tier:'BRIGaDIER',limit:100 },
+      { id:'content-moderator',name:'cONTENT mODERaTOR', desc:'Integrated into the listing flow. Automatically scans text, images, pricing and provenance before publication. All tiers.',              tier:'aUDIENCE',limit:-1 }
+    ];
 
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
+    var TIER_ORDER = ['aUDIENCE','aLLY','BRIGaDIER','CURaTOR'];
+    var TIER_COLORS = {
+      'aUDIENCE':  { text:'rgba(255,255,255,0.5)',  border:'rgba(255,255,255,0.15)', bg:'rgba(255,255,255,0.03)' },
+      'aLLY':      { text:'rgba(110,230,180,0.7)',   border:'rgba(110,230,180,0.2)',  bg:'rgba(110,230,180,0.04)' },
+      'BRIGaDIER': { text:'rgba(255,180,60,0.75)',   border:'rgba(255,180,60,0.2)',   bg:'rgba(255,180,60,0.04)' },
+      'CURaTOR':   { text:'rgba(255,92,0,0.8)',      border:'rgba(255,92,0,0.25)',    bg:'rgba(255,92,0,0.05)' }
+    };
 
-    function doEnter(){
-      var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<T1){
-          scan.style.opacity=String(lerp(0,1,e/T1));
-          vig.style.opacity='0.95';
-        }else if(e<T2){
-          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
-        }else if(e<T3){
-          var t2=(e-T2)/(T3-T2),et=smooth(t2);
-          document.documentElement.style.clipPath='';
-          scan.style.opacity=String(lerp(1,0,et));
-          vig.style.opacity=String(lerp(0.55,0,et));
-        }else{
-          document.documentElement.style.clipPath='';
-          scan.style.opacity='0'; vig.style.opacity='0';
-        }
-        if(e<T3) requestAnimationFrame(run);
+    function tierLevel(t){ var idx=TIER_ORDER.indexOf(t); return idx>=0?idx:-1; }
+    function hasAccess(user,req){ return tierLevel(user)>=tierLevel(req); }
+
+    /* ── User tier ── */
+    var userTier = 'aUDIENCE';
+    try { userTier = localStorage.getItem('arts_tier') || 'aUDIENCE'; } catch(e){}
+    document.getElementById('tier-bar-value').textContent = userTier;
+
+    /* ── Usage tracking (daily reset) ── */
+    function todayKey(){ return 'arts_bot_usage_'+new Date().toISOString().split('T')[0]; }
+    function getUsage(){ try{return JSON.parse(localStorage.getItem(todayKey())||'{}');}catch(e){return {};} }
+    function recordUsage(botId){ var u=getUsage(); u[botId]=(u[botId]||0)+1; try{localStorage.setItem(todayKey(),JSON.stringify(u));}catch(e){} return u[botId]; }
+    function getUsageCount(botId){ return getUsage()[botId]||0; }
+
+    /* ── Custom bots (CURaTOR) ── */
+    function getCustomBots(){ try{return JSON.parse(localStorage.getItem('arts_custom_bots')||'[]');}catch(e){return [];} }
+    function saveCustomBots(b){ try{localStorage.setItem('arts_custom_bots',JSON.stringify(b));}catch(e){} }
+
+    /* ── Render bot grid ── */
+    var gridEl=document.getElementById('bot-grid');
+    var panelEl=document.getElementById('bot-panel');
+
+    function renderBotGrid(){
+      gridEl.innerHTML='';
+      var allBots=BOTS.slice();
+      if(hasAccess(userTier,'CURaTOR')){
+        getCustomBots().forEach(function(cb){
+          allBots.push({ id:cb.id, name:cb.name, desc:cb.purpose||'cUSTOM bOT', tier:'CURaTOR', limit:-1, custom:true });
+        });
       }
-      requestAnimationFrame(run);
-    }
 
-    function doExit(dest){
-      if(busy)return; busy=true;
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<TR){
-          scan.style.opacity=String(lerp(0,1,e/TR));
-          vig.style.opacity=String(lerp(0,0.95,e/TR));
-        }else if(e<TR+TS){
-          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1'; vig.style.opacity='0.95';
-        }else{
-          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
-          document.documentElement.style.background='#000';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
+      allBots.forEach(function(bot){
+        var accessible=hasAccess(userTier,bot.tier);
+        var colors=TIER_COLORS[bot.tier]||TIER_COLORS['aUDIENCE'];
+        var usage=getUsageCount(bot.id);
+        var limitStr=bot.limit===-1?'uNLIMITED':usage+' / '+bot.limit+' tODAY';
+
+        var card=document.createElement('div');
+        card.className='bot-card '+(accessible?'unlocked':'locked');
+        card.innerHTML=[
+          '<span class="bot-tier-badge" style="color:'+colors.text+';background:'+colors.bg+';border:1px solid '+colors.border+'">'+esc(bot.tier)+'</span>',
+          accessible?'<span class="bot-status active">aCTIVE</span>':'<span class="bot-status locked-st">lOCKED</span>',
+          '<p class="bot-name">'+esc(bot.name)+'</p>',
+          '<p class="bot-desc">'+esc(bot.desc)+'</p>',
+          accessible?'<p class="bot-limit">'+limitStr+'</p>':'<a href="join.html" class="bot-upgrade">uPGRaDE →</a>'
+        ].join('');
+
+        if(accessible){
+          card.addEventListener('click',function(e){
+            if(e.target.closest('a'))return;
+            openBotPanel(bot);
+          });
         }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
+        gridEl.appendChild(card);
+      });
     }
 
-    document.addEventListener('click', function(ev){
-      var a=ev.target.closest('a[href]');
-      if(!a) return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h)) return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey) return;
-      ev.preventDefault();
-      doExit(h);
-    }, true);
+    /* ── Bot panel (chat interface) ── */
+    var activeBot=null;
+
+    function openBotPanel(bot){
+      activeBot=bot;
+      document.getElementById('bot-panel-name').textContent=bot.name;
+      var usage=getUsageCount(bot.id);
+      var limitStr=bot.limit===-1?'uNLIMITED qUERIES':usage+' / '+bot.limit+' qUERIES tODAY';
+      document.getElementById('bot-panel-info').textContent=limitStr;
+      document.getElementById('bot-chat').innerHTML='';
+      document.getElementById('bot-input').value='';
+      gridEl.style.display='none';
+      document.getElementById('tier-bar').style.display='none';
+      document.querySelector('.hub-rule').style.display='none';
+      var cbs=document.getElementById('custom-bot-section');
+      if(cbs&&!cbs.hidden) cbs.style.display='none';
+      panelEl.classList.add('active');
+      document.getElementById('bot-input').focus();
+    }
+
+    function closeBotPanel(){
+      activeBot=null;
+      panelEl.classList.remove('active');
+      gridEl.style.display='';
+      document.getElementById('tier-bar').style.display='';
+      document.querySelector('.hub-rule').style.display='';
+      var cbs=document.getElementById('custom-bot-section');
+      if(cbs&&hasAccess(userTier,'CURaTOR')) cbs.style.display='';
+    }
+
+    document.getElementById('bot-panel-close').addEventListener('click',closeBotPanel);
+
+    /* ── Send message (mock — Phase 2: connect to Claude API) ── */
+    function sendMessage(){
+      if(!activeBot) return;
+      var input=document.getElementById('bot-input');
+      var text=input.value.trim();
+      if(!text) return;
+
+      var usage=getUsageCount(activeBot.id);
+      if(activeBot.limit!==-1 && usage>=activeBot.limit){
+        appendMsg('bot','— dAILY lIMIT rEaCHED. uPGRaDE yOUR tIER fOR mORE qUERIES.');
+        input.value=''; return;
+      }
+
+      appendMsg('user',text);
+      input.value='';
+      recordUsage(activeBot.id);
+
+      var newUsage=getUsageCount(activeBot.id);
+      var limitStr=activeBot.limit===-1?'uNLIMITED qUERIES':newUsage+' / '+activeBot.limit+' qUERIES tODAY';
+      document.getElementById('bot-panel-info').textContent=limitStr;
+
+      /* REQUIRES BACKEND — Phase 2: replace mock with actual API call to Claude */
+      setTimeout(function(){
+        var mocks={
+          'market-scout':     '[ mOCK ] sCaNNING mARKET dATA... nO aNOMALIES dETECTED. pHASE 2 wILL cONNECT tO lIVE mARKET fEEDS.',
+          'provenance-check': '[ mOCK ] cROSS-rEFERENCING pROVENANCE... nO dISCREPANCIES. pHASE 2 wILL qUERY oPEN dATABASES.',
+          'security-scan':    '[ mOCK ] iNSPECTING mETADATA... nO sUSPICIOUS pATTERNS. pHASE 2 wILL sCAN aCTUAL fILES.',
+          'trade-alert':      '[ mOCK ] mONITORING tRADE aCTIVITY... nO aLERTS. pHASE 2 wILL dELIVER rEAL-tIME nOTIFICATIONS.',
+          'content-moderator':'tHIS bOT iS iNTEGRaTED dIRECTLY iNTO tHE lISTiNG fLOW. wHEN yOU sUBMIT a lISTiNG vIA aDD aRT, mODERaTION rUNS aUTOMATICALLY.'
+        };
+        appendMsg('bot', mocks[activeBot.id] || '[ mOCK ] cUSTOM bOT rESPONSE. pHASE 2 wILL cONNECT tO cLAUDE aPI.');
+      }, 800+Math.random()*600);
+    }
+
+    function appendMsg(type,text){
+      var chatEl=document.getElementById('bot-chat');
+      var msg=document.createElement('div');
+      msg.className='bot-msg '+type;
+      msg.textContent=text;
+      chatEl.appendChild(msg);
+      chatEl.scrollTop=chatEl.scrollHeight;
+    }
+
+    document.getElementById('bot-send').addEventListener('click',sendMessage);
+    document.getElementById('bot-input').addEventListener('keydown',function(e){
+      if(e.key==='Enter') sendMessage();
+    });
+
+    /* ── CURaTOR custom bot builder ── */
+    if(hasAccess(userTier,'CURaTOR')){
+      document.getElementById('custom-bot-section').hidden=false;
+    }
+    document.getElementById('btn-create-bot').addEventListener('click',function(){
+      var nameInput=document.getElementById('custom-bot-name');
+      var purposeInput=document.getElementById('custom-bot-purpose');
+      var name=nameInput.value.trim();
+      var purpose=purposeInput.value.trim();
+      if(!name){ nameInput.focus(); return; }
+      var bots=getCustomBots();
+      bots.push({ id:'custom_'+Date.now(), name:name, purpose:purpose||'cUSTOM bOT', createdAt:Date.now() });
+      saveCustomBots(bots);
+      nameInput.value=''; purposeInput.value='';
+      renderBotGrid();
+    });
+
+    /* ── Initial render ── */
+    renderBotGrid();
   })();
   </script>
+
+<script src="theme.js?v=4"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

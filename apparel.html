@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type"         content="website">
+  <meta property="og:url"          content="https://4-arts.com/">
+  <meta property="og:title"        content="[aRTS] — aPPaREL">
+  <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="[aRTS] — aPPaREL">
+  <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <title>[aRTS] — aPPaREL</title>
+  <!-- Gate: redirect to CAPTCHA if not verified; lock bg immediately to kill white flash -->
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+  </script>
+  <link rel="preload" as="image" href="assets/bear.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Page-specific: centered layout ── */
+    body {
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Label row ── */
+    .label-row {
+      display: flex;
+      gap: clamp(0.6rem, 2vw, 1.2rem);
+      align-items: baseline;
+      margin-bottom: clamp(2rem, 5vh, 4rem);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+
+    .label {
+      font-size: clamp(1.1rem, 3vw, 2rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.14em;
+      color: var(--c-text);
+    }
+
+    /* ── Bear grin ── */
+    .bear-wrap {
+      width: clamp(180px, 46vw, 420px);
+      opacity: 0;
+      animation: fadeUp 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s forwards;
+    }
+
+    .bear-wrap img {
+      width: 100%;
+      height: auto;
+      filter: brightness(0) invert(1);
+      display: block;
+    }
+
+    /* ── Hint ── */
+    .hint {
+      margin-top: clamp(1rem, 2.5vh, 2rem);
+      font-size: clamp(0.65rem, 1.5vw, 0.82rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      color: var(--c-text-tertiary);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.55s forwards;
+    }
+
+    /* ── Back button ── */
+    .btn-back {
+      margin-top: clamp(1.6rem, 3.5vh, 3rem);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(180px, 38vw, 300px);
+      height: clamp(48px, 8vh, 72px);
+      border: 2px solid var(--c-accent);
+      border-radius: var(--r-sm);
+      background: transparent;
+      color: var(--c-text);
+      font-family: var(--font);
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background var(--dur-fast), color var(--dur-fast);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.8s forwards;
+    }
+    .btn-back:hover { background: var(--c-accent); color: var(--c-bg); }
+
+    @keyframes fadeUp {
+      0%   { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* ── Voucher discount banner ── */
+    .voucher-banner {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--c-accent);
+      color: var(--c-bg);
+      font-size: 0.58rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.22em;
+      text-align: center;
+      padding: 8px 16px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .voucher-banner[hidden] { display: none; }
+    .voucher-banner-code {
+      background: rgba(0,0,0,0.12);
+      border-radius: 2px;
+      padding: 2px 8px;
+      font-family: 'Courier New', monospace;
+    }
+    .voucher-banner-dismiss {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(0,0,0,0.45);
+      font-family: var(--font);
+      font-size: 0.7rem;
+      font-weight: var(--fw-bold);
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    .voucher-banner-dismiss:hover { color: var(--c-bg); }
+
+    /* ── Fixed nav (minimal: logo left, about right) ── */
+    .site-logo {
+      position: fixed;
+      top: 28px; left: 32px;
+      z-index: 100;
+    }
+
+    a.nav-about {
+      position: fixed;
+      top: 28px; right: 32px;
+      text-decoration: none;
+      color: var(--c-text);
+      font-size: 0.9rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+      transition: opacity var(--dur-fast);
+      z-index: 100;
+    }
+    a.nav-about:hover { opacity: 1; }
+
+    /* ── Day mode overrides ── */
+    [data-theme="day"] .bear-wrap img { filter: none; }
+    [data-theme="day"] .hint { color: var(--c-text-tertiary); }
+
+    /* ── dvh fix ── */
+    @supports (height: 100dvh) {
+      body { height: 100dvh; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient effects -->
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+
+  <!-- Apparel voucher discount banner (shown if active voucher in localStorage) -->
+  <div class="voucher-banner" id="voucher-banner" hidden>
+    <span>11% oFF — yOUR vOUCHER iS aCTIVE:</span>
+    <span class="voucher-banner-code" id="voucher-banner-code">ARTS-11-APPAREL</span>
+    <span id="voucher-banner-days"></span>
+    <button class="voucher-banner-dismiss" id="voucher-banner-dismiss" aria-label="close">&times;</button>
+  </div>
+  <script>
+  (function(){
+    var VOUCHER_KEY      = 'arts_apparel_voucher_ts';
+    var VOUCHER_DURATION = 30 * 24 * 60 * 60 * 1000;
+    try {
+      var raw = localStorage.getItem(VOUCHER_KEY);
+      if (raw) {
+        var claimedAt = parseInt(raw, 10);
+        var now = Date.now();
+        if (now - claimedAt < VOUCHER_DURATION) {
+          var daysLeft = Math.ceil((VOUCHER_DURATION - (now - claimedAt)) / (24 * 60 * 60 * 1000));
+          var banner = document.getElementById('voucher-banner');
+          var daysEl = document.getElementById('voucher-banner-days');
+          if (banner) { banner.hidden = false; }
+          if (daysEl) { daysEl.textContent = '(' + daysLeft + 'd rEMAINING)'; }
+        }
+      }
+    } catch(e){}
+    var dismiss = document.getElementById('voucher-banner-dismiss');
+    if (dismiss) {
+      dismiss.addEventListener('click', function(){
+        var b = document.getElementById('voucher-banner');
+        if (b) b.hidden = true;
+      });
+    }
+  })();
+  </script>
+
+  <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+  <a href="about.html" class="nav-about">aBOUT</a>
+
+  <div class="label-row">
+    <span class="label">aPPaREL</span>
+  </div>
+
+  <div class="bear-wrap">
+    <img src="assets/bear.png" alt="">
+  </div>
+
+  <p class="hint">... cOMING sOON ...</p>
+
+  <a href="assets.html" class="btn-back">gO bACK</a>
+
+  <!-- Smooth page transition (replaces CRT exit) -->
+  <script>
+  (function(){
+    var busy=false;
+    function doExit(dest){
+      if(busy)return;busy=true;
+      document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
+      document.body.style.opacity='0';
+      document.body.style.transform='scale(0.99)';
+      setTimeout(function(){window.location.href=dest;},220);
+    }
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest('a[href]');
+      if(!a)return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
+      ev.preventDefault();
+      doExit(h);
+    },true);
+  })();
+  </script>
+
+  <!-- Nav & logo hover -->
+  <script>
+  (function(){
+    var DELAY = 40;
+    function navHover(el){
+      var orig=el.textContent, timers=[], state=0;
+      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      function render(n){
+        var s=orig[0];
+        for(var i=1;i<orig.length;i++) s+=(i<=n ? orig[i].toLowerCase() : orig[i]);
+        el.textContent=s;
+      }
+      el.addEventListener('mouseenter',function(){
+        clr(); var from=state;
+        for(var i=0;i<orig.length-1-from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));
+        })(i);
+      });
+      el.addEventListener('mouseleave',function(){
+        clr(); var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    }
+    document.querySelectorAll('a.nav-about').forEach(navHover);
+
+    /* Logo [a] expand */
+    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner, timers=[], state=0;
+      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
+      logo.addEventListener('mouseenter',function(){
+        clr(); var from=state;
+        for(var i=from;i<inner.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave',function(){
+        clr(); var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    });
+  })();
+  </script>
+<script src="theme.js?v=4"></script>
+</body>
+</html>

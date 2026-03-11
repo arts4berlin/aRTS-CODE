@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type"         content="website">
+  <meta property="og:url"          content="https://4-arts.com/boutique.html">
+  <meta property="og:title"        content="[aRTS] — bOUTIQUE">
+  <meta property="og:description"  content="pREMIUM aRT — eXCLUSIVE tO pAID mEMBERS">
+  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="[aRTS] — bOUTIQUE">
+  <meta name="twitter:description" content="pREMIUM aRT — eXCLUSIVE tO pAID mEMBERS">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <title>[aRTS] — bOUTIQUE</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Page-specific: boutique access gate ── */
+    .access-gate {
+      max-width: 560px;
+      margin: clamp(60px, 15vh, 120px) auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(18px, 3vh, 32px);
+    }
+    .gate-label {
+      font-size: 0.62rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.32em;
+      color: var(--c-text-tertiary);
+      text-transform: uppercase;
+    }
+    .gate-title {
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+    }
+    .gate-desc {
+      font-size: 0.72rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.12em;
+      color: var(--c-text-muted);
+      line-height: 1.8;
+      max-width: 420px;
+    }
+    .gate-tiers {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .gate-tier {
+      font-family: var(--font);
+      font-size: 0.68rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.14em;
+      color: var(--c-text-secondary);
+      padding: 4px 10px;
+      border: 1px solid var(--c-border-subtle);
+      border-radius: 3px;
+    }
+    .btn-upgrade {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font);
+      font-size: clamp(0.82rem, 2vw, 0.96rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.18em;
+      text-decoration: none;
+      padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
+      background: var(--c-accent);
+      color: var(--c-bg);
+      border: 2px solid var(--c-accent);
+      border-radius: 4px;
+      transition: background var(--dur-fast), color var(--dur-fast);
+    }
+    .btn-upgrade:hover { background: var(--c-bg); color: var(--c-accent); }
+    .gate-login {
+      font-size: 0.62rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.14em;
+      color: var(--c-text-tertiary);
+    }
+    .gate-login a {
+      color: var(--c-text-muted);
+      text-decoration: none;
+      transition: color var(--dur-fast);
+    }
+    .gate-login a:hover { color: var(--c-accent); }
+
+    /* ── Loading / empty state ── */
+    .art-state {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      font-size: 0.7rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.28em;
+      color: var(--c-text-tertiary);
+    }
+
+    /* ── Page entrance ── */
+    @keyframes boutiqueFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .site-main { animation: boutiqueFadeIn 0.5s ease both; }
+
+    /* ── Day mode: gate overrides ── */
+    [data-theme="day"] .gate-title { color: var(--c-text); }
+    [data-theme="day"] .gate-desc { color: var(--c-text-secondary); }
+    [data-theme="day"] .gate-tier { color: var(--c-text-secondary); border-color: var(--c-border); }
+    [data-theme="day"] .btn-upgrade { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+    [data-theme="day"] .btn-upgrade:hover { background: var(--c-bg); color: var(--c-accent); }
+  </style>
+</head>
+<body>
+
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+  <div class="ambient-orb ambient-orb--bottom"></div>
+
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
+      <a href="art.html">aRT</a>
+      <a href="boutique.html" aria-current="page">bOUTIQUE</a>
+      <a href="about.html">aBOUT</a>
+      <a href="inquire.html">TaLK</a>
+      <a href="work.html">wORK</a>
+    </nav>
+    <button class="site-burger" id="burger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <main class="site-main" id="boutique-main">
+    <p class="art-state" id="art-loading">LOADING…</p>
+  </main>
+
+  <script>
+  (function(){
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    /* ── Tier check ── */
+    var PAID = { 'aLLY': true, 'BRIGaDIER': true, 'CURaTOR': true };
+    var tier   = localStorage.getItem('arts_tier') || '';
+    var hash   = localStorage.getItem('arts_id_hash') || '';
+    var active = localStorage.getItem('arts_active') || '';
+
+    function isPaidMember() {
+      return !!(hash && PAID[tier] && active === 'true');
+    }
+
+    function showGate() {
+      document.getElementById('boutique-main').innerHTML = [
+        '<div class="access-gate">',
+          '<p class="gate-label">bOUTIQUE</p>',
+          '<h1 class="gate-title">eXCLUSIVE tO<br>pAID mEMBERS</h1>',
+          '<p class="gate-desc">tHE bOUTIQUE fEATURES pREMIUM aRTWORKS cURATED fOR sERIOUS cOLLECTORS. uPGRaDE yOUR mEMBERSHIP tO aCCESS.</p>',
+          '<div class="gate-tiers">',
+            '<span class="gate-tier">aLLY \u20ac3/mo</span>',
+            '<span class="gate-tier">BRIGaDIER \u20ac33/mo</span>',
+            '<span class="gate-tier">CURaTOR \u20ac333/mo</span>',
+          '</div>',
+          '<a href="join.html" class="btn-upgrade">jOIN nOW</a>',
+          hash ? '<p class="gate-login">cURRENT tIER: ' + esc(tier || 'aUDIENCE') + ' \u2014 <a href="join.html">uPGRaDE</a></p>' : '<p class="gate-login">aLREADY a mEMBER? <a href="id.html">lOG iN</a></p>',
+        '</div>'
+      ].join('');
+    }
+
+    if (!isPaidMember()) {
+      showGate();
+      return;
+    }
+
+    /* ── Render boutique grid ── */
+    var _allPieces = [];
+
+    function renderGrid(pieces) {
+      var shown = pieces.filter(function(p){ return p.boutique && p.status !== 'pENDING'; });
+      if (!shown.length) {
+        return '<p class="art-state">nO bOUTIQUE piECES yET — cOMING sOON</p>';
+      }
+
+      var cards = shown.map(function(p, i){
+        var isSold = /sold|nOT aVAILABLE/i.test(p.status || '');
+        var priceHtml = p.price && p.price !== '\u2014'
+          ? esc(p.price) + ' <span class="euro">' + esc(p.currency || '\u20ac') + '</span>'
+          : '<span style="opacity:0.3">\u2014</span>';
+        var imgHtml = p.image
+          ? '<img class="piece-img" src="'+ esc(p.image) +'" alt="'+ esc(p.title) +'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+'>'
+          : '<div class="piece-img" style="background:rgba(255,255,255,.04);height:100%"></div>';
+
+        return [
+          '<div class="piece-card">',
+            '<div class="card-img-wrap">'+ imgHtml +'</div>',
+            '<div class="card-body">',
+              '<p class="card-index">bOUTIQUE #'+ esc(String(p.id).padStart(3,'0')) +' \xB7 '+ esc(p.year||'') +'</p>',
+              '<h2 class="card-title">'+ esc(p.title) +'</h2>',
+              p.artist ? '<p class="card-artist">'+ esc(p.artist) +'</p>' : '',
+              p.media ? '<p class="card-media">'+ esc(p.media) +'</p>' : '',
+              '<div class="card-rule"></div>',
+              '<div class="card-price-row">',
+                '<span class="card-price">'+ priceHtml +'</span>',
+                '<span class="card-status'+(isSold?' sold':'')+'">'+esc(p.status||'aVAILABLE')+'</span>',
+              '</div>',
+              '<div class="card-actions">',
+                '<button class="btn-inq btn-inq-fill" style="border-radius:8px" data-view-id="'+ esc(p.id) +'">vIEW</button>',
+              '</div>',
+            '</div>',
+          '</div>'
+        ].join('');
+      }).join('');
+
+      var savedView = (localStorage.getItem('arts_view_boutique') || 'grid');
+      return [
+        '<div class="listing-header">',
+          '<div class="listing-header-left">',
+            '<span class="listing-label">bOUTIQUE</span>',
+            '<span class="listing-count">'+ shown.length +' piECE'+(shown.length!==1?'S':'')+'</span>',
+          '</div>',
+          '<div class="view-toggle">',
+            '<button class="view-toggle-btn'+(savedView==='grid'?' active':'')+'" data-view="grid">gRID</button>',
+            '<button class="view-toggle-btn'+(savedView==='list'?' active':'')+'" data-view="list">LiST</button>',
+          '</div>',
+        '</div>',
+        '<div class="art-grid'+(savedView==='list'?' view-list':'')+'" id="art-grid">'+ cards +'</div>'
+      ].join('');
+    }
+
+    /* ── View toggle ── */
+    function bindViewToggle(container) {
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.view-toggle-btn');
+        if (!btn) return;
+        var view = btn.getAttribute('data-view');
+        localStorage.setItem('arts_view_boutique', view);
+        var grid = document.getElementById('art-grid');
+        var btns = container.querySelectorAll('.view-toggle-btn');
+        btns.forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-view') === view); });
+        if (grid) grid.classList.toggle('view-list', view === 'list');
+      });
+    }
+
+    /* ── Detail modal (lazy-init) ── */
+    var detailBackdrop, detailSheet, detailGallery, detailDots, detailInfo, detailCloseBtn;
+    var _detailInited = false;
+
+    /* ── Encrypted favourites (Web Crypto API) ── */
+    var FAV_KEY = 'arts_favourites_enc';
+    var FAV_SALT = new Uint8Array([97,82,84,83,95,102,97,118,95,115,97,108,116,95,118,49]);
+    async function _deriveKey() {
+      var hash = localStorage.getItem('arts_id_hash');
+      if (!hash) return null;
+      var enc = new TextEncoder();
+      var km = await crypto.subtle.importKey('raw', enc.encode(hash), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey({ name:'PBKDF2', salt:FAV_SALT, iterations:100000, hash:'SHA-256' }, km, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']);
+    }
+    async function _encryptFavs(data) {
+      var key = await _deriveKey(); if (!key) return;
+      var enc = new TextEncoder(), iv = crypto.getRandomValues(new Uint8Array(12));
+      var ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv:iv }, key, enc.encode(JSON.stringify(data)));
+      var buf = new Uint8Array(iv.length + ct.byteLength); buf.set(iv); buf.set(new Uint8Array(ct), iv.length);
+      localStorage.setItem(FAV_KEY, btoa(String.fromCharCode.apply(null, buf)));
+    }
+    async function _decryptFavs() {
+      var key = await _deriveKey(); if (!key) return { v:1, items:[] };
+      var raw = localStorage.getItem(FAV_KEY); if (!raw) return { v:1, items:[] };
+      try { var b = Uint8Array.from(atob(raw), function(c){ return c.charCodeAt(0); }); var dec = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b.slice(0,12) }, key, b.slice(12)); return JSON.parse(new TextDecoder().decode(dec)); } catch(e) { return { v:1, items:[] }; }
+    }
+    async function toggleFav(pid) {
+      var d = await _decryptFavs(), idx = -1;
+      for (var i = 0; i < d.items.length; i++) { if (d.items[i].id === pid) { idx = i; break; } }
+      if (idx >= 0) d.items.splice(idx, 1); else d.items.push({ id: pid, at: Date.now() });
+      await _encryptFavs(d); return idx < 0;
+    }
+    async function isFav(pid) {
+      var d = await _decryptFavs();
+      for (var i = 0; i < d.items.length; i++) { if (d.items[i].id === pid) return true; } return false;
+    }
+    function _updateFavBtn(btn, active) {
+      if (active) { btn.classList.add('is-fav'); btn.querySelector('svg').style.fill='#fff'; btn.querySelector('svg').style.stroke='#fff'; }
+      else { btn.classList.remove('is-fav'); btn.querySelector('svg').style.fill='none'; btn.querySelector('svg').style.stroke='rgba(255,255,255,0.5)'; }
+    }
+
+    function initDetailEls() {
+      if (_detailInited) return;
+      detailBackdrop = document.getElementById('detail-backdrop');
+      detailSheet    = document.getElementById('detail-sheet');
+      detailGallery  = document.getElementById('detail-gallery');
+      detailDots     = document.getElementById('detail-dots');
+      detailInfo     = document.getElementById('detail-info');
+      detailCloseBtn = document.getElementById('detail-close');
+      if (!detailBackdrop) return;
+      _detailInited = true;
+      detailCloseBtn.addEventListener('click', function(e) { e.stopPropagation(); closeDetail(); });
+      detailBackdrop.addEventListener('click', function(e) { if (e.target === detailBackdrop && !detailBackdrop._opening) closeDetail(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && detailBackdrop.classList.contains('is-open')) closeDetail(); });
+      /* Favourite button click */
+      detailSheet.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn-fav'); if (!btn) return;
+        e.stopPropagation();
+        toggleFav(btn.dataset.favId).then(function(added) {
+          _updateFavBtn(btn, added);
+          if (added) _awardXP(10, 'fAVOURITE');
+        });
+      });
+    }
+
+    /* ── XP helper ── */
+    function _awardXP(pts, label) {
+      try {
+        if (!localStorage.getItem('arts_id_hash')) return;
+        var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+        localStorage.setItem('arts_points', String(cur + pts));
+        var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
+        pending.push({ label: label, pts: pts });
+        sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
+      } catch(e) {}
+    }
+
+    function openDetail(pieceId) {
+      initDetailEls();
+      var p = null;
+      for (var i = 0; i < _allPieces.length; i++) { if (_allPieces[i].id === pieceId) { p = _allPieces[i]; break; } }
+      if (!p) return;
+
+      var imgs = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
+      detailGallery.innerHTML = imgs.map(function(src, idx) {
+        return '<img src="' + esc(src) + '" alt="' + esc(p.title) + ' ' + (idx+1) + '" ' + (idx===0?'':'loading="lazy"') + '>';
+      }).join('');
+      detailDots.innerHTML = imgs.length > 1 ? imgs.map(function(_, idx) { return '<span' + (idx===0?' class="active"':'') + '></span>'; }).join('') : '';
+
+      if (imgs.length > 1) {
+        detailGallery.onscroll = function() {
+          var scrollLeft = detailGallery.scrollLeft;
+          var imgWidth = detailGallery.querySelector('img') ? detailGallery.querySelector('img').offsetWidth : 1;
+          var activeIdx = Math.round(scrollLeft / imgWidth);
+          var dots = detailDots.querySelectorAll('span');
+          for (var d = 0; d < dots.length; d++) { dots[d].className = d === activeIdx ? 'active' : ''; }
+        };
+      }
+
+      var isSold = /sold|nOT aVAILABLE/i.test(p.status || '');
+      var priceHtml = p.price && p.price !== '\u2014'
+        ? esc(p.price) + ' <span class="euro">' + esc(p.currency || '\u20ac') + '</span>'
+        : '<span style="opacity:0.3">\u2014</span>';
+
+      var meta = '';
+      function addMeta(label, val, cls) {
+        if (!val) return;
+        meta += '<div class="detail-meta-item"><span class="detail-meta-label">' + label + '</span><span class="detail-meta-val' + (cls?' '+cls:'') + '">' + esc(val) + '</span></div>';
+      }
+      addMeta('dIMENSIONS', p.dimensions);
+      addMeta('eDITION', p.edition);
+      addMeta('cONDITION', p.condition);
+      addMeta('pROVENANCE', p.provenance);
+      addMeta('cERTIFICATE', p.certificate ? 'yES' : (p.certificate === false ? 'nO' : ''), p.certificate ? 'cert-yes' : '');
+      addMeta('lOCATION', p.location);
+      addMeta('sHIPPING', p.shipping);
+
+      var inquireHref = 'inquire.html?piece=' + encodeURIComponent(p.title);
+
+      detailInfo.innerHTML = [
+        '<p class="detail-index">bOUTIQUE #' + esc(String(p.id).padStart(3,'0')) + ' \xB7 ' + esc(p.year||'') + '</p>',
+        '<h2 class="detail-title">' + esc(p.title) + '</h2>',
+        p.artist ? '<p class="detail-artist">' + esc(p.artist) + '</p>' : '',
+        p.media ? '<p class="detail-media">' + esc(p.media) + '</p>' : '',
+        '<div class="detail-rule"></div>',
+        meta ? '<div class="detail-meta">' + meta + '</div><div class="detail-rule"></div>' : '',
+        '<div class="detail-price-row">',
+          '<span class="detail-price">' + priceHtml + '</span>',
+          '<span class="detail-status' + (isSold?' sold':'') + '">' + esc(p.status||'aVAILABLE') + '</span>',
+        '</div>',
+        '<div class="detail-actions">',
+          '<a href="' + inquireHref + '" class="btn-inq btn-inq-fill" style="border-radius:8px 0 0 8px">iNQUiRE</a>',
+          '<button class="btn-fav" data-fav-id="' + esc(p.id) + '">',
+            '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+            'fAVOURITe',
+          '</button>',
+          '<button class="btn-share" data-share-title="' + esc(p.title) + '">',
+            '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>',
+            ' sHARE',
+          '</button>',
+        '</div>'
+      ].join('');
+
+      /* Update favourite button state */
+      var favBtn = detailInfo.querySelector('.btn-fav');
+      if (favBtn) { isFav(p.id).then(function(a) { _updateFavBtn(favBtn, a); }); }
+
+      /* Share button */
+      var shareBtn = detailInfo.querySelector('.btn-share');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var url = window.location.origin + '/boutique.html?piece=' + encodeURIComponent(p.id);
+          var title = p.title + ' — [aRTS]';
+          if (navigator.share) {
+            navigator.share({ title: title, url: url }).then(function() { _awardXP(30, 'sHARE'); }).catch(function(){});
+          } else {
+            navigator.clipboard.writeText(url).then(function() {
+              shareBtn.textContent = 'cOPIED';
+              setTimeout(function() { shareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> sHARE'; }, 1600);
+              _awardXP(30, 'sHARE');
+            }).catch(function(){});
+          }
+        });
+      }
+
+      detailBackdrop.hidden = false;
+      detailBackdrop._opening = true;
+      requestAnimationFrame(function() { requestAnimationFrame(function() {
+        detailBackdrop.classList.add('is-open');
+        detailBackdrop._opening = false;
+      }); });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDetail() {
+      if (detailBackdrop._opening) return;
+      detailBackdrop.classList.remove('is-open');
+      setTimeout(function() {
+        detailBackdrop.hidden = true;
+        detailGallery.innerHTML = '';
+        detailInfo.innerHTML = '';
+        document.body.style.overflow = '';
+      }, 260);
+    }
+
+    function bindCardClicks(container) {
+      container.addEventListener('click', function(e) {
+        if (e.target.closest('a[href]')) return;
+        var card = e.target.closest('.piece-card');
+        if (!card) return;
+        var viewBtn = card.querySelector('[data-view-id]');
+        if (viewBtn) { e.preventDefault(); e.stopPropagation(); openDetail(viewBtn.dataset.viewId); }
+      });
+    }
+
+    /* ── Fetch pieces ── */
+    fetch('data/pieces.json?v=' + Date.now())
+      .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+      .then(function(pieces){
+        _allPieces = pieces;
+        var main = document.getElementById('boutique-main');
+        main.innerHTML = renderGrid(_allPieces);
+        bindCardClicks(main);
+        bindViewToggle(main);
+      })
+      .catch(function(){
+        document.getElementById('boutique-main').innerHTML = '<p class="art-state">uNABLE tO lOAD bOUTIQUE piECES</p>';
+      });
+  })();
+  </script>
+
+  <!-- Nav hover + logo expand -->
+  <script>
+  (function(){
+    var DELAY=40;
+    function navHover(el){var orig=el.textContent,timers=[],state=0;function clr(){timers.forEach(clearTimeout);timers.length=0;}function render(n){var s=orig[0];for(var i=1;i<orig.length;i++)s+=(i<=n?orig[i].toLowerCase():orig[i]);el.textContent=s;}el.addEventListener('mouseenter',function(){clr();var from=state;for(var i=0;i<orig.length-1-from;i++)(function(i){timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));})(i);});el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});}
+    document.querySelectorAll('.site-nav a').forEach(navHover);
+    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){var inner=logo.dataset.inner,timers=[],state=0;function clr(){timers.forEach(clearTimeout);timers.length=0;}function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});});
+  })();
+  </script>
+
+  <!-- Detail modal -->
+  <div class="detail-backdrop" id="detail-backdrop" hidden>
+    <div class="detail-sheet" id="detail-sheet">
+      <button class="detail-close" id="detail-close">[×]</button>
+      <div class="detail-gallery" id="detail-gallery"></div>
+      <div class="detail-gallery-dots" id="detail-dots"></div>
+      <div class="detail-info" id="detail-info"></div>
+    </div>
+  </div>
+
+<script src="theme.js?v=4"></script>
+<script src="btn-fx.js"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
+</body>
+</html>

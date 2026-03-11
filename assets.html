@@ -20,6 +20,8 @@
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
   <title>[aRTS] — aSSETS</title>
   <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -28,35 +30,10 @@
   <link rel="prefetch" href="apparel.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo {
-      position: fixed;
-      top: 28px;
-      left: 32px;
-      z-index: 100;
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
-    }
-
+    /* ── Page-specific: fullscreen centred chooser ── */
     .question {
       text-align: center;
       margin-bottom: clamp(1.4rem, 3vh, 2.2rem);
@@ -64,7 +41,7 @@
 
     .small {
       font-size: 0.82rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.15em;
       opacity: 0.65;
       display: block;
@@ -73,255 +50,199 @@
 
     .large {
       font-size: clamp(1.8rem, 4.5vw, 3rem);
-      font-weight: 700;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.1em;
       display: block;
     }
 
-    .buttons { display: flex; }
-
-    /* Adjacent buttons form one unified box */
-    .buttons .btn:first-child { border-radius: 4px 0 0 4px; border-right: 1px solid rgba(255,255,255,0.25); }
-    .buttons .btn:last-child  { border-radius: 0 4px 4px 0; border-left: none; }
-
-    .btn {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.9rem, 2.2vw, 1.25rem);
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      cursor: pointer;
-      padding: clamp(0.8rem, 1.6vh, 1.1rem) clamp(1.8rem, 4vw, 3.2rem);
-      border: 2px solid #fff;
-      border-radius: 4px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s, color 0.15s;
+    /* ── Choice cards ── */
+    .choices {
+      display: flex;
+      gap: clamp(0.7rem, 2vw, 1.2rem);
+      align-items: stretch;
     }
 
-    .btn-fill  { background: #fff; color: #000; }
-    .btn-fill:hover  { background: #e2e2e2; border-color: #e2e2e2; }
-    .btn-ghost { background: transparent; color: #fff; }
-    .btn-ghost:hover { background: #fff; color: #000; }
-
-    .nav-about {
-      position: fixed;
-      top: 28px; right: 32px;
+    .choice-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: clamp(1rem, 2.6vw, 2rem) clamp(1.1rem, 3vw, 2.2rem);
+      min-width: clamp(150px, 26vw, 200px);
+      width: fit-content;
+      min-height: clamp(110px, 22vh, 170px);
+      border: 1.5px solid var(--c-border-strong);
+      border-radius: 6px;
       text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.7;
-      transition: opacity 0.15s;
+      cursor: crosshair;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
     }
-    .nav-about:hover { opacity: 1; }
-  
+
+    /* aRT card — fill on hover */
+    .choice-art { background: transparent; color: var(--c-text); }
+    .choice-art::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--c-text);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.24s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    .choice-art:hover { border-color: var(--c-text); }
+    .choice-art:hover::before { transform: scaleY(1); }
+    .choice-art:hover .choice-title { color: var(--c-bg); }
+    .choice-art:hover .choice-sub   { color: rgba(0,0,0,0.42); }
+
+    /* aPPaREL card — accent bg, dark fill on hover */
+    .choice-apparel { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-bg); }
+    .choice-apparel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--c-bg);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.24s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    .choice-apparel:hover::before  { transform: scaleY(1); }
+    .choice-apparel:hover .choice-title { color: var(--c-accent); }
+    .choice-apparel:hover .choice-sub   { color: var(--c-accent-muted); }
+
+    .choice-eyebrow {
+      font-size: 0.4rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      opacity: 0.38;
+      position: relative;
+      z-index: 1;
+    }
+
+    .choice-title {
+      font-size: clamp(1.5rem, 5vw, 2.8rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.08em;
+      line-height: 1;
+      margin-top: auto;
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      transition: color 0.15s;
+    }
+
+    .choice-sub {
+      font-size: 0.48rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.13em;
+      line-height: 1.6;
+      margin-top: 0.45rem;
+      opacity: 0.52;
+      position: relative;
+      z-index: 1;
+      transition: color 0.15s, opacity 0.15s;
+    }
+
+    @media (max-width: 420px) {
+      .choices { gap: 0.5rem; }
+      .choice-card { width: clamp(130px, 44vw, 190px); min-height: 100px; }
+    }
+
     /* ── dvh fix: excludes iOS Safari address bar ── */
     @supports (height: 100dvh) {
       body { height: 100dvh; }
     }
-    /* ── Mobile: safe area + text-size ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
-    .logo, .nav-about, header { touch-action: manipulation; }
-    .btn, button, a { touch-action: manipulation; }
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
-    * { -webkit-user-select: none; user-select: none; }
-    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
-    html { touch-action: manipulation; }
+
+    /* ── Page entrance animation ── */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .question, .choices { animation: pageIn 0.5s ease both; }
+    .choices { animation-delay: 0.1s; }
+
+    /* ── Day mode overrides ── */
+    [data-theme="day"] .choice-card { border-color: var(--c-border-hover); }
+    [data-theme="day"] .choice-art::before { background: var(--c-bg); }
+    [data-theme="day"] .choice-art:hover { border-color: var(--c-bg); }
+    [data-theme="day"] .choice-art:hover .choice-title { color: var(--c-text) !important; }
+    [data-theme="day"] .choice-art:hover .choice-sub { color: var(--c-text-secondary) !important; }
+
+    [data-theme="day"] .choice-apparel { background: var(--c-accent) !important; border-color: var(--c-accent) !important; }
+    [data-theme="day"] .choice-apparel .choice-title,
+    [data-theme="day"] .choice-apparel .choice-eyebrow,
+    [data-theme="day"] .choice-apparel .choice-sub { color: #fff !important; }
+    [data-theme="day"] .choice-apparel:hover .choice-title { color: var(--c-accent) !important; }
+    [data-theme="day"] .choice-apparel:hover .choice-sub   { color: color-mix(in srgb, var(--c-accent) 55%, transparent) !important; }
 </style>
 </head>
-<body>
-  <!-- CRT: prevent flash on arrival -->
-  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
+<body style="height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;">
 
-  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-  <a href="about.html" class="nav-about">aBOUT</a>
+  <!-- Ambient effects -->
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+
+  <a href="home.html" class="site-logo" data-inner="RTS" style="position:fixed;top:28px;left:32px;z-index:100">[a]</a>
+  <a href="about.html" class="nav-about" style="position:fixed;top:28px;right:32px;z-index:100;text-decoration:none;color:var(--c-text);font-size:0.9rem;font-weight:300;letter-spacing:0.1em;opacity:0.7;transition:opacity 0.15s">aBOUT</a>
 
   <div class="question">
     <span class="small">SELECT</span>
     <span class="large">aSSETS:</span>
   </div>
 
-  <div class="buttons">
-    <a href="art.html"     class="btn btn-ghost btn-art">aRT</a>
-    <a href="apparel.html" class="btn btn-fill  btn-apparel">aPPaREL</a>
+  <div class="choices">
+    <a href="art.html" class="choice-card choice-art btn-art">
+      <span class="choice-eyebrow">01 — gALLERY</span>
+      <span class="choice-title">aRT</span>
+      <span class="choice-sub">paintings<br>prints · sculptures</span>
+    </a>
+    <a href="apparel.html" class="choice-card choice-apparel btn-apparel">
+      <span class="choice-eyebrow">02 — wEaR</span>
+      <span class="choice-title">aPPaREL</span>
+      <span class="choice-sub">wEaR tHE<br>mOVEMENT</span>
+    </a>
   </div>
 
-  <script>
-    /* aRT — typewriter scramble on hover (desktop) / auto (touch) */
-    (function () {
-      var btn    = document.querySelector('.btn-art');
-      var TARGET = 'aRT';
-      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-      var FRAMES = 18, RATE = 45;
-      var timer  = null;
-      function runScramble() {
-        clearInterval(timer);
-        var step = 0;
-        timer = setInterval(function () {
-          var out = '';
-          for (var i = 0; i < TARGET.length; i++) {
-            out += (i < Math.floor(step * TARGET.length / FRAMES))
-              ? TARGET[i]
-              : POOL[Math.floor(Math.random() * POOL.length)];
-          }
-          btn.textContent = out;
-          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
-        }, RATE);
-      }
-      if (window.matchMedia('(hover: none)').matches) {
-        setTimeout(runScramble, 700);
-        setInterval(runScramble, 7000);
-      } else {
-        btn.addEventListener('mouseenter', runScramble);
-        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
-      }
-    })();
-
-    /* aPPaREL — typewriter scramble on hover (desktop) / auto (touch) */
-    (function () {
-      var btn    = document.querySelector('.btn-apparel');
-      var TARGET = 'aPPaREL';
-      var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
-      var FRAMES = 18, RATE = 45;
-      var timer  = null;
-      function runScramble() {
-        clearInterval(timer);
-        var step = 0;
-        timer = setInterval(function () {
-          var out = '';
-          for (var i = 0; i < TARGET.length; i++) {
-            out += (i < Math.floor(step * TARGET.length / FRAMES))
-              ? TARGET[i]
-              : POOL[Math.floor(Math.random() * POOL.length)];
-          }
-          btn.textContent = out;
-          if (++step > FRAMES) { clearInterval(timer); btn.textContent = TARGET; }
-        }, RATE);
-      }
-      if (window.matchMedia('(hover: none)').matches) {
-        setTimeout(runScramble, 1400);
-        setInterval(runScramble, 7000);
-      } else {
-        btn.addEventListener('mouseenter', runScramble);
-        btn.addEventListener('mouseleave', function () { clearInterval(timer); btn.textContent = TARGET; });
-      }
-    })();
-  </script>
-
+  <!-- Scrambler -->
   <script>
     (function () {
-      function reveal() {
-        var c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
-        document.body.appendChild(c);
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            c.style.transition = 'opacity 0.22s ease';
-            c.style.opacity    = '0';
-            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
-          });
-        });
-      }
-      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
-    })();
-  </script>
+      var POOL = '0123456789@#%&!?\/+~^<>';
+      var FRAMES = 18, RATE = 40;
 
-  <!-- CRT channel-change transition -->
-  <script>
-  (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);
-      document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
+      function makeScrambler(card, NAME) {
+        var title = card && card.querySelector('.choice-title');
+        if (!card || !title) return;
+        title.textContent = NAME;
+        var timer = null;
 
-    function doEnter(){
-      mkL();
-      var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<T1){
-          scan.style.opacity=String(lerp(0,1,e/T1));
-          vig.style.opacity='0.95';
-        }else if(e<T2){
-          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
-        }else if(e<T3){
-          var t2=(e-T2)/(T3-T2),et=smooth(t2);
-          document.documentElement.style.clipPath='';
-          scan.style.opacity=String(lerp(1,0,et));
-          vig.style.opacity=String(lerp(0.55,0,et));
-        }else{
-          document.documentElement.style.clipPath='';
-          if(scan&&scan.parentNode)scan.parentNode.removeChild(scan);
-          if(vig&&vig.parentNode)vig.parentNode.removeChild(vig);
-          scan=null;vig=null;busy=false;return;
+        function runScramble(finalText) {
+          clearInterval(timer);
+          var step = 0;
+          var len = finalText.length;
+          timer = setInterval(function () {
+            var out = '';
+            for (var i = 0; i < len; i++) {
+              out += (i < Math.floor(step * len / FRAMES))
+                ? finalText[i]
+                : POOL[Math.floor(Math.random() * POOL.length)];
+            }
+            title.textContent = out;
+            if (++step > FRAMES) { clearInterval(timer); title.textContent = finalText; }
+          }, RATE);
         }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
 
-    function doExit(dest){
-      if(busy)return;busy=true;
-      mkL();
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<TR){
-          scan.style.opacity=String(lerp(0,1,e/TR));
-          vig.style.opacity=String(lerp(0,0.95,e/TR));
-        }else if(e<TR+TS){
-          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity='0.95';
-        }else{
-          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
-          document.documentElement.style.background='#000';
-          document.body.style.background='#000';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
+        if (!window.matchMedia('(hover: none)').matches) {
+          card.addEventListener('mouseenter', function () { runScramble(NAME); });
+          card.addEventListener('mouseleave', function () { clearInterval(timer); title.textContent = NAME; });
         }
-        requestAnimationFrame(run);
       }
-      requestAnimationFrame(run);
-    }
 
-    /* Arrival */
-    if(sessionStorage.getItem('crt_transition')){
-      sessionStorage.removeItem('crt_transition');
-      doEnter();
-    }
-
-    /* Exit interceptor */
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');
-      if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();
-      doExit(h);
-    },true);
-  })();
+      makeScrambler(document.querySelector('.btn-art'),     'aRT');
+      makeScrambler(document.querySelector('.btn-apparel'), 'aPPaREL');
+    })();
   </script>
 
   <!-- Nav & logo hover -->
@@ -329,7 +250,7 @@
   (function(){
     var DELAY = 40;
 
-    /* Nav links — lowercase left→right on enter, recapitalise right→left on leave */
+    /* Nav links — lowercase left-to-right on enter, recapitalise right-to-left on leave */
     function navHover(el){
       var orig = el.textContent;
       var timers=[], state=0;
@@ -354,10 +275,10 @@
         })(i);
       });
     }
-    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
+    document.querySelectorAll('a.nav-about').forEach(navHover);
 
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+    /* Logo [a] — expand on hover via data-inner attribute */
+    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
       var inner=logo.dataset.inner;
       var timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
@@ -379,5 +300,6 @@
     });
   })();
   </script>
+<script src="theme.js?v=4"></script>
 </body>
 </html>

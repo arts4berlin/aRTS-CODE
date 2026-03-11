@@ -16,6 +16,7 @@
   <title>[aRTS] — bOT oPERaTIONS · T&amp;Cs</title>
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -23,6 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -31,17 +33,6 @@
       min-height: 100vh; min-height: 100dvh;
       display: flex; align-items: flex-start; justify-content: center;
       padding: clamp(80px, 12vh, 120px) clamp(16px, 4vw, 32px) clamp(48px, 8vh, 80px);
-    }
-
-    #crt-scan {
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);
-      opacity: 0; z-index: 9998; pointer-events: none;
-    }
-    #crt-vignette {
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);
-      opacity: 0; z-index: 9997; pointer-events: none;
     }
 
     .c-back {
@@ -173,12 +164,62 @@
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ─────────────────────────────────────────
+       DAY MODE OVERRIDES  (bot-terms.html)
+       To update: match each selector below to
+       its night-mode counterpart above.
+       Orange accent = #FF5C00
+    ───────────────────────────────────────── */
+
+    /* Page base */
+    [data-theme="day"] body { background: #fff !important; color: #000 !important; }
+
+    /* Back link */
+    [data-theme="day"] .c-back { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .c-back:hover { color: #000 !important; }
+
+    /* Doc eyebrow (informational label — muted in day) */
+    [data-theme="day"] .doc-eyebrow { color: rgba(0,0,0,0.35) !important; }
+
+    /* Doc title — inherits from body; explicit for safety */
+    [data-theme="day"] .doc-title { color: #000 !important; }
+
+    /* Version / meta */
+    [data-theme="day"] .doc-version { color: rgba(0,0,0,0.25) !important; }
+
+    /* Divider */
+    [data-theme="day"] .doc-rule { border-top-color: rgba(0,0,0,0.12) !important; }
+
+    /* Section headings */
+    [data-theme="day"] .doc-section-heading { color: rgba(0,0,0,0.38) !important; }
+
+    /* Body text */
+    [data-theme="day"] .doc-section p { color: rgba(0,0,0,0.5) !important; }
+
+    /* List items */
+    [data-theme="day"] .doc-section ul li { color: rgba(0,0,0,0.45) !important; }
+    [data-theme="day"] .doc-section ul li::before { color: rgba(0,0,0,0.25) !important; }
+
+    /* Highlight block */
+    [data-theme="day"] .doc-highlight { border-left-color: rgba(255,92,0,0.35) !important; }
+    [data-theme="day"] .doc-highlight p { color: rgba(0,0,0,0.6) !important; }
+
+    /* Accept zone divider */
+    [data-theme="day"] .accept-zone { border-top-color: rgba(0,0,0,0.12) !important; }
+
+    /* Accept notice text */
+    [data-theme="day"] .accept-notice { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .accept-notice strong { color: rgba(0,0,0,0.55) !important; }
+
+    /* Accept CTA — stays orange ✓ */
+
+    /* Decline button */
+    [data-theme="day"] .btn-decline { color: rgba(0,0,0,0.28) !important; }
+    [data-theme="day"] .btn-decline:hover { color: rgba(0,0,0,0.55) !important; }
   </style>
 </head>
 <body>
-  <div id="crt-scan"></div>
-  <div id="crt-vignette"></div>
-
   <a href="about.html" class="c-back">← bACK</a>
 
   <div class="doc">
@@ -258,92 +299,18 @@
 
   <script>
   (function(){
-    document.documentElement.style.background='#000';
-    if(sessionStorage.getItem('crt_transition')){
-      sessionStorage.removeItem('crt_transition');
-      doEnter();
-    }
-
-    var scan=document.getElementById('crt-scan');
-    var vig=document.getElementById('crt-vignette');
-    var busy=false;
-
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-
-    function doEnter(){
-      var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<T1){
-          scan.style.opacity=String(lerp(0,1,e/T1));
-          vig.style.opacity='0.95';
-        }else if(e<T2){
-          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
-        }else if(e<T3){
-          var t2=(e-T2)/(T3-T2),et=smooth(t2);
-          document.documentElement.style.clipPath='';
-          scan.style.opacity=String(lerp(1,0,et));
-          vig.style.opacity=String(lerp(0.55,0,et));
-        }else{
-          document.documentElement.style.clipPath='';
-          scan.style.opacity='0'; vig.style.opacity='0';
-        }
-        if(e<T3) requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
-    function doExit(dest){
-      if(busy)return; busy=true;
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<TR){
-          scan.style.opacity=String(lerp(0,1,e/TR));
-          vig.style.opacity=String(lerp(0,0.95,e/TR));
-        }else if(e<TR+TS){
-          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1'; vig.style.opacity='0.95';
-        }else{
-          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
-          document.documentElement.style.background='#000';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
     document.getElementById('btn-accept').addEventListener('click', function(){
       localStorage.setItem('arts_bot_terms','1');
-      doExit('bots.html');
+      window.location.href='bots.html';
     });
 
     document.getElementById('btn-decline').addEventListener('click', function(){
-      doExit('about.html');
+      window.location.href='about.html';
     });
-
-    /* CRT on all internal links */
-    document.addEventListener('click', function(ev){
-      var a=ev.target.closest('a[href]');
-      if(!a) return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h)) return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey) return;
-      ev.preventDefault();
-      doExit(h);
-    }, true);
   })();
   </script>
+<script src="theme.js?v=4"></script>
+<script src="btn-fx.js"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

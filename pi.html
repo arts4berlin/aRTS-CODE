@@ -22,6 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -159,8 +160,10 @@
       color: rgba(255,255,255,0.28); text-transform: uppercase;
     }
     .v-discount {
+      font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
       font-size: clamp(5.5rem, 22vw, 9rem);
       font-weight: 700;
+      font-style: normal;
       letter-spacing: -0.02em;
       color: #FF5C00;
       line-height: 1;
@@ -205,6 +208,8 @@
 
   <span id="big-i">?</span>
   <div id="word-wrap"></div>
+  <a href="home.html" id="skip-link" style="position:fixed;bottom:clamp(18px,4vh,32px);left:50%;transform:translateX(-50%);font-family:'Space Grotesk',sans-serif;font-size:0.56rem;font-weight:300;letter-spacing:0.22em;color:rgba(255,255,255,0);text-decoration:none;z-index:30;transition:color 1.8s ease 4s;pointer-events:none;">sKIP →</a>
+  <script>setTimeout(function(){var s=document.getElementById('skip-link');if(s){s.style.color='rgba(255,255,255,0.18)';s.style.pointerEvents='auto';}},4500);</script>
 
   <!-- Easter egg: Apple Wallet voucher -->
   <div id="voucher-overlay">
@@ -470,5 +475,6 @@
   })();
   </script>
 
+<script src="theme.js?v=4"></script>
 </body>
 </html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type"         content="website">
+  <meta property="og:url"          content="https://4-arts.com/">
+  <meta property="og:title"        content="[aRTS] — rEPORT">
+  <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
+  <title>[aRTS] — rEPORT</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 26px 32px;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
+    }
+
+    .logo {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    nav { display: flex; align-items: center; gap: 2.4rem; }
+    nav a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.85;
+      transition: opacity 0.15s;
+    }
+    nav a:hover { opacity: 1; }
+
+    main {
+      padding-top: clamp(90px, 14vh, 120px);
+      padding-bottom: clamp(80px, 10vh, 130px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-col {
+      width: min(92vw, 560px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-label {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      margin-bottom: clamp(6px, 1vh, 10px);
+    }
+
+    .form-title {
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: clamp(20px, 3.5vh, 36px);
+    }
+
+    .form-desc {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.28);
+      line-height: 1.7;
+      margin-bottom: clamp(20px, 3vh, 32px);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
+    }
+
+    .field label {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.24em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.85rem, 2.2vw, 1rem);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      padding: 0.5rem 0;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s;
+      resize: none;
+    }
+
+    .field select {
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.3)'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+      padding-right: 20px;
+    }
+
+    .field select option {
+      background: #000;
+      color: #fff;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(255,255,255,0.08);
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-bottom-color: rgba(255,255,255,0.35);
+    }
+
+    .field textarea { min-height: 110px; line-height: 1.6; }
+
+    .error-msg {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,80,80,0.8);
+      min-height: 1.2em;
+      margin-bottom: clamp(10px, 1.5vh, 16px);
+    }
+
+    .submit-row {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      margin-top: clamp(10px, 1.5vh, 18px);
+    }
+
+    .btn-send {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.82rem, 2vw, 0.96rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
+      background: #fff;
+      color: #000;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn-send:hover   { background: #FF5C00; border-color: #FF5C00; }
+    .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .back-link {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.22);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: rgba(255,255,255,0.55); }
+
+    #success {
+      display: none;
+      flex-direction: column;
+      gap: clamp(10px, 1.5vh, 16px);
+      transition: opacity 0.22s ease;
+    }
+
+    .success-check {
+      font-size: clamp(2.2rem, 7vw, 3.2rem);
+      color: #FF5C00;
+      line-height: 1;
+    }
+
+    .success-sub {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.28);
+      text-transform: uppercase;
+      line-height: 1.8;
+    }
+
+    .divider-thin {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: clamp(14px, 2vh, 22px) 0;
+    }
+
+    /* ── Mobile hamburger + overlay ── */
+    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
+    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
+    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
+    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
+    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
+    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
+    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
+    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
+
+    html { background: #000; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    header, nav, a, button { touch-action: manipulation; }
+
+    @media (max-width: 520px) {
+      header { padding: 18px 16px; }
+      nav { display: none; }
+      .burger { display:flex; gap:0; }
+      .burger span:not(.burger-label) { display:none; }
+      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
+      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
+      .mobile-id { display:block; }
+      .nav-overlay, .nav-overlay.is-open { transition:none; }
+    }
+
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
+    html { touch-action: manipulation; }
+
+    /* ── Day mode overrides ── */
+    [data-theme="day"] .section-label,
+    [data-theme="day"] .field label { color: rgba(0,0,0,0.35) !important; }
+
+    [data-theme="day"] .form-desc { color: rgba(0,0,0,0.38) !important; }
+
+    [data-theme="day"] .field input,
+    [data-theme="day"] .field textarea,
+    [data-theme="day"] .field select {
+      border-bottom-color: rgba(0,0,0,0.18) !important;
+      color: #000 !important;
+    }
+    [data-theme="day"] .field input::placeholder,
+    [data-theme="day"] .field textarea::placeholder { color: rgba(0,0,0,0.22) !important; }
+    [data-theme="day"] .field input:focus,
+    [data-theme="day"] .field textarea:focus,
+    [data-theme="day"] .field select:focus { border-bottom-color: rgba(0,0,0,0.5) !important; }
+
+    [data-theme="day"] .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(0,0,0,0.35)'/%3E%3C/svg%3E") !important;
+    }
+    [data-theme="day"] .field select option { background: #fff !important; color: #000 !important; }
+
+    [data-theme="day"] .divider-thin { background: rgba(0,0,0,0.08) !important; }
+
+    [data-theme="day"] .back-link { color: rgba(0,0,0,0.3) !important; }
+    [data-theme="day"] .back-link:hover { color: rgba(0,0,0,0.6) !important; }
+
+    [data-theme="day"] .btn-send { background: #000 !important; color: #fff !important; border-color: #000 !important; }
+    [data-theme="day"] .btn-send:hover { background: #FF5C00 !important; border-color: #FF5C00 !important; }
+
+    [data-theme="day"] .success-sub { color: rgba(0,0,0,0.38) !important; }
+</style>
+</head>
+<body>
+  <header>
+    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+    <nav>
+      <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
+      <a href="about.html">aBOUT</a>
+      <a href="inquire.html">TaLK</a>
+    </nav>
+    <a href="id.html" class="mobile-id">[iD]</a>
+    <button class="burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
+  </header>
+
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[×]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:#FF5C00">[iD]</a>
+  </div>
+
+  <main>
+    <div class="form-col">
+
+      <div id="report-form-wrap">
+        <p class="section-label">rEPORT a pROBLEM</p>
+        <h1 class="form-title">hELP</h1>
+
+        <p class="form-desc">
+          sOMETHING nOT wORKING? lET uS kNOW.<br>
+          wE'LL lOOK iNTO iT aND gET bACK tO yOU.
+        </p>
+
+        <form id="report-form" novalidate>
+          <input type="hidden" name="_subject" value="[aRTS] — pROBLEM rEPORT">
+
+          <div class="field">
+            <label for="r-email">yOUR eMAIL</label>
+            <input type="email" id="r-email" name="email" placeholder="· · ·" autocomplete="email">
+          </div>
+
+          <div class="field">
+            <label for="r-category">cATEGORY</label>
+            <select id="r-category" name="category">
+              <option value="">— sELECT —</option>
+              <option value="bUG">bUG</option>
+              <option value="aCCOUNT iSSUE">aCCOUNT iSSUE</option>
+              <option value="fEEDBACK">fEEDBACK</option>
+              <option value="oTHER">oTHER</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="r-msg">dESCRIBE tHE iSSUE</label>
+            <textarea id="r-msg" name="message" placeholder="What happened…"></textarea>
+          </div>
+
+          <p class="error-msg" id="err-msg"></p>
+
+          <div class="submit-row">
+            <button type="submit" class="btn-send" id="btn-send">sEND rEPORT</button>
+            <a href="home.html" class="back-link">&larr; bACK</a>
+          </div>
+        </form>
+      </div>
+
+      <div id="success">
+        <p class="section-label">sENT &#10003;</p>
+        <h1 class="form-title">rEPORT<br>sENT</h1>
+        <div class="success-check">&#10003;</div>
+        <p class="success-sub">
+          wE rECEIVED yOUR rEPORT<br>
+          wE'LL lOOK iNTO iT sOON
+        </p>
+        <div class="divider-thin"></div>
+        <a href="home.html" class="back-link">&larr; bACK tO hOME</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    var form   = document.getElementById('report-form');
+    var btn    = document.getElementById('btn-send');
+    var errEl  = document.getElementById('err-msg');
+
+    /* Pre-fill email if member is logged in */
+    try {
+      var storedEmail = localStorage.getItem('arts_email');
+      if(storedEmail) document.getElementById('r-email').value = storedEmail;
+    } catch(e) {}
+
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      errEl.textContent = '';
+
+      var email = document.getElementById('r-email').value.trim();
+      var cat   = document.getElementById('r-category').value;
+      var msg   = document.getElementById('r-msg').value.trim();
+
+      if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        errEl.textContent = '— vALID eMAIL rEQUIRED'; return;
+      }
+      if(!cat)   { errEl.textContent = '— sELECT a cATEGORY'; return; }
+      if(!msg)   { errEl.textContent = '— dESCRIBE tHE iSSUE'; return; }
+
+      btn.disabled    = true;
+      btn.textContent = 'sENDING\u2026';
+      form.style.opacity = '0.4';
+      form.style.pointerEvents = 'none';
+
+      try {
+        /* TODO: Replace with your Formspree endpoint for arts4berlin@outlook.com */
+        var res = await fetch('https://formspree.io/f/xaqpqzea', {
+          method:  'POST',
+          headers: { 'Accept': 'application/json' },
+          body:    new FormData(form)
+        });
+
+        if(res.ok){
+          /* Award moderation XP */
+          try {
+            if(localStorage.getItem('arts_id_hash')){
+              var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
+              localStorage.setItem('arts_points',String(cur+50));
+              var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
+              pending.push({label:'mODERATION',pts:50});
+              sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
+            }
+          } catch(xpe){}
+          var wrap = document.getElementById('report-form-wrap');
+          wrap.style.transition = 'opacity 0.22s ease';
+          wrap.style.opacity = '0';
+          setTimeout(function(){
+            wrap.hidden = true;
+            var suc = document.getElementById('success');
+            suc.style.opacity = '0';
+            suc.style.display = 'flex';
+            requestAnimationFrame(function(){
+              requestAnimationFrame(function(){ suc.style.opacity = '1'; });
+            });
+          }, 240);
+        } else {
+          errEl.textContent = '— sEND fAILED \u00b7 tRY aGAIN';
+          btn.disabled    = false;
+          btn.textContent = 'sEND rEPORT';
+          form.style.opacity = '1';
+          form.style.pointerEvents = '';
+        }
+      } catch(err){
+        errEl.textContent = '— nETWORK eRROR \u00b7 cHECK cONNECTION';
+        btn.disabled    = false;
+        btn.textContent = 'sEND rEPORT';
+        form.style.opacity = '1';
+        form.style.pointerEvents = '';
+      }
+    });
+  })();
+  </script>
+
+
+  <!-- Nav & logo hover -->
+  <script>
+  (function(){
+    var DELAY=40;
+    function navHover(el){
+      var orig=el.textContent,timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){var s=orig[0];for(var i=1;i<orig.length;i++)s+=(i<=n?orig[i].toLowerCase():orig[i]);el.textContent=s;}
+      el.addEventListener('mouseenter',function(){clr();var from=state;for(var i=0;i<orig.length-1-from;i++)(function(i){timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));})(i);});
+      el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+    }
+    document.querySelectorAll('nav a').forEach(navHover);
+    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner,timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
+      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
+      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+    });
+  })();
+  </script>
+
+  <!-- Mobile burger menu -->
+  <script>
+  (function(){
+    var burger=document.getElementById('burger'),overlay=document.getElementById('nav-overlay'),close=document.getElementById('burger-close');
+    if(!burger||!overlay)return;
+    burger.addEventListener('click',function(){overlay.classList.add('is-open');});
+    close.addEventListener('click',function(){overlay.classList.remove('is-open');});
+    overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('is-open');});
+  })();
+  </script>
+<script src="theme.js?v=4"></script>
+<script src="btn-fx.js"></script>
+</body>
+</html>

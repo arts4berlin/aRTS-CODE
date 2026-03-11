@@ -23,6 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -140,69 +141,6 @@
 
   <a href="home.html" class="btn-back">gO bACK</a>
 
-  <!-- CRT channel-change transition -->
-  <script>
-  (function(){
-    var wrap = document.documentElement;
-
-    /* Arrival */
-    if(sessionStorage.getItem('crt_transition')){
-      wrap.style.clipPath='inset(50% 0 50% 0)';
-    }
-
-    function doEnter(){
-      sessionStorage.removeItem('crt_transition');
-      var t0=null, DUR=380;
-      function run(ts){
-        if(!t0) t0=ts;
-        var pct=Math.min((ts-t0)/DUR,1);
-        var p=(1-pct)*50;
-        wrap.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-        if(pct<1) requestAnimationFrame(run);
-        else wrap.style.clipPath='';
-      }
-      requestAnimationFrame(run);
-    }
-
-    function doExit(dest){
-      var scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 2px);pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.08s';
-      document.body.appendChild(scan);
-      var t0=null, DUR=340;
-      function run(ts){
-        if(!t0) t0=ts;
-        var pct=Math.min((ts-t0)/DUR,1);
-        var p=pct<0.5?pct*100:(1-pct)*100;
-        if(pct<1){
-          wrap.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-        }else{
-          wrap.style.clipPath='inset(50% 0 50% 0)';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
-    if(sessionStorage.getItem('crt_transition')){
-      doEnter();
-    }
-
-    /* Exit interceptor */
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');
-      if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();
-      doExit(h);
-    },true);
-  })();
-  </script>
-
+<script src="theme.js?v=4"></script>
 </body>
 </html>

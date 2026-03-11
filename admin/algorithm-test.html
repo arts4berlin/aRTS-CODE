@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[aRTS] algorithm test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --muted: rgba(255,255,255,0.5);
+      --accent: #FF5C00;
+      --glass: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.07);
+    }
+    html, body { background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', sans-serif; font-size: 14px; min-height: 100vh; }
+    body { padding: 2rem; }
+
+    h1 { font-size: 1.1rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 0.25rem; }
+    .subtitle { font-size: 0.72rem; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 2rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+
+    .panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem 1.6rem;
+    }
+    .panel-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+    .panel p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; }
+
+    select {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--fg);
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 1rem;
+      appearance: none;
+    }
+    select option { background: #111; }
+
+    button.run-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.2rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button.run-btn:hover { opacity: 0.82; }
+    button.run-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .status {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      min-height: 1.2rem;
+    }
+    .status.ok    { color: #5fff7e; }
+    .status.err   { color: #ff4444; }
+    .status.busy  { color: var(--accent); }
+
+    .result-box {
+      margin-top: 1rem;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 340px;
+      overflow-y: auto;
+      font-size: 0.72rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      color: rgba(255,255,255,0.75);
+      display: none;
+    }
+    .result-box.visible { display: block; }
+
+    /* JSON syntax highlighting */
+    .result-box .key   { color: #7dd3fc; }
+    .result-box .str   { color: #86efac; }
+    .result-box .num   { color: #fbbf24; }
+    .result-box .bool  { color: #f9a8d4; }
+    .result-box .null  { color: #94a3b8; }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-chip {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+    .stat-chip span { color: var(--accent); font-size: 1.1rem; display: block; font-weight: 600; }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* XP config tables */
+    .xp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.6rem;
+      font-size: 0.72rem;
+    }
+    .xp-table th {
+      text-align: left;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .xp-table td {
+      padding: 0.45rem 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.8);
+    }
+    .xp-table td:last-child { color: var(--accent); font-weight: 600; }
+    .xp-table tr:last-child td { border-bottom: none; }
+    .xp-tag {
+      display: inline-block;
+      background: rgba(255,92,0,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(255,92,0,0.2);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+    }
+    .xp-key-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.04em;
+      font-family: monospace;
+      color: rgba(255,255,255,0.55);
+    }
+    .xp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .xp-note {
+      font-size: 0.66rem;
+      color: rgba(255,255,255,0.35);
+      margin-top: 0.75rem;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>[aRTS] aLGORITHM tEST</h1>
+  <p class="subtitle">— internal diagnostics · mock data · api endpoints</p>
+
+  <div class="stats-row" id="stats-row">
+    <div class="stat-chip"><span id="stat-listings">—</span>lISTINGS lOADED</div>
+    <div class="stat-chip"><span id="stat-users">—</span>mOCK uSERS</div>
+    <div class="stat-chip"><span id="stat-proxy">—</span>pROXY sTATUS</div>
+    <div class="stat-chip"><span id="stat-sessions">—</span>sESSIONS lOGGED</div>
+  </div>
+
+  <div class="section-label">aLGORITHM eNDPOINTS</div>
+
+  <div class="grid">
+
+    <!-- MARKET ANALYSIS -->
+    <div class="panel">
+      <div class="panel-title">01 · mARKET aNALYSIS</div>
+      <p>Sends all listings + user profiles to Claude Haiku. Returns price bands, top media, demand signals and platform recommendations.</p>
+      <button class="run-btn" id="btn-analyze">rUN aNALYSIS</button>
+      <div class="status" id="st-analyze"></div>
+      <div class="result-box" id="res-analyze"></div>
+    </div>
+
+    <!-- PERSONALISED RECOMMENDATIONS -->
+    <div class="panel">
+      <div class="panel-title">02 · pERSONALISED rECOMMENDATIONS</div>
+      <p>Select a mock collector profile. Returns ranked listing IDs, rationale, budget fit and a discovery pick.</p>
+      <select id="sel-user"></select>
+      <button class="run-btn" id="btn-recommend">rUN rECOMMENDATIONS</button>
+      <div class="status" id="st-recommend"></div>
+      <div class="result-box" id="res-recommend"></div>
+    </div>
+
+    <!-- PROVENANCE CHECK -->
+    <div class="panel">
+      <div class="panel-title">03 · pROVENANCE cHECK</div>
+      <p>Select a listing. Returns credibility score, risk level, flags and recommended verification steps.</p>
+      <select id="sel-listing"></select>
+      <button class="run-btn" id="btn-provenance">rUN pROVENANCE</button>
+      <div class="status" id="st-provenance"></div>
+      <div class="result-box" id="res-provenance"></div>
+    </div>
+
+  </div>
+
+  <div class="section-label">sESSION sTATS</div>
+  <div class="panel" style="max-width:600px">
+    <div class="panel-title">sERVER-sIDE sESSION lOG</div>
+    <p>Live stats from the VPS session log — unique devices, login events by tier and provider.</p>
+    <button class="run-btn" id="btn-stats">lOAD sTATS</button>
+    <div class="status" id="st-stats"></div>
+    <div class="result-box" id="res-stats"></div>
+  </div>
+
+  <!-- ═══ XP SYSTEM CONFIG ═══ -->
+  <div class="section-label" style="margin-top:2.5rem;">xP sYSTEM · cONFIG</div>
+
+  <div class="xp-grid">
+
+    <!-- Milestones -->
+    <div class="panel">
+      <div class="panel-title">mILESTONES</div>
+      <p>Tier progression thresholds. Displayed on member iD card with progress bar.</p>
+      <table class="xp-table">
+        <tr><th>tIER</th><th>mIN pOINTS</th></tr>
+        <tr><td>nOVICE</td><td>0</td></tr>
+        <tr><td>PaTRON</td><td>100</td></tr>
+        <tr><td>cOLLECTOR</td><td>500</td></tr>
+        <tr><td>aRCHIVIST</td><td>1,000</td></tr>
+        <tr><td>mAESTRO</td><td>2,500</td></tr>
+      </table>
+      <p class="xp-note">Defined in id.html · MILESTONES array</p>
+    </div>
+
+    <!-- Starting XP -->
+    <div class="panel">
+      <div class="panel-title">sTARTING xP · bY tIER</div>
+      <p>Points granted at sign-up via OAuth. Stored in <span class="xp-key-tag">arts_points</span></p>
+      <table class="xp-table">
+        <tr><th>sUBSCRIPTION</th><th>sTARTING xP</th></tr>
+        <tr><td>aUDIENCE <span class="xp-tag">fREE</span></td><td>50</td></tr>
+        <tr><td>aLLY <span class="xp-tag">€0.33</span></td><td>100</td></tr>
+        <tr><td>BRIGaDIER <span class="xp-tag">€3.3</span></td><td>500</td></tr>
+        <tr><td>CURaTOR <span class="xp-tag">€33</span></td><td>1,000</td></tr>
+      </table>
+      <p class="xp-note">Defined in join.html · onOAuthSuccess()</p>
+    </div>
+
+    <!-- XP Events -->
+    <div class="panel">
+      <div class="panel-title">xP eVENTS · aWARD tABLE</div>
+      <p>Actions that grant XP. Queued to <span class="xp-key-tag">arts_xp_pending</span> (sessionStorage) and displayed as toast on iD page.</p>
+      <table class="xp-table">
+        <tr><th>eVENT</th><th>sOURCE</th><th>xP</th></tr>
+        <tr><td>dAILY lOGIN</td><td>home.html</td><td>+25</td></tr>
+        <tr><td>fAVOURITE (aRT)</td><td>art.html</td><td>+10</td></tr>
+        <tr><td>fAVOURITE (bOUTIQUE)</td><td>boutique.html</td><td>+10</td></tr>
+        <tr><td>sHARE (aRT)</td><td>art.html</td><td>+30</td></tr>
+        <tr><td>sHARE (bOUTIQUE)</td><td>boutique.html</td><td>+30</td></tr>
+        <tr><td>aRT uPLOAD</td><td>add.html</td><td>+50</td></tr>
+        <tr><td>mODERATION rEPORT</td><td>report.html</td><td>+50</td></tr>
+        <tr><td>aRTICLE pUBLISH</td><td>articles.html</td><td>+150</td></tr>
+        <tr><td>π uNLOCK</td><td>pi.html</td><td>+314</td></tr>
+      </table>
+      <p class="xp-note">Each event calls localStorage arts_points += N, then pushes {label, pts} to sessionStorage arts_xp_pending</p>
+    </div>
+
+    <!-- Storage Keys -->
+    <div class="panel">
+      <div class="panel-title">lOCALsTORAGE kEYS</div>
+      <p>All client-side XP-related storage keys.</p>
+      <table class="xp-table">
+        <tr><th>kEY</th><th>tYPE</th><th>pURPOSE</th></tr>
+        <tr><td><span class="xp-key-tag">arts_points</span></td><td>localStorage</td><td>Total accumulated XP</td></tr>
+        <tr><td><span class="xp-key-tag">arts_xp_pending</span></td><td>sessionStorage</td><td>Toast queue (JSON array)</td></tr>
+        <tr><td><span class="xp-key-tag">arts_xp_daily</span></td><td>localStorage</td><td>Date of last daily login bonus</td></tr>
+        <tr><td><span class="xp-key-tag">arts_xp_prev</span></td><td>sessionStorage</td><td>Previous pts (for counter animation)</td></tr>
+      </table>
+    </div>
+
+    <!-- Toast System -->
+    <div class="panel">
+      <div class="panel-title">tOAST sYSTEM</div>
+      <p>XP award notifications rendered on iD page load.</p>
+      <table class="xp-table">
+        <tr><th>pROPERTY</th><th>vALUE</th></tr>
+        <tr><td>Position</td><td>fixed · top-right (28px, 24px)</td></tr>
+        <tr><td>Background</td><td>#FF5C00 (accent orange)</td></tr>
+        <tr><td>Duration</td><td>2s visible · 0.35s slide-in/out</td></tr>
+        <tr><td>Queue delay</td><td>700ms between toasts</td></tr>
+        <tr><td>Format</td><td>+ [pts] XP · [LABEL]</td></tr>
+        <tr><td>z-index</td><td>10000</td></tr>
+      </table>
+      <p class="xp-note">CSS classes: .xp-toast-wrap · .xp-toast · .xp-toast.show · .xp-toast.hide</p>
+    </div>
+
+    <!-- Quick Test -->
+    <div class="panel">
+      <div class="panel-title">qUICK tEST · xP</div>
+      <p>Award test XP to current browser session. Opens iD page to see toast.</p>
+      <select id="sel-xp-event">
+        <option value="25|dAILY lOGIN">+25 · dAILY lOGIN</option>
+        <option value="10|fAVOURITE">+10 · fAVOURITE</option>
+        <option value="30|sHARE">+30 · sHARE</option>
+        <option value="50|aRT uPLOAD">+50 · aRT uPLOAD</option>
+        <option value="50|mODERATION">+50 · mODERATION</option>
+        <option value="150|aRTICLE">+150 · aRTICLE</option>
+        <option value="314|π uNLOCK">+314 · π uNLOCK</option>
+      </select>
+      <button class="run-btn" id="btn-xp-test">aWARD xP</button>
+      <div class="status" id="st-xp-test"></div>
+      <div style="margin-top:0.75rem;">
+        <button class="run-btn" id="btn-xp-reset" style="background:transparent;border:1px solid var(--border);font-size:0.65rem;">rESET aLL xP</button>
+        <button class="run-btn" id="btn-xp-view" style="background:transparent;border:1px solid var(--border);font-size:0.65rem;margin-left:0.5rem;">vIEW cURRENT</button>
+      </div>
+      <div class="result-box" id="res-xp-test"></div>
+    </div>
+
+  </div>
+
+  <script>
+  (function() {
+    var PROXY_BASE = 'https://4-arts.com/proxy';   /* adjust if testing locally: http://localhost:8099 */
+    var pieces = [];
+    var users  = [];
+
+    /* ── Load mock data ── */
+    function loadData() {
+      Promise.all([
+        fetch('../data/pieces.json').then(function(r){ return r.json(); }),
+        fetch('../data/mock-users.json').then(function(r){ return r.json(); })
+      ]).then(function(res) {
+        pieces = res[0];
+        users  = res[1];
+        document.getElementById('stat-listings').textContent = pieces.length;
+        document.getElementById('stat-users').textContent    = users.length;
+        populateSelects();
+      }).catch(function(e) {
+        console.warn('Mock data load error:', e);
+        document.getElementById('stat-listings').textContent = 'ERR';
+        document.getElementById('stat-users').textContent    = 'ERR';
+      });
+
+      /* Proxy health */
+      fetch(PROXY_BASE + '/api/health')
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function(){ document.getElementById('stat-proxy').textContent = 'OK'; })
+        .catch(function(){ document.getElementById('stat-proxy').textContent = 'OFF'; });
+    }
+
+    function populateSelects() {
+      var selUser = document.getElementById('sel-user');
+      users.forEach(function(u) {
+        var opt = document.createElement('option');
+        opt.value = u.id;
+        opt.textContent = u.alias + ' · ' + u.tier + ' · ' + u.location;
+        selUser.appendChild(opt);
+      });
+
+      var selListing = document.getElementById('sel-listing');
+      pieces.forEach(function(p) {
+        var opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.title + ' — ' + p.artist + ' (' + (p.currency || 'EUR') + ' ' + (p.price || '?') + ')';
+        selListing.appendChild(opt);
+      });
+    }
+
+    /* ── JSON pretty-print with colour ── */
+    function syntaxHighlight(json) {
+      if (typeof json !== 'string') json = JSON.stringify(json, null, 2);
+      return json
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+          var cls = 'num';
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) cls = 'key'; else cls = 'str';
+          } else if (/true|false/.test(match)) {
+            cls = 'bool';
+          } else if (/null/.test(match)) {
+            cls = 'null';
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+    function showResult(boxId, stId, data, ok) {
+      var box = document.getElementById(boxId);
+      var st  = document.getElementById(stId);
+      box.innerHTML = syntaxHighlight(data);
+      box.classList.add('visible');
+      if (ok) {
+        st.textContent = '— ✓ rESPONSE rECEIVED';
+        st.className   = 'status ok';
+      } else {
+        st.textContent = '— ✗ eRROR';
+        st.className   = 'status err';
+      }
+    }
+
+    function setBusy(stId, btnId) {
+      var st  = document.getElementById(stId);
+      var btn = document.getElementById(btnId);
+      st.textContent = '— rUNNING…';
+      st.className   = 'status busy';
+      btn.disabled   = true;
+    }
+
+    function clearBusy(btnId) {
+      document.getElementById(btnId).disabled = false;
+    }
+
+    function postProxy(path, body, onDone) {
+      fetch(PROXY_BASE + path, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body),
+      }).then(function(r) {
+        return r.json().then(function(data) { onDone(data, r.ok); });
+      }).catch(function(e) {
+        onDone({ error: String(e) }, false);
+      });
+    }
+
+    /* ── 01 Market Analysis ── */
+    document.getElementById('btn-analyze').addEventListener('click', function() {
+      setBusy('st-analyze', 'btn-analyze');
+      postProxy('/api/algorithm/analyze', {
+        listings: pieces,
+        users:    users,
+        query:    'Provide a full market analysis for the [aRTS] platform.',
+      }, function(data, ok) {
+        clearBusy('btn-analyze');
+        showResult('res-analyze', 'st-analyze', data, ok);
+      });
+    });
+
+    /* ── 02 Personalised Recommendations ── */
+    document.getElementById('btn-recommend').addEventListener('click', function() {
+      var userId = document.getElementById('sel-user').value;
+      var user   = users.find(function(u){ return u.id === userId; });
+      if (!user) return;
+      setBusy('st-recommend', 'btn-recommend');
+      /* Pass only available listings for scoring */
+      var available = pieces.filter(function(p){ return p.status !== 'sOLD'; });
+      postProxy('/api/algorithm/recommend', {
+        user:     user,
+        listings: available,
+      }, function(data, ok) {
+        clearBusy('btn-recommend');
+        showResult('res-recommend', 'st-recommend', data, ok);
+      });
+    });
+
+    /* ── 03 Provenance Check ── */
+    document.getElementById('btn-provenance').addEventListener('click', function() {
+      var listingId = document.getElementById('sel-listing').value;
+      var listing   = pieces.find(function(p){ return p.id === listingId; });
+      if (!listing) return;
+      setBusy('st-provenance', 'btn-provenance');
+      postProxy('/api/algorithm/provenance', {
+        listing: listing,
+      }, function(data, ok) {
+        clearBusy('btn-provenance');
+        showResult('res-provenance', 'st-provenance', data, ok);
+      });
+    });
+
+    /* ── Session Stats ── */
+    document.getElementById('btn-stats').addEventListener('click', function() {
+      setBusy('st-stats', 'btn-stats');
+      var st  = document.getElementById('st-stats');
+      var btn = document.getElementById('btn-stats');
+      fetch(PROXY_BASE + '/api/session/stats')
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+          clearBusy('btn-stats');
+          document.getElementById('stat-sessions').textContent = data.total_sessions || 0;
+          showResult('res-stats', 'st-stats', data, true);
+        })
+        .catch(function(e) {
+          clearBusy('btn-stats');
+          showResult('res-stats', 'st-stats', { error: String(e) }, false);
+        });
+    });
+
+    /* Init */
+    loadData();
+
+    /* ── XP Quick Test ── */
+    document.getElementById('btn-xp-test').addEventListener('click', function() {
+      var val = document.getElementById('sel-xp-event').value.split('|');
+      var pts = parseInt(val[0], 10);
+      var label = val[1];
+      var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+      localStorage.setItem('arts_points', String(cur + pts));
+      var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
+      pending.push({ label: label, pts: pts });
+      sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
+      var st = document.getElementById('st-xp-test');
+      st.textContent = '— ✓ +' + pts + ' XP awarded · total: ' + (cur + pts);
+      st.className = 'status ok';
+    });
+
+    document.getElementById('btn-xp-reset').addEventListener('click', function() {
+      localStorage.removeItem('arts_points');
+      localStorage.removeItem('arts_xp_daily');
+      sessionStorage.removeItem('arts_xp_pending');
+      sessionStorage.removeItem('arts_xp_prev');
+      var st = document.getElementById('st-xp-test');
+      st.textContent = '— ✓ aLL xP dATA cLEARED';
+      st.className = 'status ok';
+      document.getElementById('res-xp-test').classList.remove('visible');
+    });
+
+    document.getElementById('btn-xp-view').addEventListener('click', function() {
+      var MILESTONES = [
+        { name: 'nOVICE', min: 0 },
+        { name: 'PaTRON', min: 100 },
+        { name: 'cOLLECTOR', min: 500 },
+        { name: 'aRCHIVIST', min: 1000 },
+        { name: 'mAESTRO', min: 2500 }
+      ];
+      var pts = parseInt(localStorage.getItem('arts_points') || '0', 10);
+      var tier = 'nOVICE';
+      for (var i = MILESTONES.length - 1; i >= 0; i--) {
+        if (pts >= MILESTONES[i].min) { tier = MILESTONES[i].name; break; }
+      }
+      var next = null;
+      for (var j = 0; j < MILESTONES.length; j++) {
+        if (MILESTONES[j].min > pts) { next = MILESTONES[j]; break; }
+      }
+      var data = {
+        total_points: pts,
+        current_tier: tier,
+        next_tier: next ? next.name : 'MAX',
+        pts_to_next: next ? next.min - pts : 0,
+        daily_login_date: localStorage.getItem('arts_xp_daily') || 'none',
+        pending_toasts: JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]')
+      };
+      showResult('res-xp-test', 'st-xp-test', data, true);
+    });
+  })();
+  </script>
+</body>
+</html>

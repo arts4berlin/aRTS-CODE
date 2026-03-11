@@ -16,6 +16,7 @@
   <title>[aRTS] — vERIFY</title>
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (localStorage.getItem('captcha_passed')) {
       window.location.replace('home.html');
     }
@@ -25,6 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -32,17 +34,6 @@
       font-family: 'Space Grotesk', sans-serif;
       min-height: 100vh; min-height: 100dvh;
       display: flex; align-items: center; justify-content: center;
-    }
-
-    #crt-scan {
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);
-      opacity: 0; z-index: 9998; pointer-events: none;
-    }
-    #crt-vignette {
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);
-      opacity: 0; z-index: 9997; pointer-events: none;
     }
 
     /* ── Back button ── */
@@ -129,9 +120,6 @@
   </style>
 </head>
 <body>
-  <div id="crt-scan"></div>
-  <div id="crt-vignette"></div>
-
   <button class="c-back" id="c-back">← bACK</button>
 
   <div class="c-card">
@@ -141,9 +129,9 @@
     <p class="c-instruction">click aLL [aRTS] bears</p>
     <div class="c-grid" id="c-grid" role="group" aria-label="Select all bears"></div>
     <div class="c-footer">
-      <div class="c-pow">
+      <div class="c-pow" style="display:none">
         <div class="c-pow-track"><div class="c-pow-fill" id="c-pow-fill"></div></div>
-        <span class="c-pow-label" id="c-pow-label">computing...</span>
+        <span class="c-pow-label" id="c-pow-label"></span>
       </div>
     </div>
     <div class="c-msg" id="c-msg"></div>
@@ -235,65 +223,28 @@
     function setMsg(txt,cls){var el=document.getElementById('c-msg');el.textContent=txt;el.className='c-msg'+(cls?' '+cls:'');}
 
     function runCRTCollapse(onDone){
-      var root=document.documentElement;
-      var scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);';
-      var vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);';
-      document.body.appendChild(scan); document.body.appendChild(vig);
-      var T_RAMP=80,T_SQUEEZE=400,T_HOLD=480;
-      function lerp(a,b,t){return a+(b-a)*t;}
-      function easeOut(t){return 1-Math.pow(1-t,3);}
-      function smooth(t){return t*t*(3-2*t);}
-      var startTs=null,done=false;
-      function tick(ts){
-        if(!startTs)startTs=ts; var e=ts-startTs;
-        if(e<T_RAMP){scan.style.opacity=String(lerp(0,1,e/T_RAMP));vig.style.opacity=String(lerp(0,0.85,e/T_RAMP));}
-        else if(e<T_SQUEEZE){var t=(e-T_RAMP)/(T_SQUEEZE-T_RAMP),et=easeOut(t),pct=lerp(0,50,et);root.style.clipPath='inset('+pct.toFixed(2)+'% 0 '+pct.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity=String(lerp(0.85,0.97,t));}
-        else if(e<T_HOLD){root.style.clipPath='inset(50% 0 50% 0)';scan.style.opacity='1';vig.style.opacity='0.97';}
-        else{if(!done){done=true;onDone();}return;}
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
+      document.body.style.transition='opacity 0.35s ease-out';
+      document.body.style.opacity='0';
+      setTimeout(onDone, 380);
     }
 
     function tryVerify(){
       if(selected.size<N_BEARS)return;
       if(document.getElementById('hp').value)return;
       if(Date.now()-openTs<800)return;
-      if(!powDone){setMsg('completing verification...','');return;}
+      if(!powDone){return;}
       setMsg('VeRIFIED ✓','ok');
       localStorage.setItem('captcha_passed','1');
-      sessionStorage.setItem('crt_transition','1');
       setTimeout(function(){
         runCRTCollapse(function(){
-          document.documentElement.style.background='#000';
-          document.body.style.background='#000';
           window.location.href='home.html';
         });
       },300);
     }
 
-    /* Back button — CRT exit to index.html */
+    /* Back button — fade exit to index.html */
     document.getElementById('c-back').addEventListener('click', function(){
-      var busy=false;
-      if(busy)return; busy=true;
-      var scan2=document.createElement('div');
-      scan2.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:9998;pointer-events:none;';
-      var vig2=document.createElement('div');
-      vig2.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:9997;pointer-events:none;';
-      document.body.appendChild(scan2);document.body.appendChild(vig2);
-      var TR=60,TS=320,s0=null;
-      function lerp(a,b,t){return a+(b-a)*t;}
-      function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-      function run(ts){
-        if(!s0)s0=ts;var e=ts-s0;
-        if(e<TR){scan2.style.opacity=String(lerp(0,1,e/TR));vig2.style.opacity=String(lerp(0,0.95,e/TR));}
-        else if(e<TR+TS){var t=(e-TR)/TS,p=lerp(0,50,smooth(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan2.style.opacity='1';vig2.style.opacity='0.95';}
-        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';document.documentElement.style.background='#000';document.body.style.background='#000';sessionStorage.setItem('crt_transition','1');window.location.href='index.html';return;}
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
+      runCRTCollapse(function(){ window.location.href='index.html'; });
     });
 
     buildGrid();
@@ -301,34 +252,6 @@
   })();
   </script>
 
-  <!-- CRT boot -->
-  <script>
-  (function(){
-    var isIAB=/Instagram|FBAN|FBAV|Snapchat|Twitter|Line\/|WhatsApp/i.test(navigator.userAgent);
-    if(isIAB)return;
-    if(!sessionStorage.getItem('crt_transition'))return;
-    sessionStorage.removeItem('crt_transition');
-    var scan=document.getElementById('crt-scan');
-    var vig=document.getElementById('crt-vignette');
-    var topCover=document.createElement('div');
-    topCover.style.cssText='position:fixed;left:0;right:0;top:0;height:50%;background:#000;z-index:9995;pointer-events:none;';
-    var botCover=document.createElement('div');
-    botCover.style.cssText='position:fixed;left:0;right:0;bottom:0;height:50%;background:#000;z-index:9995;pointer-events:none;';
-    document.body.appendChild(topCover);document.body.appendChild(botCover);
-    var T_FLICKER=130,T_EXPAND=780,T_FADE_END=1150,start=null;
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut(t){return 1-Math.pow(1-t,3);}
-    function smooth(t){return t*t*(3-2*t);}
-    function tick(ts){
-      if(!start)start=ts;var e=ts-start;
-      if(e<T_FLICKER){scan.style.opacity=String(lerp(0,1,e/T_FLICKER));vig.style.opacity='0.95';}
-      else if(e<T_EXPAND){var t=(e-T_FLICKER)/(T_EXPAND-T_FLICKER),et=easeOut(t),pct=lerp(50,0,et);topCover.style.height=pct.toFixed(2)+'%';botCover.style.height=pct.toFixed(2)+'%';scan.style.opacity='1.0';vig.style.opacity=String(lerp(0.95,0.55,et));}
-      else if(e<T_FADE_END){var t2=(e-T_EXPAND)/(T_FADE_END-T_EXPAND),et2=smooth(t2);topCover.style.height='0%';botCover.style.height='0%';scan.style.opacity=String(lerp(1.0,0,et2));vig.style.opacity=String(lerp(0.55,0,et2));}
-      else{topCover.remove();botCover.remove();scan.remove();vig.remove();return;}
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  })();
-  </script>
+<script src="theme.js?v=4"></script>
 </body>
 </html>

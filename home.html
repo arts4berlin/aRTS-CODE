@@ -19,9 +19,10 @@
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
   <title>[aRTS] — TRaDE + CONNeCT</title>
-  <!-- Gate: redirect to CAPTCHA if not verified; lock bg black immediately to kill white flash -->
+  <!-- Gate: redirect to CAPTCHA if not verified; lock bg immediately to kill white flash -->
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -29,377 +30,170 @@
   <link rel="preload" as="image" href="assets/bear.png">
   <link rel="prefetch" href="about.html">
   <link rel="prefetch" href="audience.html">
-  <link rel="prefetch" href="aid.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { background: #000; }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── CRT wrapper — receives clipPath + filter on channel-change ── */
-    #crt-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── Phosphor scanlines ── */
-    #crt-scan {
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px, transparent 3px,
-        rgba(0,14,0,0.50) 3px, rgba(0,14,0,0.50) 4px
-      );
-      opacity: 0;
-      z-index: 9998;
-      pointer-events: none;
-    }
-
-    /* ── CRT vignette — dark corners ── */
-    #crt-vignette {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.88) 100%);
-      opacity: 0;
-      z-index: 9997;
-      pointer-events: none;
-    }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
-    }
-
-    /* ── [aRTS] home mark (desktop left anchor — links to login) ── */
-    .home-mark {
-      display: inline-block;
-      min-width: 8rem;          /* reserve full [aRTS LOGIN] width — prevents layout shift */
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      color: #fff;
-      opacity: 0.88;
-      line-height: 1;
-      user-select: none;
-      text-decoration: none;
-      cursor: crosshair;
-      white-space: nowrap;
-      transition: opacity 0.15s;
-    }
-    .home-mark:hover { opacity: 1; }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-
-    nav a {
-      position: relative;
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.78;
-      cursor: crosshair;
-      transition: opacity 0.18s;
-    }
-    nav a:hover { opacity: 1; }
-
-    /* Expanding underline — sweeps left→right on hover, mirroring decap cascade */
-    nav a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 1px;
-      background: rgba(255,255,255,0.5);
-      transition: width 0.22s ease;
-    }
-    nav a:hover::after { width: 100%; }
-
-    main {
-      flex: 1;
+    /* ── Page-specific: hero layout ── */
+    .hero {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 80px 24px 60px;
+      min-height: 100dvh;
+      padding: var(--s-8) var(--gutter);
+      text-align: center;
+      position: relative;
     }
 
     .bear {
-      width: clamp(160px, 28vw, 280px);
-      display: block;
-      margin-bottom: 1.8rem;
+      width: clamp(120px, 28vw, 220px);
+      height: auto;
+      margin-bottom: var(--s-8);
+      animation: float 4s ease-in-out infinite;
+      will-change: transform;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
 
-    .tagline { text-align: center; }
-
+    .tagline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s-2);
+      margin-bottom: var(--s-10);
+    }
     .born {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 300;
-      letter-spacing: 0.2em;
-      margin-bottom: 0.15rem;
+      font-size: 0.58rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.3em;
+      color: var(--c-text-tertiary);
+      text-transform: uppercase;
     }
-
     .berlin {
-      display: block;
-      font-size: clamp(2rem, 6vw, 3rem);
-      font-weight: 700;
-      letter-spacing: 0.25em;
+      font-size: clamp(3.4rem, 12vw, 6.5rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      line-height: 0.95;
+      color: var(--c-text);
       cursor: crosshair;
-      user-select: none;
-      -webkit-user-select: none;
-      transition: opacity 0.15s;
+      transition: color var(--dur-fast);
     }
 
-    /* ── aSSETS priority button ── */
+    /* Access badge */
+    .access-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: var(--s-6);
+      opacity: 0;
+      transition: opacity 0.55s ease;
+    }
+    .access-badge.visible { opacity: 1; }
+    .access-check { font-size: 1rem; color: var(--c-accent); line-height: 1; }
+    .access-label {
+      font-size: 0.52rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.28em;
+      color: var(--c-accent-muted);
+      text-transform: uppercase;
+    }
+
+    /* aSSETS button */
     .btn-assets {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-top: clamp(20px, 4vh, 36px);
-      width: clamp(180px, 40vw, 320px);
-      height: clamp(52px, 9vh, 76px);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 3px;
-      background: transparent;
-      color: rgba(255,255,255,0.55);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1rem, 3.5vw, 1.5rem);
-      font-weight: 700;
+      padding: 16px 44px;
+      font-size: 0.92rem;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.28em;
+      border: 1.5px solid var(--c-border-hover);
+      border-radius: var(--r-md);
+      color: var(--c-text-secondary);
       text-decoration: none;
       cursor: crosshair;
       position: relative;
       overflow: hidden;
-      transition: color 0.22s, border-color 0.22s;
+      transition: color 0.22s, border-color 0.22s, box-shadow 0.22s;
     }
     .btn-assets::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: #fff;
+      background: var(--c-text);
       transform: scaleX(0);
       transform-origin: left;
-      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.28s var(--ease-smooth);
     }
     .btn-assets:hover::before { transform: scaleX(1); }
     .btn-assets:hover {
-      color: #000;
-      border-color: #fff;
+      color: var(--c-bg);
+      border-color: var(--c-text);
+      box-shadow: 0 0 28px var(--c-accent-subtle);
     }
     .btn-assets span { position: relative; z-index: 1; }
 
-    /* ── ask hint ── */
+    /* Ask hint */
     .ask-hint {
       margin-top: clamp(10px, 2vh, 18px);
-      font-size: 0.52rem;
-      font-weight: 300;
+      font-size: 0.48rem;
+      font-weight: var(--fw-light);
       letter-spacing: 0.32em;
-      color: rgba(255,255,255,0.14);
+      color: var(--c-text-ghost);
       text-transform: uppercase;
     }
 
-    /* ── aCCESS gRaNTED badge (shown for logged-in members) ── */
-    .access-badge {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      margin-top: 1.5rem;
-      opacity: 0;
-      transition: opacity 0.55s ease;
+    /* Page entrance animation */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .access-badge.visible { opacity: 1; }
-    .access-check {
-      font-size: 1rem;
-      color: #FF5C00;
-      line-height: 1;
+    .hero > * {
+      animation: pageIn 0.6s var(--ease-out) backwards;
     }
-    .access-label {
-      font-size: 0.58rem;
-      font-weight: 300;
-      letter-spacing: 0.28em;
-      color: rgba(255,92,0,0.75);
-      text-transform: uppercase;
-    }
+    .hero .bear { animation: pageIn 0.6s var(--ease-out) backwards, float 4s ease-in-out 0.6s infinite; }
+    .hero .tagline { animation-delay: 0.1s; }
+    .hero .access-badge { animation-delay: 0.2s; }
+    .hero .btn-assets { animation-delay: 0.25s; }
+    .hero .ask-hint { animation-delay: 0.3s; }
 
-    /* ── Hamburger button ── */
-    .burger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-      background: none;
-      border: none;
-      z-index: 200;
-      touch-action: manipulation;
+    /* Guide card overrides */
+    .guide-overlay { position:fixed; inset:0; z-index:10000; pointer-events:none; }
+    .guide-dim { position:absolute; inset:0; background:var(--c-bg-overlay); pointer-events:auto; transition:opacity 0.3s; }
+    .guide-card {
+      position:absolute; z-index:10001; pointer-events:auto;
+      padding:20px 22px 16px; max-width:320px; width:90vw;
+      left:50%; transform:translateX(-50%);
+      top:50%; margin-top:-60px;
     }
-    .burger span {
-      display: block;
-      width: 22px;
-      height: 2px;
-      background: #fff;
-      border-radius: 2px;
-      transition: transform 0.2s ease, opacity 0.2s ease;
+    .guide-btns { display:flex; gap:8px; justify-content:flex-end; }
+    .guide-btn {
+      font-family:var(--font); font-size:0.58rem; font-weight:var(--fw-bold);
+      letter-spacing:0.18em; padding:7px 16px; border-radius:var(--r-sm); cursor:crosshair;
     }
-    .burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .burger.is-open span:nth-child(2) { opacity: 0; }
-    .burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    /* ── Mobile full-screen overlay ── */
-    .nav-overlay {
-      /* always display:flex — visibility/pointer-events control show/hide (avoids iOS display:none→flex bug) */
-      display: flex;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0; /* explicit instead of inset for older iOS */
-      background: #000;
-      z-index: 150;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(1.4rem, 4vh, 2.4rem);
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.22s ease, visibility 0s 0.22s;
-    }
-    .nav-overlay.is-open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transition: opacity 0.22s ease, visibility 0s;
-    }
-    .nav-overlay a {
-      display: block; /* explicit block — prevents inline collapse in flex on mobile */
-      text-decoration: none;
-      color: #fff;
-      font-size: clamp(1.3rem, 7vw, 2rem);
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      opacity: 0.85;
-      line-height: 1;
-      padding: 0.55em 1.6em;     /* large tap target — mobile-friendly */
-      transition: opacity 0.12s, color 0.12s;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nav-overlay a:active,
-    .nav-overlay a:hover { opacity: 1; color: #FF5C00; }
-    .nav-overlay .overlay-close {
-      position: absolute;
-      top: 18px; right: 16px;
-    }
-
-    /* ── Mobile: safe area + text-size ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    .logo, .nav-about, header { touch-action: manipulation; }
-    .btn, button, a { touch-action: manipulation; }
-
-    /* ── Burger label ── */
-    /* Must use .burger .burger-label (specificity 0,2,0) to beat .burger span (0,1,1) */
-    .burger .burger-label {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.42rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.48);
-      margin-top: 2px;
-      line-height: 1;
-      transition: opacity 0.2s ease;
-      display: none; /* hidden on desktop */
-      width: auto;
-      height: auto;
-      background: none;
-      border-radius: 0;
-    }
-    /* When open-state burger is NOT the close button, hide its label */
-    .burger.is-open:not(.overlay-close) .burger-label { opacity: 0; }
-
-    /* ── Mobile nav: switch to text-only hamburger ── */
-    @media (max-width: 520px) {
-      header  { padding: 18px 16px; }
-      nav     { display: none; }
-      .home-mark { display: none; } /* burger-label [aRTS] covers this on mobile */
-      .burger { display: flex; gap: 0; align-items: center; justify-content: center; }
-
-      /* Hide the three bar spans — text-only [aRTS] button */
-      .burger span:not(.burger-label) { display: none; }
-
-      /* Restyle label to match home-mark on desktop */
-      /* .burger .burger-label beats .burger span (0,2,0 > 0,1,1) — prevents white-bar artefact */
-      .burger .burger-label {
-        display: block;
-        font-size: 1rem;
-        font-weight: 300;
-        letter-spacing: 0.05em;
-        color: rgba(255,255,255,0.88);
-        margin-top: 0;
-        width: auto;
-        height: auto;
-        background: none;
-        border-radius: 0;
-      }
-
-      /* Close button label [×] — always visible inside overlay */
-      .overlay-close .burger-label {
-        font-size: 1.1rem;
-        opacity: 0.72;
-      }
-
-      /* ── Mobile: no CSS fade — instant open/close; RGB power-on handled by JS filter ── */
-      .nav-overlay, .nav-overlay.is-open { transition: none; }
-    }
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
-    * { -webkit-user-select: none; user-select: none; }
-    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
-    html { touch-action: manipulation; }
-</style>
+  </style>
 </head>
 <body>
 
-  <div id="crt-wrap">
-  <header>
-    <a href="id.html" class="home-mark" id="home-mark">[aRTS]</a>
-    <nav>
+  <!-- Ambient effects -->
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+  <div class="ambient-orb ambient-orb--bottom"></div>
+
+  <header class="site-header">
+    <a href="id.html" class="site-logo home-mark" id="home-mark">[aRTS]</a>
+    <nav class="site-nav">
+      <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
-      <a href="audience.html">aUDIENCE</a>
-      <a href="aid.html">aID</a>
-      <a href="ask.html">cONNECT</a>
+      <a href="inquire.html">TaLK</a>
+      <a href="work.html">wORK</a>
     </nav>
-    <button class="burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
       <span class="burger-label">[aRTS]</span>
     </button>
@@ -407,16 +201,18 @@
 
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[×]</span>
     </button>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
     <a href="about.html">aBOUT</a>
-    <a href="audience.html">aUDIENCE</a>
-    <a href="aid.html">aID</a>
-    <a href="ask.html">cONNECT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <main>
+  <main class="hero">
     <img src="assets/bear.png" alt="aRTS bear" class="bear" fetchpriority="high">
     <div class="tagline">
       <span class="born">born in</span>
@@ -427,101 +223,21 @@
     </div>
 
     <a href="assets.html" class="btn-assets" id="btn-assets"><span>aSSETS</span></a>
-
   </main>
-  </div><!-- /crt-wrap -->
 
-  <!-- CRT overlays — outside wrapper so filters don't break fixed positioning -->
-  <div id="crt-scan"></div>
-  <div id="crt-vignette"></div>
-
+  <!-- Page entrance — fade in from captcha -->
   <script>
   (function () {
-    const scan     = document.getElementById('crt-scan');
-    const vignette = document.getElementById('crt-vignette');
-    const wrap     = document.getElementById('crt-wrap');
-
-    const T_FLICKER  =  130;
-    const T_EXPAND   =  780;
-    const T_FADE_END = 1150;
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
-    function easeOut(t)    { return 1 - Math.pow(1 - t, 3); }
-    function smoothstep(t) { return t * t * (3 - 2 * t); }
-
-    function setRGB(px, alpha) {
-      if (alpha < 0.01 || px < 0.1) { wrap.style.filter = ''; return; }
-      const p = px.toFixed(1), a = alpha.toFixed(3), b = (px * 0.5).toFixed(1);
-      wrap.style.filter =
-        `drop-shadow(-${p}px 0 ${b}px rgba(255,20,20,${a})) ` +
-        `drop-shadow(${p}px 0 ${b}px rgba(20,30,255,${a})) ` +
-        `drop-shadow(0 -${b}px ${b}px rgba(20,255,20,${(alpha * 0.4).toFixed(3)}))`;
-    }
-
-    function bootCRT() {
-      /* Start collapsed to a center line — expands as the tube warms up */
-      wrap.style.clipPath = 'inset(50% 0 50% 0)';
-
-      let start = null;
-      function tick(ts) {
-        if (!start) start = ts;
-        const e = ts - start;
-
-        if (e < T_FLICKER) {
-          // Flicker burst: strong RGB + scanlines, clip stays at center line
-          scan.style.opacity     = String(lerp(0, 1.0, e / T_FLICKER));
-          vignette.style.opacity = '0.95';
-          setRGB(9, 0.75);
-
-        } else if (e < T_EXPAND) {
-          // Tube warms up: clip expands, RGB fades out
-          const t   = (e - T_FLICKER) / (T_EXPAND - T_FLICKER);
-          const et  = easeOut(t);
-          const pct = lerp(50, 0, et);
-          wrap.style.clipPath    = `inset(${pct.toFixed(2)}% 0 ${pct.toFixed(2)}% 0)`;
-          setRGB(lerp(9, 0, smoothstep(t)), lerp(0.75, 0, smoothstep(t)));
-          scan.style.opacity     = '1.0';
-          vignette.style.opacity = String(lerp(0.95, 0.55, et));
-
-        } else if (e < T_FADE_END) {
-          // Afterglow: scanlines + vignette dissolve
-          const t  = (e - T_EXPAND) / (T_FADE_END - T_EXPAND);
-          const et = smoothstep(t);
-          wrap.style.clipPath    = '';
-          wrap.style.filter      = '';
-          scan.style.opacity     = String(lerp(1.0, 0, et));
-          vignette.style.opacity = String(lerp(0.55, 0, et));
-
-        } else {
-          // Done — clean up
-          wrap.style.clipPath    = '';
-          wrap.style.filter      = '';
-          scan.remove();
-          vignette.remove();
-          return;
-        }
-
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
-    /* Play the CRT boot when arriving from captcha verification */
-    if (sessionStorage.getItem('crt_transition')) {
-      sessionStorage.removeItem('crt_transition');
-      bootCRT();
-    }
-
     /* Bfcache restore — simple fade-in */
     window.addEventListener('pageshow', function (e) {
       if (e.persisted) {
-        const c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        var c = document.createElement('div');
+        c.style.cssText = 'position:fixed;inset:0;background:var(--c-bg);z-index:99998;pointer-events:none;opacity:1;';
         document.body.appendChild(c);
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
             c.style.transition = 'opacity 0.22s ease';
-            c.style.opacity    = '0';
+            c.style.opacity = '0';
             setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
           });
         });
@@ -551,205 +267,125 @@
     }
 
     function showEgg() {
-      /* ── Inject card CSS once ── */
       if (!document.getElementById('_ecStyle')) {
         var st = document.createElement('style'); st.id = '_ecStyle';
         st.textContent =
-          '#_eggOv{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:99999;' +
+          '#_eggOv{position:fixed;inset:0;background:var(--c-bg-overlay);z-index:99999;' +
             'display:flex;align-items:flex-end;justify-content:center;' +
             'opacity:0;transition:opacity 0.28s ease;pointer-events:none;}' +
           '#_eggOv.open{opacity:1;pointer-events:all;}' +
-          '#_eggCard{background:#0e0e0e;border-radius:24px 24px 0 0;' +
+          '#_eggCard{background:var(--c-bg-elevated);border:1px solid var(--c-border);border-radius:24px 24px 0 0;' +
             'width:min(440px,100vw);padding-bottom:max(env(safe-area-inset-bottom),32px);' +
             'transform:translateY(100%);overflow:hidden;' +
-            'font-family:"Space Grotesk",sans-serif;' +
-            'user-select:none;-webkit-user-select:none;' +
+            'font-family:var(--font);user-select:none;-webkit-user-select:none;' +
             'transition:transform 0.48s cubic-bezier(0.34,1.2,0.64,1);}' +
           '#_eggOv.open #_eggCard{transform:translateY(0);}' +
-          '._ec-stripe{height:5px;background:#FF5C00;}' +
+          '._ec-stripe{height:5px;background:var(--c-accent);}' +
           '._ec-hdr{display:flex;justify-content:space-between;align-items:baseline;padding:20px 28px 0;}' +
-          '._ec-logo{font-size:1rem;font-weight:300;letter-spacing:0.08em;color:#fff;}' +
-          '._ec-type{font-size:0.56rem;font-weight:300;letter-spacing:0.22em;' +
-            'color:rgba(255,255,255,0.28);text-transform:uppercase;}' +
-          '._ec-pay{font-size:0.7rem;font-weight:300;letter-spacing:0.24em;' +
-            'color:rgba(255,255,255,0.35);text-transform:uppercase;text-align:center;margin-top:10px;}' +
-          '._ec-num{font-size:clamp(5.5rem,22vw,9rem);font-weight:700;letter-spacing:-0.02em;' +
-            'color:#FF5C00;line-height:1;text-align:center;padding:2px 28px 0;' +
-            'user-select:none;-webkit-user-select:none;}' +
-          '._ec-rule{height:1px;background:rgba(255,255,255,0.07);margin:22px 28px;}' +
-          '._ec-congrats{font-size:1rem;font-weight:700;letter-spacing:0.14em;color:#fff;text-align:center;}' +
-          '._ec-sub{font-size:0.65rem;font-weight:300;letter-spacing:0.16em;' +
-            'color:rgba(255,255,255,0.32);text-align:center;margin-top:4px;}' +
-          '._ec-codelabel{font-size:0.52rem;font-weight:300;letter-spacing:0.26em;' +
-            'color:rgba(255,255,255,0.22);text-align:center;margin-top:22px;text-transform:uppercase;}' +
-          '._ec-code{font-size:1.05rem;font-weight:700;letter-spacing:0.2em;color:#fff;' +
-            'text-align:center;margin-top:7px;cursor:pointer;' +
-            'transition:color 0.15s;touch-action:manipulation;}' +
-          '._ec-code:hover{color:#FF5C00;}';
+          '._ec-logo{font-size:1rem;font-weight:300;letter-spacing:0.08em;color:var(--c-text);}' +
+          '._ec-type{font-size:0.56rem;font-weight:300;letter-spacing:0.22em;color:var(--c-text-tertiary);text-transform:uppercase;}' +
+          '._ec-pay{font-size:0.7rem;font-weight:300;letter-spacing:0.24em;color:var(--c-text-secondary);text-transform:uppercase;text-align:center;margin-top:10px;}' +
+          '._ec-num{font-size:clamp(5.5rem,22vw,9rem);font-weight:700;letter-spacing:-0.02em;color:var(--c-accent);line-height:1;text-align:center;padding:2px 28px 0;}' +
+          '._ec-rule{height:1px;background:var(--c-border);margin:22px 28px;}' +
+          '._ec-congrats{font-size:1rem;font-weight:700;letter-spacing:0.14em;color:var(--c-text);text-align:center;}' +
+          '._ec-sub{font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:var(--c-text-secondary);text-align:center;margin-top:4px;}' +
+          '._ec-codelabel{font-size:0.52rem;font-weight:300;letter-spacing:0.26em;color:var(--c-text-tertiary);text-align:center;margin-top:22px;text-transform:uppercase;}' +
+          '._ec-code{font-size:1.05rem;font-weight:700;letter-spacing:0.2em;color:var(--c-text);text-align:center;margin-top:7px;cursor:pointer;transition:color 0.15s;touch-action:manipulation;}' +
+          '._ec-code:hover{color:var(--c-accent);}';
         document.head.appendChild(st);
       }
 
-      /* ── Random code ── */
       var CPOOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       var codeStr = 'aRTS-77-' + (function(){
         var c=''; for(var i=0;i<6;i++) c+=CPOOL[Math.floor(Math.random()*CPOOL.length)]; return c;
       })();
 
-      /* ── Build card DOM ── */
-      var ov      = document.createElement('div'); ov.id = '_eggOv';
-      var card    = document.createElement('div'); card.id = '_eggCard';
+      var ov=document.createElement('div');ov.id='_eggOv';
+      var card=document.createElement('div');card.id='_eggCard';
+      var stripe=document.createElement('div');stripe.className='_ec-stripe';
+      var hdr=document.createElement('div');hdr.className='_ec-hdr';
+      var logo=document.createElement('span');logo.className='_ec-logo';logo.textContent='[aRTS]';
+      var type=document.createElement('span');type.className='_ec-type';type.textContent='member pass';
+      hdr.appendChild(logo);hdr.appendChild(type);
+      var pay=document.createElement('div');pay.className='_ec-pay';pay.textContent='pAY';
+      var numEl=document.createElement('div');numEl.className='_ec-num';numEl.textContent='??';
+      var rule=document.createElement('div');rule.className='_ec-rule';
+      var congrats=document.createElement('div');congrats.className='_ec-congrats';congrats.textContent='cONGRATULATIONS';
+      var sub=document.createElement('div');sub.className='_ec-sub';sub.textContent='you found the easter egg';
+      var clbl=document.createElement('div');clbl.className='_ec-codelabel';clbl.textContent='redemption code';
+      var codeEl=document.createElement('div');codeEl.className='_ec-code';codeEl.textContent=codeStr;
+      [stripe,hdr,pay,numEl,rule,congrats,sub,clbl,codeEl].forEach(function(el){card.appendChild(el);});
+      ov.appendChild(card);document.body.appendChild(ov);
 
-      var stripe  = document.createElement('div'); stripe.className = '_ec-stripe';
-      var hdr     = document.createElement('div'); hdr.className = '_ec-hdr';
-      var logo    = document.createElement('span'); logo.className = '_ec-logo'; logo.textContent = '[aRTS]';
-      var type    = document.createElement('span'); type.className = '_ec-type'; type.textContent = 'member pass';
-      hdr.appendChild(logo); hdr.appendChild(type);
-
-      var pay     = document.createElement('div'); pay.className = '_ec-pay'; pay.textContent = 'pAY';
-      var numEl   = document.createElement('div'); numEl.className = '_ec-num'; numEl.textContent = '??';
-      var rule    = document.createElement('div'); rule.className = '_ec-rule';
-      var congrats= document.createElement('div'); congrats.className = '_ec-congrats'; congrats.textContent = 'cONGRATULATIONS';
-      var sub     = document.createElement('div'); sub.className = '_ec-sub'; sub.textContent = 'you found the easter egg';
-      var clbl    = document.createElement('div'); clbl.className = '_ec-codelabel'; clbl.textContent = 'redemption code';
-      var codeEl  = document.createElement('div'); codeEl.className = '_ec-code'; codeEl.textContent = codeStr;
-      [stripe,hdr,pay,numEl,rule,congrats,sub,clbl,codeEl].forEach(function(el){ card.appendChild(el); });
-      ov.appendChild(card);
-      document.body.appendChild(ov);
-
-      /* ── Open: backdrop fades in, card slides up, then number scrambles ── */
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
         ov.classList.add('open');
         setTimeout(function(){
-          scrambleTo(numEl, '77', function(){
-            setTimeout(function(){
-              scrambleTo(numEl, '77%', function(){});
-            }, 180);
+          scrambleTo(numEl,'77',function(){
+            setTimeout(function(){scrambleTo(numEl,'77%',function(){});},180);
           });
-        }, 400);
-      }); });
+        },400);
+      });});
 
-      /* ── Copy code on click ── */
-      codeEl.addEventListener('click', function(e){
+      codeEl.addEventListener('click',function(e){
         e.stopPropagation();
-        var txt = codeEl.textContent;
-        if(navigator.clipboard){ navigator.clipboard.writeText(txt); }
-        else {
-          var ta=document.createElement('textarea'); ta.value=txt;
-          ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta);
-          ta.select(); try{document.execCommand('copy');}catch(ee){}
-          document.body.removeChild(ta);
-        }
-        codeEl.textContent='cOPIED ✓'; codeEl.style.color='#FF5C00';
-        setTimeout(function(){ codeEl.textContent=txt; codeEl.style.color=''; }, 1600);
+        var txt=codeEl.textContent;
+        if(navigator.clipboard){navigator.clipboard.writeText(txt);}
+        else{var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(ee){}document.body.removeChild(ta);}
+        codeEl.textContent='cOPIED ✓';codeEl.style.color='var(--c-accent)';
+        setTimeout(function(){codeEl.textContent=txt;codeEl.style.color='';},1600);
       });
 
-      /* ── Award points if member logged in ── */
-      try {
-        if(localStorage.getItem('arts_id_hash')){
-          var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
-          localStorage.setItem('arts_points',String(cur+77));
-        }
-      } catch(ee){}
-
-      /* ── Dismiss — double tap backdrop ── */
-      ov.addEventListener('click', function(e){
-        if(codeEl.contains(e.target)) return;
+      ov.addEventListener('click',function(e){
+        if(codeEl.contains(e.target))return;
         ov.classList.remove('open');
-        setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 340);
+        setTimeout(function(){if(ov.parentNode)ov.parentNode.removeChild(ov);},340);
       });
     }
 
-    /* ── BERLIN: scramble element + 7-click easter egg trigger ── */
-    var berlin     = document.querySelector('.berlin');
-    var clicks     = 0;
-    var scramTimer = null;
-    var B_TARGET   = 'BERLIN';
+    var berlin=document.querySelector('.berlin');
+    var clicks=0;
+    var scramTimer=null;
+    var B_TARGET='BERLIN';
 
-    function runBerlinScramble() {
+    function runBerlinScramble(){
       clearInterval(scramTimer);
-      var step = 0, FRAMES = 18, RATE = 45;
-      scramTimer = setInterval(function () {
-        var out = '';
-        for (var i = 0; i < B_TARGET.length; i++) {
-          out += (i < Math.floor(step * B_TARGET.length / FRAMES))
-            ? B_TARGET[i]
-            : POOL[Math.floor(Math.random() * POOL.length)];
+      var step=0,FRAMES=18,RATE=45;
+      scramTimer=setInterval(function(){
+        var out='';
+        for(var i=0;i<B_TARGET.length;i++){
+          out+=(i<Math.floor(step*B_TARGET.length/FRAMES))?B_TARGET[i]:POOL[Math.floor(Math.random()*POOL.length)];
         }
-        berlin.textContent = out;
-        if (++step > FRAMES) {
-          clearInterval(scramTimer);
-          berlin.textContent = B_TARGET;
-        }
-      }, RATE);
+        berlin.textContent=out;
+        if(++step>FRAMES){clearInterval(scramTimer);berlin.textContent=B_TARGET;}
+      },RATE);
     }
 
-    if (berlin) {
-      /* Touch devices: auto-scramble on load + periodic */
-      if (window.matchMedia('(hover: none)').matches) {
-        setTimeout(runBerlinScramble, 1400);
-        setInterval(runBerlinScramble, 7000);
-      } else {
-        /* Desktop: scramble on hover */
-        berlin.addEventListener('mouseenter', runBerlinScramble);
-        berlin.addEventListener('mouseleave', function () {
-          clearInterval(scramTimer);
-          berlin.textContent = B_TARGET;
-        });
+    if(berlin){
+      if(window.matchMedia('(hover: none)').matches){
+        setTimeout(runBerlinScramble,1400);
+        setInterval(runBerlinScramble,7000);
+      }else{
+        berlin.addEventListener('mouseenter',runBerlinScramble);
+        berlin.addEventListener('mouseleave',function(){clearInterval(scramTimer);berlin.textContent=B_TARGET;});
       }
-
-      /* 7-click → reveal discount */
-      berlin.addEventListener('click', function () {
+      berlin.addEventListener('click',function(){
         clicks++;
-        if (clicks === MAGIC) {
-          clicks = 0;
-          showEgg();
-        }
+        if(clicks===MAGIC){clicks=0;showEgg();}
       });
     }
   })();
   </script>
 
-  <!-- CRT exit transition -->
+  <!-- Smooth page transition (replaces CRT exit) -->
   <script>
   (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);
-      document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
+    var busy=false;
     function doExit(dest){
       if(busy)return;busy=true;
-      mkL();
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<TR){
-          scan.style.opacity=String(lerp(0,1,e/TR));
-          vig.style.opacity=String(lerp(0,0.95,e/TR));
-        }else if(e<TR+TS){
-          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity='0.95';
-        }else{
-          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
-          document.documentElement.style.background='#000';
-          document.body.style.background='#000';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
+      document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
+      document.body.style.opacity='0';
+      document.body.style.transform='scale(0.99)';
+      setTimeout(function(){window.location.href=dest;},220);
     }
     document.addEventListener('click',function(ev){
       var a=ev.target.closest('a[href]');
@@ -766,16 +402,15 @@
   <!-- Nav & logo hover -->
   <script>
   (function(){
-    var DELAY = 40;
+    var DELAY=40;
 
-    /* Nav links — lowercase left→right on enter, recapitalise right→left on leave */
     function navHover(el){
-      var orig = el.textContent;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      var orig=el.textContent;
+      var timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
       function render(n){
         var s=orig[0];
-        for(var i=1;i<orig.length;i++) s+=(i<=n ? orig[i].toLowerCase() : orig[i]);
+        for(var i=1;i<orig.length;i++) s+=(i<=n?orig[i].toLowerCase():orig[i]);
         el.textContent=s;
       }
       el.addEventListener('mouseenter',function(){
@@ -793,149 +428,114 @@
         })(i);
       });
     }
-    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
+    document.querySelectorAll('.site-nav a').forEach(navHover);
 
-    /* ── Idle static glitch — nav feels alive ── */
-    /* One random char in one random nav link briefly corrupts every ~4s   */
+    /* Idle static glitch */
     (function(){
-      var links   = Array.from(document.querySelectorAll('nav a'));
-      var origTxt = links.map(function(el){ return el.textContent; });
-      var glyphs  = '▓░▒│╌·×÷¬±';
+      var links=Array.from(document.querySelectorAll('.site-nav a'));
+      var origTxt=links.map(function(el){return el.textContent;});
+      var glyphs='▓░▒│╌·×÷¬±';
       function tick(){
-        var li  = Math.floor(Math.random() * links.length);
-        var el  = links[li];
-        var txt = origTxt[li];
-        var ci  = 1 + Math.floor(Math.random() * (txt.length - 1)); // skip index 0
-        var arr = txt.split('');
-        arr[ci] = glyphs[Math.floor(Math.random() * glyphs.length)];
-        el.textContent = arr.join('');
-        setTimeout(function(){ el.textContent = txt; }, 90);
-        setTimeout(tick, 2600 + Math.random() * 3800);
+        var li=Math.floor(Math.random()*links.length);
+        var el=links[li];
+        var txt=origTxt[li];
+        var ci=1+Math.floor(Math.random()*(txt.length-1));
+        var arr=txt.split('');
+        arr[ci]=glyphs[Math.floor(Math.random()*glyphs.length)];
+        el.textContent=arr.join('');
+        setTimeout(function(){el.textContent=txt;},90);
+        setTimeout(tick,2600+Math.random()*3800);
       }
-      setTimeout(tick, 1200 + Math.random() * 1800);
+      setTimeout(tick,1200+Math.random()*1800);
     })();
 
-    /* ── [aRTS] home mark — expand to [aRTS LOGIN] or [aRTS ID] if logged in ── */
+    /* [aRTS] home mark expand */
     (function(){
-      var mark   = document.getElementById('home-mark');
-      if (!mark) return;
-      /* If member hash stored → already logged in → show ID instead of LOGIN */
-      var loggedIn = false;
-      try { loggedIn = !!localStorage.getItem('arts_id_hash'); } catch(e) {}
-      var SUFFIX = loggedIn ? ' ID' : ' LOGIN';
-      /* [aRTS] turns orange when logged in */
+      var mark=document.getElementById('home-mark');
+      if(!mark)return;
+      var loggedIn=false;
+      try{loggedIn=!!localStorage.getItem('arts_id_hash');}catch(e){}
+      var SUFFIX=loggedIn?' ID':' LOGIN';
       if(loggedIn){
-        mark.style.opacity = '1';
-        mark.style.color = '#FF5C00';
-        mark.title = 'mEMBER iD';
+        mark.style.opacity='1';
+        mark.style.color='var(--c-accent)';
+        mark.title='mEMBER iD';
       }
-      var timers = [], state = 0;
-      function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
-      function render(n){ mark.textContent = '[aRTS' + SUFFIX.slice(0, n) + ']'; }
-      mark.addEventListener('mouseenter', function(){
-        clr();
-        var from = state;
-        for (var i = from; i < SUFFIX.length; i++)(function(i){
-          timers.push(setTimeout(function(){ render(state = i + 1); }, (i - from) * DELAY));
-        })(i);
-      });
-      mark.addEventListener('mouseleave', function(){
-        clr();
-        var from = state;
-        for (var i = 0; i < from; i++)(function(i){
-          timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
-        })(i);
-      });
-    })();
-
-    /* ── aSSETS button — word-cycle scramble on hover ── */
-    (function(){
-      var btn  = document.getElementById('btn-assets');
-      var span = btn && btn.querySelector('span');
-      if (!btn || !span) return;
-
-      /* Words to cycle through — all same visual weight as "aSSETS" */
-      var WORDS = ['aSSETS', 'tRADE', 'cOLLECT', 'vIEW', 'aSSETS'];
-      var GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-      var SCRAMBLE_FRAMES = 8;   /* scramble steps per char */
-      var CHAR_DELAY = 28;       /* ms between char slots */
-      var WORD_HOLD  = 520;      /* ms to hold each word before cycling */
-
-      var timer = null, wordIdx = 0, cycling = false;
-
-      function randChar() {
-        return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-      }
-
-      /* Scramble from current text to `target`, then call `done()` */
-      function scrambleToWord(target, done) {
-        var steps = [];
-        var maxLen = Math.max(span.textContent.length, target.length);
-        for (var i = 0; i < maxLen; i++) {
-          (function(i){
-            var frames = 0;
-            var iv = setInterval(function(){
-              var cur = span.textContent.split('');
-              /* Pad or truncate display to match target length mid-scramble */
-              while (cur.length < target.length) cur.push(randChar());
-              if (cur.length > target.length) cur = cur.slice(0, target.length);
-              if (i < cur.length) cur[i] = (frames < SCRAMBLE_FRAMES) ? randChar() : (target[i] || '');
-              span.textContent = cur.join('');
-              if (++frames > SCRAMBLE_FRAMES) {
-                clearInterval(iv);
-                /* When last char settles, call done */
-                if (i === target.length - 1) done();
-              }
-            }, CHAR_DELAY);
-            steps.push(iv);
-          })(i);
-        }
-        return steps;
-      }
-
-      function stopCycle() {
-        cycling = false;
-        clearTimeout(timer);
-        /* Snap back to aSSETS immediately on leave — no scramble, clean exit */
-        span.textContent = 'aSSETS';
-        wordIdx = 0;
-      }
-
-      function nextWord() {
-        if (!cycling) return;
-        wordIdx = (wordIdx + 1) % WORDS.length;
-        scrambleToWord(WORDS[wordIdx], function(){
-          if (!cycling) return;
-          timer = setTimeout(nextWord, WORD_HOLD);
-        });
-      }
-
-      btn.addEventListener('mouseenter', function(){
-        if (cycling) return;
-        cycling = true;
-        wordIdx = 0;
-        timer = setTimeout(nextWord, WORD_HOLD);
-      });
-
-      btn.addEventListener('mouseleave', stopCycle);
-    })();
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
+      var timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){mark.textContent='[aRTS'+SUFFIX.slice(0,n)+']';}
+      mark.addEventListener('mouseenter',function(){
         clr();
         var from=state;
+        for(var i=from;i<SUFFIX.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      mark.addEventListener('mouseleave',function(){
+        clr();
+        var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    })();
+
+    /* aSSETS button word-cycle scramble */
+    (function(){
+      var btn=document.getElementById('btn-assets');
+      var span=btn&&btn.querySelector('span');
+      if(!btn||!span)return;
+      var WORDS=['aSSETS','tRADE','cOLLECT','vIEW'];
+      var GLYPHS='$€£¥₣₹₽¢₩₿₺₴₸₡₦₲₵₼₾';
+      var SCRAMBLE_FRAMES=8,CHAR_DELAY=28,WORD_HOLD=520;
+      var timer=null,wordIdx=0,cycling=false;
+      function randChar(){return GLYPHS[Math.floor(Math.random()*GLYPHS.length)];}
+      function scrambleToWord(target,done){
+        var maxLen=Math.max(span.textContent.length,target.length);
+        for(var i=0;i<maxLen;i++){
+          (function(i){
+            var frames=0;
+            var iv=setInterval(function(){
+              var cur=span.textContent.split('');
+              while(cur.length<target.length)cur.push(randChar());
+              if(cur.length>target.length)cur=cur.slice(0,target.length);
+              if(i<cur.length)cur[i]=(frames<SCRAMBLE_FRAMES)?randChar():(target[i]||'');
+              span.textContent=cur.join('');
+              if(++frames>SCRAMBLE_FRAMES){
+                clearInterval(iv);
+                if(i===target.length-1)done();
+              }
+            },CHAR_DELAY);
+          })(i);
+        }
+      }
+      function stopCycle(){cycling=false;clearTimeout(timer);span.textContent='aSSETS';wordIdx=0;}
+      function nextWord(){
+        if(!cycling)return;
+        wordIdx=(wordIdx+1)%WORDS.length;
+        scrambleToWord(WORDS[wordIdx],function(){
+          if(!cycling)return;
+          timer=setTimeout(nextWord,WORD_HOLD);
+        });
+      }
+      btn.addEventListener('mouseenter',function(){if(cycling)return;cycling=true;wordIdx=0;timer=setTimeout(nextWord,WORD_HOLD);});
+      btn.addEventListener('mouseleave',stopCycle);
+    })();
+
+    /* Logo [a] expand */
+    document.querySelectorAll('a.logo[data-inner], a.site-logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
+      var timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
+      logo.addEventListener('mouseenter',function(){
+        clr();var from=state;
         for(var i=from;i<inner.length;i++)(function(i){
           timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
         })(i);
       });
       logo.addEventListener('mouseleave',function(){
-        clr();
-        var from=state;
+        clr();var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
@@ -947,44 +547,24 @@
   <!-- Hamburger toggle -->
   <script>
   (function(){
-    var burger  = document.getElementById('burger');
-    var overlay = document.getElementById('nav-overlay');
-    var closer  = document.getElementById('burger-close');
+    var burger=document.getElementById('burger');
+    var overlay=document.getElementById('nav-overlay');
+    var closer=document.getElementById('burger-close');
+    var oLinks=Array.from(overlay.querySelectorAll('a'));
+    var oLabels=oLinks.map(function(el){return el.textContent;});
 
-    /* Capture overlay nav links + original mixed-case labels once */
-    var oLinks  = Array.from(overlay.querySelectorAll('a'));
-    var oLabels = oLinks.map(function(el){ return el.textContent; });
-
-    /* ── RGB power-on flash (mobile CRT aesthetic) ── */
-    function rgbPowerOn(){
-      var steps = [
-        [0,   'brightness(9) saturate(0.1)'],
-        [55,  'brightness(5) hue-rotate(0deg)   saturate(3)'],
-        [110, 'brightness(3) hue-rotate(120deg) saturate(2.5)'],
-        [165, 'brightness(2) hue-rotate(240deg) saturate(1.5)'],
-        [220, 'brightness(1.2) saturate(0.9)'],
-        [300, '']
-      ];
-      steps.forEach(function(s){
-        setTimeout(function(){
-          if (overlay.classList.contains('is-open')) overlay.style.filter = s[1];
-        }, s[0]);
-      });
-    }
-
-    /* ── Decap cascade: all-lowercase → mixed-case left-to-right, staggered per link ── */
     function decapCascade(){
-      oLinks.forEach(function(el, li){
-        var target = oLabels[li];
-        el.textContent = target.toLowerCase();          /* start: all lowercase */
-        var base = li * 100 + 120;                      /* slower stagger per link */
-        Array.from(target).forEach(function(ch, i){
+      oLinks.forEach(function(el,li){
+        var target=oLabels[li];
+        el.textContent=target.toLowerCase();
+        var base=li*100+120;
+        Array.from(target).forEach(function(ch,i){
           setTimeout(function(){
-            if (!overlay.classList.contains('is-open')) return;
-            var chars = el.textContent.split('');
-            chars[i] = ch;                              /* pop to target case   */
-            el.textContent = chars.join('');
-          }, base + i * 50);                            /* slower per-char cadence */
+            if(!overlay.classList.contains('is-open'))return;
+            var chars=el.textContent.split('');
+            chars[i]=ch;
+            el.textContent=chars.join('');
+          },base+i*50);
         });
       });
     }
@@ -992,233 +572,313 @@
     function openMenu(){
       overlay.classList.add('is-open');
       burger.classList.add('is-open');
-      rgbPowerOn();
       decapCascade();
     }
-
     function closeMenu(){
-      overlay.style.filter = '';
-      oLinks.forEach(function(el, i){ el.textContent = oLabels[i]; }); /* restore labels */
+      oLinks.forEach(function(el,i){el.textContent=oLabels[i];});
       overlay.classList.remove('is-open');
       burger.classList.remove('is-open');
-      /* visibility + pointer-events handled entirely by CSS; no display toggle needed */
     }
 
-    burger.addEventListener('click', openMenu);
-    closer.addEventListener('click', closeMenu);
+    burger.addEventListener('click',openMenu);
+    closer.addEventListener('click',closeMenu);
+    overlay.addEventListener('click',function(e){if(e.target===overlay)closeMenu();});
+  })();
+  </script>
 
-    /* Close on tap outside any link */
-    overlay.addEventListener('click', function(e){
-      if (e.target === overlay) closeMenu();
+  <!-- Easter egg: type KNUP -->
+  <script>(function(){
+    var SEQ='knup',buf='';
+    var WORDS=['BUY IT','USE IT','BREAK IT','FIX IT','TRASH IT','CHANGE IT','MAIL —','UPGRADE IT','CHARGE IT','POINT IT','ZOOM IT','PRESS IT','SNAP IT','WORK IT','QUICK — ERASE IT','WRITE IT','CUT IT','PASTE IT','SAVE IT','LOAD IT','CHECK IT','QUICK — REWRITE IT','PLUG IT','PLAY IT','BURN IT','RIP IT','DRAG AND DROP IT','ZIP —','UNZIP IT','LOCK IT','FILL IT','CALL IT','FIND IT','VIEW IT','CODE IT','JAM —','UNLOCK IT','SURF IT','SCROLL IT','PAUSE IT','CLICK IT','CROSS IT','CRACK IT','SWITCH —','UPDATE IT','NAME IT','READ IT','TUNE IT','PRINT IT','SCAN IT','SEND IT','FAX IT','RENAME IT','TOUCH IT','BRING IT','PAY IT','WATCH IT','TURN IT','LEAVE IT','START —','FORMAT IT'];
+    document.addEventListener('keydown',function(e){
+      if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+      buf=(buf+e.key.toLowerCase()).slice(-SEQ.length);
+      if(buf===SEQ){buf='';launch();}
+    });
+    function launch(){
+      var BPM=120,MS=Math.round(60000/BPM/2);
+      var s=document.createElement('style');
+      s.textContent=
+        '@keyframes tRgb{0%{text-shadow:3px 0 1px rgba(255,20,20,0.92),-3px 0 1px rgba(20,200,255,0.92)}33%{text-shadow:-3px 0 1px rgba(20,255,20,0.92),3px 0 1px rgba(200,20,255,0.92)}66%{text-shadow:3px 0 1px rgba(20,60,255,0.92),-3px 0 1px rgba(255,220,20,0.92)}100%{text-shadow:3px 0 1px rgba(255,20,20,0.92),-3px 0 1px rgba(20,200,255,0.92)}}'+
+        '@keyframes tPop{0%{opacity:0;transform:scale(1.08)}9%{opacity:1;transform:scale(1)}82%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0.94)}}'+
+        '@keyframes tFadeIn{0%{opacity:0}100%{opacity:1}}'+
+        '#_techEgg{position:fixed;inset:0;background:var(--c-bg);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;animation:tFadeIn 0.18s ease forwards;}'+
+        '#_techEgg::before{content:"KNUP";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;font-family:var(--font);font-size:clamp(6rem,30vw,18rem);font-weight:700;color:var(--c-text-ghost);letter-spacing:0.1em;pointer-events:none;user-select:none;}'+
+        '#_techWord{position:relative;z-index:2;font-family:var(--font);font-size:clamp(1.8rem,8vw,5rem);font-weight:700;letter-spacing:0.18em;color:var(--c-text);text-align:center;padding:0 6vw;line-height:1.1;}';
+      document.head.appendChild(s);
+      var ov=document.createElement('div');ov.id='_techEgg';
+      var wEl=document.createElement('div');wEl.id='_techWord';
+      ov.appendChild(wEl);document.body.appendChild(ov);
+      var idx=0,timer,stopped=false;
+      function tick(){
+        if(stopped||idx>=WORDS.length){if(!stopped)stop(500);return;}
+        var word=WORDS[idx++];
+        wEl.style.animation='none';
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          if(stopped)return;
+          wEl.textContent=word;
+          wEl.style.animation='tRgb '+MS+'ms linear infinite, tPop '+MS+'ms ease both';
+          timer=setTimeout(tick,MS);
+        });});
+      }
+      function stop(delay){
+        stopped=true;clearTimeout(timer);
+        setTimeout(function(){
+          ov.style.transition='opacity 0.38s ease';ov.style.opacity='0';
+          setTimeout(function(){
+            if(ov.parentNode)ov.parentNode.removeChild(ov);
+            if(s.parentNode)s.parentNode.removeChild(s);
+          },420);
+        },delay||0);
+      }
+      tick();
+      ov.addEventListener('click',function(){stop();});
+      document.addEventListener('keydown',function esc(e){
+        if(e.key==='Escape'){stop();document.removeEventListener('keydown',esc);}
+      });
+    }
+  })();</script>
+
+  <!-- Easter egg: type ZENO -->
+  <script>(function(){
+    var SEQ='zeno',buf='';
+    document.addEventListener('keydown',function(e){
+      if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+      buf=(buf+e.key.toLowerCase()).slice(-SEQ.length);
+      if(buf===SEQ){buf='';launchZeno();}
+    });
+    function launchZeno(){
+      var s=document.createElement('style');
+      s.textContent=
+        '@keyframes zFade{0%{opacity:0}100%{opacity:1}}'+
+        '#_zenoEgg{position:fixed;inset:0;background:var(--c-bg);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(24px,4vh,52px);overflow:hidden;animation:zFade 0.32s ease forwards;}'+
+        '#_zenoEgg::before{content:"ZENO";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;font-family:var(--font);font-size:clamp(6rem,30vw,18rem);font-weight:700;color:var(--c-accent-subtle);letter-spacing:0.1em;pointer-events:none;user-select:none;}'+
+        '#_zenoEq{display:flex;align-items:center;gap:clamp(10px,2.2vw,24px);position:relative;z-index:1;}'+
+        '#_zenoSig{display:inline-flex;flex-direction:column;align-items:center;font-family:var(--font);color:var(--c-accent);line-height:1.1;}'+
+        '.zs-top{font-size:clamp(0.9rem,2.4vw,1.4rem);}.zs-sym{font-size:clamp(2.8rem,9vw,5.5rem);font-weight:700;line-height:0.9;}.zs-bot{font-size:clamp(0.62rem,1.6vw,0.88rem);letter-spacing:0.06em;}'+
+        '.zs-term,.zs-rel,.zs-res{font-family:var(--font);font-size:clamp(2rem,7vw,4.5rem);font-weight:700;color:var(--c-accent);position:relative;z-index:1;}.zs-rel{font-weight:300;}'+
+        '#_zenoQuote{font-family:var(--font);font-size:clamp(0.68rem,1.8vw,0.88rem);font-weight:300;letter-spacing:0.14em;color:var(--c-text-secondary);text-align:center;max-width:min(78vw,500px);line-height:1.8;position:relative;z-index:1;}'+
+        '#_zenoName{font-family:var(--font);font-size:clamp(0.48rem,1.1vw,0.60rem);font-weight:300;letter-spacing:0.30em;color:var(--c-text-ghost);text-align:center;position:relative;z-index:1;}';
+      document.head.appendChild(s);
+      var ov=document.createElement('div');ov.id='_zenoEgg';
+      var eq=document.createElement('div');eq.id='_zenoEq';
+      var sig=document.createElement('div');sig.id='_zenoSig';
+      sig.innerHTML='<span class="zs-top">∞</span><span class="zs-sym">Σ</span><span class="zs-bot">n=1</span>';
+      var term=document.createElement('span');term.className='zs-term';term.textContent='(1/2)ⁿ';
+      var rel=document.createElement('span');rel.className='zs-rel';rel.textContent='=';
+      var res=document.createElement('span');res.className='zs-res';res.textContent='1';
+      eq.appendChild(sig);eq.appendChild(term);eq.appendChild(rel);eq.appendChild(res);
+      var quote=document.createElement('p');quote.id='_zenoQuote';
+      quote.textContent='That which is in locomotion must arrive at the half-way stage before it arrives at the goal.';
+      var name=document.createElement('p');name.id='_zenoName';name.textContent='490 BC';
+      ov.appendChild(eq);ov.appendChild(quote);ov.appendChild(name);
+      document.body.appendChild(ov);
+      function close(){
+        ov.style.transition='opacity 0.34s ease';ov.style.opacity='0';
+        setTimeout(function(){if(ov.parentNode)ov.parentNode.removeChild(ov);if(s.parentNode)s.parentNode.removeChild(s);},380);
+      }
+      ov.addEventListener('click',close);
+      document.addEventListener('keydown',function esc(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',esc);}});
+    }
+  })();</script>
+
+  <!-- First-time user guide -->
+  <script>
+  (function(){
+    if(localStorage.getItem('arts_id_hash')||localStorage.getItem('arts_guide_done'))return;
+    var steps=[
+      {title:'wELCOME tO [aRTS]',desc:'a tRADING nETWORK fOR aRT cOLLECTORS aND cREATORS, bORN iN bERLIN.'},
+      {title:'bROWSE tHE gALLERY',desc:'tAP "aRT" iN tHE nAV tO eXPLORE aVAILABLE pIECES fROM aRTISTS wORLDWIDE.'},
+      {title:'vIEW dETAILS',desc:'cLICK aNY pIECE tO sEE fULL dETAILS — iMAGES, dIMENSIONS, pROVENANCE, aND mORE.'},
+      {title:'iNQUIRE',desc:'fOUND sOMETHING yOU lIKE? hIT "iNQUiRE" tO sTART a cONVERSATION wITH tHE sELLER.'},
+      {title:'jOIN tHE nETWORK',desc:'bECOME a mEMBER tO uNLOCK fAVOURITES, bOUTIQUE aCCESS, aND mORE. fREE tIER aVAILABLE.'}
+    ];
+    var cur=0;
+    var overlay=document.createElement('div');
+    overlay.className='guide-overlay';
+    overlay.innerHTML='<div class="guide-dim"></div><div class="guide-card"><div class="guide-stripe"></div><p class="guide-step"></p><p class="guide-title"></p><p class="guide-desc"></p><div class="guide-btns"><button class="guide-btn guide-btn-skip">sKIP</button><button class="guide-btn guide-btn-next">nEXT</button></div></div>';
+    function render(){
+      var s=steps[cur];
+      overlay.querySelector('.guide-step').textContent=(cur+1)+' / '+steps.length;
+      overlay.querySelector('.guide-title').textContent=s.title;
+      overlay.querySelector('.guide-desc').textContent=s.desc;
+      overlay.querySelector('.guide-btn-next').textContent=cur===steps.length-1?'gOT iT':'nEXT';
+    }
+    function finish(){
+      localStorage.setItem('arts_guide_done','1');
+      overlay.querySelector('.guide-dim').style.opacity='0';
+      overlay.querySelector('.guide-card').style.opacity='0';
+      setTimeout(function(){if(overlay.parentNode)overlay.parentNode.removeChild(overlay);},350);
+    }
+    render();
+    setTimeout(function(){document.body.appendChild(overlay);},1400);
+    overlay.querySelector('.guide-btn-next').addEventListener('click',function(){
+      cur++;if(cur>=steps.length)finish();else render();
+    });
+    overlay.querySelector('.guide-btn-skip').addEventListener('click',finish);
+    overlay.querySelector('.guide-dim').addEventListener('click',finish);
+  })();
+  </script>
+
+  <!-- GDPR consent banner -->
+  <div id="gdpr-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:color-mix(in srgb, var(--c-bg-elevated) 97%, transparent);backdrop-filter:blur(12px);border-top:1px solid var(--c-accent-subtle);padding:16px 24px;font-family:var(--font);">
+    <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <p style="flex:1;min-width:200px;font-size:0.62rem;font-weight:300;letter-spacing:0.1em;color:var(--c-text-secondary);line-height:1.6;">
+        wE uSE lOCALsTORAGE tO sTORE yOUR sESSION dATA aND pREFERENCES. nO cOOKIES. <a href="privacy.html" style="color:var(--c-accent);text-decoration:none">pRIVACY pOLICY</a>
+      </p>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button id="gdpr-accept" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:var(--c-accent);color:#fff;border:none;border-radius:var(--r-sm);cursor:crosshair;">aCCEPT</button>
+        <button id="gdpr-decline" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:transparent;color:var(--c-text-tertiary);border:1px solid var(--c-border);border-radius:var(--r-sm);cursor:crosshair;">dECLINE</button>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    if(localStorage.getItem('arts_gdpr_consent'))return;
+    var banner=document.getElementById('gdpr-banner');
+    banner.style.display='block';
+    document.getElementById('gdpr-accept').addEventListener('click',function(){
+      localStorage.setItem('arts_gdpr_consent',new Date().toISOString());
+      banner.style.display='none';
+    });
+    document.getElementById('gdpr-decline').addEventListener('click',function(){
+      localStorage.setItem('arts_gdpr_consent','declined');
+      banner.style.display='none';
     });
   })();
   </script>
 
-  <!-- ── Easter egg: type KNUP ── -->
-  <script>(function(){
-    var SEQ = 'knup', buf = '';
+  <!-- Daily login XP -->
+  <script>
+  (function(){
+    try{
+      if(localStorage.getItem('arts_id_hash')){
+        var today=new Date().toISOString().slice(0,10);
+        if(localStorage.getItem('arts_xp_daily')!==today){
+          localStorage.setItem('arts_xp_daily',today);
+          var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
+          localStorage.setItem('arts_points',String(cur+25));
+          var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
+          pending.push({label:'dAILY lOGIN',pts:25});
+          sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
+        }
+      }
+    }catch(e){}
+  })();
+  </script>
 
-    var WORDS = [
-      'BUY IT','USE IT','BREAK IT','FIX IT',
-      'TRASH IT','CHANGE IT','MAIL —','UPGRADE IT',
-      'CHARGE IT','POINT IT','ZOOM IT','PRESS IT',
-      'SNAP IT','WORK IT','QUICK — ERASE IT',
-      'WRITE IT','CUT IT','PASTE IT','SAVE IT',
-      'LOAD IT','CHECK IT','QUICK — REWRITE IT',
-      'PLUG IT','PLAY IT','BURN IT','RIP IT',
-      'DRAG AND DROP IT','ZIP —','UNZIP IT',
-      'LOCK IT','FILL IT','CALL IT','FIND IT',
-      'VIEW IT','CODE IT','JAM —','UNLOCK IT',
-      'SURF IT','SCROLL IT','PAUSE IT','CLICK IT',
-      'CROSS IT','CRACK IT','SWITCH —','UPDATE IT',
-      'NAME IT','READ IT','TUNE IT','PRINT IT',
-      'SCAN IT','SEND IT','FAX IT','RENAME IT',
-      'TOUCH IT','BRING IT','PAY IT','WATCH IT',
-      'TURN IT','LEAVE IT','START —','FORMAT IT'
-    ];
+  <script src="theme.js?v=4"></script>
+  <script src="btn-fx.js"></script>
+  <script>
+    window.artsCornerAdd({label:'rEPORT',href:'report.html'});
+    window.artsCornerAdd({label:'fEEDBaCK',id:'corner-feedback-item',action:function(){
+      var bd=document.getElementById('fb-backdrop');
+      if(bd)bd.classList.add('open');
+    }});
+  </script>
 
-    document.addEventListener('keydown', function(e){
-      if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      buf = (buf + e.key.toLowerCase()).slice(-SEQ.length);
-      if(buf === SEQ){ buf = ''; launch(); }
-    });
+  <!-- FEEDBACK WIDGET -->
+  <div id="fb-backdrop">
+    <div id="fb-sheet">
+      <div class="fb-handle-wrap" style="display:flex;justify-content:center;padding:10px 0 0;"><div class="fb-handle" style="width:34px;height:3px;border-radius:2px;"></div></div>
+      <div class="fb-stripe" style="height:4px;"></div>
+      <div class="fb-head" style="display:flex;justify-content:space-between;align-items:center;padding:18px 24px 0;">
+        <span class="fb-logo" style="font-size:0.9rem;font-weight:300;letter-spacing:0.06em;">[aRTS]</span>
+        <button class="fb-close" id="fb-close">[×]</button>
+      </div>
+      <div id="fb-form" class="fb-body" style="padding:14px 24px 0;">
+        <div class="fb-stars-wrap" style="margin-bottom:20px;">
+          <p class="fb-stars-pre" style="font-size:0.42rem;letter-spacing:0.26em;margin-bottom:10px;text-transform:uppercase;font-weight:600;">— hOW dO yOU fEEL? —</p>
+          <div class="fb-stars" id="fb-stars" style="display:flex;gap:10px;">
+            <button class="fb-star" data-v="1" aria-label="1 star" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">B</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
+            <button class="fb-star" data-v="2" aria-label="2 stars" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">R</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
+            <button class="fb-star" data-v="3" aria-label="3 stars" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">A</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
+            <button class="fb-star" data-v="4" aria-label="4 stars" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">V</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
+            <button class="fb-star" data-v="5" aria-label="5 stars" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">O</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
+          </div>
+          <p class="fb-stars-label" id="fb-stars-label" style="font-size:0.44rem;letter-spacing:0.22em;text-transform:uppercase;margin-top:9px;min-height:1em;"></p>
+        </div>
+        <textarea class="fb-text" id="fb-text" rows="3" maxlength="280" placeholder="wHaT dO yOU tHINK? — bE bRUTaL." style="width:100%;font-size:0.88rem;padding:6px 0;resize:none;"></textarea>
+        <p class="fb-char-count" id="fb-char" style="font-size:0.42rem;font-weight:300;letter-spacing:0.18em;text-align:right;margin-top:4px;">0 / 280</p>
+        <div class="fb-foot" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 0;gap:12px;">
+          <span class="fb-note" style="font-size:0.42rem;font-weight:300;letter-spacing:0.14em;flex:1;">sTORED LOCaLLY · hELPS iMPROVE tHE sITE</span>
+          <button class="fb-submit" id="fb-submit" disabled style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;padding:0.7rem 1.4rem;flex-shrink:0;">sUBMIT</button>
+        </div>
+      </div>
+      <div id="fb-success" hidden class="fb-success" style="padding:28px 24px;text-align:center;font-size:0.72rem;font-weight:300;letter-spacing:0.18em;">tHaNKS — fEEDBaCK rECEIVED ✓</div>
+    </div>
+  </div>
+  <style>
+    .fb-star.preview .fb-letter { color:var(--c-accent-muted) !important; transform:scale(1.12); }
+    .fb-star.active .fb-letter { opacity:0; transform:scale(0.2) rotate(20deg); }
+    .fb-star.active .fb-starmark { opacity:1 !important; transform:scale(1.1) rotate(0deg) !important; }
+    .fb-form[hidden], .fb-success[hidden] { display:none; }
+  </style>
 
-    function launch(){
-      /* ── BPM: Technologic runs at ~120 — 8th-note grid = 250ms ── */
-      var BPM = 120, MS = Math.round(60000 / BPM / 2); /* 250ms */
-
-      /* ── styles ── */
-      var s = document.createElement('style');
-      s.textContent =
-        /* RGB aberration — one full cycle = 1 word duration, stays in sync */
-        '@keyframes tRgb{' +
-          '0%  {text-shadow: 3px 0 1px rgba(255,20,20,0.92), -3px 0 1px rgba(20,200,255,0.92)}' +
-          '33% {text-shadow:-3px 0 1px rgba(20,255,20,0.92),  3px 0 1px rgba(200,20,255,0.92)}' +
-          '66% {text-shadow: 3px 0 1px rgba(20,60,255,0.92), -3px 0 1px rgba(255,220,20,0.92)}' +
-          '100%{text-shadow: 3px 0 1px rgba(255,20,20,0.92), -3px 0 1px rgba(20,200,255,0.92)}' +
-        '}' +
-        /* Pop: snap in, hold, fade cleanly — no skew jitter */
-        '@keyframes tPop{' +
-          '0%  {opacity:0; transform:scale(1.08)}' +
-          '9%  {opacity:1; transform:scale(1)}' +
-          '82% {opacity:1; transform:scale(1)}' +
-          '100%{opacity:0; transform:scale(0.94)}' +
-        '}' +
-        /* Overlay entrance */
-        '@keyframes tFadeIn{0%{opacity:0}100%{opacity:1}}' +
-        '#_techEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
-          'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
-          'cursor:pointer;overflow:hidden;' +
-          'animation:tFadeIn 0.18s ease forwards;}' +
-        /* CRT scanlines on overlay */
-        '#_techEgg::after{content:"";position:absolute;inset:0;pointer-events:none;' +
-          'background:repeating-linear-gradient(to bottom,' +
-            'transparent 0px,transparent 3px,rgba(0,14,0,0.45) 3px,rgba(0,14,0,0.45) 4px);' +
-          'z-index:1;}' +
-        /* Giant KNUP watermark */
-        '#_techEgg::before{content:"KNUP";position:absolute;top:50%;left:50%;' +
-          'transform:translate(-50%,-50%);z-index:0;' +
-          'font-family:"Space Grotesk",sans-serif;font-size:clamp(6rem,30vw,18rem);' +
-          'font-weight:700;color:rgba(255,255,255,0.012);letter-spacing:0.1em;' +
-          'pointer-events:none;user-select:none;}' +
-        '#_techWord{position:relative;z-index:2;' +
-          'font-family:"Space Grotesk",sans-serif;' +
-          'font-size:clamp(1.8rem,8vw,5rem);font-weight:700;letter-spacing:0.18em;' +
-          'color:#fff;text-align:center;padding:0 6vw;line-height:1.1;}';
-      document.head.appendChild(s);
-
-      /* ── overlay ── */
-      var ov   = document.createElement('div'); ov.id = '_techEgg';
-      var wEl  = document.createElement('div'); wEl.id = '_techWord';
-      ov.appendChild(wEl);
-      document.body.appendChild(ov);
-
-      /* ── sequencer — rAF-based reset for clean per-word animation ── */
-      var idx = 0, timer, stopped = false;
-
-      function tick(){
-        if(stopped || idx >= WORDS.length){ if(!stopped) stop(500); return; }
-        var word = WORDS[idx++];
-        wEl.style.animation = 'none';
-        /* rAF gives browser one frame to commit 'none' before restarting */
-        requestAnimationFrame(function(){
-          requestAnimationFrame(function(){
-            if(stopped) return;
-            wEl.textContent = word;
-            wEl.style.animation =
-              'tRgb ' + MS + 'ms linear infinite, ' +
-              'tPop ' + MS + 'ms ease both';
-            timer = setTimeout(tick, MS);
-          });
+  <script>
+  (function(){
+    var rating=0,hasText=false;
+    var backdrop=document.getElementById('fb-backdrop');
+    var closeBtn=document.getElementById('fb-close');
+    var starsEl=document.getElementById('fb-stars');
+    var textEl=document.getElementById('fb-text');
+    var charEl=document.getElementById('fb-char');
+    var submitEl=document.getElementById('fb-submit');
+    var formEl=document.getElementById('fb-form');
+    var successEl=document.getElementById('fb-success');
+    function closeSheet(){backdrop.classList.remove('open');}
+    closeBtn.addEventListener('click',closeSheet);
+    backdrop.addEventListener('click',function(e){if(e.target===backdrop)closeSheet();});
+    var STAR_LABELS=['','wEaK','mEH','gOOD','gREaT','bRAVO!'];
+    var stars=Array.from(starsEl.querySelectorAll('.fb-star'));
+    var labelEl=document.getElementById('fb-stars-label');
+    stars.forEach(function(s){
+      s.addEventListener('mouseenter',function(){
+        var n=parseInt(s.getAttribute('data-v'),10);
+        stars.forEach(function(st){
+          var v=parseInt(st.getAttribute('data-v'),10);
+          st.classList.remove('preview','active');
+          if(v<=n)st.classList.add(v<=rating?'active':'preview');
+          else if(v<=rating)st.classList.add('active');
         });
-      }
-
-      function stop(delay){
-        stopped = true;
-        clearTimeout(timer);
-        setTimeout(function(){
-          ov.style.transition = 'opacity 0.38s ease';
-          ov.style.opacity = '0';
-          setTimeout(function(){
-            if(ov.parentNode) ov.parentNode.removeChild(ov);
-            if(s.parentNode)  s.parentNode.removeChild(s);
-          }, 420);
-        }, delay || 0);
-      }
-
-      tick();
-      ov.addEventListener('click', function(){ stop(); });
-      document.addEventListener('keydown', function esc(e){
-        if(e.key === 'Escape'){ stop(); document.removeEventListener('keydown', esc); }
+        labelEl.textContent=STAR_LABELS[n];
       });
-    }
-  })();</script>
-
-  <!-- ── Easter egg: type ZENO — Zeno's Dichotomy Paradox ── -->
-  <script>(function(){
-    var SEQ = 'zeno', buf = '';
-
-    document.addEventListener('keydown', function(e){
-      if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      buf = (buf + e.key.toLowerCase()).slice(-SEQ.length);
-      if(buf === SEQ){ buf = ''; launchZeno(); }
+      s.addEventListener('click',function(){
+        rating=parseInt(s.getAttribute('data-v'),10);
+        stars.forEach(function(st){
+          var v=parseInt(st.getAttribute('data-v'),10);
+          st.classList.remove('preview','active');
+          if(v<=rating)st.classList.add('active');
+        });
+        labelEl.textContent=STAR_LABELS[rating];
+        submitEl.disabled=!(rating>0&&hasText);
+      });
     });
-
-    function launchZeno(){
-      var s = document.createElement('style');
-      s.textContent =
-        '@keyframes zFade{0%{opacity:0}100%{opacity:1}}' +
-        '#_zenoEgg{position:fixed;inset:0;background:#000;z-index:99999;' +
-          'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
-          'gap:clamp(24px,4vh,52px);overflow:hidden;animation:zFade 0.32s ease forwards;}' +
-        '#_zenoEgg::after{content:"";position:absolute;inset:0;pointer-events:none;' +
-          'background:repeating-linear-gradient(to bottom,' +
-            'transparent 0px,transparent 3px,rgba(0,14,0,0.42) 3px,rgba(0,14,0,0.42) 4px);}' +
-        '#_zenoEgg::before{content:"ZENO";position:absolute;top:50%;left:50%;' +
-          'transform:translate(-50%,-50%);z-index:0;' +
-          'font-family:"Space Grotesk",sans-serif;font-size:clamp(6rem,30vw,18rem);' +
-          'font-weight:700;color:rgba(255,92,0,0.018);letter-spacing:0.1em;' +
-          'pointer-events:none;user-select:none;}' +
-        /* Equation */
-        '#_zenoEq{display:flex;align-items:center;gap:clamp(10px,2.2vw,24px);' +
-          'position:relative;z-index:1;}' +
-        '#_zenoSig{display:inline-flex;flex-direction:column;align-items:center;' +
-          'font-family:"Space Grotesk",sans-serif;color:#FF5C00;line-height:1.1;}' +
-        '.zs-top{font-size:clamp(0.9rem,2.4vw,1.4rem);}' +
-        '.zs-sym{font-size:clamp(2.8rem,9vw,5.5rem);font-weight:700;line-height:0.9;}' +
-        '.zs-bot{font-size:clamp(0.62rem,1.6vw,0.88rem);letter-spacing:0.06em;}' +
-        '.zs-term,.zs-rel,.zs-res{font-family:"Space Grotesk",sans-serif;' +
-          'font-size:clamp(2rem,7vw,4.5rem);font-weight:700;color:#FF5C00;' +
-          'position:relative;z-index:1;}' +
-        '.zs-rel{font-weight:300;}' +
-        /* Quote */
-        '#_zenoQuote{font-family:"Space Grotesk",sans-serif;' +
-          'font-size:clamp(0.68rem,1.8vw,0.88rem);font-weight:300;' +
-          'letter-spacing:0.14em;color:rgba(255,255,255,0.28);' +
-          'text-align:center;max-width:min(78vw,500px);line-height:1.8;' +
-          'position:relative;z-index:1;}' +
-        '#_zenoName{font-family:"Space Grotesk",sans-serif;' +
-          'font-size:clamp(0.48rem,1.1vw,0.60rem);font-weight:300;' +
-          'letter-spacing:0.30em;color:rgba(255,255,255,0.14);' +
-          'text-align:center;position:relative;z-index:1;}';
-      document.head.appendChild(s);
-
-      var ov = document.createElement('div'); ov.id = '_zenoEgg';
-
-      /* Equation: Σ (1/2)ⁿ = 1 */
-      var eq  = document.createElement('div'); eq.id = '_zenoEq';
-      var sig = document.createElement('div'); sig.id = '_zenoSig';
-      sig.innerHTML =
-        '<span class="zs-top">∞</span>' +
-        '<span class="zs-sym">Σ</span>' +
-        '<span class="zs-bot">n=1</span>';
-      var term = document.createElement('span'); term.className = 'zs-term'; term.textContent = '(1/2)ⁿ';
-      var rel  = document.createElement('span'); rel.className  = 'zs-rel';  rel.textContent  = '=';
-      var res  = document.createElement('span'); res.className  = 'zs-res';  res.textContent  = '1';
-      eq.appendChild(sig); eq.appendChild(term); eq.appendChild(rel); eq.appendChild(res);
-
-      /* Quote */
-      var quote = document.createElement('p'); quote.id = '_zenoQuote';
-      quote.textContent = 'That which is in locomotion must arrive at the half-way stage before it arrives at the goal.';
-      var name = document.createElement('p'); name.id = '_zenoName';
-      name.textContent = '— Zeno of Elea  ·  490 BC';
-
-      ov.appendChild(eq); ov.appendChild(quote); ov.appendChild(name);
-      document.body.appendChild(ov);
-
-      function close(){
-        ov.style.transition = 'opacity 0.34s ease';
-        ov.style.opacity = '0';
-        setTimeout(function(){
-          if(ov.parentNode) ov.parentNode.removeChild(ov);
-          if(s.parentNode)  s.parentNode.removeChild(s);
-        }, 380);
-      }
-      ov.addEventListener('click', close);
-      document.addEventListener('keydown', function esc(e){
-        if(e.key === 'Escape'){ close(); document.removeEventListener('keydown', esc); }
+    starsEl.addEventListener('mouseleave',function(){
+      stars.forEach(function(st){
+        var v=parseInt(st.getAttribute('data-v'),10);
+        st.classList.remove('preview');
+        st.classList.toggle('active',v<=rating);
       });
-    }
-  })();</script>
+      labelEl.textContent=rating>0?STAR_LABELS[rating]:'';
+    });
+    textEl.addEventListener('input',function(){
+      charEl.textContent=textEl.value.length+' / 280';
+      hasText=textEl.value.trim().length>0;
+      submitEl.disabled=!(rating>0&&hasText);
+    });
+    submitEl.addEventListener('click',function(){
+      try{
+        var existing=JSON.parse(localStorage.getItem('arts_feedback')||'[]');
+        existing.push({ts:Date.now(),rating:rating,text:textEl.value.trim(),page:'home'});
+        localStorage.setItem('arts_feedback',JSON.stringify(existing));
+      }catch(e){}
+      formEl.hidden=true;successEl.hidden=false;
+      var fbCorner=document.getElementById('corner-feedback-item');
+      if(fbCorner){fbCorner.textContent='tHaNKS \u2713';fbCorner.classList.add('submitted');}
+      setTimeout(closeSheet,1600);
+    });
+  })();
+  </script>
 </body>
 </html>

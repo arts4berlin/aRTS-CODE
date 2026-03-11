@@ -11,17 +11,18 @@
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
-  <meta property="og:title"        content="[aRTS]">
+  <meta property="og:title"        content="[aRTS] — cONNECT">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
   <meta property="og:image"        content="https://4-arts.com/assets/og.png">
   <meta name="twitter:card"        content="summary">
-  <meta name="twitter:title"       content="[aRTS]">
+  <meta name="twitter:title"       content="[aRTS] — cONNECT">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
-  <title>[aRTS] — TaIL EnD</title>
+  <title>[aRTS] — cONNECT</title>
   <script>
-    /* Clear any pass so the user must restart from scratch */
-    localStorage.removeItem('captcha_passed');
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
   </script>
   <link rel="preload" as="image" href="assets/bear.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,10 +44,35 @@
       justify-content: center;
     }
 
-    /* ── Label row: TaIL  ·  EnD ── */
+    .logo {
+      position: fixed;
+      top: 28px; left: 32px;
+      z-index: 100;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    .nav-about {
+      position: fixed;
+      top: 28px; right: 32px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .nav-about:hover { opacity: 1; }
+
+    /* ── Label row ── */
     .label-row {
       display: flex;
-      gap: clamp(3rem, 12vw, 9rem);
+      gap: clamp(0.6rem, 2vw, 1.2rem);
       align-items: baseline;
       margin-bottom: clamp(2rem, 5vh, 4rem);
       opacity: 0;
@@ -85,8 +111,8 @@
       animation: fadeUp 0.6s ease 0.55s forwards;
     }
 
-    /* ── Restart button ── */
-    .btn-restart {
+    /* ── Back button ── */
+    .btn-back {
       margin-top: clamp(1.6rem, 3.5vh, 3rem);
       display: inline-flex;
       align-items: center;
@@ -108,22 +134,20 @@
       opacity: 0;
       animation: fadeUp 0.6s ease 0.8s forwards;
     }
-    .btn-restart:hover { background: #FF5C00; color: #000; }
+    .btn-back:hover { background: #FF5C00; color: #000; }
 
     @keyframes fadeUp {
       0%   { opacity: 0; transform: translateY(12px); }
       100% { opacity: 1; transform: translateY(0);    }
     }
 
-    /* ── dvh fix: excludes iOS Safari address bar ── */
+    /* ── dvh fix ── */
     @supports (height: 100dvh) {
       body { height: 100dvh; }
     }
-    /* ── Mobile: safe area + text-size ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    .logo, .nav-about, header { touch-action: manipulation; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     .btn, button, a { touch-action: manipulation; }
-  
+
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
@@ -131,22 +155,66 @@
 </style>
 </head>
 <body>
+  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+  <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="label-row">
-    <span class="label">TaIL</span>
-    <span class="label">EnD</span>
+    <span class="label">cONNECT</span>
   </div>
 
   <div class="bear-wrap">
     <img src="assets/bear.png" alt="">
   </div>
 
-  <p class="hint">... sOMETHING WENT WRONG ...</p>
+  <p class="hint">... cOMING sOON ...</p>
 
-  <a href="captcha.html" class="btn-restart">rESTART</a>
+  <a href="home.html" class="btn-back">gO bACK</a>
 
-
+  <!-- Nav & logo hover -->
+  <script>
+  (function(){
+    var DELAY = 40;
+    function navHover(el){
+      var orig=el.textContent, timers=[], state=0;
+      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      function render(n){
+        var s=orig[0];
+        for(var i=1;i<orig.length;i++) s+=(i<=n ? orig[i].toLowerCase() : orig[i]);
+        el.textContent=s;
+      }
+      el.addEventListener('mouseenter',function(){
+        clr(); var from=state;
+        for(var i=0;i<orig.length-1-from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));
+        })(i);
+      });
+      el.addEventListener('mouseleave',function(){
+        clr(); var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    }
+    document.querySelectorAll('a.nav-about').forEach(navHover);
+    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner, timers=[], state=0;
+      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
+      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
+      logo.addEventListener('mouseenter',function(){
+        clr(); var from=state;
+        for(var i=from;i<inner.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave',function(){
+        clr(); var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    });
+  })();
+  </script>
 <script src="theme.js?v=4"></script>
-<script src="btn-fx.js"></script>
 </body>
 </html>

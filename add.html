@@ -239,6 +239,103 @@
       font-size: clamp(0.9rem, 2.2vw, 1.1rem);
     }
 
+    .field-group select {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2.6vw, 1.3rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.55rem 0;
+      outline: none;
+      transition: border-color 0.18s;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    .field-group select option { background: #000; color: #fff; }
+    .field-group select:focus { border-bottom-color: rgba(255,255,255,0.45); }
+
+    /* Side-by-side fields */
+    .field-row {
+      display: flex;
+      gap: 1rem;
+    }
+    .field-row .field-group { flex: 1; }
+    .field-row .field-group.narrow { flex: 0 0 5rem; }
+
+    /* Checkbox field */
+    .check-group {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
+    }
+    .check-group input[type="checkbox"] {
+      width: 18px; height: 18px;
+      accent-color: #FF5C00;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check-group label {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+    }
+
+    /* Multi-image upload */
+    .multi-upload {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
+    }
+    .upload-slot {
+      position: relative;
+      aspect-ratio: 1;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      background: rgba(255,255,255,0.02);
+    }
+    .upload-slot:hover { border-color: rgba(255,255,255,0.35); }
+    .upload-slot.has-img { border-color: rgba(255,255,255,0.06); }
+    .upload-slot input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-slot img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none;
+    }
+    .upload-slot.has-img img { display: block; }
+    .upload-slot .slot-hint {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; font-weight: 300; color: rgba(255,255,255,0.18);
+      pointer-events: none;
+    }
+    .upload-slot.has-img .slot-hint { opacity: 0; }
+    .upload-slot .slot-remove {
+      display: none;
+      position: absolute; top: 4px; right: 4px;
+      width: 20px; height: 20px;
+      background: rgba(0,0,0,0.7); border: none; border-radius: 50%;
+      color: #fff; font-size: 0.7rem; cursor: pointer;
+      align-items: center; justify-content: center; z-index: 2;
+    }
+    .upload-slot.has-img .slot-remove { display: flex; }
+    .upload-label {
+      font-size: 0.62rem; font-weight: 300; letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.32); text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
     /* ── Submit row ── */
     .submit-row {
       margin-top: clamp(24px, 3.5vh, 40px);
@@ -263,7 +360,8 @@
       border-right: 1px solid rgba(0,0,0,0.18);
       transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .btn-submit:hover { background: #FF5C00; border-color: #FF5C00; color: #000; }
+    .btn-submit:hover:not(:disabled) { background: #FF5C00; border-color: #FF5C00; color: #000; }
+    .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .btn-back {
       display: inline-flex;
@@ -298,31 +396,249 @@
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     header, nav, a, button { touch-action: manipulation; }
 
+    /* ── Mobile hamburger + overlay ── */
+    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
+    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
+    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
+    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
+    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
+    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
+    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
+    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
+
     @media (max-width: 520px) {
       header { padding: 18px 16px; }
-      nav    { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
-      nav a  { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+      nav { display: none; }
+      .burger { display:flex; gap:0; }
+      .burger span:not(.burger-label) { display:none; }
+      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
+      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
+      .mobile-id { display:block; }
+      .nav-overlay, .nav-overlay.is-open { transition:none; }
     }
-  
+
+    /* ── Moderation panel ── */
+    .mod-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 32px);
+      overflow-y: auto;
+    }
+    .mod-overlay.active { display: flex; }
+
+    .mod-panel {
+      width: min(92vw, 520px);
+      background: rgba(12,12,12,0.98);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: clamp(24px, 4vh, 40px) clamp(20px, 4vw, 32px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 2.5vh, 24px);
+    }
+
+    .mod-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mod-badge {
+      font-size: 0.42rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      padding: 2px 7px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      color: rgba(110,230,110,0.75);
+      background: rgba(110,230,110,0.06);
+      border: 1px solid rgba(110,230,110,0.18);
+    }
+    .mod-title {
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .mod-subtitle {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.22);
+      margin-top: -8px;
+    }
+
+    .mod-checks {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .mod-check {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .mod-check:last-child { border-bottom: none; }
+    .mod-check.visible { opacity: 1; transform: translateY(0); }
+
+    .mod-icon {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .mod-icon.pending { color: rgba(255,255,255,0.15); }
+    .mod-icon.running { color: rgba(255,255,255,0.3); animation: mod-spin 0.8s linear infinite; }
+    .mod-icon.pass    { color: rgba(110,230,110,0.75); }
+    .mod-icon.fail    { color: rgba(255,80,80,0.7); }
+    .mod-icon.warn    { color: rgba(255,180,60,0.75); }
+
+    @keyframes mod-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .mod-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.55);
+      min-width: 0;
+    }
+
+    .mod-result {
+      margin-left: auto;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25);
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .mod-result.fail-msg { color: rgba(255,80,80,0.6); }
+    .mod-result.pass-msg { color: rgba(110,230,110,0.5); }
+    .mod-result.warn-msg { color: rgba(255,180,60,0.55); }
+
+    .mod-summary {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.32);
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+    }
+    .mod-summary.all-pass { border-color: rgba(110,230,110,0.12); color: rgba(110,230,110,0.5); }
+    .mod-summary.has-fail { border-color: rgba(255,80,80,0.12); color: rgba(255,80,80,0.5); }
+
+    .mod-actions {
+      display: flex;
+      gap: 0;
+    }
+    .btn-mod-retry {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      padding: 0.75rem 1.6rem;
+      background: transparent;
+      color: #FF5C00;
+      border: 1px solid rgba(255,92,0,0.3);
+      border-radius: 4px 0 0 4px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-mod-retry:hover { background: rgba(255,92,0,0.08); border-color: rgba(255,92,0,0.5); }
+    .btn-mod-close {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      padding: 0.75rem 1.4rem;
+      background: transparent;
+      color: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .btn-mod-close:hover { color: rgba(255,255,255,0.6); }
+
+    /* ── Day mode: mod panel ── */
+    [data-theme="day"] .mod-overlay { background: rgba(255,255,255,0.88) !important; }
+    [data-theme="day"] .mod-panel { background: rgba(250,250,250,0.98) !important; border-color: rgba(0,0,0,0.1) !important; }
+    [data-theme="day"] .mod-title { color: #000 !important; }
+    [data-theme="day"] .mod-subtitle { color: rgba(0,0,0,0.32) !important; }
+    [data-theme="day"] .mod-checks { border-color: rgba(0,0,0,0.08) !important; }
+    [data-theme="day"] .mod-check { border-bottom-color: rgba(0,0,0,0.06) !important; }
+    [data-theme="day"] .mod-icon.pending { color: rgba(0,0,0,0.15) !important; }
+    [data-theme="day"] .mod-icon.running { color: rgba(0,0,0,0.3) !important; }
+    [data-theme="day"] .mod-label { color: rgba(0,0,0,0.55) !important; }
+    [data-theme="day"] .mod-result { color: rgba(0,0,0,0.32) !important; }
+    [data-theme="day"] .mod-result.fail-msg { color: rgba(200,40,40,0.6) !important; }
+    [data-theme="day"] .mod-result.pass-msg { color: rgba(40,160,80,0.6) !important; }
+    [data-theme="day"] .mod-result.warn-msg { color: rgba(180,120,20,0.6) !important; }
+    [data-theme="day"] .mod-summary { border-color: rgba(0,0,0,0.08) !important; color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .mod-summary.all-pass { border-color: rgba(40,160,80,0.2) !important; color: rgba(40,160,80,0.6) !important; }
+    [data-theme="day"] .mod-summary.has-fail { border-color: rgba(200,40,40,0.15) !important; color: rgba(200,40,40,0.55) !important; }
+    [data-theme="day"] .btn-mod-close { color: rgba(0,0,0,0.35) !important; border-color: rgba(0,0,0,0.1) !important; }
+    [data-theme="day"] .btn-mod-close:hover { color: rgba(0,0,0,0.6) !important; }
+
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
 </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- CRT: prevent flash on arrival -->
-  <script>(function(){if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
-
   <header>
     <a href="home.html" class="logo" data-inner="RTS">[a]</a>
     <nav>
+      <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
-      <a href="articles.html">aRTICLES</a>
-      <a href="ask.html">cONNECT</a>
+      <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
+    <a href="id.html" class="mobile-id">[iD]</a>
+    <button class="burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
   </header>
+
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[×]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="id.html" style="color:#FF5C00">[iD]</a>
+  </div>
 
   <main>
     <div class="form-col">
@@ -330,15 +646,39 @@
       <p class="section-label">sUBMIT TO [aRTS]</p>
       <h1 class="form-title">aDD aRT</h1>
 
-      <!-- Image upload -->
-      <div class="upload-zone" id="upload-zone">
-        <input type="file" id="file-input" name="image" accept="image/*">
-        <img id="preview" alt="preview">
-        <div class="upload-hint">
-          <span class="upload-icon">+</span>
-          <span class="upload-text">uPLOAD iMAGE</span>
+      <!-- Image upload (up to 5) -->
+      <p class="upload-label">iMAGES (uP tO 5)</p>
+      <div class="multi-upload" id="multi-upload">
+        <div class="upload-slot" data-slot="0">
+          <input type="file" accept="image/*">
+          <img alt="image 1">
+          <span class="slot-hint">+</span>
+          <button type="button" class="slot-remove" aria-label="remove">&times;</button>
         </div>
-        <span class="upload-change">cHANGE</span>
+        <div class="upload-slot" data-slot="1">
+          <input type="file" accept="image/*">
+          <img alt="image 2">
+          <span class="slot-hint">+</span>
+          <button type="button" class="slot-remove" aria-label="remove">&times;</button>
+        </div>
+        <div class="upload-slot" data-slot="2">
+          <input type="file" accept="image/*">
+          <img alt="image 3">
+          <span class="slot-hint">+</span>
+          <button type="button" class="slot-remove" aria-label="remove">&times;</button>
+        </div>
+        <div class="upload-slot" data-slot="3">
+          <input type="file" accept="image/*">
+          <img alt="image 4">
+          <span class="slot-hint">+</span>
+          <button type="button" class="slot-remove" aria-label="remove">&times;</button>
+        </div>
+        <div class="upload-slot" data-slot="4">
+          <input type="file" accept="image/*">
+          <img alt="image 5">
+          <span class="slot-hint">+</span>
+          <button type="button" class="slot-remove" aria-label="remove">&times;</button>
+        </div>
       </div>
 
       <div class="divider"></div>
@@ -350,9 +690,58 @@
       </div>
 
       <div class="field-group">
+        <label for="f-artist">aRTIST</label>
+        <input type="text" id="f-artist" name="artist" placeholder="aRTIST nAME" autocomplete="off">
+      </div>
+
+      <div class="field-group">
         <label for="f-price">pRICE (€)</label>
         <input type="text" id="f-price" name="price" placeholder="0.000" autocomplete="off" inputmode="decimal">
       </div>
+
+      <div class="field-group">
+        <label for="f-media">mEDIa / mATERIaLS</label>
+        <input type="text" id="f-media" name="media" placeholder="oIL oN cANVAS · mIXED mEDIa" autocomplete="off">
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label for="f-dimensions">dIMENSIONS</label>
+          <input type="text" id="f-dimensions" name="dimensions" placeholder="120 × 80 × 5 cm" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label for="f-edition">eDITION</label>
+          <input type="text" id="f-edition" name="edition" placeholder="uNIQUE · 1/10" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label for="f-condition">cONDITION</label>
+          <select id="f-condition" name="condition">
+            <option value="" disabled selected>sELECT</option>
+            <option value="eXCELLENT">eXCELLENT</option>
+            <option value="gOOD">gOOD</option>
+            <option value="fAIR">fAIR</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="f-location">lOCATION</label>
+          <input type="text" id="f-location" name="location" placeholder="bERLIN, gERMANY" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="f-provenance">pROVENANCE</label>
+        <textarea id="f-provenance" name="provenance" placeholder="sTUDIO oF tHE aRTIST · pRIVATE cOLLECTION"></textarea>
+      </div>
+
+      <div class="check-group">
+        <input type="checkbox" id="f-certificate" name="certificate">
+        <label for="f-certificate">iNCLUDES cERTIFICATE oF aUTHENTICITY</label>
+      </div>
+
+      <div class="divider"></div>
 
       <div class="field-group">
         <label for="f-email">yOUR eMaIL</label>
@@ -364,8 +753,13 @@
         <textarea id="f-note" name="note" placeholder="aNYTHING ELSE TO ADD..."></textarea>
       </div>
 
+      <div class="check-group" style="margin-bottom:12px">
+        <input type="checkbox" id="f-consent" name="consent">
+        <label for="f-consent">i cONFIRM i hAVE tHE rIGHTS tO lIST tHIS wORK aND aGREE tO tHE <a href="listing-terms.html" style="color:#FF5C00;text-decoration:none" target="_blank">lISTING tERMS</a>. sUBMISSIONS aRE sUBJECT tO <a href="bot-terms.html" style="color:#FF5C00;text-decoration:none" target="_blank">cONTENT mODERaTION</a></label>
+      </div>
+
       <div class="submit-row">
-        <button class="btn-submit" id="btn-submit">sUBMiT</button>
+        <button class="btn-submit" id="btn-submit" disabled>sUBMiT</button>
         <a href="art.html" class="btn-back">BaCK</a>
       </div>
 
@@ -374,47 +768,422 @@
     </div>
   </main>
 
-  <!-- Image preview -->
+  <!-- Moderation overlay -->
+  <div class="mod-overlay" id="mod-overlay">
+    <div class="mod-panel">
+      <div class="mod-header">
+        <span class="mod-badge">aCTIVE</span>
+        <span class="mod-title">mODERaTOR bOT</span>
+      </div>
+      <p class="mod-subtitle">sCaNNING yOUR lISTiNG...</p>
+      <div class="mod-checks" id="mod-checks"></div>
+      <div class="mod-summary" id="mod-summary" style="display:none"></div>
+      <div class="mod-actions" id="mod-actions" style="display:none">
+        <button class="btn-mod-retry" id="btn-mod-retry">rETRY</button>
+        <button class="btn-mod-close" id="btn-mod-close">eDIT LISTiNG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-image upload -->
   <script>
   (function(){
-    var zone   = document.getElementById('upload-zone');
-    var input  = document.getElementById('file-input');
-    var preview= document.getElementById('preview');
-    input.addEventListener('change', function(){
-      var file = input.files && input.files[0];
-      if(!file) return;
-      var url = URL.createObjectURL(file);
-      preview.src = url;
-      preview.classList.add('visible');
-      zone.classList.add('has-image');
+    var slots = document.querySelectorAll('.upload-slot');
+    slots.forEach(function(slot){
+      var inp = slot.querySelector('input[type="file"]');
+      var img = slot.querySelector('img');
+      var rem = slot.querySelector('.slot-remove');
+      inp.addEventListener('change', function(){
+        var file = inp.files && inp.files[0];
+        if(!file) return;
+        img.src = URL.createObjectURL(file);
+        slot.classList.add('has-img');
+      });
+      rem.addEventListener('click', function(e){
+        e.stopPropagation();
+        inp.value = '';
+        img.src = '';
+        slot.classList.remove('has-img');
+      });
     });
   })();
   </script>
 
-  <!-- Submit → Formspree -->
+  <!-- Consent checkbox enables submit -->
+  <script>
+  (function(){
+    var cb = document.getElementById('f-consent');
+    var btn = document.getElementById('btn-submit');
+    cb.addEventListener('change', function(){ btn.disabled = !cb.checked; });
+  })();
+  </script>
+
+  <!-- Edit mode: pre-fill from localStorage if ?edit=ID -->
+  <script>
+  (function(){
+    var params = new URLSearchParams(window.location.search);
+    var editId = params.get('edit');
+    if (!editId) return;
+    try {
+      var pieces = JSON.parse(localStorage.getItem('arts_my_pieces') || '[]');
+      var piece = null;
+      for (var k = 0; k < pieces.length; k++) { if (pieces[k].id === editId) { piece = pieces[k]; break; } }
+      if (!piece) return;
+      document.getElementById('f-title').value = piece.title || '';
+      document.getElementById('f-artist').value = piece.artist || '';
+      document.getElementById('f-price').value = piece.price || '';
+      document.getElementById('f-media').value = piece.media || '';
+      document.getElementById('f-dimensions').value = piece.dimensions || '';
+      document.getElementById('f-edition').value = piece.edition || '';
+      if (piece.condition) document.getElementById('f-condition').value = piece.condition;
+      document.getElementById('f-location').value = piece.location || '';
+      document.getElementById('f-provenance').value = piece.provenance || '';
+      if (piece.certificate) document.getElementById('f-certificate').checked = true;
+      /* Pre-fill images */
+      var imgs = piece.images || (piece.image ? [piece.image] : []);
+      var slots = document.querySelectorAll('.upload-slot');
+      for (var i = 0; i < imgs.length && i < slots.length; i++) {
+        var img = slots[i].querySelector('img');
+        img.src = imgs[i];
+        slots[i].classList.add('has-img');
+      }
+      document.getElementById('btn-submit').textContent = 'uPDaTE';
+      document.querySelector('.form-title').textContent = 'eDIT aRT';
+      document.querySelector('.section-label').textContent = 'eDIT yOUR LISTiNG';
+      window._artsEditId = editId;
+    } catch(e) {}
+  })();
+  </script>
+
+  <!-- Moderator Bot + Submit → Formspree + localStorage -->
   <script>
   (function(){
     var btn  = document.getElementById('btn-submit');
     var note = document.getElementById('submit-note');
 
-    btn.addEventListener('click', async function(){
-      var title = document.getElementById('f-title').value.trim();
-      var email = document.getElementById('f-email').value.trim();
+    /* ── Prohibited words list ── */
+    var PROHIBITED = [
+      'spam','scam','fake','counterfeit','replica','knockoff',
+      'xxx','porn','nsfw','nude','naked',
+      'drugs','cocaine','heroin','meth',
+      'weapon','gun','bomb','explosive',
+      'murder','kill','terrorist',
+      'nigger','nigga','faggot','retard','kike','chink','spic',
+      'bitcoin','crypto','nft','mint','airdrop','token','whitelist',
+      'buy now','act fast','limited offer','click here','free money',
+      'viagra','cialis','pharmacy'
+    ];
 
-      if (!title) { document.getElementById('f-title').focus(); return; }
-      if (!email) { document.getElementById('f-email').focus(); return; }
+    /* ── Moderation checks ── */
+    var MOD_CHECKS = [
+      {
+        id: 'text-scan',
+        name: 'tEXT sCAN',
+        run: function() {
+          var title = document.getElementById('f-title').value.trim();
+          var artist = document.getElementById('f-artist').value.trim();
+          var prov = document.getElementById('f-provenance').value.trim();
+          var noteVal = document.getElementById('f-note').value.trim();
+          var allText = (title + ' ' + artist + ' ' + prov + ' ' + noteVal).toLowerCase();
+
+          if (title.length < 3) return { status: 'fail', msg: 'tITLE tOO sHORT (mIN 3 cHARS)' };
+          if (!artist) return { status: 'fail', msg: 'aRTIST fIELD eMPTY' };
+
+          /* Repeated char detection (e.g. "aaaaaa") */
+          if (/(.)\1{5,}/.test(title) || /(.)\1{5,}/.test(artist)) {
+            return { status: 'fail', msg: 'sUSPICIOUS rEPEATED cHARACTERS' };
+          }
+
+          /* Prohibited words */
+          for (var i = 0; i < PROHIBITED.length; i++) {
+            if (allText.indexOf(PROHIBITED[i]) !== -1) {
+              return { status: 'fail', msg: 'pROHIBITED cONTENT dETECTED' };
+            }
+          }
+
+          return { status: 'pass', msg: 'cLEAN' };
+        }
+      },
+      {
+        id: 'image-check',
+        name: 'iMAGE cHECK',
+        run: function() {
+          var slots = document.querySelectorAll('.upload-slot');
+          var hasImage = false;
+          var hasLargeFile = false;
+          var count = 0;
+
+          slots.forEach(function(slot) {
+            var inp = slot.querySelector('input[type="file"]');
+            if (inp.files && inp.files[0]) {
+              hasImage = true;
+              count++;
+              if (inp.files[0].size > 5 * 1024 * 1024) hasLargeFile = true;
+            } else if (slot.classList.contains('has-img')) {
+              hasImage = true;
+              count++;
+            }
+          });
+
+          if (!hasImage) return { status: 'fail', msg: 'nO iMAGES uPLOADED' };
+          if (hasLargeFile) return { status: 'warn', msg: count + ' iMAGE(S) · lARGE fILE wARNING' };
+          return { status: 'pass', msg: count + ' iMAGE(S) vALID' };
+        }
+      },
+      {
+        id: 'price-analysis',
+        name: 'pRICE aNALYSIS',
+        run: function() {
+          var raw = document.getElementById('f-price').value.trim();
+          if (!raw) return { status: 'warn', msg: 'nO pRICE sET (aLLOWED)' };
+          var num = parseFloat(raw.replace(/[^0-9.]/g, ''));
+          if (isNaN(num) || num < 0) return { status: 'fail', msg: 'iNVALID pRICE fORMAT' };
+          if (num === 0) return { status: 'warn', msg: '€0 — cONFIRM iNTENDED' };
+          if (num > 10000000) return { status: 'warn', msg: 'uNUSUALLY hIGH vALUE' };
+          return { status: 'pass', msg: '€' + num.toLocaleString() + ' vALID' };
+        }
+      },
+      {
+        id: 'provenance-review',
+        name: 'pROVENANCE rEVIEW',
+        run: function() {
+          var prov = document.getElementById('f-provenance').value.trim();
+          if (!prov) return { status: 'warn', msg: 'nO pROVENANCE (oPTIONAL)' };
+          if (prov.length < 10) return { status: 'warn', msg: 'vERY bRIEF pROVENANCE' };
+          /* Check for copy-paste spam (same word repeated 4+ times) */
+          var words = prov.toLowerCase().split(/\s+/);
+          var freq = {};
+          for (var i = 0; i < words.length; i++) {
+            freq[words[i]] = (freq[words[i]] || 0) + 1;
+            if (freq[words[i]] >= 4 && words[i].length > 2) {
+              return { status: 'fail', msg: 'rEPETITIVE cONTENT dETECTED' };
+            }
+          }
+          return { status: 'pass', msg: 'rECORDED' };
+        }
+      },
+      {
+        id: 'ai-content-scan',
+        name: 'aI cONTENT sCAN',
+        run: function() {
+          /* MOCK → Phase 2: POST to backend → Claude API deep analysis */
+          /* Will check: inappropriate imagery, copyright, AI-generated art disclosure */
+          return { status: 'pass', msg: 'pASS (mOCK · pHASE 2: cLAUDE aPI)' };
+        }
+      }
+    ];
+
+    /* ── Moderation UI ── */
+    var overlay   = document.getElementById('mod-overlay');
+    var checksEl  = document.getElementById('mod-checks');
+    var summaryEl = document.getElementById('mod-summary');
+    var actionsEl = document.getElementById('mod-actions');
+    var subtitleEl= overlay.querySelector('.mod-subtitle');
+
+    var ICONS = { pending: '○', running: '⟳', pass: '✓', fail: '✗', warn: '⚠' };
+
+    function openModPanel() {
+      checksEl.innerHTML = '';
+      summaryEl.style.display = 'none';
+      summaryEl.className = 'mod-summary';
+      actionsEl.style.display = 'none';
+      subtitleEl.textContent = 'sCaNNING yOUR lISTiNG...';
+      overlay.classList.add('active');
+    }
+
+    function closeModPanel() {
+      overlay.classList.remove('active');
+    }
+
+    function runModeration(onAllPass) {
+      openModPanel();
+
+      /* Create check rows */
+      var rows = [];
+      MOD_CHECKS.forEach(function(check) {
+        var row = document.createElement('div');
+        row.className = 'mod-check';
+        row.innerHTML =
+          '<span class="mod-icon pending">' + ICONS.pending + '</span>' +
+          '<span class="mod-label">' + check.name + '</span>' +
+          '<span class="mod-result">wAITING</span>';
+        checksEl.appendChild(row);
+        rows.push({ el: row, check: check });
+      });
+
+      /* Run checks sequentially with stagger */
+      var allPassed = true;
+      var hasWarn = false;
+      var failMessages = [];
+      var idx = 0;
+
+      function runNext() {
+        if (idx >= rows.length) {
+          /* All done */
+          summaryEl.style.display = '';
+          if (!allPassed) {
+            subtitleEl.textContent = 'lISTiNG bLOCKED';
+            summaryEl.className = 'mod-summary has-fail';
+            summaryEl.textContent = '✗ ' + failMessages.length + ' cHECK(S) fAILED — pLEASE fIX aNd rETRY';
+            actionsEl.style.display = 'flex';
+          } else if (hasWarn) {
+            subtitleEl.textContent = 'pASSED wITH wARNINGS';
+            summaryEl.className = 'mod-summary all-pass';
+            summaryEl.textContent = '✓ aLL cHECKS pASSED — pROCEEDING...';
+            setTimeout(function() { closeModPanel(); onAllPass(); }, 1200);
+          } else {
+            subtitleEl.textContent = 'aLL cLEAR';
+            summaryEl.className = 'mod-summary all-pass';
+            summaryEl.textContent = '✓ aLL cHECKS pASSED — pROCEEDING...';
+            setTimeout(function() { closeModPanel(); onAllPass(); }, 1200);
+          }
+          return;
+        }
+
+        var item = rows[idx];
+        var row = item.el;
+        var check = item.check;
+
+        /* Show row */
+        row.classList.add('visible');
+        var iconEl = row.querySelector('.mod-icon');
+        var resultEl = row.querySelector('.mod-result');
+        iconEl.className = 'mod-icon running';
+        iconEl.textContent = ICONS.running;
+        resultEl.textContent = 'sCaNNING...';
+        resultEl.className = 'mod-result';
+
+        /* Simulate processing delay */
+        var delay = 400 + Math.random() * 500;
+        setTimeout(function() {
+          var result = check.run();
+          iconEl.textContent = ICONS[result.status];
+          iconEl.className = 'mod-icon ' + result.status;
+          resultEl.textContent = result.msg;
+          resultEl.className = 'mod-result ' + result.status + '-msg';
+
+          if (result.status === 'fail') {
+            allPassed = false;
+            failMessages.push(check.name + ': ' + result.msg);
+          }
+          if (result.status === 'warn') hasWarn = true;
+
+          idx++;
+          setTimeout(runNext, 200);
+        }, delay);
+      }
+
+      /* Start first check after a beat */
+      setTimeout(runNext, 350);
+    }
+
+    /* ── Mod panel buttons ── */
+    document.getElementById('btn-mod-close').addEventListener('click', closeModPanel);
+    document.getElementById('btn-mod-retry').addEventListener('click', function() {
+      closeModPanel();
+    });
+
+    /* ── Save piece to localStorage (new or update) ── */
+    function saveToLocal(title) {
+      /* NOTE: base64 images consume ~1.3x file size in localStorage. ~5MB limit total. */
+      try {
+        var myPieces = JSON.parse(localStorage.getItem('arts_my_pieces') || '[]');
+        var price = document.getElementById('f-price').value.trim() || '—';
+        var media = document.getElementById('f-media').value.trim();
+        var artist = document.getElementById('f-artist').value.trim();
+        var dimensions = document.getElementById('f-dimensions').value.trim();
+        var edition = document.getElementById('f-edition').value.trim();
+        var condition = document.getElementById('f-condition').value;
+        var location_ = document.getElementById('f-location').value.trim();
+        var provenance = document.getElementById('f-provenance').value.trim();
+        var certificate = document.getElementById('f-certificate').checked;
+
+        /* Read all image slots as base64 */
+        var slots = document.querySelectorAll('.upload-slot');
+        var pending = 0, imgArr = [];
+
+        function persist() {
+          var primaryImg = imgArr[0] || '';
+          if (window._artsEditId) {
+            for (var k = 0; k < myPieces.length; k++) {
+              if (myPieces[k].id === window._artsEditId) {
+                var p = myPieces[k];
+                p.title = title; p.artist = artist; p.price = price; p.media = media;
+                p.dimensions = dimensions; p.edition = edition; p.condition = condition;
+                p.location = location_; p.provenance = provenance; p.certificate = certificate;
+                if (imgArr.length) { p.image = primaryImg; p.images = imgArr; }
+                break;
+              }
+            }
+          } else {
+            myPieces.push({
+              id: 'u_' + Date.now(),
+              title: title, artist: artist,
+              year: new Date().getFullYear().toString(),
+              price: price, currency: '\u20ac', status: 'aVAILABLE',
+              image: primaryImg, images: imgArr,
+              media: media, dimensions: dimensions, edition: edition,
+              condition: condition, location: location_, provenance: provenance,
+              certificate: certificate,
+              userListing: true, createdAt: Date.now()
+            });
+          }
+          localStorage.setItem('arts_my_pieces', JSON.stringify(myPieces));
+        }
+
+        slots.forEach(function(slot, idx) {
+          var inp = slot.querySelector('input[type="file"]');
+          var file = inp.files && inp.files[0];
+          if (file) {
+            pending++;
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+              imgArr[idx] = ev.target.result;
+              pending--;
+              if (pending === 0) persist();
+            };
+            reader.readAsDataURL(file);
+          } else if (slot.classList.contains('has-img')) {
+            imgArr[idx] = slot.querySelector('img').src;
+          }
+        });
+        /* Filter out empty slots */
+        setTimeout(function() {
+          imgArr = imgArr.filter(Boolean);
+          if (pending === 0) persist();
+        }, 50);
+      } catch(e) { /* localStorage full or unavailable */ }
+    }
+
+    /* ── Formspree submission (called after moderation passes) ── */
+    async function submitToFormspree(title) {
+      var email = document.getElementById('f-email').value.trim();
 
       var data = new FormData();
       data.append('title',    title);
+      data.append('artist',   document.getElementById('f-artist').value.trim());
       data.append('price',    document.getElementById('f-price').value.trim() || '—');
+      data.append('media',    document.getElementById('f-media').value.trim());
+      data.append('dimensions', document.getElementById('f-dimensions').value.trim());
+      data.append('edition',  document.getElementById('f-edition').value.trim());
+      data.append('condition', document.getElementById('f-condition').value);
+      data.append('location', document.getElementById('f-location').value.trim());
+      data.append('provenance', document.getElementById('f-provenance').value.trim());
+      data.append('certificate', document.getElementById('f-certificate').checked ? 'yes' : 'no');
       data.append('email',    email);
       data.append('note',     document.getElementById('f-note').value.trim());
       data.append('_subject', '[aRTS] art submission: ' + title);
 
-      var fileInput = document.getElementById('file-input');
-      if (fileInput.files && fileInput.files[0]) {
-        data.append('image', fileInput.files[0]);
-      }
+      /* Attach all uploaded images */
+      var slots = document.querySelectorAll('.upload-slot');
+      var imgIdx = 0;
+      slots.forEach(function(slot) {
+        var inp = slot.querySelector('input[type="file"]');
+        if (inp.files && inp.files[0]) {
+          data.append('image_' + imgIdx, inp.files[0]);
+          imgIdx++;
+        }
+      });
 
       btn.disabled = true;
       btn.textContent = 'sENDING...';
@@ -426,6 +1195,7 @@
           headers: { 'Accept': 'application/json' }
         });
         if (res.ok) {
+          saveToLocal(title);
           btn.textContent = 'sENT \u2713';
           btn.style.background  = '#FF5C00';
           btn.style.borderColor = '#FF5C00';
@@ -435,9 +1205,12 @@
             if (localStorage.getItem('arts_id_hash')) {
               var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
               localStorage.setItem('arts_points', String(cur + 50));
+              var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
+              pending.push({ label: 'aRT uPLOAD', pts: 50 });
+              sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
               var ptsMsg = document.createElement('p');
               ptsMsg.style.cssText = 'font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:#FF5C00;margin-top:6px;';
-              ptsMsg.textContent = '+ 50 pTS aWaRDED — cHECK yOUR iD';
+              ptsMsg.textContent = '+ 50 XP aWaRDED — cHECK yOUR iD';
               note.insertAdjacentElement('afterend', ptsMsg);
               setTimeout(function(){ if (ptsMsg.parentNode) ptsMsg.parentNode.removeChild(ptsMsg); }, 3500);
             }
@@ -447,13 +1220,23 @@
             btn.style.background  = '';
             btn.style.borderColor = '';
             btn.disabled          = false;
-            document.getElementById('f-title').value    = '';
-            document.getElementById('f-price').value    = '';
-            document.getElementById('f-email').value    = '';
-            document.getElementById('f-note').value     = '';
-            document.getElementById('file-input').value = '';
-            document.getElementById('preview').classList.remove('visible');
-            document.getElementById('upload-zone').classList.remove('has-image');
+            document.getElementById('f-title').value       = '';
+            document.getElementById('f-artist').value      = '';
+            document.getElementById('f-price').value       = '';
+            document.getElementById('f-media').value       = '';
+            document.getElementById('f-dimensions').value  = '';
+            document.getElementById('f-edition').value     = '';
+            document.getElementById('f-condition').value   = '';
+            document.getElementById('f-location').value    = '';
+            document.getElementById('f-provenance').value  = '';
+            document.getElementById('f-certificate').checked = false;
+            document.getElementById('f-email').value       = '';
+            document.getElementById('f-note').value        = '';
+            document.querySelectorAll('.upload-slot').forEach(function(slot){
+              slot.querySelector('input[type="file"]').value = '';
+              slot.querySelector('img').src = '';
+              slot.classList.remove('has-img');
+            });
             note.textContent = '* image, title, price + contact sent directly to [aRTS].';
           }, 3000);
         } else {
@@ -466,6 +1249,34 @@
         btn.disabled     = false;
         note.textContent = '* something went wrong \u2014 please try again.';
       }
+    }
+
+    /* ── Submit handler — moderation gate ── */
+    btn.addEventListener('click', function(){
+      var title = document.getElementById('f-title').value.trim();
+      var email = document.getElementById('f-email').value.trim();
+
+      if (!title) { document.getElementById('f-title').focus(); return; }
+
+      /* Edit mode: run moderation then save locally (skip Formspree) */
+      if (window._artsEditId) {
+        runModeration(function() {
+          saveToLocal(title);
+          btn.textContent = 'uPDaTED \u2713';
+          btn.style.background  = '#FF5C00';
+          btn.style.borderColor = '#FF5C00';
+          note.textContent = '* listing updated.';
+          setTimeout(function(){ window.location.href = 'art.html'; }, 1200);
+        });
+        return;
+      }
+
+      if (!email) { document.getElementById('f-email').focus(); return; }
+
+      /* New listing: run moderation then submit */
+      runModeration(function() {
+        submitToFormspree(title);
+      });
     });
   })();
   </script>
@@ -486,96 +1297,6 @@
       }
       window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
     })();
-  </script>
-
-  <!-- CRT channel-change transition -->
-  <script>
-  (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);
-      document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-
-    function doEnter(){
-      mkL();
-      var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<T1){
-          scan.style.opacity=String(lerp(0,1,e/T1));
-          vig.style.opacity='0.95';
-        }else if(e<T2){
-          var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));
-        }else if(e<T3){
-          var t2=(e-T2)/(T3-T2),et=smooth(t2);
-          document.documentElement.style.clipPath='';
-          scan.style.opacity=String(lerp(1,0,et));
-          vig.style.opacity=String(lerp(0.55,0,et));
-        }else{
-          document.documentElement.style.clipPath='';
-          if(scan&&scan.parentNode)scan.parentNode.removeChild(scan);
-          if(vig&&vig.parentNode)vig.parentNode.removeChild(vig);
-          scan=null;vig=null;busy=false;return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
-    function doExit(dest){
-      if(busy)return;busy=true;
-      mkL();
-      var TR=60,TS=320,s0=null;
-      function run(ts){
-        if(!s0)s0=ts;
-        var e=ts-s0;
-        if(e<TR){
-          scan.style.opacity=String(lerp(0,1,e/TR));
-          vig.style.opacity=String(lerp(0,0.95,e/TR));
-        }else if(e<TR+TS){
-          var t=(e-TR)/TS,p=lerp(0,50,smooth(t));
-          document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';
-          scan.style.opacity='1';
-          vig.style.opacity='0.95';
-        }else{
-          document.documentElement.style.clipPath='inset(50% 0 50% 0)';
-          sessionStorage.setItem('crt_transition','1');
-          window.location.href=dest;
-          return;
-        }
-        requestAnimationFrame(run);
-      }
-      requestAnimationFrame(run);
-    }
-
-    if(sessionStorage.getItem('crt_transition')){
-      sessionStorage.removeItem('crt_transition');
-      doEnter();
-    }
-
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');
-      if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();
-      doExit(h);
-    },true);
-  })();
   </script>
 
   <!-- Nav & logo hover -->
@@ -625,5 +1346,18 @@
     });
   })();
   </script>
+
+  <!-- Mobile burger menu -->
+  <script>
+  (function(){
+    var burger=document.getElementById('burger'),overlay=document.getElementById('nav-overlay'),close=document.getElementById('burger-close');
+    if(!burger||!overlay)return;
+    burger.addEventListener('click',function(){overlay.classList.add('is-open');});
+    close.addEventListener('click',function(){overlay.classList.remove('is-open');});
+    overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('is-open');});
+  })();
+  </script>
+<script src="theme.js?v=4"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

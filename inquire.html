@@ -20,6 +20,7 @@
   <title>[aRTS] — iNQUIRE</title>
   <script>
     document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -27,55 +28,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
-    }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-    }
-
-    nav { display: flex; align-items: center; gap: 2.4rem; }
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
-
-    main {
-      padding-top: clamp(90px, 14vh, 120px);
-      padding-bottom: clamp(80px, 10vh, 130px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
+    /* ── Page-specific: inquire form ── */
     .form-col {
       width: min(92vw, 560px);
       display: flex;
@@ -84,19 +39,19 @@
 
     .section-label {
       font-size: 0.62rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.2);
+      color: var(--c-text-ghost);
       text-transform: uppercase;
       margin-bottom: clamp(6px, 1vh, 10px);
     }
 
     .form-title {
       font-size: clamp(2rem, 6vw, 3.4rem);
-      font-weight: 700;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.08em;
       line-height: 1;
-      color: #fff;
+      color: var(--c-text);
       margin-bottom: clamp(20px, 3.5vh, 36px);
     }
 
@@ -105,24 +60,24 @@
       align-items: center;
       gap: 0.7rem;
       padding: clamp(12px, 1.8vh, 18px) 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--c-border);
       margin-bottom: clamp(24px, 4vh, 38px);
     }
 
     .piece-ref-label {
       font-size: 0.58rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.22);
+      color: var(--c-text-ghost);
       text-transform: uppercase;
       flex-shrink: 0;
     }
 
     .piece-ref-name {
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.1em;
-      color: #FF5C00;
+      color: var(--c-accent);
       word-break: break-all;
     }
 
@@ -136,9 +91,9 @@
 
     .field label {
       font-size: 0.58rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.24em;
-      color: rgba(255,255,255,0.2);
+      color: var(--c-text-ghost);
       text-transform: uppercase;
     }
 
@@ -146,27 +101,27 @@
     .field textarea {
       background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
+      border-bottom: 1px solid var(--c-border);
+      color: var(--c-text);
+      font-family: var(--font);
       font-size: clamp(0.85rem, 2.2vw, 1rem);
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.04em;
       padding: 0.5rem 0;
       outline: none;
       width: 100%;
-      transition: border-color 0.15s;
+      transition: border-color var(--dur-fast);
       resize: none;
     }
 
     .field input::placeholder,
     .field textarea::placeholder {
-      color: rgba(255,255,255,0.08);
+      color: var(--c-text-ghost);
     }
 
     .field input:focus,
     .field textarea:focus {
-      border-bottom-color: rgba(255,255,255,0.35);
+      border-bottom-color: var(--c-text-tertiary);
     }
 
     .field textarea { min-height: 110px; line-height: 1.6; }
@@ -174,9 +129,9 @@
     /* Error + Submit */
     .error-msg {
       font-size: 0.65rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.16em;
-      color: rgba(255,80,80,0.8);
+      color: var(--c-error);
       min-height: 1.2em;
       margin-bottom: clamp(10px, 1.5vh, 16px);
     }
@@ -189,34 +144,34 @@
     }
 
     .btn-send {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font);
       font-size: clamp(0.82rem, 2vw, 0.96rem);
-      font-weight: 700;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.18em;
       cursor: pointer;
       padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
-      background: #fff;
-      color: #000;
-      border: 2px solid #fff;
+      background: var(--c-text);
+      color: var(--c-bg);
+      border: 2px solid var(--c-text);
       border-radius: 4px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
     }
-    .btn-send:hover   { background: #FF5C00; border-color: #FF5C00; }
+    .btn-send:hover   { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-bg); }
     .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .back-link {
       font-size: 0.62rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.22);
+      color: var(--c-text-ghost);
       text-decoration: none;
-      transition: color 0.15s;
+      transition: color var(--dur-fast);
     }
-    .back-link:hover { color: rgba(255,255,255,0.55); }
+    .back-link:hover { color: var(--c-text-secondary); }
 
     /* ── Success state — hidden until JS shows it ── */
     #success {
-      display: none;          /* JS sets display:flex on success */
+      display: none;
       flex-direction: column;
       gap: clamp(10px, 1.5vh, 16px);
       transition: opacity 0.22s ease;
@@ -224,15 +179,15 @@
 
     .success-check {
       font-size: clamp(2.2rem, 7vw, 3.2rem);
-      color: #FF5C00;
+      color: var(--c-accent);
       line-height: 1;
     }
 
     .success-sub {
       font-size: 0.65rem;
-      font-weight: 300;
+      font-weight: var(--fw-light);
       letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.28);
+      color: var(--c-text-ghost);
       text-transform: uppercase;
       line-height: 1.8;
     }
@@ -240,39 +195,78 @@
     .divider-thin {
       width: 100%;
       height: 1px;
-      background: rgba(255,255,255,0.06);
+      background: var(--c-border);
       margin: clamp(14px, 2vh, 22px) 0;
     }
 
-    /* ── Mobile ── */
-    html { background: #000; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    header, nav, a, button { touch-action: manipulation; }
-
-    @media (max-width: 520px) {
-      header { padding: 18px 16px; }
-      nav    { gap: clamp(0.7rem, 3.5vw, 1.4rem); }
-      nav a  { font-size: clamp(0.7rem, 2.2vw, 0.85rem); }
+    /* Page entrance */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
-    * { -webkit-user-select: none; user-select: none; }
-    input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
-    html { touch-action: manipulation; }
-</style>
+    .site-main > * {
+      animation: pageIn 0.5s var(--ease-out) backwards;
+    }
+    .site-main .form-col { animation-delay: 0.05s; }
+
+    /* ── Day mode overrides ── */
+    [data-theme="day"] .form-title { color: var(--c-text); }
+    [data-theme="day"] .field input,
+    [data-theme="day"] .field textarea {
+      color: var(--c-text);
+      border-bottom-color: var(--c-border);
+    }
+    [data-theme="day"] .field input:focus,
+    [data-theme="day"] .field textarea:focus {
+      border-bottom-color: var(--c-text-secondary);
+    }
+    [data-theme="day"] .field input::placeholder,
+    [data-theme="day"] .field textarea::placeholder {
+      color: var(--c-text-ghost);
+    }
+    [data-theme="day"] .btn-send {
+      background: var(--c-text);
+      color: var(--c-bg);
+      border-color: var(--c-text);
+    }
+    [data-theme="day"] .btn-send:hover {
+      background: var(--c-accent);
+      border-color: var(--c-accent);
+    }
+    [data-theme="day"] .piece-ref-name { color: var(--c-accent); }
+    [data-theme="day"] .success-check { color: var(--c-accent); }
+    [data-theme="day"] .piece-ref {
+      border-bottom-color: var(--c-border);
+    }
+    [data-theme="day"] .divider-thin {
+      background: var(--c-border);
+    }
+    [data-theme="day"] .error-msg {
+      color: var(--c-error);
+    }
+  </style>
 </head>
 <body>
-  <script>(function(){document.documentElement.style.background='#000';if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
-  <header>
-    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-    <nav>
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+  <div class="ambient-orb ambient-orb--bottom"></div>
+
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
       <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
-      <a href="audience.html">aUDIENCE</a>
+      <a href="inquire.html" aria-current="page">TaLK</a>
+      <a href="work.html">wORK</a>
     </nav>
+    <button class="site-burger" id="burger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
   </header>
 
-  <main>
+  <main class="site-main">
     <div class="form-col">
 
       <!-- ── Form state ── -->
@@ -310,7 +304,7 @@
 
           <div class="submit-row">
             <button type="submit" class="btn-send" id="btn-send">sEND iNQUIRY</button>
-            <a href="ask.html" class="back-link">← bACK</a>
+            <a href="home.html" class="back-link">← bACK</a>
           </div>
         </form>
       </div>
@@ -326,7 +320,7 @@
           wE'LL bE iN tOUCH sOON
         </p>
         <div class="divider-thin"></div>
-        <a href="ask.html" class="back-link">← bACK</a>
+        <a href="home.html" class="back-link">← bACK</a>
       </div>
 
     </div>
@@ -353,6 +347,24 @@
       var alias = localStorage.getItem('arts_alias');
       if(alias) document.getElementById('f-name').value = alias;
     } catch(e) {}
+
+    /* ── Check if piece is admin-listed (routes to admin inbox) ── */
+    var isAdminPiece = false;
+    var ADMIN_ENDPOINT = 'https://formspree.io/f/xaqpqzea'; /* TODO: Replace with separate admin Formspree endpoint */
+    var PUBLIC_ENDPOINT = 'https://formspree.io/f/xaqpqzea';
+    if(piece){
+      fetch('data/pieces.json?v=' + Date.now())
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .then(function(pieces){
+          var match = pieces.find(function(p){ return p.title === piece; });
+          if(match && match.admin){
+            isAdminPiece = true;
+            /* Update subject for admin routing */
+            document.querySelector('input[name="_subject"]').value = '[aRTS] — aDMIN iNQUIRY';
+          }
+        })
+        .catch(function(){});
+    }
 
     /* ── Form submission via Formspree (AJAX) ── */
     var form   = document.getElementById('inq-form');
@@ -381,7 +393,8 @@
       form.style.pointerEvents = 'none';
 
       try {
-        var res = await fetch('https://formspree.io/f/xaqpqzea', {
+        var endpoint = isAdminPiece ? ADMIN_ENDPOINT : PUBLIC_ENDPOINT;
+        var res = await fetch(endpoint, {
           method:  'POST',
           headers: { 'Accept': 'application/json' },
           body:    new FormData(form)
@@ -419,67 +432,7 @@
   })();
   </script>
 
-  <script>
-    (function () {
-      function reveal() {
-        var c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
-        document.body.appendChild(c);
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            c.style.transition = 'opacity 0.22s ease';
-            c.style.opacity    = '0';
-            setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 320);
-          });
-        });
-      }
-      window.addEventListener('pageshow', function (e) { if (e.persisted) reveal(); });
-    })();
-  </script>
-
-  <!-- CRT channel-change transition -->
-  <script>
-  (function(){
-    var scan=null,vig=null,busy=false;
-    function mkL(){
-      if(scan)return;
-      scan=document.createElement('div');
-      scan.style.cssText='position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,14,0,0.50) 3px,rgba(0,14,0,0.50) 4px);opacity:0;z-index:99997;pointer-events:none;';
-      vig=document.createElement('div');
-      vig.style.cssText='position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,0.88) 100%);opacity:0;z-index:99996;pointer-events:none;';
-      document.body.appendChild(scan);document.body.appendChild(vig);
-    }
-    function lerp(a,b,t){return a+(b-a)*t;}
-    function easeOut3(t){return 1-Math.pow(1-Math.min(1,Math.max(0,t)),3);}
-    function smooth(t){var c=Math.min(1,Math.max(0,t));return c*c*(3-2*c);}
-    function doEnter(){
-      mkL();var T1=130,T2=780,T3=1150,s0=null;
-      function run(ts){if(!s0)s0=ts;var e=ts-s0;
-        if(e<T1){scan.style.opacity=String(lerp(0,1,e/T1));vig.style.opacity='0.95';}
-        else if(e<T2){var t=(e-T1)/(T2-T1),p=lerp(50,0,easeOut3(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity=String(lerp(0.95,0.55,easeOut3(t)));}
-        else if(e<T3){var t2=(e-T2)/(T3-T2),et=smooth(t2);document.documentElement.style.clipPath='';scan.style.opacity=String(lerp(1,0,et));vig.style.opacity=String(lerp(0.55,0,et));}
-        else{document.documentElement.style.clipPath='';if(scan&&scan.parentNode)scan.parentNode.removeChild(scan);if(vig&&vig.parentNode)vig.parentNode.removeChild(vig);scan=null;vig=null;busy=false;return;}
-        requestAnimationFrame(run);}
-      requestAnimationFrame(run);}
-    function doExit(dest){
-      if(busy)return;busy=true;mkL();var TR=60,TS=320,s0=null;
-      function run(ts){if(!s0)s0=ts;var e=ts-s0;
-        if(e<TR){scan.style.opacity=String(lerp(0,1,e/TR));vig.style.opacity=String(lerp(0,0.95,e/TR));}
-        else if(e<TR+TS){var t=(e-TR)/TS,p=lerp(0,50,smooth(t));document.documentElement.style.clipPath='inset('+p.toFixed(2)+'% 0 '+p.toFixed(2)+'% 0)';scan.style.opacity='1';vig.style.opacity='0.95';}
-        else{document.documentElement.style.clipPath='inset(50% 0 50% 0)';document.documentElement.style.background='#000';document.body.style.background='#000';sessionStorage.setItem('crt_transition','1');window.location.href=dest;return;}
-        requestAnimationFrame(run);}
-      requestAnimationFrame(run);}
-    if(sessionStorage.getItem('crt_transition')){sessionStorage.removeItem('crt_transition');doEnter();}
-    document.addEventListener('click',function(ev){
-      var a=ev.target.closest('a[href]');if(!a)return;
-      var h=a.getAttribute('href');
-      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
-      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
-      ev.preventDefault();doExit(h);},true);
-  })();
-  </script>
-
-  <!-- Nav & logo hover -->
+  <!-- Nav hover lowercase animation -->
   <script>
   (function(){
     var DELAY=40;
@@ -490,15 +443,68 @@
       el.addEventListener('mouseenter',function(){clr();var from=state;for(var i=0;i<orig.length-1-from;i++)(function(i){timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));})(i);});
       el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
-    document.querySelectorAll('nav a').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner,timers=[],state=0;
+    document.querySelectorAll('.site-nav a').forEach(navHover);
+
+    /* Idle static glitch */
+    (function(){
+      var links=Array.from(document.querySelectorAll('.site-nav a'));
+      var origTxt=links.map(function(el){return el.textContent;});
+      var glyphs='▓░▒│╌·×÷¬±';
+      function tick(){
+        var li=Math.floor(Math.random()*links.length);
+        var el=links[li];
+        var txt=origTxt[li];
+        var ci=1+Math.floor(Math.random()*(txt.length-1));
+        var arr=txt.split('');
+        arr[ci]=glyphs[Math.floor(Math.random()*glyphs.length)];
+        el.textContent=arr.join('');
+        setTimeout(function(){el.textContent=txt;},90);
+        setTimeout(tick,2600+Math.random()*3800);
+      }
+      setTimeout(tick,1200+Math.random()*1800);
+    })();
+
+    /* Logo [a] expand */
+    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
+      var timers=[],state=0;
       function clr(){timers.forEach(clearTimeout);timers.length=0;}
       function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
-      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+      logo.addEventListener('mouseenter',function(){
+        clr();var from=state;
+        for(var i=from;i<inner.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave',function(){
+        clr();var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
     });
   })();
   </script>
+
+  <!-- Page transition -->
+  <script>
+  (function(){
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest('a[href]');if(!a)return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
+      ev.preventDefault();
+      document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
+      document.body.style.opacity='0';
+      document.body.style.transform='scale(0.99)';
+      setTimeout(function(){ window.location.href=h; },220);
+    },true);
+  })();
+  </script>
+
+<script src="theme.js?v=4"></script>
+<script src="btn-fx.js"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>
