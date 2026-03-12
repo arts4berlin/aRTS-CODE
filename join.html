@@ -12,11 +12,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS] — jOIN">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS] — jOIN">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — jOIN</title>
   <script>
     document.documentElement.style.background = '#000';
@@ -25,9 +25,7 @@
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Apple Sign In -->
@@ -103,7 +101,7 @@
       flex-direction: column;
       gap: clamp(8px, 1.2vh, 12px);
     }
-    .btn-oauth.google:not(:disabled):hover { border-color: rgba(66,133,244,0.85); color: var(--c-text); background: rgba(66,133,244,0.14); }
+    .btn-oauth.google:not(:disabled):hover { border-color: rgba(255,92,0,0.7); color: var(--c-text); background: rgba(255,92,0,0.1); }
     .btn-oauth.apple:not(:disabled):hover  { border-color: var(--c-border-strong); color: var(--c-text); background: var(--c-accent-subtle); }
     .btn-oauth:disabled { opacity: 0.25; cursor: default; }
 
@@ -311,7 +309,11 @@
       letter-spacing: 0.06em;
       color: var(--c-accent);
       line-height: 1;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease 0.18s, transform 0.4s var(--ease-out) 0.18s;
     }
+    #co-backdrop.open .co-tier-name-el { opacity: 1; transform: translateY(0); }
     .co-tier-price-el {
       font-size: 0.66rem;
       font-weight: var(--fw-light);
@@ -475,7 +477,7 @@
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
     <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html">aRT</a>
@@ -561,6 +563,21 @@
             </svg>
             cONTINUE wITH aPPLE
           </button>
+          <p class="oauth-divider">— oR sIGN uP wITH eMail —</p>
+          <div class="email-auth-section" id="email-auth-section">
+            <div class="field-group" style="margin-bottom:10px;">
+              <label for="j-password">pASSWORD <span style="font-size:0.5rem;opacity:0.45;letter-spacing:0.1em;">(mIN 8 cHARS, 1 nUMBER)</span></label>
+              <input type="password" id="j-password" class="field" placeholder="••••••••" autocomplete="new-password" minlength="8">
+            </div>
+            <div class="field-group" style="margin-bottom:12px;">
+              <label for="j-password-confirm">cONFIRM pASSWORD</label>
+              <input type="password" id="j-password-confirm" class="field" placeholder="••••••••" autocomplete="new-password">
+            </div>
+            <button class="btn-oauth" id="btn-email-signup" style="border-color:var(--c-accent);color:var(--c-accent);" disabled>
+              sIGN uP wITH eMail
+            </button>
+            <p class="email-auth-error" id="email-auth-error" style="color:rgba(255,60,60,0.75);font-size:0.58rem;margin-top:8px;min-height:1em;"></p>
+          </div>
           <p class="already-member" style="margin-top:4px;"><a href="id.html">already a member? →</a></p>
         </div>
       </div>
@@ -704,7 +721,7 @@
       </div>
 
       <div class="co-foot">
-        <span class="co-secure">🔒 secured by stripe</span>
+        <span class="co-secure"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;opacity:0.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>secured by stripe</span>
         <button class="co-cancel-btn" id="co-cancel-btn">cancel</button>
       </div>
     </div>
@@ -758,7 +775,68 @@
       var disabled = !selectedTier;
       document.getElementById('btn-google').disabled = disabled;
       document.getElementById('btn-apple').disabled  = disabled;
+      document.getElementById('btn-email-signup').disabled = disabled;
     }
+
+    /* ── Email + password signup ── */
+    document.getElementById('btn-email-signup').addEventListener('click', async function() {
+      var errEl = document.getElementById('email-auth-error');
+      errEl.textContent = '';
+
+      if (!selectedTier) { errEl.textContent = 'sELECT a tIER fIRST'; return; }
+
+      var email = document.getElementById('j-email').value.trim();
+      var alias = document.getElementById('j-alias').value.trim() || 'mEMBER';
+      var pw    = document.getElementById('j-password').value;
+      var pw2   = document.getElementById('j-password-confirm').value;
+
+      if (!email || !email.includes('@')) { errEl.textContent = 'vALID eMail rEQUIRED'; return; }
+      if (pw.length < 8) { errEl.textContent = 'pASSWORD mUST bE aT lEAST 8 cHARACTERS'; return; }
+      if (!/\d/.test(pw)) { errEl.textContent = 'pASSWORD mUST cONTAIN aT lEAST 1 nUMBER'; return; }
+      if (pw !== pw2) { errEl.textContent = 'pASSWORDS dO nOT mATCH'; return; }
+
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = 'cREATING aCCOUNT...';
+
+      try {
+        var res = await fetch(PROXY_BASE + '/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: pw, alias: alias }),
+        });
+        var data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          errEl.textContent = (data.error && data.error.message) || 'rEGISTRATION fAILED';
+          btn.disabled = false;
+          btn.textContent = 'sIGN uP wITH eMail';
+          return;
+        }
+
+        // Store session + user data (same pattern as OAuth)
+        try {
+          localStorage.setItem('arts_session_token', data.session_token);
+          localStorage.setItem('arts_id_hash', data.user_id_hash);
+          localStorage.setItem('arts_email', email);
+          localStorage.setItem('arts_alias', alias);
+          localStorage.setItem('arts_tier', selectedTier);
+          localStorage.setItem('arts_oauth_provider', 'email');
+          localStorage.setItem('arts_since', new Date().toISOString().split('T')[0]);
+          var startPtsMap = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000, 'aUDIENCE': 50 };
+          localStorage.setItem('arts_points', String(startPtsMap[selectedTier] || 50));
+          if (selectedTier === 'aUDIENCE') localStorage.setItem('arts_active', 'true');
+        } catch(e) {}
+
+        // Proceed to Stage 2 (same as OAuth flow)
+        onOAuthSuccess('email', data.user_id_hash, email, alias);
+
+      } catch(e) {
+        errEl.textContent = 'cONNECTION eRROR — tRY aGAIN';
+        btn.disabled = false;
+        btn.textContent = 'sIGN uP wITH eMail';
+      }
+    });
 
     async function sha256(str) {
       var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -771,7 +849,14 @@
       var email = oauthEmail || document.getElementById('j-email').value.trim();
       var alias = oauthName  || document.getElementById('j-alias').value.trim();
       var idHash = await sha256('arts_oauth_' + sub);
-      var startPts = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000, 'aUDIENCE': 50 }[selectedTier] || 50;
+      var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
+      var startPtsMap = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000, 'aUDIENCE': 50 };
+      if(ptsCfg&&ptsCfg.events){
+        if(ptsCfg.events.signup_ally!=null) startPtsMap['aLLY']=ptsCfg.events.signup_ally;
+        if(ptsCfg.events.signup_brigadier!=null) startPtsMap['BRIGaDIER']=ptsCfg.events.signup_brigadier;
+        if(ptsCfg.events.signup_curator!=null) startPtsMap['CURaTOR']=ptsCfg.events.signup_curator;
+      }
+      var startPts = startPtsMap[selectedTier] || 50;
 
       try {
         localStorage.setItem('arts_oauth_provider', provider);

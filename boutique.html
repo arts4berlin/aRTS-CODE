@@ -12,11 +12,11 @@
   <meta property="og:url"          content="https://4-arts.com/boutique.html">
   <meta property="og:title"        content="[aRTS] — bOUTIQUE">
   <meta property="og:description"  content="pREMIUM aRT — eXCLUSIVE tO pAID mEMBERS">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS] — bOUTIQUE">
   <meta name="twitter:description" content="pREMIUM aRT — eXCLUSIVE tO pAID mEMBERS">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — bOUTIQUE</title>
   <script>
     document.documentElement.style.background = '#000';
@@ -25,9 +25,7 @@
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     /* ── Page-specific: boutique access gate ── */
@@ -489,6 +487,23 @@
       <div class="detail-info" id="detail-info"></div>
     </div>
   </div>
+
+<!-- Scroll-to-top -->
+<button id="scroll-top" aria-label="Scroll to top">↑ tOP</button>
+<script>
+(function(){
+  var btn=document.getElementById('scroll-top');
+  if(!btn)return;
+  var ticking=false;
+  window.addEventListener('scroll',function(){
+    if(!ticking){requestAnimationFrame(function(){
+      btn.classList.toggle('visible',window.scrollY>400);
+      ticking=false;
+    });ticking=true;}
+  },{passive:true});
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
 
 <script src="theme.js?v=4"></script>
 <script src="btn-fx.js"></script>

@@ -1,0 +1,3580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>[aRTS] — aDMIN</title>
+  <link href="../assets/fonts/space-grotesk.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg:           #000;
+      --bg-card:      rgba(255,255,255,0.02);
+      --bg-card-hover:rgba(255,255,255,0.04);
+      --border:       rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --text:         #fff;
+      --text-dim:     rgba(255,255,255,0.38);
+      --text-muted:   rgba(255,255,255,0.18);
+      --accent:       #FF5C00;
+      --accent-dim:   rgba(255,92,0,0.7);
+      --success:      rgba(110,230,110,0.75);
+      --success-bg:   rgba(110,230,110,0.06);
+      --success-bdr:  rgba(110,230,110,0.18);
+      --danger:       rgba(255,60,60,0.75);
+      --danger-bg:    rgba(255,60,60,0.06);
+      --danger-bdr:   rgba(255,60,60,0.18);
+      --pending:      rgba(255,200,60,0.75);
+      --pending-bg:   rgba(255,200,60,0.06);
+      --pending-bdr:  rgba(255,200,60,0.18);
+      --blue:         rgba(100,160,255,0.75);
+      --blue-bg:      rgba(100,160,255,0.06);
+      --sidebar-w:    220px;
+      --mono:         'Courier New', Courier, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: rgba(255,255,255,0.01);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .sidebar-logo {
+      padding: 0 22px;
+      margin-bottom: 36px;
+      font-size: 0.88rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+    .sidebar-logo .mark { color: var(--accent); font-weight: 700; }
+    .sidebar-logo .sub {
+      display: block;
+      font-size: 0.48rem;
+      letter-spacing: 0.32em;
+      color: var(--text-dim);
+      margin-top: 6px;
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 22px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+    }
+    .nav-item:hover {
+      color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.015);
+    }
+    .nav-item.active {
+      color: var(--text);
+      border-left-color: var(--accent);
+      background: rgba(255,92,0,0.04);
+    }
+    .nav-icon {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      width: 18px;
+      text-align: center;
+      color: inherit;
+      font-weight: 400;
+    }
+
+    .sidebar-footer {
+      padding: 18px 22px 0;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .sidebar-footer .user {
+      font-size: 0.5rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+    .sidebar-footer .logout-btn {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 12px;
+      border: 1px solid var(--accent-dim);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--accent);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sidebar-footer .logout-btn:hover { background: var(--accent); color: #000; }
+
+    /* ── Main content ── */
+    .dashboard {
+      grid-column: 2;
+      padding: 28px clamp(24px, 4vw, 48px) 60px;
+      min-height: 100vh;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dash-title {
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+    .dash-status {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .clock { font-family: var(--mono); }
+
+    /* ── Sections ── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-title {
+      font-size: 0.56rem;
+      font-weight: 300;
+      letter-spacing: 0.32em;
+      color: var(--accent-dim);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .section-desc {
+      font-size: 0.66rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* ── Cards grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--bg);
+      padding: clamp(16px, 2.5vh, 24px) clamp(16px, 2.5vw, 22px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .card:hover { background: var(--bg-card-hover); }
+
+    .card-label {
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.26em;
+      color: var(--accent-dim);
+      text-transform: uppercase;
+    }
+
+    .card-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.66rem;
+      letter-spacing: 0.06em;
+    }
+    .card-row .k {
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.14em;
+      font-size: 0.52rem;
+    }
+    .card-row .v {
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      color: var(--text-dim);
+    }
+    .card-row .v.green { color: var(--success); }
+    .card-row .v.orange { color: var(--accent); }
+    .card-row .v.blue { color: var(--blue); }
+
+    /* ── Tables ── */
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 32px;
+    }
+    .dash-table th {
+      text-align: left;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: var(--accent-dim);
+      font-size: 0.46rem;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dash-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+    .dash-table tr:hover td { background: rgba(255,255,255,0.01); }
+    .dash-table .desc-cell {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.54rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      font-weight: 300;
+    }
+    .dash-table .name-cell {
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.42rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+    .badge.online   { color: var(--success); background: var(--success-bg); border: 1px solid var(--success-bdr); }
+    .badge.pending  { color: var(--pending); background: var(--pending-bg); border: 1px solid var(--pending-bdr); }
+    .badge.offline  { color: var(--danger);  background: var(--danger-bg);  border: 1px solid var(--danger-bdr); }
+    .badge.active   { color: var(--success); background: var(--success-bg); border: 1px solid var(--success-bdr); }
+    .badge.soon     { color: var(--text-dim); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
+
+    /* ── Buttons ── */
+    .dash-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 14px;
+      border: 1.5px solid var(--border-hover);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      text-decoration: none;
+    }
+    .dash-btn:hover { border-color: var(--accent); color: var(--text); }
+    .dash-btn.primary { border-color: var(--accent); color: var(--accent); }
+    .dash-btn.primary:hover { background: var(--accent); color: #000; }
+    .dash-btn.danger { border-color: var(--danger-bdr); color: var(--danger); }
+    .dash-btn.danger:hover { background: rgba(255,60,60,0.12); }
+    .dash-btn.success { border-color: var(--success-bdr); color: var(--success); }
+    .dash-btn.success:hover { background: rgba(110,230,110,0.08); }
+
+    /* ── Search bar ── */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .search-input {
+      flex: 1;
+      max-width: 360px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 14px;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus { border-color: var(--accent-dim); }
+    .search-count {
+      font-size: 0.5rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      font-weight: 300;
+    }
+
+    /* ── Terminal / console ── */
+    .console {
+      background: rgba(255,255,255,0.015);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 18px 20px;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      line-height: 1.9;
+      color: rgba(110,230,110,0.7);
+      max-height: 320px;
+      overflow-y: auto;
+      margin-bottom: 24px;
+      letter-spacing: 0.02em;
+    }
+    .console .line { white-space: pre-wrap; word-break: break-all; }
+    .console .prompt { color: var(--accent); }
+    .console .dim { color: rgba(110,230,110,0.35); }
+    .console .user-msg { color: var(--text); }
+    .console .ai-msg { color: rgba(110,230,110,0.7); }
+    .console .err { color: var(--danger); }
+
+    /* ── AI Prompt input ── */
+    .prompt-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .prompt-input {
+      flex: 1;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      color: var(--text);
+      letter-spacing: 0.03em;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: none;
+      min-height: 40px;
+      max-height: 120px;
+    }
+    .prompt-input::placeholder { color: var(--text-muted); }
+    .prompt-input:focus { border-color: var(--accent); }
+
+    /* ── Bot cards ── */
+    .bot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .bot-card {
+      background: var(--bg);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .bot-card:hover { background: var(--bg-card-hover); }
+    .bot-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.72);
+    }
+    .bot-desc {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    /* ── Environment cards ── */
+    .env-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .env-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s;
+    }
+    .env-card:hover { border-color: var(--border-hover); }
+    .env-label {
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+    }
+    .env-domain {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--text-muted);
+    }
+    .env-actions { display: flex; gap: 8px; margin-top: auto; }
+
+    /* ── Log feed ── */
+    .log-feed { display: flex; flex-direction: column; gap: 0; }
+    .log-entry {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+      font-size: 0.62rem;
+    }
+    .log-ts {
+      font-family: var(--mono);
+      font-size: 0.54rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    .log-tag {
+      font-size: 0.42rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .log-tag.deploy  { color: var(--accent); background: rgba(255,92,0,0.08); }
+    .log-tag.content { color: var(--text-dim); background: rgba(255,255,255,0.04); }
+    .log-tag.system  { color: var(--success); background: var(--success-bg); }
+    .log-tag.member  { color: var(--blue); background: var(--blue-bg); }
+    .log-msg { font-weight: 300; letter-spacing: 0.06em; color: var(--text-dim); }
+
+    /* ── Sub-section headers ── */
+    .sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      margin-top: 8px;
+    }
+    .sub-title {
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* ── Server info ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .info-row {
+      background: var(--bg);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .info-row .k {
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .info-row .v {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+
+    .spacer { height: 28px; }
+
+    /* ── Mobile ── */
+    .mobile-toggle {
+      display: none;
+      position: fixed;
+      top: 16px; left: 16px;
+      z-index: 200;
+      width: 36px; height: 36px;
+      background: rgba(0,0,0,0.8);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 90;
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 150;
+        background: #000;
+        padding-top: 16px;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-logo { margin-top: 48px; }
+      .mobile-toggle { display: flex; }
+      .mobile-overlay.open { display: block; }
+      .dashboard { grid-column: 1; padding-top: 64px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .env-grid { grid-template-columns: 1fr; }
+      .bot-grid { grid-template-columns: 1fr; }
+      .search-input { max-width: 100%; }
+    }
+
+    /* ── Admin 12-word login barrier ── */
+    .id-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .id-cell {
+      background: #000;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .id-num {
+      font-size: 0.44rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.18);
+    }
+    .id-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      outline: none;
+      padding: 0.25rem 0;
+      width: 100%;
+      transition: border-color 0.15s;
+      text-transform: lowercase;
+    }
+    .id-input::placeholder { color: rgba(255,255,255,0.08); font-weight: 300; }
+    .id-input:focus { border-bottom-color: rgba(255,255,255,0.35); }
+    .id-input.err   { border-bottom-color: rgba(255,80,80,0.5); }
+    .id-input.ok    { border-bottom-color: #FF5C00; }
+    .id-cell.paste-cell {
+      background: #fff;
+      position: relative;
+    }
+    .id-cell.paste-cell .id-num { color: rgba(0,0,0,0.3); }
+    .id-cell.paste-cell .id-input {
+      color: #000;
+      border-bottom-color: rgba(0,0,0,0.12);
+    }
+    .id-cell.paste-cell .id-input::placeholder {
+      color: rgba(0,0,0,0.35);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      font-size: 0.65rem;
+    }
+    .id-cell.paste-cell .id-input:focus { border-bottom-color: rgba(0,0,0,0.35); }
+    .id-cell.paste-cell.has-words .paste-clear { display: block; }
+    .id-cell.paste-cell.has-words .id-input::placeholder { color: transparent; }
+    .paste-clear {
+      position: absolute;
+      top: 6px; right: 8px;
+      background: none;
+      border: none;
+      color: rgba(0,0,0,0.25);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 6px;
+      line-height: 1;
+      transition: color 0.15s;
+      display: none;
+      z-index: 2;
+    }
+    .paste-clear:hover { color: rgba(0,0,0,0.7); }
+    .btn-verify {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      cursor: pointer;
+      padding: 0.9rem 1rem;
+      width: 100%;
+      background: #fff;
+      color: #000;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .btn-verify:hover { background: #FF5C00; border-color: #FF5C00; }
+    .adm-priv-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 16px;
+    }
+    .adm-priv-pill {
+      position: relative;
+      width: 34px; height: 18px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .adm-priv-pill::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .adm-priv-btn.on .adm-priv-pill {
+      background: rgba(255,92,0,0.25);
+      border-color: rgba(255,92,0,0.55);
+    }
+    .adm-priv-btn.on .adm-priv-pill::after {
+      transform: translateX(16px);
+      background: #FF5C00;
+    }
+    .adm-priv-label {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.22);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .adm-priv-btn.on .adm-priv-label { color: #FF5C00; }
+    .adm-priv-btn:hover .adm-priv-label { color: rgba(255,255,255,0.4); }
+    @media (max-width: 520px) {
+      #login-screen .id-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Login screen (12-word barrier) ── -->
+  <div id="login-screen" style="position:fixed;inset:0;z-index:99999;background:#000;overflow-y:auto;font-family:'Space Grotesk',sans-serif;">
+    <div style="min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px 24px;">
+    <div style="width:min(92vw,560px);">
+      <p style="font-size:1.4rem;font-weight:300;letter-spacing:0.05em;color:#fff;margin-bottom:6px;text-align:center;">
+        <span style="color:#FF5C00;font-weight:700;">[aRTS]</span> aDMIN
+      </p>
+      <p style="font-size:0.48rem;letter-spacing:0.32em;color:rgba(255,255,255,0.3);margin-bottom:32px;text-align:center;">eNTER 12-wORD pHRASE</p>
+
+      <button class="adm-priv-btn on" id="admin-priv-btn" role="switch" aria-checked="true">
+        <span class="adm-priv-pill"></span>
+        <span class="adm-priv-label">pRIVaCY mODE</span>
+      </button>
+
+      <div class="id-grid" id="admin-id-grid"></div>
+
+      <p id="admin-err" style="font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:rgba(255,80,80,0.8);min-height:1.2em;margin-bottom:14px;"></p>
+
+      <button class="btn-verify" id="admin-verify-btn">vERIFY pHRASE</button>
+
+      <p style="font-size:0.42rem;letter-spacing:0.18em;color:rgba(255,255,255,0.15);margin-top:24px;text-align:center;">4-arts.com · bERLIN</p>
+    </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    /* ── Admin 12-word barrier ──
+       Set ADMIN_HASH to SHA-256 of your 12 words joined by hyphens.
+       e.g. SHA-256("word1-word2-word3-...-word12")
+       Leave empty to fall back to Caddy basic-auth (hash sent as password). */
+    var ADMIN_HASH = '0f00d8f8ef711dd4bfdae6e1769210450c1ea1384de85cc9763ac3ad4e68130a';
+
+    var loginScreen = document.getElementById('login-screen');
+
+    /* Already authed this session? */
+    if (sessionStorage.getItem('arts_admin_auth')) {
+      loginScreen.style.display = 'none';
+      return;
+    }
+
+    /* ── Word pool (same as member ID) ── */
+    var POOL = new Set([
+      'amber','archive','atlas','axiom','azure',
+      'beacon','bridge','canal','canvas','cedar',
+      'cipher','cobalt','coral','current','datum',
+      'delta','dusk','echo','ember','epoch',
+      'ether','ferry','flare','flux','fractal',
+      'frame','ghost','grain','granite','harbor',
+      'haze','helix','hollow','horizon','indigo',
+      'iris','ivory','jade','lacuna','lance',
+      'layer','lens','linden','locus','loop',
+      'lumen','margin','matrix','mesa','mirror',
+      'mist','module','moat','moss','nave',
+      'nexus','node','nomad','notch','nova',
+      'oasis','ochre','orbit','origin','oxide',
+      'paper','passage','pearl','phase','pillar',
+      'pivot','plane','prism','pulse','quartz',
+      'radius','rail','raven','relay','ridge',
+      'ripple','root','route','rubric','rust',
+      'salt','shard','shore','signal','silk',
+      'slate','socket','soot','spark','spine',
+      'spool','spore','spur','steel','stem',
+      'stencil','stone','strand','stratum','stream',
+      'string','strobe','surge','symbol','taper',
+      'tide','timber','token','tome','torch',
+      'torque','track','transit','tread','trove',
+      'tunnel','umbra','vale','valve','vector',
+      'vessel','void','volta','wake','weld',
+      'wharf','wire','witness','zinc','zone'
+    ]);
+
+    /* ── SHA-256 ── */
+    async function sha256(str) {
+      var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+    }
+
+    /* ── Privacy scramble ── */
+    var privacyOn = true;
+    var privReal  = new Array(12).fill('');
+    var _privPool = 'abcdefghijklmnopqrstuvwxyz';
+    var _privFocused = -1;
+    var _privInterval = null;
+    var _privRevealTimers = new Array(12).fill(null);
+
+    function _rand(len) {
+      if (!len) return '';
+      var s = '';
+      for (var k = 0; k < len; k++) s += _privPool[Math.floor(Math.random() * _privPool.length)];
+      return s;
+    }
+    function scrambleInput(inp, idx) {
+      if (!privacyOn || _privFocused === idx) return;
+      if (privReal[idx]) inp.value = _rand(privReal[idx].length);
+    }
+    function cascadeReveal(inp, idx) {
+      if (_privRevealTimers[idx]) { clearInterval(_privRevealTimers[idx]); _privRevealTimers[idx] = null; }
+      var target = privReal[idx] || '';
+      if (!target) { inp.value = ''; return; }
+      var frame = 0, FRAMES = 10, RATE = 38;
+      _privRevealTimers[idx] = setInterval(function() {
+        var settled = Math.floor((frame / FRAMES) * target.length);
+        inp.value = target.split('').map(function(ch, k) {
+          return k < settled ? ch : _privPool[Math.floor(Math.random() * _privPool.length)];
+        }).join('');
+        frame++;
+        if (frame > FRAMES) {
+          clearInterval(_privRevealTimers[idx]);
+          _privRevealTimers[idx] = null;
+          inp.value = target;
+        }
+      }, RATE);
+    }
+    function rescrambleAll() {
+      if (!privacyOn) return;
+      inputs.forEach(function(inp, idx) { scrambleInput(inp, idx); });
+    }
+
+    /* ── Build 12-input grid ── */
+    var grid   = document.getElementById('admin-id-grid');
+    var inputs = [];
+    for (var i = 0; i < 12; i++) {
+      var cell = document.createElement('div');
+      cell.className = i === 0 ? 'id-cell paste-cell' : 'id-cell';
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'id-input';
+      inp.autocomplete = 'off';
+      inp.autocorrect = 'off';
+      inp.autocapitalize = 'none';
+      inp.spellcheck = false;
+      inp.placeholder = i === 0 ? 'pASTe' : '· · ·';
+      inp.dataset.idx = i;
+      var numStr = (i + 1) < 10 ? '0' + (i + 1) : '' + (i + 1);
+      cell.innerHTML = '<span class="id-num">' + (i === 0 ? '' : numStr) + '</span>';
+      cell.appendChild(inp);
+      grid.appendChild(cell);
+      inputs.push(inp);
+    }
+
+    /* Clear button on paste cell */
+    var clearBtn = document.createElement('button');
+    clearBtn.className = 'paste-clear';
+    clearBtn.textContent = '×';
+    clearBtn.type = 'button';
+    inputs[0].parentElement.appendChild(clearBtn);
+    function markHasWords() { inputs[0].parentElement.classList.add('has-words'); }
+    function markNoWords()  { inputs[0].parentElement.classList.remove('has-words'); }
+    clearBtn.addEventListener('click', function(e) {
+      e.preventDefault(); e.stopPropagation();
+      privReal = new Array(12).fill('');
+      inputs.forEach(function(inp) { inp.value = ''; inp.classList.remove('ok', 'err'); });
+      document.getElementById('admin-err').textContent = '';
+      markNoWords();
+      inputs[0].focus();
+    });
+
+    /* ── Paste fill ── */
+    function fillFromClipboard(text) {
+      var parts = text.trim().split(/[\s\-—,]+/).filter(Boolean).slice(0, 12);
+      if (parts.length < 2) return false;
+      parts.forEach(function(w, j) {
+        if (inputs[j]) {
+          privReal[j] = w.toLowerCase().trim();
+          inputs[j].value = _rand(privReal[j].length || 5);
+        }
+      });
+      var cellCount = Math.min(parts.length, 12);
+      var CELL_DELAY = 55, FRAMES = 12, RATE = 36;
+      for (var jj = cellCount - 1; jj >= 0; jj--) {
+        (function(jj) {
+          var target = privReal[jj] || '';
+          if (!target) return;
+          setTimeout(function() {
+            var frame = 0;
+            var t = setInterval(function() {
+              var settled = Math.floor((frame / FRAMES) * target.length);
+              inputs[jj].value = target.split('').map(function(ch, k) {
+                var fromRight = target.length - 1 - k;
+                return fromRight < settled ? ch : _privPool[Math.floor(Math.random() * _privPool.length)];
+              }).join('');
+              frame++;
+              if (frame > FRAMES) {
+                clearInterval(t);
+                if (privacyOn) inputs[jj].value = _rand(target.length);
+              }
+            }, RATE);
+          }, (cellCount - 1 - jj) * CELL_DELAY);
+        })(jj);
+      }
+      var nextFocus = inputs[parts.length] || inputs[11];
+      if (nextFocus) setTimeout(function(){ nextFocus.focus(); }, cellCount * CELL_DELAY + 100);
+      markHasWords();
+      return true;
+    }
+
+    /* ── Wire inputs ── */
+    inputs.forEach(function(inp, i) {
+      inp.addEventListener('focus', function() {
+        _privFocused = i;
+        if (privacyOn) cascadeReveal(inp, i);
+      });
+      inp.addEventListener('blur', function() {
+        if (_privRevealTimers[i]) { clearInterval(_privRevealTimers[i]); _privRevealTimers[i] = null; }
+        _privFocused = -1;
+        if (privacyOn) scrambleInput(inp, i);
+      });
+      if (i === 0) {
+        inp.addEventListener('paste', function(e) {
+          var text = (e.clipboardData || window.clipboardData).getData('text');
+          if (text.trim().split(/[\s\-—,]+/).filter(Boolean).length > 1) {
+            e.preventDefault();
+            fillFromClipboard(text);
+          }
+        });
+        inp.addEventListener('click', function() {
+          if (privReal.some(function(w){ return w; })) return;
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText().then(function(text) {
+              if (text) fillFromClipboard(text);
+            }).catch(function(){});
+          }
+        });
+      } else {
+        inp.addEventListener('paste', function(e) { e.preventDefault(); });
+      }
+      inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === 'Tab') {
+          e.preventDefault();
+          var next = inputs[i + 1];
+          if (next) next.focus(); else document.getElementById('admin-verify-btn').focus();
+        }
+      });
+      inp.addEventListener('input', function() {
+        var v = inp.value.toLowerCase().replace(/[^a-z]/g, '');
+        inp.value = v;
+        privReal[i] = v;
+        inp.classList.remove('err', 'ok');
+      });
+    });
+
+    /* ── Privacy toggle ── */
+    var privBtn = document.getElementById('admin-priv-btn');
+    function applyPrivacy() {
+      if (privacyOn) {
+        privBtn.classList.add('on');
+        privBtn.setAttribute('aria-checked', 'true');
+        rescrambleAll();
+        if (!_privInterval) _privInterval = setInterval(rescrambleAll, 2200);
+      } else {
+        privBtn.classList.remove('on');
+        privBtn.setAttribute('aria-checked', 'false');
+        if (_privInterval) { clearInterval(_privInterval); _privInterval = null; }
+        inputs.forEach(function(inp, idx) { inp.value = privReal[idx]; });
+      }
+    }
+    privBtn.addEventListener('click', function() { privacyOn = !privacyOn; applyPrivacy(); });
+    applyPrivacy();
+
+    /* ── Grant access ── */
+    function grantAccess() {
+      sessionStorage.setItem('arts_admin_auth', '1');
+      loginScreen.style.transition = 'opacity 0.3s';
+      loginScreen.style.opacity = '0';
+      setTimeout(function(){ loginScreen.style.display = 'none'; }, 350);
+    }
+
+    /* ── Verify ── */
+    document.getElementById('admin-verify-btn').addEventListener('click', async function() {
+      var words = privReal.map(function(v){ return v.trim().toLowerCase(); });
+      var errEl = document.getElementById('admin-err');
+      errEl.textContent = '';
+      inputs.forEach(function(inp){ inp.classList.remove('err', 'ok'); });
+
+      if (words.some(function(w){ return !w; })) {
+        errEl.textContent = '— eNTER aLL 12 wORDS';
+        inputs.forEach(function(inp, i){ if (!words[i]) inp.classList.add('err'); });
+        return;
+      }
+      if (new Set(words).size !== 12) {
+        errEl.textContent = '— dUPLICaTe wORDS dETECTED';
+        var seen = {};
+        words.forEach(function(w, i){
+          if (seen[w] !== undefined){ inputs[i].classList.add('err'); inputs[seen[w]].classList.add('err'); }
+          else seen[w] = i;
+        });
+        return;
+      }
+      inputs.forEach(function(inp){ inp.classList.add('ok'); });
+
+      var hash = await sha256(words.join('-'));
+
+      /* Local hash check (set ADMIN_HASH above to enable) */
+      if (ADMIN_HASH) {
+        if (hash === ADMIN_HASH) { grantAccess(); return; }
+        errEl.textContent = '— wRONG pHRASE';
+        inputs.forEach(function(inp){ inp.classList.remove('ok'); inp.classList.add('err'); });
+        return;
+      }
+
+      /* Fallback: Caddy basic-auth (sends hash as password) */
+      fetch('/admin/auth-check', {
+        method: 'HEAD',
+        headers: { 'Authorization': 'Basic ' + btoa('admin:' + hash) }
+      }).then(function(res) {
+        if (res.ok || res.status === 404) {
+          grantAccess();
+        } else {
+          errEl.textContent = '— wRONG pHRASE';
+          inputs.forEach(function(inp){ inp.classList.remove('ok'); inp.classList.add('err'); });
+        }
+      }).catch(function() {
+        /* Dev/offline mode — grant if words are valid pool words */
+        grantAccess();
+      });
+    });
+  })();
+  </script>
+
+  <button class="mobile-toggle" id="mobileToggle">=</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="mark">[aRTS]</span> aDMIN
+      <span class="sub">iNSIDER oPERaTIONS</span>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-item active" data-section="overview">
+        <span class="nav-icon">#</span> oVERVIEW
+      </div>
+      <div class="nav-item" data-section="site">
+        <span class="nav-icon">/</span> sITE
+      </div>
+      <div class="nav-item" data-section="members">
+        <span class="nav-icon">@</span> mEMBERS
+      </div>
+      <div class="nav-item" data-section="bots">
+        <span class="nav-icon">%</span> bOTS
+      </div>
+      <div class="nav-item" data-section="inquiries">
+        <span class="nav-icon">!</span> iNQUIRIES
+      </div>
+      <div class="nav-item" data-section="newsletter">
+        <span class="nav-icon">&bull;</span> nEWSLETTER
+      </div>
+      <div class="nav-item" data-section="deploy">
+        <span class="nav-icon">&gt;</span> dEPLOY
+      </div>
+      <div class="nav-item" data-section="logs">
+        <span class="nav-icon">_</span> lOGS
+      </div>
+      <div class="nav-item" data-section="points">
+        <span class="nav-icon">♢</span> pOINTS
+      </div>
+      <div class="nav-item" data-section="vouchers">
+        <span class="nav-icon">%</span> vOUCHERS
+      </div>
+      <div class="nav-item" data-section="feedback">
+        <span class="nav-icon">♦</span> fEEDBaCK
+      </div>
+      <div class="nav-item" data-section="sales">
+        <span class="nav-icon">♦</span> sALES
+      </div>
+      <div class="nav-item" data-section="verification">
+        <span class="nav-icon">✓</span> vERIFICATION
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user">admin@4-arts.com</div>
+      <button class="logout-btn" onclick="sessionStorage.removeItem('arts_admin_auth');window.location.reload()">lOGOUT</button>
+    </div>
+  </aside>
+
+  <main class="dashboard">
+    <div class="dash-header">
+      <h1 class="dash-title">aDMIN pANEL</h1>
+      <div class="dash-status">
+        <span class="status-dot"></span>
+        <span>oNLINE</span>
+        <span class="clock" id="clock">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- ═══════════ OVERVIEW ═══════════ -->
+    <div class="section active" id="sec-overview">
+      <p class="section-title">sYSTEM oVERVIEW</p>
+      <p class="section-desc">Quick snapshot of the platform. Click any card to jump to that section.</p>
+
+      <div class="card-grid">
+        <div class="card" data-goto="site">
+          <span class="card-label">sITE sTATUS</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">sTATUS</span><span class="v green">oNLINE</span></div>
+            <div class="card-row"><span class="k">dOMAIN</span><span class="v">4-arts.com</span></div>
+            <div class="card-row"><span class="k">sERVER</span><span class="v">ubuntu-4gb-hel1-1</span></div>
+            <div class="card-row"><span class="k">sSL</span><span class="v green">vALID</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="site">
+          <span class="card-label">cONTENT</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">pAGES</span><span class="v" id="ov-pages">--</span></div>
+            <div class="card-row"><span class="k">aSSETS</span><span class="v">11 fILES</span></div>
+            <div class="card-row"><span class="k">pIECES</span><span class="v">1 lISTED</span></div>
+            <div class="card-row"><span class="k">lAST eDIT</span><span class="v">2026-03-12</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="members">
+          <span class="card-label">mEMBERS</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">tOTAL</span><span class="v">0</span></div>
+            <div class="card-row"><span class="k">pENDING</span><span class="v">0</span></div>
+            <div class="card-row"><span class="k">tIERS</span><span class="v">4 aCTIVE</span></div>
+            <div class="card-row"><span class="k">rEVENUE</span><span class="v orange">--</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="bots">
+          <span class="card-label">bOT oPERaTIONS</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">aGENTS</span><span class="v">5 rEGISTERED</span></div>
+            <div class="card-row"><span class="k">aCTIVE</span><span class="v orange">0</span></div>
+            <div class="card-row"><span class="k">pROMPTS</span><span class="v blue">rEADY</span></div>
+            <div class="card-row"><span class="k">aPi</span><span class="v orange">nOT cONNECTED</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="deploy">
+          <span class="card-label">dEPLOY</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">lAST</span><span class="v">2026-03-12</span></div>
+            <div class="card-row"><span class="k">eNV</span><span class="v">pRODUCTION</span></div>
+            <div class="card-row"><span class="k">mETHOD</span><span class="v">SCP</span></div>
+            <div class="card-row"><span class="k">bRANCH</span><span class="v">main</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="logs">
+          <span class="card-label">aCTIVITY</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">tODAY</span><span class="v">6 eVENTS</span></div>
+            <div class="card-row"><span class="k">lAST</span><span class="v">aDMIN uPDATE</span></div>
+            <div class="card-row"><span class="k">eRRORS</span><span class="v green">0</span></div>
+            <div class="card-row"><span class="k">uPTIME</span><span class="v green">100%</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="points">
+          <span class="card-label">pOINTS sYSTEM</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">eVENTS</span><span class="v" id="ov-pts-events">--</span></div>
+            <div class="card-row"><span class="k">mILESTONES</span><span class="v">5</span></div>
+            <div class="card-row"><span class="k">cONFIG</span><span class="v" id="ov-pts-status">dEFAULT</span></div>
+            <div class="card-row"><span class="k">sTORAGE</span><span class="v">localStorage</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="vouchers">
+          <span class="card-label">vOUCHERS</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">sTATUS</span><span class="v green" id="ov-voucher-status">aCTIVE</span></div>
+            <div class="card-row"><span class="k">dISCOUNT</span><span class="v orange" id="ov-voucher-discount">11%</span></div>
+            <div class="card-row"><span class="k">dURATION</span><span class="v" id="ov-voucher-duration">30d</span></div>
+            <div class="card-row"><span class="k">cODE</span><span class="v" id="ov-voucher-code" style="font-family:var(--mono);font-size:0.56rem;">ARTS-11-APPAREL</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="feedback" id="ov-feedback-card" style="cursor:pointer;">
+          <span class="card-label">fEEDBaCK</span>
+          <div class="card-rows" id="ov-feedback-rows">
+            <div class="card-row"><span class="k">eNTRIES</span><span class="v" id="ov-fb-count">--</span></div>
+            <div class="card-row"><span class="k">aVG rATING</span><span class="v" id="ov-fb-avg">--</span></div>
+            <div class="card-row"><span class="k">pOSITIVE</span><span class="v green" id="ov-fb-pos">--</span></div>
+            <div class="card-row"><span class="k">nEGaTIVE</span><span class="v" id="ov-fb-neg" style="color:var(--danger)">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ SITE ═══════════ -->
+    <div class="section" id="sec-site">
+      <p class="section-title">sITE mANAGEMENT</p>
+      <p class="section-desc">All pages on 4-arts.com. Search by name or description. Click vIEW to open on the live site.</p>
+
+      <div class="search-bar">
+        <input type="text" class="search-input" id="fileSearch" placeholder="sEARCH pAGES...">
+        <span class="search-count" id="fileCount"></span>
+      </div>
+
+      <table class="dash-table" id="fileTable">
+        <thead>
+          <tr>
+            <th>fILE</th>
+            <th>dESCRIPTION</th>
+            <th>aCTIONS</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="spacer"></div>
+
+      <div class="sub-header">
+        <span class="sub-title">pIECES (data/pieces.json)</span>
+        <button class="dash-btn primary" onclick="alert('Backend required — use GitHub Actions workflow')">+ aDD pIECE</button>
+      </div>
+
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>iD</th>
+            <th>tITLE</th>
+            <th>yEAR</th>
+            <th>pRICE</th>
+            <th>sTATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>000</td>
+            <td>pIETRO</td>
+            <td>2025</td>
+            <td>&#8364;88.888.888</td>
+            <td><span class="badge active">aVAILABLE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════ MEMBERS ═══════════ -->
+    <div class="section" id="sec-members">
+      <p class="section-title">mEMBER mANAGEMENT</p>
+      <p class="section-desc">Manage tiers, search members by alias or email, approve applications. Connected to Stripe for payments.</p>
+
+      <div class="sub-header">
+        <span class="sub-title">mEMBERSHIP tIERS</span>
+      </div>
+
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>tIER</th>
+            <th>pRICE</th>
+            <th>pERKS</th>
+            <th>mEMBERS</th>
+            <th>sTATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name-cell">aLLY</td>
+            <td><span style="color:var(--accent)">&#8364;</span>0.33 / mo</td>
+            <td class="desc-cell">member card &middot; community access &middot; trading network &middot; bOUTIQUE aCCESS</td>
+            <td>0</td>
+            <td><span class="badge active">aCTIVE</span></td>
+          </tr>
+          <tr>
+            <td class="name-cell">BRIGaDIER</td>
+            <td><span style="color:var(--accent)">&#8364;</span>3.3 / mo</td>
+            <td class="desc-cell">all above &middot; submission slots &middot; 2 guest invites</td>
+            <td>0</td>
+            <td><span class="badge active">aCTIVE</span></td>
+          </tr>
+          <tr>
+            <td class="name-cell">CURaTOR</td>
+            <td><span style="color:var(--accent)">&#8364;</span>33 / mo</td>
+            <td class="desc-cell">all above &middot; editorial seat &middot; private archive &middot; patronage</td>
+            <td>0</td>
+            <td><span class="badge active">aCTIVE</span></td>
+          </tr>
+          <tr>
+            <td class="name-cell">aUDIENCE</td>
+            <td>fREE</td>
+            <td class="desc-cell">community access &middot; event alerts &middot; newsletter</td>
+            <td>0</td>
+            <td><span class="badge active">aCTIVE</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="spacer"></div>
+
+      <div class="sub-header">
+        <span class="sub-title">mEMBER lIST</span>
+        <button class="dash-btn primary" onclick="alert('Backend required')">+ iNVITE</button>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" class="search-input" id="memberSearch" placeholder="sEARCH mEMBERS...">
+        <span class="search-count" id="memberCount"></span>
+      </div>
+
+      <table class="dash-table" id="memberTable">
+        <thead>
+          <tr>
+            <th>iD</th>
+            <th>aLIAS</th>
+            <th>tIER</th>
+            <th>jOINED</th>
+            <th>sTATUS</th>
+            <th>aCTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;font-size:0.6rem;letter-spacing:0.12em;padding:28px">nO mEMBERS yET — wAITING fOR fIRST sIGN-UP</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="spacer"></div>
+
+      <div class="sub-header">
+        <span class="sub-title">pENDING aPPLICATIONS</span>
+      </div>
+
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>aLIAS</th>
+            <th>tIER</th>
+            <th>aPPLIED</th>
+            <th>aCTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4" style="text-align:center;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;font-size:0.6rem;letter-spacing:0.12em;padding:28px">nO pENDING aPPLICATIONS</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════ BOTS ═══════════ -->
+    <div class="section" id="sec-bots">
+      <p class="section-title">bOT oPERaTIONS</p>
+      <p class="section-desc">AI agents for the platform. Use the prompt console below to test queries in real time. Connect your Claude API key to enable live responses.</p>
+
+      <div class="sub-header">
+        <span class="sub-title">rEGISTERED aGENTS</span>
+      </div>
+
+      <div class="bot-grid">
+        <div class="bot-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="bot-name">mARKET sCOUT</span>
+            <span class="badge soon">cOMING sOON</span>
+          </div>
+          <p class="bot-desc">Monitors public listings across primary and secondary art markets. Flags pricing anomalies and emerging valuations.</p>
+        </div>
+        <div class="bot-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="bot-name">pROVENANCE cHECK</span>
+            <span class="badge soon">cOMING sOON</span>
+          </div>
+          <p class="bot-desc">Cross-references provenance records and exhibition histories against open databases. Surfaces discrepancies.</p>
+        </div>
+        <div class="bot-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="bot-name">sECURITY sCAN</span>
+            <span class="badge soon">cOMING sOON</span>
+          </div>
+          <p class="bot-desc">Inspects embedded asset metadata and code payloads for anomalies. Flags suspicious patterns in digital artworks.</p>
+        </div>
+        <div class="bot-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="bot-name">tRADE aLERT</span>
+            <span class="badge soon">cOMING sOON</span>
+          </div>
+          <p class="bot-desc">Delivers structured intelligence on trade activity within your network. Configurable thresholds and cadence.</p>
+        </div>
+        <div class="bot-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="bot-name">cONTENT mODERATOR</span>
+            <span class="badge active">aCTIVE</span>
+          </div>
+          <p class="bot-desc">3-tier pipeline: HF Falconsai NSFW detection (tier 1) → KoalaAI text moderation (tier 1.5) → Claude Vision deep analysis (tier 2). Scans images and text before publication.</p>
+        </div>
+      </div>
+
+      <div class="sub-header">
+        <span class="sub-title">pROMPT cONSOLE</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge active" id="apiStatus">sERVER pROXY</span>
+        </div>
+      </div>
+
+      <div class="console" id="botConsole">
+        <div class="line dim">--- [aRTS] bOT cONSOLE ---</div>
+        <div class="line dim">Type a prompt below and press sEND or Enter.</div>
+        <div class="line dim">Responses powered by Claude via server-side proxy.</div>
+        <div class="line dim">---</div>
+      </div>
+
+      <div class="prompt-bar">
+        <textarea class="prompt-input" id="promptInput" placeholder="aSK tHE bOTS aNYTHING..." rows="1"></textarea>
+        <button class="dash-btn primary" id="promptSend">sEND</button>
+      </div>
+
+      <p class="section-desc" style="margin-top:8px">
+        Example prompts: "scan listing #000 for metadata anomalies" &middot; "check provenance for pIETRO" &middot; "summarize market trends for Berlin galleries" &middot; "moderate this image description"
+      </p>
+    </div>
+
+    <!-- ═══════════ INQUIRIES ═══════════ -->
+    <div class="section" id="sec-inquiries">
+      <p class="section-title">iNQUIRIES</p>
+      <p class="section-desc">Inquiries submitted via the marketplace. Set your Formspree API key to fetch live submissions.</p>
+
+      <div class="sub-header">
+        <span>iNBOX</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge soon" id="fsStatus">nO kEY</span>
+          <button class="dash-btn" id="fsKeyBtn">sET fORMSPREE kEY</button>
+          <button class="dash-btn" id="fsRefreshBtn" style="display:none">rEFRESH</button>
+        </div>
+      </div>
+
+      <div id="inqLoading" style="display:none;padding:18px 0;font-size:0.62rem;color:var(--text-dim);letter-spacing:0.12em;">Loading submissions...</div>
+      <div id="inqEmpty" style="display:none;padding:18px 0;font-size:0.62rem;color:var(--text-muted);letter-spacing:0.12em;">No inquiries found. Set a Formspree API key to fetch submissions.</div>
+
+      <table class="data-table" id="inqTable" style="display:none">
+        <thead>
+          <tr><th>DATE</th><th>NAME</th><th>EMAIL</th><th>PIECE</th><th>MESSAGE</th><th>STATUS</th></tr>
+        </thead>
+        <tbody id="inqBody"></tbody>
+      </table>
+
+      <div style="margin-top:18px;">
+        <p style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.12em;">
+          Status is tracked locally. Click a status badge to cycle: nEW &rarr; rEPLIED &rarr; cLOSED &rarr; nEW.<br>
+          <a href="https://formspree.io/forms" target="_blank" rel="noopener" style="color:var(--accent-dim);text-decoration:none;">oPEN fORMSPREE dASHBOARD &rarr;</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- ═══════════ NEWSLETTER ═══════════ -->
+    <div class="section" id="sec-newsletter">
+      <p class="section-title">nEWSLETTER bOT</p>
+      <p class="section-desc">Compose and schedule newsletters. Configure points awarded for subscriber engagement (opens, clicks, interactions).</p>
+
+      <!-- Points config -->
+      <div class="sub-header">
+        <span>POINTS SYSTEM</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">stored in localStorage</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:24px;">
+        <div class="card">
+          <p class="card-label">eMAIL oPEN</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" id="pts-open" value="5" min="0" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">lINK cLICK</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" id="pts-click" value="10" min="0" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">iNTERACTION</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" id="pts-interact" value="25" min="0" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="saveNewsletterConfig()" style="font-family:'Space Grotesk',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.14em;padding:6px 16px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:3px;cursor:pointer;margin-bottom:28px;">sAVE pOINTS cONFIG</button>
+
+      <!-- Compose -->
+      <div class="sub-header">
+        <span>COMPOSE NEWSLETTER</span>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.52rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">sUBJECT</label>
+        <input type="text" id="nl-subject" placeholder="Newsletter subject..."
+          style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.06em;padding:6px 0;width:100%;outline:none;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.52rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">bODY</label>
+        <textarea id="nl-body" rows="8" placeholder="Write your newsletter content here..."
+          style="background:var(--bg-card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.78rem;font-weight:300;letter-spacing:0.02em;padding:12px;width:100%;outline:none;resize:vertical;line-height:1.6;"></textarea>
+      </div>
+      <button disabled title="Requires backend — Phase 2"
+        style="font-family:'Space Grotesk',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;padding:10px 24px;background:var(--text-muted);color:var(--bg);border:none;border-radius:4px;cursor:not-allowed;opacity:0.4;">sEND nEWSLETTER /* REQUIRES BACKEND */</button>
+
+      <!-- Campaign history -->
+      <div class="sub-header" style="margin-top:32px;">
+        <span>CAMPAIGN HISTORY</span>
+      </div>
+      <table class="dash-table">
+        <thead>
+          <tr><th>DATE</th><th>SUBJECT</th><th style="text-align:center;">SENT</th><th style="text-align:center;">OPENS</th><th style="text-align:center;">CLICKS</th><th style="text-align:right;">PTS AWARDED</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="white-space:nowrap;">2026-03-08</td>
+            <td class="name-cell">wELCOME tO [aRTS]</td>
+            <td style="text-align:center;">24</td>
+            <td style="text-align:center;color:var(--success);">18 <span class="desc-cell">(75%)</span></td>
+            <td style="text-align:center;color:var(--accent);">9 <span class="desc-cell">(38%)</span></td>
+            <td style="text-align:right;color:var(--accent);">+270</td>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap;">2026-03-01</td>
+            <td class="name-cell">mARCH UpDaTE — nEW fEATURES</td>
+            <td style="text-align:center;">22</td>
+            <td style="text-align:center;color:var(--success);">15 <span class="desc-cell">(68%)</span></td>
+            <td style="text-align:center;color:var(--accent);">6 <span class="desc-cell">(27%)</span></td>
+            <td style="text-align:right;color:var(--accent);">+195</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Subscriber list -->
+      <div class="sub-header" style="margin-top:28px;">
+        <span>SUBSCRIBERS</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">24 total</span>
+      </div>
+      <table class="dash-table">
+        <thead>
+          <tr><th>TIER</th><th style="text-align:center;">COUNT</th><th style="text-align:center;">AVG POINTS</th><th style="text-align:right;">LAST SENT</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name-cell" style="color:var(--accent);">aLLY</td><td style="text-align:center;">14</td><td style="text-align:center;">320</td><td style="text-align:right;">2026-03-08</td></tr>
+          <tr><td class="name-cell" style="color:var(--accent);">BRIGaDIER</td><td style="text-align:center;">6</td><td style="text-align:center;">780</td><td style="text-align:right;">2026-03-08</td></tr>
+          <tr><td class="name-cell" style="color:var(--accent);">CURaTOR</td><td style="text-align:center;">2</td><td style="text-align:center;">1540</td><td style="text-align:right;">2026-03-08</td></tr>
+          <tr><td class="name-cell" style="color:var(--text-dim);">aUDIENCE</td><td style="text-align:center;">2</td><td style="text-align:center;">65</td><td style="text-align:right;">2026-03-01</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════ DEPLOY ═══════════ -->
+    <div class="section" id="sec-deploy">
+      <p class="section-title">dEPLOY cONTROL</p>
+      <p class="section-desc">Manage production, preview, and admin environments. Deploy via SCP or restart Caddy. Server status and config overview.</p>
+
+      <div class="sub-header">
+        <span class="sub-title">eNVIRONMENTS</span>
+      </div>
+
+      <div class="env-grid">
+        <div class="env-card">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="status-dot"></span>
+            <span class="env-label">pRODUCTION</span>
+          </div>
+          <span class="env-domain">4-arts.com</span>
+          <div class="env-actions">
+            <button class="dash-btn primary" onclick="alert('Backend required')">dEPLOY</button>
+            <a href="https://4-arts.com" target="_blank" class="dash-btn">oPEN</a>
+          </div>
+        </div>
+        <div class="env-card">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="status-dot"></span>
+            <span class="env-label">pREVIEW</span>
+          </div>
+          <span class="env-domain">preview.4-arts.com</span>
+          <div class="env-actions">
+            <button class="dash-btn primary" onclick="alert('Backend required')">dEPLOY</button>
+            <a href="https://preview.4-arts.com" target="_blank" class="dash-btn">oPEN</a>
+          </div>
+        </div>
+        <div class="env-card">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="status-dot"></span>
+            <span class="env-label">aDMIN</span>
+          </div>
+          <span class="env-domain">admin.4-arts.com</span>
+          <div class="env-actions">
+            <button class="dash-btn primary" onclick="alert('Backend required')">dEPLOY</button>
+            <button class="dash-btn" onclick="window.location.reload()">rELOAD</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-header">
+        <span class="sub-title">dEPLOY cONSOLE</span>
+      </div>
+
+      <div class="console" id="deployConsole">
+        <div class="line"><span class="prompt">&gt;</span> lAST dEPLOY: 2026-03-10 12:40:22 UTC</div>
+        <div class="line"><span class="prompt">&gt;</span> mETHOD: scp -r site/* arts@VPS:/var/www/4-arts/</div>
+        <div class="line"><span class="prompt">&gt;</span> sTATUS: <span style="color:var(--success)">sUCCESS</span></div>
+        <div class="line"><span class="prompt">&gt;</span> fILES tRANSFERRED: 38</div>
+        <div class="line dim">---</div>
+        <div class="line"><span class="prompt">&gt;</span> rEADY</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:32px">
+        <button class="dash-btn primary" onclick="alert('Backend required — run: scp -r site/* arts@VPS:/var/www/4-arts/')">rUN dEPLOY</button>
+        <button class="dash-btn" onclick="alert('Backend required — run: sudo systemctl restart caddy')">rESTART cADDY</button>
+      </div>
+
+      <div class="sub-header">
+        <span class="sub-title">sERVER sTATUS</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-row"><span class="k">hOST</span><span class="v">ubuntu-4gb-hel1-1</span></div>
+        <div class="info-row"><span class="k">oS</span><span class="v">Ubuntu 24.04</span></div>
+        <div class="info-row"><span class="k">cPU</span><span class="v">2 vCPU (ARM)</span></div>
+        <div class="info-row"><span class="k">rAM</span><span class="v">4 GB</span></div>
+        <div class="info-row"><span class="k">wEB sERVER</span><span class="v">Caddy</span></div>
+        <div class="info-row"><span class="k">cDN</span><span class="v">Cloudflare</span></div>
+        <div class="info-row"><span class="k">fIREWALL</span><span class="v green">UFW aCTIVE</span></div>
+        <div class="info-row"><span class="k">fAIL2BAN</span><span class="v green">aCTIVE</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ LOGS ═══════════ -->
+    <div class="section" id="sec-logs">
+      <p class="section-title">aCTIVITY lOG</p>
+      <p class="section-desc">Platform events — deploys, member actions, system changes. Logs are mock data until backend is connected.</p>
+
+      <div class="search-bar">
+        <input type="text" class="search-input" id="logSearch" placeholder="fILTER lOGS...">
+        <button class="dash-btn" onclick="alert('Backend required')">rEFRESH</button>
+      </div>
+
+      <div class="log-feed" id="logFeed">
+        <div class="log-entry">
+          <span class="log-ts">2026-03-10 12:46</span>
+          <span class="log-tag deploy">dEPLOY</span>
+          <span class="log-msg">admin.4-arts.com deployed</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-10 12:40</span>
+          <span class="log-tag deploy">dEPLOY</span>
+          <span class="log-msg">sITE deployed to production</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-10 12:38</span>
+          <span class="log-tag content">cONTENT</span>
+          <span class="log-msg">pieces.json updated (1 piece)</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-10 11:20</span>
+          <span class="log-tag system">sYSTEM</span>
+          <span class="log-msg">Caddy reloaded with admin block</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-10 10:15</span>
+          <span class="log-tag system">sYSTEM</span>
+          <span class="log-msg">admin.4-arts.com DNS + Caddy configured</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-10 10:00</span>
+          <span class="log-tag system">sYSTEM</span>
+          <span class="log-msg">preview.4-arts.com configured</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-09 18:45</span>
+          <span class="log-tag system">sYSTEM</span>
+          <span class="log-msg">SSL certificates provisioned via Caddy</span>
+        </div>
+        <div class="log-entry">
+          <span class="log-ts">2026-03-09 14:12</span>
+          <span class="log-tag deploy">dEPLOY</span>
+          <span class="log-msg">Initial site deployment to 4-arts.com</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ POINTS ═══════════ -->
+    <div class="section" id="sec-points">
+      <p class="section-title">pOINTS sYSTEM</p>
+      <p class="section-desc">Manage all XP rewards across the platform. Edit values and save — changes apply site-wide via localStorage config.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="pts-save-btn" onclick="savePointsConfig()">sAVE aLL cHANGES</button>
+        <button class="dash-btn" onclick="resetPointsConfig()" style="color:var(--danger);border-color:var(--danger-bdr);">rESET tO dEFAULTS</button>
+        <span id="pts-save-status" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Milestones -->
+      <div class="sub-header">
+        <span>MILESTONES</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">rank thresholds</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:28px;">
+        <div class="card" style="text-align:center;">
+          <p class="card-label">nOVICE</p>
+          <span style="font-size:1.1rem;font-weight:700;color:var(--text-dim);">0 pTS</span>
+        </div>
+        <div class="card" style="text-align:center;">
+          <p class="card-label">pATRON</p>
+          <div style="display:flex;align-items:baseline;gap:4px;justify-content:center;">
+            <input type="number" data-pts-milestone="patron" value="100" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.1rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.52rem;color:var(--text-muted);">pTS</span>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <p class="card-label">cOLLECTOR</p>
+          <div style="display:flex;align-items:baseline;gap:4px;justify-content:center;">
+            <input type="number" data-pts-milestone="collector" value="500" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.1rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.52rem;color:var(--text-muted);">pTS</span>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <p class="card-label">aRCHIVIST</p>
+          <div style="display:flex;align-items:baseline;gap:4px;justify-content:center;">
+            <input type="number" data-pts-milestone="archivist" value="1000" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.1rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.52rem;color:var(--text-muted);">pTS</span>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <p class="card-label">mAESTRO</p>
+          <div style="display:flex;align-items:baseline;gap:4px;justify-content:center;">
+            <input type="number" data-pts-milestone="maestro" value="2500" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.1rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.52rem;color:var(--text-muted);">pTS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign-up Rewards -->
+      <div class="sub-header">
+        <span>SIGN-UP REWARDS</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">join.html</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">aUDIENCE sIGN-UP</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="signup_audience" value="50" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">fREE tIER</p>
+        </div>
+        <div class="card">
+          <p class="card-label">aLLY sIGN-UP</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="signup_ally" value="100" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">bRIGaDIER sIGN-UP</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="signup_brigadier" value="500" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">cURaTOR sIGN-UP</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="signup_curator" value="1000" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engagement Rewards -->
+      <div class="sub-header">
+        <span>ENGAGEMENT REWARDS</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">across site pages</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">dAILY lOGIN</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="daily_login" value="25" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">home.html · once/day</p>
+        </div>
+        <div class="card">
+          <p class="card-label">aRTICLE vIEW</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="article_view" value="150" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">articles.html</p>
+        </div>
+        <div class="card">
+          <p class="card-label">lIST aRT pIECE</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="list_art" value="50" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">add.html</p>
+        </div>
+        <div class="card">
+          <p class="card-label">sUBMIT rEPORT</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="submit_report" value="50" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">report.html</p>
+        </div>
+        <div class="card">
+          <p class="card-label">pI eASTER eGG</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="pi_easter_egg" value="314" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">pi.html · once</p>
+        </div>
+        <div class="card">
+          <p class="card-label">fAVOURITE (aRT)</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="favourite_art" value="10" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">art.html</p>
+        </div>
+        <div class="card">
+          <p class="card-label">fAVOURITE (bOUTIQUE)</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="favourite_boutique" value="10" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">boutique.html</p>
+        </div>
+        <div class="card">
+          <p class="card-label">sHARE (aRT)</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="share_art" value="30" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">art.html</p>
+        </div>
+        <div class="card">
+          <p class="card-label">sHARE (bOUTIQUE)</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="share_boutique" value="30" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">boutique.html</p>
+        </div>
+      </div>
+
+      <!-- Newsletter Points (mirrors sec-newsletter config) -->
+      <div class="sub-header">
+        <span>NEWSLETTER ENGAGEMENT</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">synced with nEWSLETTER section</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">eMAIL oPEN</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="nl_open" value="5" min="0" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">lINK cLICK</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="nl_click" value="10" min="0" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">iNTERACTION</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="nl_interact" value="25" min="0" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Community Helpers / Moderators -->
+      <div class="sub-header">
+        <span>COMMUNITY HELPERS &amp; MODERATORS</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">rewards for community contributions</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">fLAG cONTENT</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="mod_flag_content" value="20" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">report.html · per valid flag</p>
+        </div>
+        <div class="card">
+          <p class="card-label">vERIFY lISTING</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="mod_verify_listing" value="40" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">manual listing review</p>
+        </div>
+        <div class="card">
+          <p class="card-label">rESOLVE dISPUTE</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="mod_resolve_dispute" value="75" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">mediate member disputes</p>
+        </div>
+        <div class="card">
+          <p class="card-label">wELCOME nEW mEMBER</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="helper_welcome" value="15" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">onboarding assistance</p>
+        </div>
+        <div class="card">
+          <p class="card-label">aNSWER qUESTION</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="helper_answer" value="25" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">help in community</p>
+        </div>
+        <div class="card">
+          <p class="card-label">cURATE cOLLECTION</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="helper_curate" value="60" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">curate featured art</p>
+        </div>
+      </div>
+
+      <!-- Add Custom Event -->
+      <div class="sub-header">
+        <span>ADD CUSTOM EVENT</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">create new point rewards</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:28px;">
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">eVENT kEY</label>
+          <input type="text" id="custom-pts-key" placeholder="e.g. share_art"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.78rem;font-weight:700;padding:6px 0;width:160px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">lABEL</label>
+          <input type="text" id="custom-pts-label" placeholder="e.g. sHARE aRT"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.78rem;font-weight:700;padding:6px 0;width:160px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">pOINTS</label>
+          <input type="number" id="custom-pts-value" placeholder="50" min="0" max="99999"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.78rem;font-weight:700;padding:6px 0;width:70px;outline:none;text-align:center;">
+        </div>
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">pAGE</label>
+          <input type="text" id="custom-pts-page" placeholder="e.g. art.html"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.78rem;font-weight:300;padding:6px 0;width:120px;outline:none;">
+        </div>
+        <button class="dash-btn" onclick="addCustomPointEvent()" style="margin-bottom:2px;">+ aDD eVENT</button>
+      </div>
+
+      <!-- Custom Events List -->
+      <div id="custom-events-container" style="margin-bottom:28px;"></div>
+
+      <!-- Storage Info -->
+      <div class="sub-header">
+        <span>STORAGE KEYS</span>
+      </div>
+      <table class="data-table" style="margin-bottom:18px;">
+        <thead>
+          <tr><th>KEY</th><th>TYPE</th><th>DESCRIPTION</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_points_config</td><td>localStorage</td><td>Centralized point values config (JSON)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_points</td><td>localStorage</td><td>User's total accumulated XP</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_xp_pending</td><td>sessionStorage</td><td>Toast notification queue (JSON array)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_xp_daily</td><td>localStorage</td><td>Date of last daily login bonus</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_xp_prev</td><td>sessionStorage</td><td>Previous pts value (counter animation)</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:0.52rem;color:var(--text-muted);letter-spacing:0.1em;font-weight:300;">
+        Point values saved to <span style="font-family:var(--mono);color:var(--accent);">arts_points_config</span> in localStorage.
+        Site pages read from this config at runtime — no deploy needed for value changes.
+        <br>To implement a custom event on a page, use: <span style="font-family:var(--mono);color:var(--text-dim);">aRTS.awardXP('event_key')</span>
+      </p>
+    </div>
+
+    <!-- ═══════════ VOUCHERS ═══════════ -->
+    <div class="section" id="sec-vouchers">
+      <p class="section-title">vOUCHER mANAGEMENT</p>
+      <p class="section-desc">Configure discount vouchers for the platform. Changes are saved to localStorage and apply site-wide.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="voucher-save-btn" onclick="saveVoucherConfig()">sAVE cHANGES</button>
+        <button class="dash-btn" onclick="resetVoucherConfig()" style="color:var(--danger);border-color:var(--danger-bdr);">rESET tO dEFAULTS</button>
+        <span id="voucher-save-status" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Apparel Voucher -->
+      <div class="sub-header">
+        <span>aPPaREL vOUCHER</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">id.html · apparel.html</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">dISCOUNT</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <input type="number" id="voucher-discount" value="11" min="1" max="100"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.78rem;color:var(--accent);font-weight:700;">%</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">dURATION</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <input type="number" id="voucher-duration" value="30" min="1" max="365"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">dAYS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">vOUCHER cODE</p>
+          <input type="text" id="voucher-code" value="ARTS-11-APPAREL"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--accent);font-family:var(--mono);font-size:0.82rem;font-weight:700;width:160px;outline:none;letter-spacing:0.08em;margin-top:4px;">
+        </div>
+        <div class="card">
+          <p class="card-label">sTATUS</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <span id="voucher-status-dot" style="width:8px;height:8px;border-radius:50%;background:var(--success);"></span>
+            <span id="voucher-status-text" style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;color:var(--success);">aCTIVE</span>
+          </div>
+          <button class="dash-btn" onclick="toggleVoucherActive()" id="voucher-toggle-btn" style="margin-top:8px;font-size:0.48rem;padding:4px 10px;">dISABLE</button>
+        </div>
+      </div>
+
+      <!-- Voucher Storage Info -->
+      <div class="sub-header">
+        <span>STORAGE KEYS</span>
+      </div>
+      <table class="data-table" style="margin-bottom:18px;">
+        <thead>
+          <tr><th>KEY</th><th>TYPE</th><th>DESCRIPTION</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_apparel_voucher_ts</td><td>localStorage</td><td>Claim timestamp (ms since epoch)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_voucher_config</td><td>localStorage</td><td>Voucher settings (discount %, duration, code, active)</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:0.52rem;color:var(--text-muted);letter-spacing:0.1em;font-weight:300;">
+        Voucher config saved to <span style="font-family:var(--mono);color:var(--accent);">arts_voucher_config</span> in localStorage.
+        id.html reads the config to display discount amount and code. apparel.html reads the claim timestamp to show the active banner.
+      </p>
+    </div>
+
+    <!-- ═══════════ FEEDBACK ═══════════ -->
+    <div class="section" id="sec-feedback">
+      <p class="section-title">fEEDBaCK rEPORT</p>
+      <p class="section-desc">User feedback collected from the site. Bot analysis runs automatically on load — click rEFRESH to re-analyse.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="fb-refresh-btn" onclick="loadFeedback()">rEFRESH + aNaLYSE</button>
+        <button class="dash-btn" id="fb-clear-btn" onclick="clearFeedback()" style="color:var(--danger);border-color:var(--danger-bdr);">cLEaR aLL</button>
+        <span id="fb-count-badge" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Bot Analysis Report -->
+      <div id="fb-report" style="display:none;margin-bottom:28px;">
+        <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:14px;">— bOT aNaLYSIS —</p>
+
+        <!-- Score cards -->
+        <div class="card-grid" id="fb-score-grid" style="margin-bottom:20px;"></div>
+
+        <!-- What works well -->
+        <div style="margin-bottom:20px;">
+          <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.28em;color:var(--success);text-transform:uppercase;margin-bottom:10px;">✓ wHaT wORKS wELL</p>
+          <div id="fb-positives" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+
+        <!-- What needs improvement -->
+        <div style="margin-bottom:20px;">
+          <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.28em;color:var(--danger);text-transform:uppercase;margin-bottom:10px;">✗ wHaT NEEDS wORK</p>
+          <div id="fb-negatives" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+
+        <!-- Topic breakdown -->
+        <div>
+          <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.28em;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;">tOPIC bREAKDOWN</p>
+          <div id="fb-topics" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+      </div>
+
+      <!-- No feedback state -->
+      <div id="fb-empty" style="display:none;font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);padding:28px 0;">nO fEEDBaCK yET — vISIT tHE sITE aND sUBMIT fEEDBaCK fIRST.</div>
+
+      <!-- Feedback entries table -->
+      <table class="dash-table" id="fb-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>dATE</th>
+            <th>rATING</th>
+            <th>fEEDBaCK</th>
+            <th>pAGE</th>
+            <th>sENTIMENT</th>
+          </tr>
+        </thead>
+        <tbody id="fb-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════ SALES ═══════════ -->
+    <div class="section" id="sec-sales">
+      <p class="section-title">sALES & rEVENUE</p>
+      <p class="section-desc">sTRIPE cONNECT mARKETPLACE — cOMMISSION tRACKING & pAYOUT sTATUS.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="sales-refresh-btn">rEFRESH</button>
+        <span id="sales-count-badge" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Summary cards -->
+      <div id="sales-stats" style="display:none;margin-bottom:28px;">
+        <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:14px;">— sALES sUMMARY —</p>
+        <div class="card-grid" id="sales-stats-grid"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="sales-empty" style="font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);padding:28px 0;">lOADING sALES dATA...</div>
+
+      <!-- Sales table -->
+      <table class="dash-table" id="sales-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>dATE</th>
+            <th>pIECE</th>
+            <th>aMOUNT</th>
+            <th>cOMMISSION</th>
+            <th>sELLER pAYOUT</th>
+            <th>tIER</th>
+          </tr>
+        </thead>
+        <tbody id="sales-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════ VERIFICATION ═══════════ -->
+    <div class="section" id="sec-verification">
+      <p class="section-title">vERIFICATION</p>
+      <p class="section-desc">aRTIST, sTUDIO & iNDIViDUAL aPPROVAL qUEUE.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="verify-refresh-btn">rEFRESH</button>
+        <button class="dash-btn" id="verify-show-all" style="opacity:0.5;">aLL</button>
+        <span id="verify-count-badge" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Stats cards -->
+      <div id="verify-stats" style="display:none;margin-bottom:28px;">
+        <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:14px;">— vERIFICATION sUMMARY —</p>
+        <div class="card-grid" id="verify-stats-grid"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="verify-empty" style="font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);padding:28px 0;">lOADING vERIFICATION dATA...</div>
+
+      <!-- Pending table -->
+      <table class="dash-table" id="verify-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>dATE</th>
+            <th>nAME</th>
+            <th>tYPE</th>
+            <th>pORTFOLIO</th>
+            <th>sTATUS</th>
+            <th>aCTION</th>
+          </tr>
+        </thead>
+        <tbody id="verify-tbody"></tbody>
+      </table>
+
+      <!-- Review modal -->
+      <div id="verifyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+        <div style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:28px 32px;max-width:520px;width:92%;position:relative;max-height:80vh;overflow-y:auto;">
+          <button id="verifyModalClose" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[x]</button>
+          <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:18px;">vERIFICATION rEVIEW</p>
+          <div id="verifyModalBody" style="display:flex;flex-direction:column;gap:12px;"></div>
+          <div style="margin-top:20px;">
+            <label style="font-size:0.55rem;font-weight:300;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-transform:uppercase;">aDMIN nOTES</label>
+            <textarea id="verify-admin-notes" style="width:100%;height:60px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.75rem;padding:8px;outline:none;resize:none;margin-top:6px;"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="dash-btn" id="verify-approve-btn" style="background:rgba(110,230,110,0.15);border-color:rgba(110,230,110,0.3);color:rgba(110,230,110,0.85);">aPPROVE</button>
+            <button class="dash-btn" id="verify-reject-btn" style="background:rgba(255,80,80,0.1);border-color:rgba(255,80,80,0.25);color:rgba(255,80,80,0.75);">rEJECT</button>
+            <button class="dash-btn" id="verify-revoke-btn" style="display:none;background:rgba(255,200,60,0.1);border-color:rgba(255,200,60,0.2);color:rgba(255,200,60,0.7);">rEVOKE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ MEMBER DETAIL MODAL ═══════════ -->
+    <div id="memberModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+      <div style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:28px 32px;max-width:420px;width:90%;position:relative;">
+        <button id="memberModalClose" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[x]</button>
+        <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:18px;">mEMBER dETAIL</p>
+        <div id="memberModalBody" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+  (function(){
+    /* ── Clock ── */
+    var clockEl = document.getElementById('clock');
+    function updateClock(){
+      var d = new Date();
+      clockEl.textContent =
+        String(d.getUTCHours()).padStart(2,'0') + ':' +
+        String(d.getUTCMinutes()).padStart(2,'0') + ':' +
+        String(d.getUTCSeconds()).padStart(2,'0') + ' UTC';
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* ── Navigation ── */
+    var navItems = document.querySelectorAll('.nav-item');
+    var sections = document.querySelectorAll('.section');
+
+    function goToSection(name){
+      navItems.forEach(function(n){ n.classList.remove('active'); });
+      sections.forEach(function(s){ s.classList.remove('active'); });
+      var nav = document.querySelector('.nav-item[data-section="'+name+'"]');
+      if(nav) nav.classList.add('active');
+      var sec = document.getElementById('sec-'+name);
+      if(sec) sec.classList.add('active');
+      window.scrollTo(0,0);
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('mobileOverlay').classList.remove('open');
+    }
+
+    navItems.forEach(function(item){
+      item.addEventListener('click', function(){
+        goToSection(item.getAttribute('data-section'));
+      });
+    });
+
+    /* Overview card clicks */
+    document.querySelectorAll('.card[data-goto]').forEach(function(card){
+      card.addEventListener('click', function(){
+        goToSection(card.getAttribute('data-goto'));
+      });
+    });
+
+    /* ── Mobile sidebar ── */
+    var toggle = document.getElementById('mobileToggle');
+    var overlay = document.getElementById('mobileOverlay');
+    var sidebar = document.getElementById('sidebar');
+    toggle.addEventListener('click', function(){ sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+    overlay.addEventListener('click', function(){ sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+
+    /* ── Scramble effect on nav hover ── */
+    var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
+    var FRAMES = 14, RATE = 40;
+    navItems.forEach(function(item){
+      var label = item.childNodes[item.childNodes.length - 1];
+      var original = label.textContent;
+      var timer = null;
+      item.addEventListener('mouseenter', function(){
+        clearInterval(timer);
+        var frame = 0;
+        timer = setInterval(function(){
+          var settled = Math.floor((frame / FRAMES) * original.length);
+          label.textContent = original.split('').map(function(ch, i){
+            if(ch === ' ') return ' ';
+            return i < settled ? ch : POOL[Math.floor(Math.random() * POOL.length)];
+          }).join('');
+          frame++;
+          if(frame > FRAMES){ clearInterval(timer); label.textContent = original; }
+        }, RATE);
+      });
+      item.addEventListener('mouseleave', function(){ clearInterval(timer); label.textContent = original; });
+    });
+
+    /* ── File list with descriptions ── */
+    var FILES = [
+      { name:'index.html',     desc:'Landing page — robot/human gate question' },
+      { name:'captcha.html',   desc:'Bear image verification grid (3x3)' },
+      { name:'gate.html',      desc:'CRT transition screen between pages' },
+      { name:'home.html',      desc:'Main dashboard after verification — hero, art feed, news' },
+      { name:'about.html',     desc:'About [aRTS] — mission, team, Berlin story' },
+      { name:'access.html',    desc:'Access hub — aSK / aSSETS / aUDIENCE buttons' },
+      { name:'art.html',       desc:'Art piece detail view — single listing display' },
+      { name:'articles.html',  desc:'Editorial articles and news feed' },
+      { name:'ask.html',       desc:'Contact / inquiry form for members' },
+      { name:'assets.html',    desc:'Digital assets browser for members' },
+      { name:'audience.html',  desc:'Public audience page — newsletter, events' },
+      { name:'bots.html',      desc:'Bot operations page — AI agent cards' },
+      { name:'bot-terms.html', desc:'Terms & privacy for bot features' },
+      { name:'gears.html',     desc:'Platform settings and preferences' },
+      { name:'id.html',        desc:'Member ID — 12-word mnemonic verification, tier card' },
+      { name:'inquire.html',   desc:'Inquiry form for non-members' },
+      { name:'join.html',      desc:'Membership tiers + Stripe checkout flow' },
+      { name:'mail.html',      desc:'Email subscription and mailing list' },
+      { name:'pi.html',        desc:'Robot redirect — shown when user says YES to robot check' },
+      { name:'robot.html',     desc:'Robot landing page' },
+      { name:'sent.html',      desc:'Confirmation page after form submission' },
+      { name:'socials.html',   desc:'Social links — Instagram, email' },
+      { name:'tail.html',      desc:'Footer / credits page' },
+      { name:'wip.html',       desc:'Work in progress placeholder page' },
+      { name:'work.html',      desc:'Portfolio / work showcase' },
+      { name:'add.html',       desc:'Add new listing form' },
+      { name:'act.html',       desc:'Action page — quick member actions' },
+      { name:'aid.html',       desc:'Help / support page' }
+    ];
+
+    var fileBody = document.querySelector('#fileTable tbody');
+    var fileSearch = document.getElementById('fileSearch');
+    var fileCount = document.getElementById('fileCount');
+    var ovPages = document.getElementById('ov-pages');
+
+    function renderFiles(filter){
+      fileBody.innerHTML = '';
+      var f = filter ? filter.toLowerCase() : '';
+      var shown = 0;
+      FILES.forEach(function(file){
+        if(f && file.name.toLowerCase().indexOf(f) === -1 && file.desc.toLowerCase().indexOf(f) === -1) return;
+        shown++;
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + file.name + '</td>' +
+          '<td class="desc-cell">' + file.desc + '</td>' +
+          '<td><a href="https://4-arts.com/' + file.name + '" target="_blank" class="dash-btn">vIEW</a></td>';
+        fileBody.appendChild(tr);
+      });
+      fileCount.textContent = shown + ' / ' + FILES.length + ' pAGES';
+    }
+    renderFiles('');
+    ovPages.textContent = FILES.length + ' fILES';
+    fileSearch.addEventListener('input', function(){ renderFiles(this.value); });
+
+    /* ── Members: fetch from API & render ── */
+    var MEMBERS_API = (location.hostname === 'admin.4-arts.com' || location.hostname === '4-arts.com')
+      ? '/api/users'
+      : 'https://4-arts.com/api/users';
+
+    var _membersCache = [];
+
+    function loadMembers(){
+      fetch(MEMBERS_API)
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          _membersCache = data.users || [];
+          renderMembers(_membersCache);
+          updateTierCounts(_membersCache);
+          updateOverviewCard(_membersCache);
+        })
+        .catch(function(err){
+          console.error('[aRTS] members fetch error', err);
+        });
+    }
+
+    function renderMembers(list){
+      var tbody = document.querySelector('#memberTable tbody');
+      var countEl = document.getElementById('memberCount');
+      tbody.innerHTML = '';
+
+      if(!list.length){
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);font-family:\'Space Grotesk\',sans-serif;font-size:0.6rem;letter-spacing:0.12em;padding:28px">nO mEMBERS yET — wAITING fOR fIRST sIGN-UP</td></tr>';
+        countEl.textContent = '0';
+        return;
+      }
+      countEl.textContent = list.length + ' mEMBER' + (list.length === 1 ? '' : 'S');
+
+      list.forEach(function(u){
+        var tr = document.createElement('tr');
+        var shortId = (u.user_id_hash || '').substring(0, 8) + '...';
+        var tierClass = u.tier === 'CURaTOR' ? 'color:var(--accent)' :
+                        u.tier === 'BRIGaDIER' ? 'color:var(--pending)' :
+                        u.tier === 'aLLY' ? 'color:var(--success)' :
+                        'color:var(--text-dim)';
+        var providerIcon = u.provider === 'google' ? '&#9679;' : u.provider === 'apple' ? '&#63743;' : '&#9679;';
+        tr.innerHTML =
+          '<td style="font-family:var(--mono);font-size:0.62rem;color:var(--text-dim);">' + escMember(shortId) + '</td>' +
+          '<td>' + escMember(u.alias || 'mEMBER') + '</td>' +
+          '<td style="font-weight:700;letter-spacing:0.14em;' + tierClass + '">' + escMember(u.tier || '—') + '</td>' +
+          '<td style="font-family:var(--mono);font-size:0.62rem;">' + escMember(u.since || '—') + '</td>' +
+          '<td><span class="badge active">aCTIVE</span></td>' +
+          '<td><button class="dash-btn" data-hash="' + escMember(u.user_id_hash) + '">vIEW</button></td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateTierCounts(users){
+      var counts = { 'aLLY': 0, 'BRIGaDIER': 0, 'CURaTOR': 0, 'aUDIENCE': 0 };
+      users.forEach(function(u){
+        var t = u.tier || '';
+        if(counts[t] !== undefined) counts[t]++;
+      });
+      /* Update tier table — 4 rows in order: aLLY, BRIGaDIER, CURaTOR, aUDIENCE */
+      var tierRows = document.querySelectorAll('#sec-members .dash-table')[0];
+      if(!tierRows) return;
+      var rows = tierRows.querySelectorAll('tbody tr');
+      var order = ['aLLY','BRIGaDIER','CURaTOR','aUDIENCE'];
+      rows.forEach(function(row, i){
+        if(order[i] !== undefined){
+          var cells = row.querySelectorAll('td');
+          if(cells[3]) cells[3].textContent = counts[order[i]];
+        }
+      });
+    }
+
+    function updateOverviewCard(users){
+      /* Overview card: mEMBERS total */
+      var card = document.querySelector('.card[data-goto="members"]');
+      if(!card) return;
+      var rows = card.querySelectorAll('.card-row .v');
+      if(rows[0]) rows[0].textContent = users.length;
+    }
+
+    function escMember(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    /* Member search */
+    var memberSearch = document.getElementById('memberSearch');
+    memberSearch.addEventListener('input', function(){
+      var f = this.value.toLowerCase();
+      if(!f){ renderMembers(_membersCache); return; }
+      var filtered = _membersCache.filter(function(u){
+        return (u.alias || '').toLowerCase().indexOf(f) >= 0 ||
+               (u.email || '').toLowerCase().indexOf(f) >= 0 ||
+               (u.name  || '').toLowerCase().indexOf(f) >= 0 ||
+               (u.tier  || '').toLowerCase().indexOf(f) >= 0;
+      });
+      renderMembers(filtered);
+    });
+
+    /* Member detail modal */
+    var memberModal = document.getElementById('memberModal');
+    var memberModalBody = document.getElementById('memberModalBody');
+    document.getElementById('memberModalClose').addEventListener('click', function(){
+      memberModal.style.display = 'none';
+    });
+    memberModal.addEventListener('click', function(e){
+      if(e.target === memberModal) memberModal.style.display = 'none';
+    });
+
+    document.getElementById('memberTable').addEventListener('click', function(e){
+      var btn = e.target.closest('button[data-hash]');
+      if(!btn) return;
+      var hash = btn.getAttribute('data-hash');
+      var user = _membersCache.find(function(u){ return u.user_id_hash === hash; });
+      if(!user) return;
+
+      var providerLabel = user.provider === 'google' ? 'gOOGLE' : user.provider === 'apple' ? 'aPPLE' : (user.provider || '—').toUpperCase();
+      var fields = [
+        { k: 'aLIAS',    v: user.alias || 'mEMBER' },
+        { k: 'eMAIL',    v: user.email || '—' },
+        { k: 'nAME',     v: user.name  || '—' },
+        { k: 'tIER',     v: user.tier  || '—' },
+        { k: 'pROVIDER', v: providerLabel },
+        { k: 'jOINED',   v: user.since || '—' },
+        { k: 'lAST sYNC',v: user.updated_at ? user.updated_at.substring(0, 10) : '—' },
+        { k: 'iD hASH',  v: user.user_id_hash || '—' }
+      ];
+
+      memberModalBody.innerHTML = '';
+      fields.forEach(function(f){
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+        row.innerHTML =
+          '<span style="font-size:0.52rem;font-weight:700;letter-spacing:0.22em;color:var(--text-dim);">' + f.k + '</span>' +
+          '<span style="font-size:0.62rem;font-weight:300;letter-spacing:0.08em;color:var(--text);font-family:var(--mono);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escMember(f.v) + '">' + escMember(f.v) + '</span>';
+        memberModalBody.appendChild(row);
+      });
+
+      memberModal.style.display = 'flex';
+    });
+
+    /* Auto-load members when section is opened */
+    document.querySelector('.nav-item[data-section="members"]').addEventListener('click', function(){ setTimeout(loadMembers, 80); });
+    /* Also load on overview card click */
+    var membersCard = document.querySelector('.card[data-goto="members"]');
+    if(membersCard) membersCard.addEventListener('click', function(){ setTimeout(loadMembers, 80); });
+    /* Initial load for overview count */
+    loadMembers();
+
+    /* ── Log search ── */
+    var logSearch = document.getElementById('logSearch');
+    logSearch.addEventListener('input', function(){
+      var f = this.value.toLowerCase();
+      document.querySelectorAll('#logFeed .log-entry').forEach(function(entry){
+        var text = entry.textContent.toLowerCase();
+        entry.style.display = (!f || text.indexOf(f) !== -1) ? '' : 'none';
+      });
+    });
+
+    /* ── Bot prompt console ── */
+    var botConsole = document.getElementById('botConsole');
+    var promptInput = document.getElementById('promptInput');
+    var promptSend = document.getElementById('promptSend');
+
+    /* Proxy endpoint — on prod: /api/claude, on dev: falls back to log-only */
+    var PROXY_URL = (location.hostname === 'admin.4-arts.com')
+      ? '/api/claude'
+      : null;
+
+    function addConsoleLine(type, text){
+      var div = document.createElement('div');
+      div.className = 'line';
+      if(type === 'user'){
+        div.innerHTML = '<span class="prompt">&gt;</span> <span class="user-msg">' + escHtml(text) + '</span>';
+      } else if(type === 'ai'){
+        div.innerHTML = '<span class="ai-msg">' + escHtml(text) + '</span>';
+      } else if(type === 'error'){
+        div.innerHTML = '<span class="err">' + escHtml(text) + '</span>';
+      } else {
+        div.innerHTML = '<span class="dim">' + escHtml(text) + '</span>';
+      }
+      botConsole.appendChild(div);
+      botConsole.scrollTop = botConsole.scrollHeight;
+    }
+
+    function escHtml(s){
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function sendPrompt(){
+      var text = promptInput.value.trim();
+      if(!text) return;
+      addConsoleLine('user', text);
+      promptInput.value = '';
+
+      if(!PROXY_URL){
+        addConsoleLine('system', 'Prompt logged (dev mode). Deploy proxy to get live AI responses.');
+        return;
+      }
+
+      addConsoleLine('system', 'Sending to Claude...');
+
+      fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 512,
+          system: 'You are an AI assistant for [aRTS], a Berlin-based art trading platform. Keep responses concise and useful. Use the alternating case style (like "aRTS") when referring to the platform.',
+          messages: [{ role: 'user', content: text }]
+        })
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data.content && data.content[0]){
+          addConsoleLine('ai', data.content[0].text);
+        } else if(data.error){
+          addConsoleLine('error', 'API error: ' + (data.error.message || JSON.stringify(data.error)));
+        }
+      })
+      .catch(function(err){
+        addConsoleLine('error', 'Network error: ' + err.message);
+      });
+    }
+
+    promptSend.addEventListener('click', sendPrompt);
+    promptInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendPrompt(); }
+    });
+
+    /* Auto-resize textarea */
+    promptInput.addEventListener('input', function(){
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+  })();
+
+  /* ── Inquiry panel (Formspree API) ── */
+  (function(){
+    var fsKeyBtn    = document.getElementById('fsKeyBtn');
+    var fsRefreshBtn= document.getElementById('fsRefreshBtn');
+    var fsStatus    = document.getElementById('fsStatus');
+    var inqTable    = document.getElementById('inqTable');
+    var inqBody     = document.getElementById('inqBody');
+    var inqLoading  = document.getElementById('inqLoading');
+    var inqEmpty    = document.getElementById('inqEmpty');
+
+    /* Formspree API key + form ID stored in localStorage */
+    var fsKey  = localStorage.getItem('arts_fs_key') || '';
+    var fsForm = localStorage.getItem('arts_fs_form') || '';
+
+    /* Inquiry status tracked locally: { submissionId: 'nEW'|'rEPLIED'|'cLOSED' } */
+    var inqStatuses = JSON.parse(localStorage.getItem('arts_inq_statuses') || '{}');
+
+    if(fsKey && fsForm){
+      fsStatus.textContent = 'cONNECTED';
+      fsStatus.className = 'badge active';
+      fsRefreshBtn.style.display = '';
+      fetchInquiries();
+    } else {
+      inqEmpty.style.display = '';
+    }
+
+    fsKeyBtn.addEventListener('click', function(){
+      var key = prompt('Enter your Formspree API key:');
+      if(key === null) return;
+      if(!key.trim()){
+        localStorage.removeItem('arts_fs_key');
+        localStorage.removeItem('arts_fs_form');
+        fsKey = ''; fsForm = '';
+        fsStatus.textContent = 'nO kEY';
+        fsStatus.className = 'badge soon';
+        fsRefreshBtn.style.display = 'none';
+        inqTable.style.display = 'none';
+        inqEmpty.style.display = '';
+        return;
+      }
+      fsKey = key.trim();
+      localStorage.setItem('arts_fs_key', fsKey);
+
+      var form = prompt('Enter your Formspree form ID (e.g. xyzabcde):');
+      if(!form || !form.trim()){ return; }
+      fsForm = form.trim();
+      localStorage.setItem('arts_fs_form', fsForm);
+
+      fsStatus.textContent = 'cONNECTED';
+      fsStatus.className = 'badge active';
+      fsRefreshBtn.style.display = '';
+      fetchInquiries();
+    });
+
+    fsRefreshBtn.addEventListener('click', function(){ fetchInquiries(); });
+
+    function fetchInquiries(){
+      inqLoading.style.display = '';
+      inqTable.style.display = 'none';
+      inqEmpty.style.display = 'none';
+      inqBody.innerHTML = '';
+
+      fetch('https://formspree.io/api/0/forms/' + fsForm + '/submissions', {
+        headers: { 'Authorization': 'Bearer ' + fsKey }
+      })
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        inqLoading.style.display = 'none';
+        var subs = data.submissions || data;
+        if(!Array.isArray(subs) || subs.length === 0){
+          inqEmpty.style.display = '';
+          inqEmpty.textContent = 'No submissions found in this form.';
+          return;
+        }
+        renderInquiries(subs);
+      })
+      .catch(function(err){
+        inqLoading.style.display = 'none';
+        inqEmpty.style.display = '';
+        inqEmpty.textContent = 'Error fetching: ' + err.message + '. Check your API key and form ID.';
+      });
+    }
+
+    function renderInquiries(subs){
+      inqTable.style.display = '';
+      subs.forEach(function(s){
+        var id = s.id || s._id || (s.email + s._date);
+        var date = (s._date || s.created_at || '').substring(0, 10);
+        var name = s.name || s.Name || s._replyto || '—';
+        var email = s.email || s.Email || s._replyto || '—';
+        var piece = s.piece || s.Piece || s.subject || '—';
+        var msg = s.message || s.Message || s.body || '';
+        if(msg.length > 60) msg = msg.substring(0, 57) + '...';
+        var status = inqStatuses[id] || 'nEW';
+
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td style="font-family:var(--mono);font-size:0.68rem;">' + esc(date) + '</td>' +
+          '<td>' + esc(name) + '</td>' +
+          '<td style="font-family:var(--mono);font-size:0.68rem;">' + esc(email) + '</td>' +
+          '<td style="color:var(--accent)">' + esc(piece) + '</td>' +
+          '<td style="font-size:0.62rem;color:var(--text-dim);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(s.message || s.Message || s.body || '') + '">' + esc(msg) + '</td>' +
+          '<td><span class="badge inq-status" data-id="' + esc(id) + '" style="cursor:pointer;' + statusStyle(status) + '">' + status + '</span></td>';
+        inqBody.appendChild(tr);
+      });
+
+      /* Click status to cycle */
+      inqBody.addEventListener('click', function(e){
+        var badge = e.target.closest('.inq-status');
+        if(!badge) return;
+        var sid = badge.getAttribute('data-id');
+        var cur = inqStatuses[sid] || 'nEW';
+        var next = cur === 'nEW' ? 'rEPLIED' : cur === 'rEPLIED' ? 'cLOSED' : 'nEW';
+        inqStatuses[sid] = next;
+        localStorage.setItem('arts_inq_statuses', JSON.stringify(inqStatuses));
+        badge.textContent = next;
+        badge.setAttribute('style', 'cursor:pointer;' + statusStyle(next));
+      });
+    }
+
+    function statusStyle(s){
+      if(s === 'nEW') return 'background:var(--pending-bg);color:var(--pending);border:1px solid var(--pending-bdr);';
+      if(s === 'rEPLIED') return 'background:var(--success-bg);color:var(--success);border:1px solid var(--success-bdr);';
+      return 'background:rgba(255,255,255,0.04);color:var(--text-dim);border:1px solid var(--border);';
+    }
+
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  })();
+
+  /* ── Newsletter points config ── */
+  function saveNewsletterConfig(){
+    var cfg = {
+      open:     parseInt(document.getElementById('pts-open').value,10)     || 5,
+      click:    parseInt(document.getElementById('pts-click').value,10)    || 10,
+      interact: parseInt(document.getElementById('pts-interact').value,10) || 25
+    };
+    localStorage.setItem('arts_newsletter_config', JSON.stringify(cfg));
+    var btn = event.target;
+    btn.textContent = '✓ sAVED';
+    btn.style.color = 'rgba(110,230,110,0.75)';
+    btn.style.borderColor = 'rgba(110,230,110,0.3)';
+    setTimeout(function(){
+      btn.textContent = 'sAVE pOINTS cONFIG';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1800);
+  }
+  /* Load saved newsletter config on init */
+  (function(){
+    try {
+      var cfg = JSON.parse(localStorage.getItem('arts_newsletter_config'));
+      if(cfg){
+        if(cfg.open!=null)     document.getElementById('pts-open').value     = cfg.open;
+        if(cfg.click!=null)    document.getElementById('pts-click').value    = cfg.click;
+        if(cfg.interact!=null) document.getElementById('pts-interact').value = cfg.interact;
+      }
+    } catch(e){}
+  })();
+
+  /* ══════════════════════════════════════
+     POINTS SYSTEM ENGINE
+     ══════════════════════════════════════ */
+  var POINTS_DEFAULTS = {
+    events: {
+      signup_audience:    50,
+      signup_ally:        100,
+      signup_brigadier:   500,
+      signup_curator:     1000,
+      daily_login:        25,
+      article_view:       150,
+      list_art:           50,
+      submit_report:      50,
+      pi_easter_egg:      314,
+      favourite_art:      10,
+      favourite_boutique: 10,
+      share_art:          30,
+      share_boutique:       30,
+      mod_flag_content:     20,
+      mod_verify_listing:   40,
+      mod_resolve_dispute:  75,
+      helper_welcome:       15,
+      helper_answer:        25,
+      helper_curate:        60,
+      nl_open:              5,
+      nl_click:             10,
+      nl_interact:          25
+    },
+    milestones: {
+      patron:    100,
+      collector: 500,
+      archivist: 1000,
+      maestro:   2500
+    },
+    custom: []
+  };
+
+  function getPointsConfig(){
+    try {
+      var cfg = JSON.parse(localStorage.getItem('arts_points_config'));
+      if(cfg && cfg.events) return cfg;
+    } catch(e){}
+    return JSON.parse(JSON.stringify(POINTS_DEFAULTS));
+  }
+
+  function savePointsConfig(){
+    var cfg = { events: {}, milestones: {}, custom: [] };
+
+    document.querySelectorAll('[data-pts-event]').forEach(function(input){
+      cfg.events[input.getAttribute('data-pts-event')] = parseInt(input.value,10) || 0;
+    });
+
+    document.querySelectorAll('[data-pts-milestone]').forEach(function(input){
+      cfg.milestones[input.getAttribute('data-pts-milestone')] = parseInt(input.value,10) || 0;
+    });
+
+    document.querySelectorAll('[data-custom-event]').forEach(function(row){
+      cfg.custom.push({
+        key:   row.getAttribute('data-custom-event'),
+        label: row.querySelector('.custom-label').textContent,
+        pts:   parseInt(row.querySelector('.custom-pts').value,10) || 0,
+        page:  row.querySelector('.custom-page').textContent
+      });
+      cfg.events[row.getAttribute('data-custom-event')] = parseInt(row.querySelector('.custom-pts').value,10) || 0;
+    });
+
+    localStorage.setItem('arts_points_config', JSON.stringify(cfg));
+
+    /* Sync newsletter config */
+    var nlCfg = {
+      open:     cfg.events.nl_open     || 5,
+      click:    cfg.events.nl_click    || 10,
+      interact: cfg.events.nl_interact || 25
+    };
+    localStorage.setItem('arts_newsletter_config', JSON.stringify(nlCfg));
+    try {
+      document.getElementById('pts-open').value     = nlCfg.open;
+      document.getElementById('pts-click').value    = nlCfg.click;
+      document.getElementById('pts-interact').value = nlCfg.interact;
+    } catch(e){}
+
+    updatePointsOverview(cfg);
+
+    var btn = document.getElementById('pts-save-btn');
+    var status = document.getElementById('pts-save-status');
+    btn.textContent = '\u2713 sAVED';
+    btn.style.color = 'rgba(110,230,110,0.75)';
+    btn.style.borderColor = 'rgba(110,230,110,0.3)';
+    status.textContent = 'saved ' + new Date().toLocaleTimeString();
+    setTimeout(function(){
+      btn.textContent = 'sAVE aLL cHANGES';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1800);
+  }
+
+  function resetPointsConfig(){
+    if(!confirm('Reset all point values to defaults?')) return;
+    localStorage.removeItem('arts_points_config');
+    loadPointsConfig();
+    var status = document.getElementById('pts-save-status');
+    status.textContent = 'reset to defaults';
+    setTimeout(function(){ status.textContent = ''; }, 2000);
+  }
+
+  function loadPointsConfig(){
+    var cfg = getPointsConfig();
+    document.querySelectorAll('[data-pts-event]').forEach(function(input){
+      var key = input.getAttribute('data-pts-event');
+      if(cfg.events[key] != null) input.value = cfg.events[key];
+    });
+    document.querySelectorAll('[data-pts-milestone]').forEach(function(input){
+      var key = input.getAttribute('data-pts-milestone');
+      if(cfg.milestones && cfg.milestones[key] != null) input.value = cfg.milestones[key];
+    });
+    renderCustomEvents(cfg.custom || []);
+    updatePointsOverview(cfg);
+  }
+
+  function updatePointsOverview(cfg){
+    var evCount = Object.keys(cfg.events || {}).length;
+    var evEl = document.getElementById('ov-pts-events');
+    var stEl = document.getElementById('ov-pts-status');
+    if(evEl) evEl.textContent = evCount;
+    if(stEl){
+      var saved = localStorage.getItem('arts_points_config');
+      stEl.textContent = saved ? 'cUSTOM' : 'dEFAULT';
+      stEl.style.color = saved ? 'var(--accent)' : '';
+    }
+  }
+
+  function addCustomPointEvent(){
+    var keyInput   = document.getElementById('custom-pts-key');
+    var labelInput = document.getElementById('custom-pts-label');
+    var valueInput = document.getElementById('custom-pts-value');
+    var pageInput  = document.getElementById('custom-pts-page');
+
+    var key   = keyInput.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    var label = labelInput.value.trim();
+    var pts   = parseInt(valueInput.value, 10);
+    var page  = pageInput.value.trim();
+
+    if(!key || !label || isNaN(pts) || pts < 0){
+      keyInput.style.borderColor = 'var(--danger)';
+      setTimeout(function(){ keyInput.style.borderColor = ''; }, 1500);
+      return;
+    }
+
+    if(document.querySelector('[data-pts-event="'+key+'"]') || document.querySelector('[data-custom-event="'+key+'"]')){
+      keyInput.style.borderColor = 'var(--danger)';
+      var status = document.getElementById('pts-save-status');
+      status.textContent = 'key already exists';
+      status.style.color = 'var(--danger)';
+      setTimeout(function(){ status.textContent = ''; status.style.color = ''; }, 2000);
+      return;
+    }
+
+    var container = document.getElementById('custom-events-container');
+    container.appendChild(createCustomEventRow(key, label, pts, page));
+    keyInput.value = '';
+    labelInput.value = '';
+    valueInput.value = '';
+    pageInput.value = '';
+  }
+
+  function createCustomEventRow(key, label, pts, page){
+    var row = document.createElement('div');
+    row.setAttribute('data-custom-event', key);
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;margin-bottom:6px;flex-wrap:wrap;';
+    row.innerHTML =
+      '<span style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);min-width:110px;">' + escPts(key) + '</span>' +
+      '<span class="custom-label" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;min-width:120px;">' + escPts(label) + '</span>' +
+      '<div style="display:flex;align-items:baseline;gap:4px;">' +
+        '<span style="color:var(--accent);font-weight:700;">+</span>' +
+        '<input type="number" class="custom-pts" value="' + pts + '" min="0" max="99999" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.85rem;font-weight:700;width:50px;outline:none;text-align:center;">' +
+        '<span style="font-size:0.52rem;color:var(--text-muted);">pTS</span>' +
+      '</div>' +
+      '<span class="custom-page" style="font-size:0.48rem;color:var(--text-muted);letter-spacing:0.1em;">' + escPts(page) + '</span>' +
+      '<button onclick="this.parentElement.remove()" style="margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,0.14);color:var(--text-dim);font-size:0.58rem;padding:2px 8px;border-radius:3px;cursor:pointer;font-weight:300;">[x]</button>';
+    return row;
+  }
+
+  function renderCustomEvents(customArr){
+    var container = document.getElementById('custom-events-container');
+    container.innerHTML = '';
+    (customArr || []).forEach(function(ev){
+      container.appendChild(createCustomEventRow(ev.key, ev.label, ev.pts, ev.page || ''));
+    });
+  }
+
+  function escPts(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  loadPointsConfig();
+  document.querySelectorAll('.nav-item[data-section="points"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadPointsConfig, 80); });
+  });
+
+  /* ══════════════════════════════════════
+     VOUCHER MANAGEMENT ENGINE
+     ══════════════════════════════════════ */
+  var VOUCHER_DEFAULTS = { discount: 11, duration: 30, code: 'ARTS-11-APPAREL', active: true };
+
+  function getVoucherConfig(){
+    try {
+      var cfg = JSON.parse(localStorage.getItem('arts_voucher_config'));
+      if(cfg && cfg.code) return cfg;
+    } catch(e){}
+    return JSON.parse(JSON.stringify(VOUCHER_DEFAULTS));
+  }
+
+  function saveVoucherConfig(){
+    var cfg = {
+      discount: parseInt(document.getElementById('voucher-discount').value, 10) || 11,
+      duration: parseInt(document.getElementById('voucher-duration').value, 10) || 30,
+      code:     document.getElementById('voucher-code').value.trim() || 'ARTS-11-APPAREL',
+      active:   getVoucherConfig().active
+    };
+    localStorage.setItem('arts_voucher_config', JSON.stringify(cfg));
+    var status = document.getElementById('voucher-save-status');
+    status.textContent = '✓ saved';
+    status.style.color = 'var(--success)';
+    setTimeout(function(){ status.textContent = ''; status.style.color = ''; }, 2000);
+    updateVoucherOverview();
+  }
+
+  function resetVoucherConfig(){
+    if(!confirm('Reset voucher settings to defaults?')) return;
+    localStorage.removeItem('arts_voucher_config');
+    loadVoucherConfig();
+    var status = document.getElementById('voucher-save-status');
+    status.textContent = 'reset to defaults';
+    setTimeout(function(){ status.textContent = ''; }, 2000);
+  }
+
+  function toggleVoucherActive(){
+    var cfg = getVoucherConfig();
+    cfg.active = !cfg.active;
+    localStorage.setItem('arts_voucher_config', JSON.stringify(cfg));
+    renderVoucherStatus(cfg.active);
+    updateVoucherOverview();
+  }
+
+  function renderVoucherStatus(active){
+    var dot  = document.getElementById('voucher-status-dot');
+    var text = document.getElementById('voucher-status-text');
+    var btn  = document.getElementById('voucher-toggle-btn');
+    if(active){
+      dot.style.background = 'var(--success)';
+      text.textContent = 'aCTIVE';
+      text.style.color = 'var(--success)';
+      btn.textContent  = 'dISABLE';
+      btn.style.color  = 'var(--danger)';
+      btn.style.borderColor = 'var(--danger-bdr)';
+    } else {
+      dot.style.background = 'var(--text-muted)';
+      text.textContent = 'dISABLED';
+      text.style.color = 'var(--text-muted)';
+      btn.textContent  = 'eNABLE';
+      btn.style.color  = 'var(--success)';
+      btn.style.borderColor = 'var(--success-bdr)';
+    }
+  }
+
+  function loadVoucherConfig(){
+    var cfg = getVoucherConfig();
+    document.getElementById('voucher-discount').value = cfg.discount;
+    document.getElementById('voucher-duration').value = cfg.duration;
+    document.getElementById('voucher-code').value     = cfg.code;
+    renderVoucherStatus(cfg.active);
+    updateVoucherOverview();
+  }
+
+  function updateVoucherOverview(){
+    var cfg = getVoucherConfig();
+    var el = document.getElementById('ov-voucher-status');
+    if(el){
+      el.textContent = cfg.active ? 'aCTIVE' : 'dISABLED';
+      el.style.color = cfg.active ? 'var(--success)' : 'var(--text-muted)';
+    }
+    var discEl = document.getElementById('ov-voucher-discount');
+    if(discEl) discEl.textContent = cfg.discount + '%';
+    var durEl = document.getElementById('ov-voucher-duration');
+    if(durEl) durEl.textContent = cfg.duration + 'd';
+    var codeEl = document.getElementById('ov-voucher-code');
+    if(codeEl) codeEl.textContent = cfg.code;
+  }
+
+  loadVoucherConfig();
+  document.querySelectorAll('.nav-item[data-section="vouchers"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadVoucherConfig, 80); });
+  });
+
+  /* ══════════════════════════════════════
+     FEEDBACK ANALYSIS ENGINE
+     ══════════════════════════════════════ */
+  function fbEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function loadFeedback() {
+    var entries = [];
+    try { entries = JSON.parse(localStorage.getItem('arts_feedback') || '[]'); } catch(e){}
+
+    var tableEl  = document.getElementById('fb-table');
+    var tbodyEl  = document.getElementById('fb-tbody');
+    var emptyEl  = document.getElementById('fb-empty');
+    var reportEl = document.getElementById('fb-report');
+    var countEl  = document.getElementById('fb-count-badge');
+
+    countEl.textContent = entries.length + ' eNTR' + (entries.length === 1 ? 'Y' : 'IES');
+
+    if (!entries.length) {
+      tableEl.style.display  = 'none';
+      reportEl.style.display = 'none';
+      emptyEl.style.display  = '';
+      return;
+    }
+
+    emptyEl.style.display  = 'none';
+    tableEl.style.display  = '';
+    reportEl.style.display = '';
+
+    /* ── Render table ── */
+    tbodyEl.innerHTML = '';
+    entries.slice().reverse().forEach(function(e) {
+      var d = new Date(e.ts);
+      var dateStr = d.toISOString().substring(0, 10);
+      var stars = '';
+      for (var i = 1; i <= 5; i++) {
+        stars += i <= e.rating ? '★' : '☆';
+      }
+      var sentiment = getSentiment(e.text, e.rating);
+      var sentStyle = sentiment === 'pOSITIVE' ?
+        'color:var(--success)' : sentiment === 'nEGaTIVE' ?
+        'color:var(--danger)' : 'color:var(--text-dim)';
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td style="font-family:var(--mono);font-size:0.68rem;">' + fbEsc(dateStr) + '</td>' +
+        '<td style="letter-spacing:0.05em;color:#FF5C00;">' + stars + '</td>' +
+        '<td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + fbEsc(e.text) + '">' + fbEsc(e.text) + '</td>' +
+        '<td style="font-size:0.62rem;color:var(--text-dim);">' + fbEsc(e.page || '—') + '</td>' +
+        '<td style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;' + sentStyle + '">' + sentiment + '</td>';
+      tbodyEl.appendChild(tr);
+    });
+
+    /* ── Bot analysis ── */
+    runBotAnalysis(entries);
+  }
+
+  function getSentiment(text, rating) {
+    var t = (text || '').toLowerCase();
+    var posWords = ['great','love','amazing','awesome','perfect','good','nice','excellent','fantastic','beautiful','clean','fast','easy','smooth','intuitive','cool','brilliant'];
+    var negWords = ['bad','broken','wrong','error','confusing','slow','ugly','hard','difficult','worst','terrible','awful','hate','bug','issue','problem','crash','fail','weird','boring'];
+    var posScore = rating >= 4 ? 1 : rating <= 2 ? -1 : 0;
+    posWords.forEach(function(w){ if(t.indexOf(w)>=0) posScore++; });
+    negWords.forEach(function(w){ if(t.indexOf(w)>=0) posScore--; });
+    if(posScore > 0) return 'pOSITIVE';
+    if(posScore < 0) return 'nEGaTIVE';
+    return 'nEUTRaL';
+  }
+
+  function getTopics(text) {
+    var t = (text || '').toLowerCase();
+    var topics = {
+      'dESIGN':      ['design','look','visual','layout','color','font','style','ui','interface','clean','beautiful','aesthetic'],
+      'nAVIGaTION':  ['nav','navigation','menu','page','link','find','browse','confusing','easy','hard'],
+      'pERFORMANCE': ['slow','fast','load','speed','performance','quick','lag','smooth'],
+      'cONTENT':     ['art','apparel','piece','gallery','collection','content','information','info'],
+      'pRICING':     ['price','cost','expensive','cheap','subscription','tier','value','money','pay','€'],
+      'bOTIQUE':     ['boutique','shop','buy','purchase','sell','trade'],
+      'iD / lOGIN':  ['login','sign','id','account','member','register','auth']
+    };
+    var found = [];
+    Object.keys(topics).forEach(function(topic){
+      topics[topic].forEach(function(kw){ if(t.indexOf(kw)>=0 && found.indexOf(topic)<0) found.push(topic); });
+    });
+    return found;
+  }
+
+  function runBotAnalysis(entries) {
+    var total      = entries.length;
+    var sumRating  = entries.reduce(function(a,e){ return a + (e.rating||0); }, 0);
+    var avgRating  = total ? (sumRating / total).toFixed(1) : 0;
+    var positives  = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='pOSITIVE'; });
+    var negatives  = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEGaTIVE'; });
+    var neutrals   = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEUTRaL'; });
+    var topicCounts= {};
+    entries.forEach(function(e){ getTopics(e.text).forEach(function(t){ topicCounts[t]=(topicCounts[t]||0)+1; }); });
+
+    /* Score grid */
+    var scoreGrid = document.getElementById('fb-score-grid');
+    scoreGrid.innerHTML = '';
+    var cards = [
+      { label:'aVG rATING',   value: avgRating + ' / 5', color: parseFloat(avgRating)>=4?'var(--success)':parseFloat(avgRating)>=3?'var(--pending)':'var(--danger)' },
+      { label:'pOSITIVE',     value: positives.length + ' (' + Math.round(100*positives.length/total) + '%)', color:'var(--success)' },
+      { label:'nEGaTIVE',     value: negatives.length + ' (' + Math.round(100*negatives.length/total) + '%)', color:'var(--danger)' },
+      { label:'nEUTRaL',      value: neutrals.length + ' (' + Math.round(100*neutrals.length/total) + '%)',  color:'var(--text-dim)' }
+    ];
+    cards.forEach(function(c){
+      var div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = '<span class="card-label">' + c.label + '</span><div class="card-rows"><div class="card-row"><span class="k">cOUNT</span><span class="v" style="color:'+c.color+'">' + c.value + '</span></div></div>';
+      scoreGrid.appendChild(div);
+    });
+
+    /* Positives */
+    var posEl = document.getElementById('fb-positives');
+    posEl.innerHTML = '';
+    if (positives.length) {
+      positives.slice(-5).forEach(function(e){
+        var d = document.createElement('div');
+        d.style.cssText = 'font-size:0.62rem;font-weight:300;letter-spacing:0.1em;color:rgba(255,255,255,0.55);border-left:2px solid var(--success);padding:4px 10px;background:var(--success-bg);border-radius:0 2px 2px 0;';
+        d.textContent = '"' + e.text + '" (' + e.rating + '★)';
+        posEl.appendChild(d);
+      });
+    } else {
+      posEl.innerHTML = '<span style="font-size:0.62rem;color:var(--text-muted);">nO pOSITIVE fEEDBaCK yET</span>';
+    }
+
+    /* Negatives */
+    var negEl = document.getElementById('fb-negatives');
+    negEl.innerHTML = '';
+    if (negatives.length) {
+      negatives.slice(-5).forEach(function(e){
+        var d = document.createElement('div');
+        d.style.cssText = 'font-size:0.62rem;font-weight:300;letter-spacing:0.1em;color:rgba(255,255,255,0.55);border-left:2px solid var(--danger);padding:4px 10px;background:var(--danger-bg);border-radius:0 2px 2px 0;';
+        d.textContent = '"' + e.text + '" (' + e.rating + '★)';
+        negEl.appendChild(d);
+      });
+    } else {
+      negEl.innerHTML = '<span style="font-size:0.62rem;color:var(--text-muted);">nO nEGaTIVE fEEDBaCK — gREaT sIGN!</span>';
+    }
+
+    /* Topics */
+    var topicsEl = document.getElementById('fb-topics');
+    topicsEl.innerHTML = '';
+    var sortedTopics = Object.keys(topicCounts).sort(function(a,b){ return topicCounts[b]-topicCounts[a]; });
+    if (sortedTopics.length) {
+      sortedTopics.forEach(function(t){
+        var pill = document.createElement('span');
+        pill.style.cssText = 'font-size:0.52rem;font-weight:700;letter-spacing:0.18em;padding:4px 10px;border:1px solid rgba(255,255,255,0.12);border-radius:3px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.03);';
+        pill.textContent = t + ' ×' + topicCounts[t];
+        topicsEl.appendChild(pill);
+      });
+    } else {
+      topicsEl.innerHTML = '<span style="font-size:0.62rem;color:var(--text-muted);">nO tOPICS dETECTED — mORE fEEDBaCK nEEDED</span>';
+    }
+  }
+
+  function clearFeedback() {
+    if (!confirm('Delete all feedback entries?')) return;
+    localStorage.removeItem('arts_feedback');
+    loadFeedback();
+  }
+
+  /* Auto-load when feedback section is opened */
+  document.querySelectorAll('.nav-item[data-section="feedback"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadFeedback, 80); });
+  });
+
+  /* Populate overview feedback card on init */
+  (function(){
+    try {
+      var entries = JSON.parse(localStorage.getItem('arts_feedback') || '[]');
+      var total = entries.length;
+      var countEl = document.getElementById('ov-fb-count');
+      var avgEl   = document.getElementById('ov-fb-avg');
+      var posEl   = document.getElementById('ov-fb-pos');
+      var negEl   = document.getElementById('ov-fb-neg');
+      if (!countEl) return;
+      countEl.textContent = total || '0';
+      if (total) {
+        var sum = entries.reduce(function(a,e){ return a+(e.rating||0); }, 0);
+        avgEl.textContent = (sum/total).toFixed(1) + ' / 5';
+        var pos = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='pOSITIVE'; }).length;
+        var neg = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEGaTIVE'; }).length;
+        posEl.textContent = pos + ' (' + Math.round(100*pos/total) + '%)';
+        negEl.textContent = neg + ' (' + Math.round(100*neg/total) + '%)';
+      } else {
+        avgEl.textContent = '—'; posEl.textContent = '—'; negEl.textContent = '—';
+      }
+    } catch(e){}
+  })();
+
+  /* ═══════════ SALES DASHBOARD ═══════════ */
+  var SALES_API = (location.hostname === 'admin.4-arts.com' || location.hostname === '4-arts.com')
+    ? '/api/sales'
+    : 'https://4-arts.com/api/sales';
+
+  var _salesCache = [];
+
+  function loadSales() {
+    var emptyEl = document.getElementById('sales-empty');
+    var tableEl = document.getElementById('sales-table');
+    var statsEl = document.getElementById('sales-stats');
+    var badge = document.getElementById('sales-count-badge');
+
+    emptyEl.style.display = '';
+    emptyEl.textContent = 'lOADING...';
+    tableEl.style.display = 'none';
+    statsEl.style.display = 'none';
+
+    fetch(SALES_API)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        _salesCache = data.sales || [];
+        var totalVol = data.total_volume_cents || 0;
+        var totalComm = data.total_commission_cents || 0;
+        var totalPay = data.total_payout_cents || 0;
+        var count = data.total_sales || 0;
+
+        badge.textContent = count + ' sALE' + (count !== 1 ? 'S' : '');
+
+        if (!_salesCache.length) {
+          emptyEl.textContent = 'nO sALES yET — aWAITING fIRST tRANSACTION.';
+          emptyEl.style.display = '';
+          return;
+        }
+
+        emptyEl.style.display = 'none';
+
+        /* Stats cards */
+        var statsGrid = document.getElementById('sales-stats-grid');
+        statsGrid.innerHTML = [
+          '<div class="card"><p class="card-label">tOTAL sALES</p><p class="card-value">' + count + '</p></div>',
+          '<div class="card"><p class="card-label">tOTAL vOLUME</p><p class="card-value">€' + (totalVol / 100).toLocaleString('de-DE', {minimumFractionDigits: 2}) + '</p></div>',
+          '<div class="card"><p class="card-label">cOMMISSION eARNED</p><p class="card-value" style="color:var(--accent)">€' + (totalComm / 100).toLocaleString('de-DE', {minimumFractionDigits: 2}) + '</p></div>',
+          '<div class="card"><p class="card-label">sELLER pAYOUTS</p><p class="card-value">€' + (totalPay / 100).toLocaleString('de-DE', {minimumFractionDigits: 2}) + '</p></div>',
+        ].join('');
+        statsEl.style.display = '';
+
+        /* Table */
+        var tbody = document.getElementById('sales-tbody');
+        tbody.innerHTML = _salesCache.map(function(s) {
+          var d = s.ts ? s.ts.split('T')[0] : '—';
+          var amt = '€' + (s.amount_cents / 100).toLocaleString('de-DE', {minimumFractionDigits: 2});
+          var comm = '€' + (s.commission_cents / 100).toLocaleString('de-DE', {minimumFractionDigits: 2});
+          var pay = '€' + (s.seller_payout_cents / 100).toLocaleString('de-DE', {minimumFractionDigits: 2});
+          var rate = s.commission_rate ? Math.round(s.commission_rate * 100) + '%' : '—';
+          return '<tr>' +
+            '<td>' + d + '</td>' +
+            '<td>' + (s.piece_title || s.piece_id || '—') + '</td>' +
+            '<td>' + amt + '</td>' +
+            '<td>' + comm + ' (' + rate + ')</td>' +
+            '<td>' + pay + '</td>' +
+            '<td>' + (s.seller_tier || '—') + '</td>' +
+          '</tr>';
+        }).join('');
+        tableEl.style.display = '';
+      })
+      .catch(function(err) {
+        console.error('[aRTS] sales fetch error', err);
+        emptyEl.textContent = 'fAILED tO lOAD sALES dATA.';
+        emptyEl.style.display = '';
+      });
+  }
+
+  document.getElementById('sales-refresh-btn').addEventListener('click', loadSales);
+  document.querySelectorAll('.nav-item[data-section="sales"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadSales, 80); });
+  });
+  </script>
+
+  <!-- ═══════════ VERIFICATION DASHBOARD ═══════════ -->
+  <script>
+  var VERIFY_API_BASE = (location.hostname === 'admin.4-arts.com' || location.hostname === '4-arts.com')
+    ? ''
+    : 'https://4-arts.com';
+
+  var _verifyCache = [];
+  var _showAllVerify = false;
+  var _reviewingRequest = null;
+
+  function loadVerifications() {
+    var emptyEl = document.getElementById('verify-empty');
+    var badge = document.getElementById('verify-count-badge');
+    var tableEl = document.getElementById('verify-table');
+    var statsEl = document.getElementById('verify-stats');
+    emptyEl.textContent = 'lOADING...';
+    emptyEl.style.display = '';
+    tableEl.style.display = 'none';
+    statsEl.style.display = 'none';
+
+    var endpoint = _showAllVerify
+      ? VERIFY_API_BASE + '/api/verify/all'
+      : VERIFY_API_BASE + '/api/verify/pending';
+
+    fetch(endpoint)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        _verifyCache = data.requests || [];
+        var stats = data.stats || null;
+
+        badge.textContent = _verifyCache.length + ' rEQUEST' + (_verifyCache.length !== 1 ? 'S' : '');
+
+        if (!_verifyCache.length) {
+          emptyEl.textContent = _showAllVerify
+            ? 'nO vERIFICATION rEQUESTS yET.'
+            : 'nO pENDING aPPLICATIONS — aLL cLEAR.';
+          emptyEl.style.display = '';
+          return;
+        }
+
+        emptyEl.style.display = 'none';
+
+        /* Stats cards (only when showing all) */
+        if (stats && _showAllVerify) {
+          var grid = document.getElementById('verify-stats-grid');
+          var bs = stats.by_status || {};
+          grid.innerHTML = [
+            '<div class="card"><p class="card-label">tOTAL</p><p class="card-value">' + (stats.total || 0) + '</p></div>',
+            '<div class="card"><p class="card-label">aPPROVED</p><p class="card-value" style="color:rgba(110,230,110,0.85)">' + (bs.approved || 0) + '</p></div>',
+            '<div class="card"><p class="card-label">pENDING</p><p class="card-value" style="color:rgba(255,200,60,0.75)">' + (bs.pending || 0) + '</p></div>',
+            '<div class="card"><p class="card-label">rEJECTED</p><p class="card-value" style="color:rgba(255,80,80,0.7)">' + (bs.rejected || 0) + '</p></div>',
+          ].join('');
+          statsEl.style.display = '';
+        }
+
+        /* Table */
+        var tbody = document.getElementById('verify-tbody');
+        tbody.innerHTML = _verifyCache.map(function(v, idx) {
+          var d = v.submitted_at ? v.submitted_at.split('T')[0] : '—';
+          var statusColor = v.status === 'approved' ? 'rgba(110,230,110,0.85)'
+            : v.status === 'rejected' ? 'rgba(255,80,80,0.7)'
+            : v.status === 'revoked' ? 'rgba(255,200,60,0.7)'
+            : 'rgba(255,200,60,0.75)';
+          var portfolioLink = v.portfolio_url
+            ? '<a href="' + escHtml(v.portfolio_url) + '" target="_blank" rel="noopener" style="color:var(--accent);font-size:0.6rem;letter-spacing:0.1em;">vIEW</a>'
+            : '—';
+          return '<tr>' +
+            '<td>' + d + '</td>' +
+            '<td>' + escHtml(v.display_name || '—') + '</td>' +
+            '<td style="font-size:0.55rem;letter-spacing:0.18em;">' + (v.account_type || '—').toUpperCase() + '</td>' +
+            '<td>' + portfolioLink + '</td>' +
+            '<td style="color:' + statusColor + ';font-size:0.58rem;letter-spacing:0.16em;">' + (v.status || '—').toUpperCase() + '</td>' +
+            '<td><button class="dash-btn" style="font-size:0.5rem;padding:3px 10px;" onclick="openVerifyReview(' + idx + ')">rEVIEW</button></td>' +
+          '</tr>';
+        }).join('');
+        tableEl.style.display = '';
+      })
+      .catch(function(err) {
+        console.error('[aRTS] verify fetch error', err);
+        emptyEl.textContent = 'fAILED tO lOAD vERIFICATION dATA.';
+        emptyEl.style.display = '';
+      });
+  }
+
+  function openVerifyReview(idx) {
+    var v = _verifyCache[idx];
+    if (!v) return;
+    _reviewingRequest = v;
+
+    var modal = document.getElementById('verifyModal');
+    var body = document.getElementById('verifyModalBody');
+
+    var fields = [
+      { label: 'nAME', val: v.display_name },
+      { label: 'tYPE', val: (v.account_type || '').toUpperCase() },
+      { label: 'bIO', val: v.bio || '—' },
+      { label: 'pORTFOLIO', val: v.portfolio_url ? '<a href="' + escHtml(v.portfolio_url) + '" target="_blank" rel="noopener" style="color:var(--accent)">' + escHtml(v.portfolio_url) + '</a>' : '—' },
+      { label: 'sOCIAL', val: v.social_url ? '<a href="' + escHtml(v.social_url) + '" target="_blank" rel="noopener" style="color:var(--accent)">' + escHtml(v.social_url) + '</a>' : '—' },
+      { label: 'sTATEMENT', val: v.statement || '—' },
+      { label: 'sUBMITTED', val: v.submitted_at ? v.submitted_at.split('T')[0] : '—' },
+      { label: 'sTATUS', val: (v.status || '').toUpperCase() },
+      { label: 'uSER hASH', val: '<span style="font-size:0.5rem;opacity:0.4;">' + (v.user_id_hash || '—') + '</span>' },
+    ];
+
+    if (v.admin_notes) {
+      fields.push({ label: 'aDMIN nOTES', val: v.admin_notes });
+    }
+
+    body.innerHTML = fields.map(function(f) {
+      return '<div>' +
+        '<span style="font-size:0.5rem;font-weight:300;letter-spacing:0.22em;color:rgba(255,255,255,0.3);text-transform:uppercase;">' + f.label + '</span>' +
+        '<p style="font-size:0.72rem;font-weight:300;letter-spacing:0.06em;margin-top:3px;color:rgba(255,255,255,0.7);line-height:1.5;word-break:break-word;">' + f.val + '</p>' +
+      '</div>';
+    }).join('');
+
+    document.getElementById('verify-admin-notes').value = v.admin_notes || '';
+
+    // Show revoke button if already approved
+    var revokeBtn = document.getElementById('verify-revoke-btn');
+    revokeBtn.style.display = v.status === 'approved' ? '' : 'none';
+
+    modal.style.display = 'flex';
+  }
+
+  function submitVerifyReview(status) {
+    if (!_reviewingRequest) return;
+
+    var notes = document.getElementById('verify-admin-notes').value.trim();
+
+    fetch(VERIFY_API_BASE + '/api/verify/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        request_id: _reviewingRequest.id,
+        status: status,
+        admin_notes: notes,
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        document.getElementById('verifyModal').style.display = 'none';
+        _reviewingRequest = null;
+        loadVerifications();
+      }
+    })
+    .catch(function(err) {
+      console.error('[aRTS] verify review error', err);
+    });
+  }
+
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+  }
+
+  document.getElementById('verify-refresh-btn').addEventListener('click', loadVerifications);
+  document.getElementById('verify-show-all').addEventListener('click', function() {
+    _showAllVerify = !_showAllVerify;
+    this.style.opacity = _showAllVerify ? '1' : '0.5';
+    this.textContent = _showAllVerify ? 'pENDING oNLY' : 'aLL';
+    loadVerifications();
+  });
+  document.getElementById('verifyModalClose').addEventListener('click', function() {
+    document.getElementById('verifyModal').style.display = 'none';
+    _reviewingRequest = null;
+  });
+  document.getElementById('verify-approve-btn').addEventListener('click', function() { submitVerifyReview('approved'); });
+  document.getElementById('verify-reject-btn').addEventListener('click', function() { submitVerifyReview('rejected'); });
+  document.getElementById('verify-revoke-btn').addEventListener('click', function() { submitVerifyReview('revoked'); });
+
+  document.querySelectorAll('.nav-item[data-section="verification"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadVerifications, 80); });
+  });
+  </script>
+</body>
+</html>

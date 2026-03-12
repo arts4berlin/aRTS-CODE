@@ -12,11 +12,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — aRTICLES</title>
   <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
@@ -24,9 +24,7 @@
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -196,7 +194,7 @@
 
   <div class="nav-overlay" id="nav-overlay">
     <button class="burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html">aRT</a>
@@ -297,10 +295,12 @@
   function awardArticleXP() {
     try {
       if (!localStorage.getItem('arts_id_hash')) return;
+      var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
+      var artPts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.article_view!=null)?ptsCfg.events.article_view:150;
       var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
-      localStorage.setItem('arts_points', String(cur + 150));
+      localStorage.setItem('arts_points', String(cur + artPts));
       var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
-      pending.push({ label: 'aRTICLE', pts: 150 });
+      pending.push({ label: 'aRTICLE', pts: artPts });
       sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
     } catch(e) {}
   }

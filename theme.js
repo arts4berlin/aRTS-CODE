@@ -40,6 +40,8 @@
     if (_panel) _panel.classList.remove('open');
     var t = document.getElementById('corner-trigger');
     if (t) t.classList.remove('open');
+    var top = document.getElementById('scroll-top');
+    if (top) top.style.display = '';
   }
 
   function _makeItem(cfg) {
@@ -99,6 +101,8 @@
       e.stopPropagation();
       var isOpen = _panel.classList.toggle('open');
       trigger.classList.toggle('open', isOpen);
+      var top = document.getElementById('scroll-top');
+      if (top) top.style.display = isOpen ? 'none' : '';
     });
 
     /* Close on outside click */

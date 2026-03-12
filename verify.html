@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type"         content="website">
+  <meta property="og:url"          content="https://4-arts.com/">
+  <meta property="og:title"        content="[aRTS] — vERiFY">
+  <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <title>[aRTS] — vERiFY</title>
+  <script>
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+  </script>
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Fixed header ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 26px 32px;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
+    }
+
+    .logo {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2.4rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      opacity: 0.85;
+      transition: opacity 0.15s;
+    }
+    nav a:hover { opacity: 1; }
+
+    /* ── Burger ── */
+    .burger { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 4px; }
+    .nav-overlay { display: none; }
+
+    @media (max-width: 700px) {
+      nav { display: none; }
+      .burger { display: block; }
+      .nav-overlay {
+        display: flex; position: fixed; inset: 0; z-index: 200;
+        background: rgba(0,0,0,0.95); flex-direction: column;
+        align-items: center; justify-content: center; gap: 2rem;
+        opacity: 0; pointer-events: none; transition: opacity 0.25s;
+      }
+      .nav-overlay.is-open { opacity: 1; pointer-events: auto; }
+      .nav-overlay a {
+        text-decoration: none; color: #fff; font-size: 1.2rem;
+        font-weight: 300; letter-spacing: 0.12em; opacity: 0.85;
+      }
+      .nav-overlay a:hover { opacity: 1; }
+      .burger-close {
+        position: absolute; top: 26px; right: 32px;
+        background: none; border: 1px solid rgba(255,255,255,0.14);
+        color: #fff; font-size: 0.9rem; font-weight: 300;
+        padding: 4px 10px; border-radius: 3px; cursor: pointer;
+      }
+    }
+
+    /* ── Main ── */
+    main {
+      padding-top: clamp(90px, 14vh, 120px);
+      padding-bottom: clamp(80px, 10vh, 130px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-col {
+      width: min(92vw, 640px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      margin-bottom: clamp(8px, 1.5vh, 14px);
+    }
+
+    .form-title {
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: clamp(28px, 4.5vh, 48px);
+    }
+
+    .form-sub {
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      margin-top: -20px;
+      margin-bottom: clamp(28px, 4vh, 44px);
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: clamp(28px, 4vh, 44px) 0;
+    }
+
+    /* ── Form fields ── */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
+    }
+
+    .field-group label {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.32);
+      text-transform: uppercase;
+    }
+
+    .field-group input,
+    .field-group textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 2.6vw, 1.3rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.55rem 0;
+      outline: none;
+      transition: border-color 0.18s;
+      width: 100%;
+    }
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+      color: rgba(255,255,255,0.12);
+      font-weight: 300;
+    }
+    .field-group input:focus,
+    .field-group textarea:focus {
+      border-bottom-color: rgba(255,255,255,0.45);
+    }
+    .field-group textarea {
+      resize: none;
+      height: 80px;
+      font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+    }
+
+    /* ── Account type selector ── */
+    .type-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: clamp(24px, 3.5vh, 38px);
+    }
+
+    .type-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      color: rgba(255,255,255,0.45);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      padding: 14px 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: center;
+    }
+    .type-btn:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.7);
+    }
+    .type-btn.active {
+      border-color: #FF5C00;
+      color: #FF5C00;
+      background: rgba(255,92,0,0.06);
+    }
+
+    .type-label {
+      display: block;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.2);
+      margin-top: 6px;
+    }
+    .type-btn.active .type-label { color: rgba(255,92,0,0.5); }
+
+    /* ── Submit ── */
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: clamp(10px, 2vh, 20px);
+    }
+
+    .btn-submit {
+      background: #FF5C00;
+      border: none;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      padding: 14px 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-submit:hover { opacity: 0.85; }
+    .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .submit-note {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ── Status cards ── */
+    .status-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      padding: clamp(24px, 4vh, 40px);
+      background: rgba(255,255,255,0.02);
+      text-align: center;
+    }
+
+    .status-icon {
+      font-size: 2.4rem;
+      font-weight: 300;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .status-title {
+      font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .status-sub {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.6;
+    }
+
+    .status-card.approved { border-color: rgba(110,230,110,0.3); }
+    .status-card.approved .status-icon { color: rgba(110,230,110,0.75); }
+    .status-card.approved .status-title { color: rgba(110,230,110,0.85); }
+
+    .status-card.pending { border-color: rgba(255,200,60,0.25); }
+    .status-card.pending .status-icon { color: rgba(255,200,60,0.6); }
+    .status-card.pending .status-title { color: rgba(255,200,60,0.75); }
+
+    .status-card.rejected { border-color: rgba(255,80,80,0.25); }
+    .status-card.rejected .status-icon { color: rgba(255,80,80,0.6); }
+
+    .btn-reapply {
+      display: inline-block;
+      margin-top: 20px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.6);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      padding: 10px 24px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-reapply:hover {
+      border-color: rgba(255,255,255,0.35);
+      color: #fff;
+    }
+
+    .admin-notes {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(255,80,80,0.06);
+      border: 1px solid rgba(255,80,80,0.15);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.55);
+      text-align: left;
+    }
+
+    .id-notice {
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
+    }
+    .id-notice-title {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 8px;
+    }
+    .id-notice-text {
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.3);
+      line-height: 1.6;
+    }
+
+    /* ── Error ── */
+    .form-error {
+      display: none;
+      padding: 12px 16px;
+      background: rgba(255,80,80,0.08);
+      border: 1px solid rgba(255,80,80,0.2);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: rgba(255,80,80,0.8);
+      margin-bottom: 20px;
+    }
+    .form-error.visible { display: block; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] body { background: #fff; color: #000; }
+    html[data-theme="day"] header { background: linear-gradient(to bottom, rgba(255,255,255,0.92) 60%, transparent); }
+    html[data-theme="day"] .logo { color: #000; }
+    html[data-theme="day"] nav a { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .section-label { color: #FF5C00; }
+    html[data-theme="day"] .form-title { color: #000; }
+    html[data-theme="day"] .form-sub { color: rgba(0,0,0,0.4); }
+    html[data-theme="day"] .divider { background: rgba(0,0,0,0.07); }
+    html[data-theme="day"] .field-group label { color: rgba(0,0,0,0.35); }
+    html[data-theme="day"] .field-group input,
+    html[data-theme="day"] .field-group textarea {
+      color: #000;
+      border-bottom-color: rgba(0,0,0,0.12);
+    }
+    html[data-theme="day"] .field-group input::placeholder,
+    html[data-theme="day"] .field-group textarea::placeholder { color: rgba(0,0,0,0.15); }
+    html[data-theme="day"] .field-group input:focus,
+    html[data-theme="day"] .field-group textarea:focus { border-bottom-color: rgba(0,0,0,0.4); }
+
+    html[data-theme="day"] .type-btn {
+      background: rgba(0,0,0,0.02);
+      border-color: rgba(0,0,0,0.1);
+      color: rgba(0,0,0,0.4);
+    }
+    html[data-theme="day"] .type-btn:hover {
+      border-color: rgba(0,0,0,0.25);
+      color: rgba(0,0,0,0.65);
+    }
+    html[data-theme="day"] .type-btn.active {
+      border-color: #FF5C00;
+      color: #FF5C00;
+      background: rgba(255,92,0,0.05);
+    }
+    html[data-theme="day"] .type-label { color: rgba(0,0,0,0.2); }
+    html[data-theme="day"] .type-btn.active .type-label { color: rgba(255,92,0,0.5); }
+
+    html[data-theme="day"] .submit-note { color: rgba(0,0,0,0.25); }
+
+    html[data-theme="day"] .status-card {
+      border-color: rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.02);
+    }
+    html[data-theme="day"] .status-sub { color: rgba(0,0,0,0.4); }
+
+    html[data-theme="day"] .btn-reapply {
+      border-color: rgba(0,0,0,0.15);
+      color: rgba(0,0,0,0.5);
+    }
+    html[data-theme="day"] .btn-reapply:hover {
+      border-color: rgba(0,0,0,0.35);
+      color: #000;
+    }
+
+    html[data-theme="day"] .admin-notes {
+      background: rgba(255,80,80,0.04);
+      border-color: rgba(255,80,80,0.12);
+      color: rgba(0,0,0,0.55);
+    }
+
+    html[data-theme="day"] .id-notice {
+      background: rgba(0,0,0,0.02);
+      border-color: rgba(0,0,0,0.06);
+    }
+    html[data-theme="day"] .id-notice-title { color: rgba(0,0,0,0.35); }
+    html[data-theme="day"] .id-notice-text { color: rgba(0,0,0,0.3); }
+
+    html[data-theme="day"] .form-error {
+      background: rgba(255,80,80,0.06);
+      border-color: rgba(255,80,80,0.15);
+    }
+
+    html[data-theme="day"] .nav-overlay { background: rgba(255,255,255,0.97); }
+    html[data-theme="day"] .nav-overlay a { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .burger { color: #000; }
+    html[data-theme="day"] .burger-close { color: #000; border-color: rgba(0,0,0,0.14); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="home.html" data-inner="RTS">[a]</a>
+    <nav>
+      <a href="art.html">aRT</a>
+      <a href="assets.html">aSSETS</a>
+      <a href="id.html">iD</a>
+    </nav>
+    <button class="burger" id="burger">|||</button>
+  </header>
+
+  <!-- Mobile overlay -->
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="burger-close" id="burger-close">[x]</button>
+    <a href="art.html">aRT</a>
+    <a href="assets.html">aSSETS</a>
+    <a href="id.html">iD</a>
+    <a href="home.html">hOME</a>
+  </div>
+
+  <main>
+    <div class="form-col">
+      <div class="section-label">iDENTITY</div>
+      <div class="form-title">vERiFY</div>
+      <div class="form-sub">
+        aPPLY fOR vERIFICATION aS aN aRTIST, sTUDIO, oR iNDIViDUAL.<br>
+        vERIFIED aCCOUNTS cAN LiST aND sELL oN [aRTS].
+      </div>
+
+      <!-- Error banner -->
+      <div class="form-error" id="form-error"></div>
+
+      <!-- Status view (shown if already applied) -->
+      <div id="status-view" style="display:none;"></div>
+
+      <!-- Application form (hidden if already applied) -->
+      <div id="form-view">
+        <div class="field-group">
+          <label>aCCOUNT tYPE</label>
+        </div>
+        <div class="type-selector">
+          <button class="type-btn active" data-type="artist">
+            aRTIST
+            <span class="type-label">iNDIViDUAL cREATOR</span>
+          </button>
+          <button class="type-btn" data-type="studio">
+            sTUDIO
+            <span class="type-label">gALLERY / cOLLECTiVE</span>
+          </button>
+          <button class="type-btn" data-type="individual">
+            iNDIViDUAL
+            <span class="type-label">cOLLECTOR / oTHER</span>
+          </button>
+        </div>
+
+        <div class="field-group">
+          <label>dISPLAY nAME</label>
+          <input type="text" id="v-name" placeholder="yOUR aRTIST oR sTUDIO nAME" maxlength="120" required>
+        </div>
+
+        <div class="field-group">
+          <label>bIO</label>
+          <textarea id="v-bio" placeholder="sHORT bIO — wHO yOU aRE, wHAT yOU dO" maxlength="1000"></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label>pORTFOLIO / wEBSITE</label>
+          <input type="url" id="v-portfolio" placeholder="https://">
+        </div>
+
+        <div class="field-group">
+          <label>sOCIAL mEDIA</label>
+          <input type="url" id="v-social" placeholder="iNSTAGRAM, x, eTc.">
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label>sTATEMENT</label>
+          <textarea id="v-statement" placeholder="wHY dO yOU wANT vERIFICATION? wHAT dO yOU pLAN tO LiST?" maxlength="2000" style="height:100px;"></textarea>
+        </div>
+
+        <div class="id-notice">
+          <div class="id-notice-title">iD vERIFICATION</div>
+          <div class="id-notice-text">
+            aUTOMATED iD vERIFICATION (pASSPORT / dRiVER'S LiCENSE + sELFIE) iS cOMING sOON viA sTRIPE iDENTiTY.
+            fOR nOW, yOUR aPPLICATION iS rEVIEWED mANUALLY bY oUR tEAM.
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button class="btn-submit" id="btn-submit">sUBMiT</button>
+          <span class="submit-note">rEVIEW tAKES 24–48h</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+  (function() {
+    var API_BASE = 'https://4-arts.com';
+    var idHash = localStorage.getItem('arts_id_hash') || '';
+    var selectedType = 'artist';
+
+    // ── Check existing status ──
+    if (idHash) {
+      fetch(API_BASE + '/api/verify/status?hash=' + encodeURIComponent(idHash))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.status === 'approved') {
+            showStatus('approved', data);
+          } else if (data.status === 'pending') {
+            showStatus('pending', data);
+          } else if (data.status === 'rejected') {
+            showStatus('rejected', data);
+          }
+          // 'none' — show the form (default)
+        })
+        .catch(function() { /* API down — show form */ });
+    }
+
+    function showStatus(status, data) {
+      var formView = document.getElementById('form-view');
+      var statusView = document.getElementById('status-view');
+      formView.style.display = 'none';
+      statusView.style.display = 'block';
+
+      // Sync localStorage
+      localStorage.setItem('arts_verified', status);
+
+      if (status === 'approved') {
+        statusView.innerHTML =
+          '<div class="status-card approved">' +
+            '<div class="status-icon">\u2713</div>' +
+            '<div class="status-title">vERIFIED</div>' +
+            '<div class="status-sub">' +
+              'yOUR ' + (data.account_type || 'artist').toUpperCase() + ' aCCOUNT iS vERIFIED.<br>' +
+              'yOU cAN nOW LiST aND sELL oN [aRTS].' +
+            '</div>' +
+          '</div>';
+      } else if (status === 'pending') {
+        statusView.innerHTML =
+          '<div class="status-card pending">' +
+            '<div class="status-icon">\u29D7</div>' +
+            '<div class="status-title">uNDER rEVIEW</div>' +
+            '<div class="status-sub">' +
+              'yOUR aPPLICATION wAS sUBMITTED ' + formatDate(data.submitted_at) + '.<br>' +
+              'rEVIEW tYPICALLY tAKES 24\u201348 hOURS.' +
+            '</div>' +
+          '</div>';
+      } else if (status === 'rejected') {
+        var notesHtml = data.admin_notes
+          ? '<div class="admin-notes"><strong>rEASON:</strong> ' + escapeHtml(data.admin_notes) + '</div>'
+          : '';
+        statusView.innerHTML =
+          '<div class="status-card rejected">' +
+            '<div class="status-icon">\u2717</div>' +
+            '<div class="status-title">nOT aPPROVED</div>' +
+            '<div class="status-sub">' +
+              'yOUR aPPLICATION wAS rEVIEWED oN ' + formatDate(data.reviewed_at) + '.' +
+            '</div>' +
+            notesHtml +
+            '<button class="btn-reapply" id="btn-reapply">rE-aPPLY</button>' +
+          '</div>';
+        var reapplyBtn = document.getElementById('btn-reapply');
+        if (reapplyBtn) {
+          reapplyBtn.addEventListener('click', function() {
+            statusView.style.display = 'none';
+            formView.style.display = 'block';
+            localStorage.removeItem('arts_verified');
+          });
+        }
+      }
+    }
+
+    // ── Type selector ──
+    var typeBtns = document.querySelectorAll('.type-btn');
+    typeBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        typeBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        selectedType = btn.dataset.type;
+      });
+    });
+
+    // ── Submit ──
+    var submitBtn = document.getElementById('btn-submit');
+    submitBtn.addEventListener('click', function() {
+      var errorEl = document.getElementById('form-error');
+      errorEl.classList.remove('visible');
+
+      if (!idHash) {
+        showError('yOU mUST bE sIGNED iN tO aPPLY. gO tO jOIN fIRST.');
+        return;
+      }
+
+      var displayName = document.getElementById('v-name').value.trim();
+      if (!displayName) {
+        showError('dISPLAY nAME iS rEQUIRED.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'sUBMITTING...';
+
+      fetch(API_BASE + '/api/verify/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_hash: idHash,
+          account_type: selectedType,
+          display_name: displayName,
+          bio: document.getElementById('v-bio').value.trim(),
+          portfolio_url: document.getElementById('v-portfolio').value.trim(),
+          social_url: document.getElementById('v-social').value.trim(),
+          statement: document.getElementById('v-statement').value.trim(),
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          showError(data.error.message || 'sOMETHING wENT wRONG');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'sUBMiT';
+          return;
+        }
+        if (data.already_verified) {
+          showStatus('approved', data);
+          return;
+        }
+        localStorage.setItem('arts_verified', 'pending');
+        showStatus('pending', { submitted_at: new Date().toISOString(), account_type: selectedType });
+      })
+      .catch(function() {
+        showError('nETWORK eRROR — tRY aGAIN lATER');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'sUBMiT';
+      });
+    });
+
+    function showError(msg) {
+      var el = document.getElementById('form-error');
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      var d = new Date(iso);
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  })();
+  </script>
+
+  <!-- Nav hover animation -->
+  <script>
+  (function(){
+    var DELAY = 28;
+    function navHover(el){
+      var orig = el.textContent, timers = [], state = 0;
+      function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
+      function render(n){ el.textContent = orig.slice(0, n); }
+      el.addEventListener('mouseenter', function(){
+        clr(); var from = state;
+        for(var i = 0; i < orig.length - 1 - from; i++)(function(i){
+          timers.push(setTimeout(function(){ render(state = from + i + 1); }, i * DELAY));
+        })(i);
+      });
+      el.addEventListener('mouseleave', function(){
+        clr(); var from = state;
+        for(var i = 0; i < from; i++)(function(i){
+          timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
+        })(i);
+      });
+    }
+    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
+    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
+      var inner = logo.dataset.inner;
+      var timers = [], state = 0;
+      function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
+      function render(n){ logo.textContent = '[a' + inner.slice(0, n) + ']'; }
+      logo.addEventListener('mouseenter', function(){
+        clr(); var from = state;
+        for(var i = from; i < inner.length; i++)(function(i){
+          timers.push(setTimeout(function(){ render(state = i + 1); }, (i - from) * DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave', function(){
+        clr(); var from = state;
+        for(var i = 0; i < from; i++)(function(i){
+          timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
+        })(i);
+      });
+    });
+  })();
+  </script>
+
+  <!-- Mobile burger menu -->
+  <script>
+  (function(){
+    var burger = document.getElementById('burger'), overlay = document.getElementById('nav-overlay'), close = document.getElementById('burger-close');
+    if(!burger || !overlay) return;
+    burger.addEventListener('click', function(){ overlay.classList.add('is-open'); });
+    close.addEventListener('click', function(){ overlay.classList.remove('is-open'); });
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.classList.remove('is-open'); });
+  })();
+  </script>
+  <script src="theme.js?v=4"></script>
+  <script>window.artsCornerAdd({ label: 'iD', href: 'id.html' });</script>
+</body>
+</html>

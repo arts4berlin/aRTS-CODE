@@ -13,11 +13,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — lISTING tERMS</title>
   <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
@@ -25,9 +25,7 @@
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -193,7 +191,7 @@
 
   <div class="nav-overlay" id="nav-overlay">
     <button class="burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html">aRT</a>
@@ -214,19 +212,35 @@
       <p>You attest that all information provided in your listing is accurate and that the artwork is authentic. Misrepresentation of authorship, provenance, medium, dimensions, or condition may result in immediate removal of the listing and suspension of your account.</p>
 
       <h2>cOMMISSION tERMS</h2>
-      <p>[aRTS] reserves the right to apply a commission on successful sales facilitated through the platform. Commission rates are disclosed upon inquiry and may vary depending on the nature of the transaction. By listing, you acknowledge and accept that a commission may apply.</p>
+      <p>[aRTS] applies a commission on each successful sale facilitated through the platform. Rates are determined by the seller's membership tier at the time of sale:</p>
+      <p style="margin-top:12px">
+        <strong style="color:rgba(255,255,255,0.55)">aUDIENCE</strong> (free) — 20% commission<br>
+        <strong style="color:rgba(255,255,255,0.55)">aLLY</strong> (€0.33/mo) — 15% commission<br>
+        <strong style="color:rgba(255,255,255,0.55)">BRIGaDIER</strong> (€3.3/mo) — 10% commission<br>
+        <strong style="color:rgba(255,255,255,0.55)">CURaTOR</strong> (€33/mo) — 7% commission
+      </p>
+      <p style="margin-top:12px">Commission is automatically deducted at the time of sale. The remaining balance is paid out to the seller's connected Stripe account within 2–3 business days.</p>
+
+      <h2>pAYMENT pROCESSING</h2>
+      <p>All payments are processed by <a href="https://stripe.com" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;" target="_blank" rel="noopener">Stripe</a>. To receive payouts, sellers must connect a Stripe Express account. During onboarding, Stripe collects identity and banking information directly — [aRTS] does not see, store, or process any financial or identity data. Stripe acts as the payment processor and is subject to its own <a href="https://stripe.com/privacy" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;" target="_blank" rel="noopener">Privacy Policy</a> and <a href="https://stripe.com/legal/connect-account" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;" target="_blank" rel="noopener">Connected Account Agreement</a>.</p>
+
+      <h2>pAYOUT tIMELINE</h2>
+      <p>Seller payouts are initiated automatically by Stripe following a confirmed sale. Funds typically arrive within 2–3 business days via the seller's connected bank account. [aRTS] does not hold funds — all payment splitting is handled by Stripe at the time of the transaction.</p>
+
+      <h2>rEFUNDS</h2>
+      <p>Buyers may request a refund within 14 days of purchase by contacting [aRTS] via the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page. If a refund is granted, the full purchase amount is returned to the buyer. The platform commission is non-refundable on refunded sales; however, [aRTS] reserves the right to waive this on a case-by-case basis.</p>
 
       <h2>lIABILITY</h2>
-      <p>[aRTS] acts as a listing platform only. All transactions are conducted directly between buyer and seller. [aRTS] does not guarantee the completion, quality, or outcome of any transaction and assumes no liability for disputes, damages, or losses arising from dealings between parties.</p>
+      <p>[aRTS] facilitates transactions between buyers and sellers via Stripe. While [aRTS] acts as the platform connecting parties, all payment processing and fund distribution is handled by Stripe. [aRTS] does not guarantee the completion, quality, or outcome of any transaction and assumes no liability for disputes, damages, or losses arising from dealings between parties.</p>
 
       <h2>rEMOVAL</h2>
       <p>[aRTS] reserves the right to remove any listing that violates these terms, infringes on intellectual property rights, contains misleading information, or is otherwise deemed inappropriate at the sole discretion of the platform.</p>
 
       <h2>sESSION dATA &amp; iDENTITY</h2>
-      <p>By submitting a listing, you acknowledge that your [aRTS] member identity — authenticated via Google or Apple — is associated with the submission for the purposes of provenance tracking, communication, and moderation. Your OAuth identifier is stored in hashed form only. Your IP address is logged at the time of listing submission for fraud prevention and audit purposes. This data is handled in accordance with our <a href="privacy.html" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">Privacy Policy</a>.</p>
+      <p>By submitting a listing, you acknowledge that your [aRTS] member identity — authenticated via Google or Apple — is associated with the submission for the purposes of provenance tracking, communication, and moderation. Your OAuth identifier is stored in hashed form only. Your IP address is logged at the time of listing submission for fraud prevention and audit purposes. This data is handled in accordance with our <a href="privacy.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Privacy Policy</a>.</p>
 
       <h2>cONTACT</h2>
-      <p>Questions about these terms can be directed through the <a href="inquire.html" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
+      <p>Questions about these terms can be directed through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
 
       <div class="legal-divider"></div>
       <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>

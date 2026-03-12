@@ -12,20 +12,18 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS] — aDD aRT">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS] — aDD aRT">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — aDD aRT</title>
   <script>
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -392,6 +390,86 @@
       line-height: 1.6;
     }
 
+    /* ── Commission breakdown ── */
+    .commission-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 8px;
+      padding: 10px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .comm-line {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.28);
+    }
+    .comm-payout {
+      color: rgba(255,255,255,0.5);
+      font-weight: 600;
+    }
+    [data-theme="day"] .commission-breakdown { border-top-color: rgba(0,0,0,0.06); }
+    [data-theme="day"] .comm-line { color: rgba(0,0,0,0.28); }
+    [data-theme="day"] .comm-payout { color: rgba(0,0,0,0.5); }
+
+    /* ── Stripe Connect gate ── */
+    .stripe-gate {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      margin-bottom: clamp(18px, 2.8vh, 28px);
+      background: rgba(255,255,255,0.02);
+      overflow: hidden;
+    }
+    .stripe-gate-bar { height: 4px; background: var(--c-accent); flex-shrink: 0; }
+    .stripe-gate-inner { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .stripe-gate-title {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.45);
+    }
+    .stripe-gate-text {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.22);
+      line-height: 1.6;
+    }
+    .btn-stripe-connect {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      padding: 0.75rem 1.6rem;
+      background: #FF5C00;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      align-self: flex-start;
+    }
+    .btn-stripe-connect:hover { opacity: 0.85; }
+    .stripe-connected {
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: rgba(110,230,110,0.7);
+    }
+    [data-theme="day"] .stripe-gate { border-color: rgba(0,0,0,0.08); background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .stripe-gate-title { color: rgba(0,0,0,0.45); }
+    [data-theme="day"] .stripe-gate-text { color: rgba(0,0,0,0.28); }
+    [data-theme="day"] .stripe-connected { color: rgba(40,160,80,0.7); }
+
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     header, nav, a, button { touch-action: manipulation; }
@@ -630,7 +708,7 @@
 
   <div class="nav-overlay" id="nav-overlay">
     <button class="burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html">aRT</a>
@@ -645,6 +723,22 @@
 
       <p class="section-label">sUBMIT TO [aRTS]</p>
       <h1 class="form-title">aDD aRT</h1>
+
+      <!-- Verification gate -->
+      <div id="verify-gate" style="display:none;">
+        <div style="border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:clamp(24px,4vh,40px);background:rgba(255,255,255,0.02);text-align:center;">
+          <div style="font-size:2rem;font-weight:300;color:rgba(255,255,255,0.2);margin-bottom:14px;">&#10003;</div>
+          <p style="font-size:clamp(1rem,3vw,1.3rem);font-weight:700;letter-spacing:0.1em;margin-bottom:10px;">vERIFICATION rEQUIRED</p>
+          <p style="font-size:0.72rem;font-weight:300;letter-spacing:0.1em;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:20px;">
+            yOU mUST bE vERIFIED aS aN aRTIST, sTUDIO, oR iNDIViDUAL<br>bEFORE yOU cAN LiST aRT oN [aRTS].
+          </p>
+          <a href="verify.html" style="display:inline-block;background:#FF5C00;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.16em;padding:12px 28px;border-radius:4px;text-decoration:none;transition:opacity 0.15s;">aPPLY nOW</a>
+          <p id="verify-gate-pending" style="display:none;margin-top:16px;font-size:0.65rem;font-weight:300;letter-spacing:0.12em;color:rgba(255,200,60,0.65);">yOUR aPPLICATION iS uNDER rEVIEW — cHECK bACK sOON.</p>
+        </div>
+      </div>
+
+      <!-- Main form (hidden if not verified) -->
+      <div id="add-form-content">
 
       <!-- Image upload (up to 5) -->
       <p class="upload-label">iMAGES (uP tO 5)</p>
@@ -697,6 +791,10 @@
       <div class="field-group">
         <label for="f-price">pRICE (€)</label>
         <input type="text" id="f-price" name="price" placeholder="0.000" autocomplete="off" inputmode="decimal">
+        <div class="commission-breakdown" id="commission-breakdown" style="display:none">
+          <span class="comm-line" id="comm-rate"></span>
+          <span class="comm-line comm-payout" id="comm-payout"></span>
+        </div>
       </div>
 
       <div class="field-group">
@@ -743,6 +841,23 @@
 
       <div class="divider"></div>
 
+      <!-- Stripe Connect onboarding gate -->
+      <div class="stripe-gate" id="stripe-gate">
+        <div class="stripe-gate-bar"></div>
+        <div class="stripe-gate-inner">
+          <span class="stripe-gate-title">sELLER pAYOUT</span>
+          <span class="stripe-gate-text">tO rECEIVE pAYOUTS fROM sALES, cONNECT yOUR sTRIPE aCCOUNT. tHIS iS a oNE-tIME sETUP (~2 mIN). yOUR bANK dETAILS aRE hANDLED eNTIRELY bY sTRIPE — [aRTS] nEVER sEES oR sTORES tHEM.</span>
+          <button class="btn-stripe-connect" id="btn-stripe-connect" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>cONNECT sTRIPE</button>
+        </div>
+      </div>
+      <div class="stripe-gate" id="stripe-connected" style="display:none">
+        <div class="stripe-gate-bar"></div>
+        <div class="stripe-gate-inner">
+          <span class="stripe-gate-title">sELLER pAYOUT</span>
+          <span class="stripe-connected">&#10003; sTRIPE cONNECTED — pAYOUTS eNABLED</span>
+        </div>
+      </div>
+
       <div class="field-group">
         <label for="f-email">yOUR eMaIL</label>
         <input type="email" id="f-email" name="email" placeholder="you@example.com" autocomplete="email">
@@ -764,6 +879,8 @@
       </div>
 
       <p class="submit-note" id="submit-note">* image, title, price + contact sent directly to [aRTS].</p>
+
+      </div><!-- /add-form-content -->
 
     </div>
   </main>
@@ -809,12 +926,136 @@
   })();
   </script>
 
-  <!-- Consent checkbox enables submit -->
+  <!-- Consent checkbox + Stripe connection enables submit -->
   <script>
   (function(){
     var cb = document.getElementById('f-consent');
     var btn = document.getElementById('btn-submit');
-    cb.addEventListener('change', function(){ btn.disabled = !cb.checked; });
+    function checkReady() {
+      var stripeOk = localStorage.getItem('arts_stripe_connected') === 'true';
+      btn.disabled = !(cb.checked && stripeOk);
+    }
+    cb.addEventListener('change', checkReady);
+    /* Re-check when Stripe status changes (after redirect) */
+    checkReady();
+  })();
+  </script>
+
+  <!-- Commission calculator -->
+  <script>
+  (function(){
+    var COMMISSION_RATES = {
+      'aUDIENCE': 0.20,
+      'aLLY':     0.15,
+      'BRIGaDIER': 0.10,
+      'CURaTOR':  0.07
+    };
+
+    var tier = localStorage.getItem('arts_tier') || 'aUDIENCE';
+    var rate = COMMISSION_RATES[tier] || 0.20;
+    var pctLabel = Math.round(rate * 100) + '%';
+
+    var priceInput = document.getElementById('f-price');
+    var breakdownEl = document.getElementById('commission-breakdown');
+    var rateEl = document.getElementById('comm-rate');
+    var payoutEl = document.getElementById('comm-payout');
+
+    function updateBreakdown() {
+      var raw = priceInput.value.trim().replace(/[^0-9.,]/g, '');
+      var num = parseFloat(raw.replace(/\./g, '').replace(',', '.'));
+      if (!raw || isNaN(num) || num <= 0) {
+        breakdownEl.style.display = 'none';
+        return;
+      }
+      var commission = Math.round(num * rate * 100) / 100;
+      var payout = Math.round((num - commission) * 100) / 100;
+      rateEl.textContent = 'aRTS cOMMISSION (' + pctLabel + '): \u20ac' + commission.toLocaleString('de-DE', {minimumFractionDigits: 2});
+      payoutEl.textContent = 'yOU rECEIVE: \u20ac' + payout.toLocaleString('de-DE', {minimumFractionDigits: 2});
+      breakdownEl.style.display = '';
+    }
+
+    priceInput.addEventListener('input', updateBreakdown);
+    priceInput.addEventListener('change', updateBreakdown);
+  })();
+  </script>
+
+  <!-- Stripe Connect gate -->
+  <script>
+  (function(){
+    var API_BASE = 'https://4-arts.com';
+    var gateEl = document.getElementById('stripe-gate');
+    var connectedEl = document.getElementById('stripe-connected');
+    var connectBtn = document.getElementById('btn-stripe-connect');
+    var hash = localStorage.getItem('arts_id_hash') || '';
+
+    function showConnected() {
+      gateEl.style.display = 'none';
+      connectedEl.style.display = '';
+    }
+
+    /* Check if already connected */
+    if (localStorage.getItem('arts_stripe_connected') === 'true') {
+      showConnected();
+    } else if (hash) {
+      fetch(API_BASE + '/api/connect/status?hash=' + encodeURIComponent(hash))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.connected) {
+            localStorage.setItem('arts_stripe_connected', 'true');
+            showConnected();
+          }
+        })
+        .catch(function() { /* API not available yet — keep gate visible */ });
+    }
+
+    /* Handle return from Stripe onboarding */
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('stripe_connected') === '1') {
+      localStorage.setItem('arts_stripe_connected', 'true');
+      showConnected();
+      /* Clean URL */
+      var clean = window.location.pathname;
+      if (params.get('edit')) clean += '?edit=' + params.get('edit');
+      window.history.replaceState({}, '', clean || window.location.pathname);
+    }
+
+    /* Connect button click */
+    connectBtn.addEventListener('click', function() {
+      if (!hash) {
+        alert('pLEASE jOIN [aRTS] fIRST tO lIST aRT');
+        window.location.href = 'join.html';
+        return;
+      }
+      connectBtn.textContent = 'cONNECTING...';
+      connectBtn.disabled = true;
+
+      var email = localStorage.getItem('arts_email') || '';
+      fetch(API_BASE + '/api/connect/onboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_hash: hash,
+          email: email,
+          return_url: window.location.href
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          connectBtn.textContent = 'cONNECT sTRIPE';
+          connectBtn.disabled = false;
+          var errMsg = (data.error && data.error.message) || data.error || 'cONNECTION fAILED — tRY aGAIN';
+          alert(errMsg);
+        }
+      })
+      .catch(function() {
+        connectBtn.textContent = 'cONNECT sTRIPE';
+        connectBtn.disabled = false;
+        alert('sERVER uNAVAILABLE — tRY aGAIN lATER');
+      });
+    });
   })();
   </script>
 
@@ -965,10 +1206,68 @@
       {
         id: 'ai-content-scan',
         name: 'aI cONTENT sCAN',
-        run: function() {
-          /* MOCK → Phase 2: POST to backend → Claude API deep analysis */
-          /* Will check: inappropriate imagery, copyright, AI-generated art disclosure */
-          return { status: 'pass', msg: 'pASS (mOCK · pHASE 2: cLAUDE aPI)' };
+        async: true,
+        run: function(done) {
+          /* Tier 1: HF NSFW → Tier 1.5: KoalaAI text moderation → Tier 2: Claude Vision */
+          var PROXY_BASE = 'https://4-arts.com';
+          var slots = document.querySelectorAll('.upload-slot');
+          var images = [];
+          var pending = 0;
+          var collected = 0;
+
+          slots.forEach(function(slot, idx) {
+            var inp = slot.querySelector('input[type="file"]');
+            var file = inp.files && inp.files[0];
+            if (file) {
+              pending++;
+              var reader = new FileReader();
+              reader.onload = function(ev) {
+                images[idx] = ev.target.result;
+                collected++;
+                if (collected === pending) sendToBackend();
+              };
+              reader.readAsDataURL(file);
+            } else if (slot.classList.contains('has-img')) {
+              images[idx] = slot.querySelector('img').src;
+            }
+          });
+
+          images = images.filter(Boolean);
+          if (!pending) sendToBackend();
+
+          function sendToBackend() {
+            images = images.filter(Boolean);
+            if (!images.length) {
+              done({ status: 'warn', msg: 'nO iMAGES tO sCAN' });
+              return;
+            }
+
+            var title = (document.getElementById('f-title').value || '').trim();
+            var note = (document.getElementById('f-note').value || '').trim();
+            var provenance = (document.getElementById('f-provenance').value || '').trim();
+            var description = [title, note, provenance].filter(Boolean).join(' — ');
+            var hash = localStorage.getItem('arts_id_hash') || '';
+
+            fetch(PROXY_BASE + '/api/moderate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ images: images, title: title, description: description, user_id_hash: hash })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              var msg = data.msg || 'sCAN cOMPLETE';
+              if (data.text_mod && data.text_mod.status === 'warn') {
+                msg += ' [tEXT: ' + (data.text_mod.label || '?') + ']';
+              }
+              if (data.tier2 && data.tier2.flags && data.tier2.flags.length) {
+                msg += ' [' + data.tier2.flags.length + ' fLAG(S)]';
+              }
+              done({ status: data.status || 'warn', msg: msg });
+            })
+            .catch(function() {
+              done({ status: 'warn', msg: 'sCAN uNAVAILABLE — pROCEED wITH cAUTION' });
+            });
+          }
         }
       }
     ];
@@ -1053,10 +1352,8 @@
         resultEl.textContent = 'sCaNNING...';
         resultEl.className = 'mod-result';
 
-        /* Simulate processing delay */
-        var delay = 400 + Math.random() * 500;
-        setTimeout(function() {
-          var result = check.run();
+        /* Process check result */
+        function applyResult(result) {
           iconEl.textContent = ICONS[result.status];
           iconEl.className = 'mod-icon ' + result.status;
           resultEl.textContent = result.msg;
@@ -1070,6 +1367,16 @@
 
           idx++;
           setTimeout(runNext, 200);
+        }
+
+        /* Run check — async checks call done(), sync checks return immediately */
+        var delay = 400 + Math.random() * 500;
+        setTimeout(function() {
+          if (check.async) {
+            check.run(applyResult);
+          } else {
+            applyResult(check.run());
+          }
         }, delay);
       }
 
@@ -1203,14 +1510,16 @@
           /* Award +50 points if member is logged in */
           try {
             if (localStorage.getItem('arts_id_hash')) {
+              var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
+              var listPts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.list_art!=null)?ptsCfg.events.list_art:50;
               var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
-              localStorage.setItem('arts_points', String(cur + 50));
+              localStorage.setItem('arts_points', String(cur + listPts));
               var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
-              pending.push({ label: 'aRT uPLOAD', pts: 50 });
+              pending.push({ label: 'aRT uPLOAD', pts: listPts });
               sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
               var ptsMsg = document.createElement('p');
               ptsMsg.style.cssText = 'font-size:0.62rem;font-weight:700;letter-spacing:0.14em;color:#FF5C00;margin-top:6px;';
-              ptsMsg.textContent = '+ 50 XP aWaRDED — cHECK yOUR iD';
+              ptsMsg.textContent = '+ ' + listPts + ' XP aWaRDED — cHECK yOUR iD';
               note.insertAdjacentElement('afterend', ptsMsg);
               setTimeout(function(){ if (ptsMsg.parentNode) ptsMsg.parentNode.removeChild(ptsMsg); }, 3500);
             }
@@ -1357,6 +1666,51 @@
     overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('is-open');});
   })();
   </script>
+<!-- Verification gate check -->
+<script>
+(function(){
+  var gate = document.getElementById('verify-gate');
+  var form = document.getElementById('add-form-content');
+  var pendingMsg = document.getElementById('verify-gate-pending');
+  var idHash = localStorage.getItem('arts_id_hash') || '';
+  var cached = localStorage.getItem('arts_verified');
+
+  function applyGate(status) {
+    if (status === 'approved') {
+      gate.style.display = 'none';
+      form.style.display = '';
+    } else if (status === 'pending') {
+      gate.style.display = '';
+      form.style.display = 'none';
+      pendingMsg.style.display = '';
+    } else {
+      gate.style.display = '';
+      form.style.display = 'none';
+    }
+  }
+
+  if (cached === 'approved') {
+    // Already verified — show form
+  } else {
+    applyGate(cached || 'none');
+  }
+
+  if (idHash) {
+    fetch('https://4-arts.com/api/verify/status?hash=' + encodeURIComponent(idHash))
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.status && d.status !== 'none') {
+          localStorage.setItem('arts_verified', d.status);
+          applyGate(d.status);
+        } else if (!cached) {
+          applyGate('none');
+        }
+      }).catch(function(){});
+  } else {
+    applyGate('none');
+  }
+})();
+</script>
 <script src="theme.js?v=4"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>

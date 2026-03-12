@@ -13,11 +13,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — WoRK</title>
   <script>
     if (!localStorage.getItem('captcha_passed')) {
@@ -25,9 +25,7 @@
     }
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -227,9 +225,9 @@
       var POOL   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&!?';
       var FRAMES = 22, RATE = 44;
 
-      /* Company placeholder word list — cycles without repeating */
-      var COMPANY_WORDS = ['COMPaNY', 'GaLLERY', 'aRT STuDIO', 'FREELaNCER', 'STREET NaME', 'STuDIO', 'BRaND', 'aGENCY', 'COLLeCTIVE', 'FOUNDaTION', 'cURaTOR', 'BOOKER', 'PROMOtER', 'LABEL'];
-      var companyIdx = 0, companyTimer = null;
+      /* Company placeholder word list — scrambles on hover */
+      var COMPANY_WORDS = ['COMPaNY', 'GaLLERY', 'aRT STuDIO', 'EXHiBITION', 'STREET NaME', 'COLLeCTIVE', 'FOUNDaTION', 'cURaTOR', 'PROMOtER', 'ReSIDENCY', 'BIENNaLE', 'FaIR', 'aUCTION HoUSE', 'INSTITuTION', 'LABEL'];
+      var companyIdx = 0, companyScrambling = false;
 
       function scramblePh(input, text, delay, cb) {
         setTimeout(function () {
@@ -251,24 +249,20 @@
       var companyField = null;
 
       fields.forEach(function (f, i) {
-        if (f.name === 'company') {
-          companyField = f;
-          scramblePh(f, f.dataset.ph, 280 + i * 220, function () {
-            /* Start cycling after initial reveal */
-            companyTimer = setInterval(function () {
-              if (companyField.value.length > 0) return; /* Don't cycle if user is typing */
-              companyIdx = (companyIdx + 1) % COMPANY_WORDS.length;
-              scramblePh(companyField, COMPANY_WORDS[companyIdx], 0);
-            }, 3200);
-          });
-        } else {
-          scramblePh(f, f.dataset.ph, 280 + i * 220);
-        }
+        if (f.name === 'company') companyField = f;
+        scramblePh(f, f.dataset.ph, 280 + i * 220);
       });
 
-      /* Stop cycling when user focuses the company field */
+      /* Hover on company field → scramble to next word */
       if (companyField) {
-        companyField.addEventListener('focus', function () { clearInterval(companyTimer); });
+        companyField.addEventListener('mouseenter', function () {
+          if (companyField.value.length > 0 || companyScrambling) return;
+          companyIdx = (companyIdx + 1) % COMPANY_WORDS.length;
+          companyScrambling = true;
+          scramblePh(companyField, COMPANY_WORDS[companyIdx], 0, function () {
+            companyScrambling = false;
+          });
+        });
       }
     })();
   </script>

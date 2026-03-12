@@ -12,20 +12,18 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS] — mEMBER iD">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS] — mEMBER iD">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — mEMBER iD</title>
   <script>
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <!-- Firebase Auth (compat SDK — works with existing var-based code) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -139,7 +137,7 @@
       gap: 10px;
     }
     .btn-oauth:hover { color: #fff; border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.03); }
-    .btn-oauth.google:hover { border-color: rgba(66,133,244,0.85); color: #fff; background: rgba(66,133,244,0.14); }
+    .btn-oauth.google:hover { border-color: rgba(255,92,0,0.7); color: #fff; background: rgba(255,92,0,0.1); }
     .btn-oauth.apple:hover  { border-color: rgba(255,255,255,0.85); color: #fff; background: rgba(255,255,255,0.09); }
 
     .oauth-divider {
@@ -454,6 +452,51 @@
       width: fit-content;
     }
     .vc-voucher-link:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    /* ── Seller info section ── */
+    .vc-seller-title {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 10px;
+    }
+    .vc-seller-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 6px;
+    }
+    .vc-seller-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .vc-seller-dot.connected { background: rgba(0,200,80,0.6); }
+    .vc-seller-dot.not-connected { background: rgba(255,255,255,0.15); }
+    .vc-seller-label {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.4);
+    }
+    .vc-seller-label strong {
+      font-weight: 700;
+      color: rgba(255,92,0,0.65);
+    }
+    .vc-seller-terms {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: rgba(255,92,0,0.5);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,92,0,0.2);
+      padding-bottom: 1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .vc-seller-terms:hover { color: #FF5C00; border-color: rgba(255,92,0,0.5); }
 
     /* ── Favourites section ── */
     .vc-favs-title {
@@ -928,7 +971,7 @@
 
   <div class="nav-overlay" id="nav-overlay">
     <button class="burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html">aRT</a>
@@ -972,8 +1015,23 @@
             </div>
             <p id="email-sent-msg" class="email-sent-msg" hidden>
               cHECK yOUR eMaIL — tap the link to sign in<br>
-              <span style="color:rgba(255,255,255,0.2);font-size:0.6rem">link expires in 1 hour · same browser preferred</span>
+              <span style="color:var(--c-text-tertiary);font-size:0.6rem">link expires in 1 hour · same browser preferred</span>
             </p>
+          </div>
+
+          <!-- email + password login -->
+          <button id="btn-pw-toggle" class="email-toggle-link" style="margin-top:4px;">or sign in with password →</button>
+          <div id="pw-section" hidden>
+            <p class="oauth-divider" style="margin:2px 0">— sIGN iN wITH pASSWORD —</p>
+            <div style="margin-bottom:8px;">
+              <input type="email" id="pw-email" class="field" placeholder="your@email.com" autocomplete="email" spellcheck="false" style="width:100%;background:var(--c-bg);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:var(--c-text);font-family:var(--font);font-size:0.72rem;padding:10px 12px;outline:none;">
+            </div>
+            <div style="margin-bottom:8px;">
+              <input type="password" id="pw-pass" class="field" placeholder="password" autocomplete="current-password" style="width:100%;background:var(--c-bg);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:var(--c-text);font-family:var(--font);font-size:0.72rem;padding:10px 12px;outline:none;">
+            </div>
+            <button class="btn-oauth" id="btn-pw-login" style="border-color:var(--c-accent);color:var(--c-accent);width:100%;">sIGN iN</button>
+            <p id="pw-error" style="color:rgba(255,60,60,0.75);font-size:0.58rem;margin-top:6px;min-height:1em;"></p>
+            <p style="text-align:center;margin-top:6px;"><a href="#" id="btn-forgot" style="font-size:0.54rem;color:var(--c-text-secondary);text-decoration:none;letter-spacing:0.06em;">fORGOT pASSWORD? →</a></p>
           </div>
         </div>
 
@@ -1035,6 +1093,32 @@
               <p class="vc-voucher-desc">11% off your next aPPaREL order</p>
               <p class="vc-voucher-timer" id="vc-voucher-timer"></p>
               <a href="apparel.html" class="vc-voucher-link">sHOP aPPaREL →</a>
+            </div>
+
+            <!-- Seller info section -->
+            <div class="vc-rule"></div>
+            <div class="vc-seller-section" id="vc-seller-section">
+              <p class="vc-seller-title">sELLER iNFO</p>
+              <div class="vc-seller-row">
+                <span class="vc-seller-dot not-connected" id="vc-seller-dot"></span>
+                <span class="vc-seller-label" id="vc-seller-commission">cOMMISSION: <strong>—</strong></span>
+              </div>
+              <div class="vc-seller-row">
+                <span class="vc-seller-dot not-connected" id="vc-stripe-dot"></span>
+                <span class="vc-seller-label" id="vc-stripe-status">sTRIPE: nOT cONNECTED</span>
+              </div>
+              <a href="listing-terms.html" class="vc-seller-terms">lISTING tERMS →</a>
+            </div>
+
+            <!-- Verification status -->
+            <div class="vc-rule"></div>
+            <div class="vc-verify-section" id="vc-verify-section">
+              <p class="vc-seller-title">vERIFICATION</p>
+              <div class="vc-seller-row">
+                <span class="vc-seller-dot not-connected" id="vc-verify-dot"></span>
+                <span class="vc-seller-label" id="vc-verify-status">nOT vERIFIED</span>
+              </div>
+              <a href="verify.html" class="vc-seller-terms" id="vc-verify-link">aPPLY fOR vERIFICATION →</a>
             </div>
 
             <!-- Favourites section -->
@@ -1211,12 +1295,14 @@
         if (_s2PrivInterval) clearInterval(_s2PrivInterval);
         _s2PrivInterval = setInterval(s2ScrambleAlias, 2200);
         s2ScrambleAlias();
+        try { sessionStorage.removeItem('arts_alias_unlocked'); } catch(e) {}
       } else {
         btn.classList.remove('active');
         btn.setAttribute('aria-checked','false');
         if (_s2PrivInterval) { clearInterval(_s2PrivInterval); _s2PrivInterval = null; }
         var el = document.getElementById('vc-alias');
         if (el && _s2AliasReal && !el.classList.contains('no-name')) el.textContent = _s2AliasReal;
+        try { sessionStorage.setItem('arts_alias_unlocked', 'true'); } catch(e) {}
       }
     }
     document.getElementById('btn-privacy-toggle-s2').addEventListener('click', function() {
@@ -1255,13 +1341,25 @@
     })();
 
     /* ── Milestones & points renderer ── */
-    var MILESTONES = [
-      { name: 'nOVICE',    min: 0    },
-      { name: 'PaTRON',    min: 100  },
-      { name: 'cOLLECTOR', min: 500  },
-      { name: 'aRCHIVIST', min: 1000 },
-      { name: 'mAESTRO',   min: 2500 }
-    ];
+    var MILESTONES = (function(){
+      var defaults = [
+        { name: 'nOVICE',    min: 0    },
+        { name: 'PaTRON',    min: 100  },
+        { name: 'cOLLECTOR', min: 500  },
+        { name: 'aRCHIVIST', min: 1000 },
+        { name: 'mAESTRO',   min: 2500 }
+      ];
+      try {
+        var cfg = JSON.parse(localStorage.getItem('arts_points_config'));
+        if(cfg && cfg.milestones){
+          if(cfg.milestones.patron!=null)    defaults[1].min = cfg.milestones.patron;
+          if(cfg.milestones.collector!=null)  defaults[2].min = cfg.milestones.collector;
+          if(cfg.milestones.archivist!=null)  defaults[3].min = cfg.milestones.archivist;
+          if(cfg.milestones.maestro!=null)    defaults[4].min = cfg.milestones.maestro;
+        }
+      } catch(e){}
+      return defaults;
+    })();
 
     function getMilestoneIdx(pts) {
       for (var i = MILESTONES.length - 1; i >= 0; i--) {
@@ -1439,6 +1537,76 @@
         }
       }
       renderVoucher();
+
+      /* Seller info: commission rate + Stripe Connect status */
+      var COMM_RATES = { 'aUDIENCE': 20, 'aLLY': 15, 'BRIGaDIER': 10, 'CURaTOR': 7 };
+      var rate = COMM_RATES[tier] || COMM_RATES['aUDIENCE'];
+      var payout = 100 - rate;
+      document.getElementById('vc-seller-commission').innerHTML =
+        'cOMMISSION: <strong>' + rate + '%</strong> — yOU kEEP <strong>' + payout + '%</strong>';
+
+      var stripeDot = document.getElementById('vc-stripe-dot');
+      var stripeLabel = document.getElementById('vc-stripe-status');
+      var sellerDot = document.getElementById('vc-seller-dot');
+      if (store.get('arts_stripe_connected') === '1') {
+        stripeDot.className = 'vc-seller-dot connected';
+        stripeLabel.textContent = 'sTRIPE: cONNECTED';
+        sellerDot.className = 'vc-seller-dot connected';
+      } else {
+        /* Check API as fallback */
+        var idHash = store.get('arts_id_hash');
+        if (idHash) {
+          fetch('https://4-arts.com/api/connect/status?hash=' + encodeURIComponent(idHash))
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              if (d.connected) {
+                store.set('arts_stripe_connected', '1');
+                stripeDot.className = 'vc-seller-dot connected';
+                stripeLabel.textContent = 'sTRIPE: cONNECTED';
+                sellerDot.className = 'vc-seller-dot connected';
+              }
+            }).catch(function(){});
+        }
+      }
+
+      /* ── Verification status ── */
+      var verifyDot = document.getElementById('vc-verify-dot');
+      var verifyLabel = document.getElementById('vc-verify-status');
+      var verifyLink = document.getElementById('vc-verify-link');
+      var cachedVerify = store.get('arts_verified');
+
+      function updateVerifyUI(status) {
+        if (status === 'approved') {
+          verifyDot.className = 'vc-seller-dot connected';
+          verifyLabel.textContent = 'vERIFIED';
+          verifyLink.textContent = 'vIEW vERIFICATION →';
+        } else if (status === 'pending') {
+          verifyDot.style.background = 'rgba(255,200,60,0.5)';
+          verifyLabel.textContent = 'uNDER rEVIEW';
+          verifyLink.textContent = 'cHECK sTATUS →';
+        } else if (status === 'rejected') {
+          verifyDot.style.background = 'rgba(255,80,80,0.5)';
+          verifyLabel.textContent = 'nOT aPPROVED';
+          verifyLink.textContent = 'rE-aPPLY →';
+        }
+      }
+
+      if (cachedVerify) {
+        updateVerifyUI(cachedVerify);
+      }
+
+      var vIdHash = store.get('arts_id_hash');
+      if (vIdHash) {
+        fetch('https://4-arts.com/api/verify/status?hash=' + encodeURIComponent(vIdHash))
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d.status && d.status !== 'none') {
+              store.set('arts_verified', d.status);
+              updateVerifyUI(d.status);
+            }
+          }).catch(function(){});
+      }
+
       /* Render favourites list */
       renderFavourites();
     }
@@ -1644,6 +1812,85 @@
       }, 50);
     });
 
+    /* ── Password login toggle ── */
+    document.getElementById('btn-pw-toggle').addEventListener('click', function() {
+      var sec = document.getElementById('pw-section');
+      var hidden = sec.hidden;
+      sec.hidden = !hidden;
+      this.textContent = hidden ? 'hide password ↑' : 'or sign in with password →';
+      if (!hidden) return;
+      setTimeout(function() { document.getElementById('pw-email').focus(); }, 50);
+    });
+
+    /* ── Password login handler ── */
+    document.getElementById('btn-pw-login').addEventListener('click', async function() {
+      var errEl = document.getElementById('pw-error');
+      errEl.textContent = '';
+      var email = (document.getElementById('pw-email').value || '').trim().toLowerCase();
+      var pw = document.getElementById('pw-pass').value;
+      if (!email || !pw) { errEl.textContent = 'eMail aNd pASSWORD rEQUIRED'; return; }
+
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = 'sIGNING iN...';
+
+      try {
+        var res = await fetch(PROXY_BASE + '/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: pw }),
+        });
+        var data = await res.json();
+        if (!res.ok || !data.ok) {
+          errEl.textContent = (data.error && data.error.message) || 'iNVALID eMail oR pASSWORD';
+          btn.disabled = false;
+          btn.textContent = 'sIGN iN';
+          return;
+        }
+        // Store session
+        try {
+          store.set('arts_session_token', data.session_token);
+          store.set('arts_id_hash', data.user_id_hash);
+          store.set('arts_email', data.email);
+          store.set('arts_alias', data.alias || 'mEMBER');
+          store.set('arts_tier', data.tier || '');
+          store.set('arts_oauth_provider', 'email');
+          store.set('arts_since', data.since || new Date().toISOString().split('T')[0]);
+          store.set('arts_active', 'true');
+        } catch(e) {}
+        // Show logged-in state
+        window.location.reload();
+      } catch(e) {
+        errEl.textContent = 'cONNECTION eRROR';
+        btn.disabled = false;
+        btn.textContent = 'sIGN iN';
+      }
+    });
+
+    document.getElementById('pw-pass').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('btn-pw-login').click();
+    });
+
+    /* ── Forgot password ── */
+    document.getElementById('btn-forgot').addEventListener('click', async function(e) {
+      e.preventDefault();
+      var email = (document.getElementById('pw-email').value || '').trim().toLowerCase();
+      var errEl = document.getElementById('pw-error');
+      if (!email) { errEl.textContent = 'eNTER yOUR eMail fIRST'; return; }
+      try {
+        var res = await fetch(PROXY_BASE + '/api/auth/reset-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email }),
+        });
+        errEl.style.color = 'rgba(110,230,110,0.75)';
+        errEl.textContent = 'iF tHAT eMail eXISTS, a rESET lINK wAS sENT';
+        setTimeout(function() { errEl.style.color = ''; }, 5000);
+      } catch(e) {
+        errEl.textContent = 'cONNECTION eRROR';
+      }
+    });
+
     document.getElementById('btn-email-send').addEventListener('click', function() {
       var errEl = document.getElementById('err-msg');
       var sentEl = document.getElementById('email-sent-msg');
@@ -1765,6 +2012,7 @@
       store.del('arts_alias');
       store.del('arts_since');
       store.del('arts_points');
+      store.del('arts_stripe_connected');
       var s2Out = document.getElementById('s2');
       s2Out.style.opacity = '0';
       setTimeout(function() {

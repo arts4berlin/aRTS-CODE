@@ -12,11 +12,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS] — aRT">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS] — aRT">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — aRT</title>
   <script>
     document.documentElement.style.background = '#000';
@@ -25,9 +25,7 @@
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     /* ── Page-specific: art gallery layout ── */
@@ -280,7 +278,7 @@
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
     <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html" style="color:var(--c-accent)">aRT</a>
@@ -544,7 +542,7 @@
     function placeBid(pieceId, amount) {
       var all = getBids();
       var existing = all[pieceId];
-      var alias = localStorage.getItem('arts_alias') || 'aNON';
+      var alias = (sessionStorage.getItem('arts_alias_unlocked') && localStorage.getItem('arts_alias')) || 'aNON';
       var now = Date.now();
       if (!existing) {
         existing = {
@@ -744,12 +742,16 @@
       });
     }
 
+    var API_BASE = 'https://4-arts.com';
+
     function renderDefaultActions(pieceId, piece) {
       var inquireHref = 'inquire.html?piece=' + encodeURIComponent(piece.title);
       var isSold = /sold|nOT aVAILABLE/i.test(piece.status || '');
+      var hasPrice = piece.price && piece.price !== '—' && !/^0+$/.test(piece.price.replace(/\D/g,''));
       return [
         '<div class="detail-actions">',
-          isSold ? '' : '<button class="btn-inq btn-inq-fill" id="btn-bid" style="border-radius:var(--r-md) 0 0 var(--r-md)">bID</button>',
+          (!isSold && hasPrice) ? '<button class="btn-inq btn-inq-fill" id="btn-buy" data-piece-id="' + esc(piece.id) + '" style="border-radius:var(--r-md) 0 0 var(--r-md);background:var(--c-accent);color:#000;border-color:var(--c-accent)">bUY</button>' : '',
+          isSold ? '' : '<button class="btn-inq btn-inq-fill" id="btn-bid" style="border-radius:' + ((!isSold && hasPrice) ? '0' : 'var(--r-md) 0 0 var(--r-md)') + '">bID</button>',
           '<a href="' + inquireHref + '" class="btn-inq btn-inq-ghost" style="border-radius:' + (isSold ? 'var(--r-md) 0 0 var(--r-md)' : '0') + '">iNQUiRE</a>',
           '<button class="btn-fav" data-fav-id="' + esc(piece.id) + '" style="border-radius:0">',
             '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
@@ -816,6 +818,50 @@
           if (pieceId2 && _currentDetailPiece) showBidInput(pieceId2, _currentDetailPiece, true);
           return;
         }
+      });
+
+      /* Buy button click (event delegation) */
+      detailSheet.addEventListener('click', function(e) {
+        var buyBtn = e.target.closest('#btn-buy');
+        if (!buyBtn) return;
+        e.stopPropagation();
+        var piece = _currentDetailPiece;
+        if (!piece) return;
+
+        buyBtn.textContent = 'pROCESSING...';
+        buyBtn.disabled = true;
+
+        var buyerHash = localStorage.getItem('arts_id_hash') || '';
+        var buyerEmail = localStorage.getItem('arts_email') || '';
+
+        fetch(API_BASE + '/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            piece_id: piece.id,
+            title: piece.title,
+            price: piece.price,
+            currency: piece.currency || '€',
+            buyer_hash: buyerHash,
+            buyer_email: buyerEmail
+          })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            buyBtn.textContent = 'bUY';
+            buyBtn.disabled = false;
+            var errMsg = (data.error && data.error.message) || data.error || 'cHECKOUT fAILED — tRY aGAIN';
+            alert(errMsg);
+          }
+        })
+        .catch(function() {
+          buyBtn.textContent = 'bUY';
+          buyBtn.disabled = false;
+          alert('sERVER uNAVAILABLE — tRY aGAIN lATER');
+        });
       });
 
       /* Share button click (event delegation) */
@@ -916,7 +962,7 @@
       detailInfo.innerHTML = [
         '<p class="detail-index">aRT #' + esc(String(p.id).padStart(3,'0')) + ' \xB7 ' + esc(p.year||'') + '</p>',
         '<h2 class="detail-title">' + esc(p.title) + '</h2>',
-        p.artist ? '<p class="detail-artist">' + esc(p.artist) + '</p>' : '',
+        p.artist ? '<p class="detail-artist">' + esc(p.artist) + (p.admin || p.verified ? ' <span class="verified-badge" title="vERIFIED">&#10003;</span>' : '') + '</p>' : '',
         p.media ? '<p class="detail-media">' + esc(p.media) + '</p>' : '',
         '<div class="detail-rule"></div>',
         meta ? '<div class="detail-meta">' + meta + '</div><div class="detail-rule"></div>' : '',
@@ -997,6 +1043,43 @@
         }, RATE);
       });
     }
+  })();
+  </script>
+
+  <!-- Purchase success overlay -->
+  <script>
+  (function(){
+    var params = new URLSearchParams(window.location.search);
+    var purchasedId = params.get('purchased');
+    if (!purchasedId) return;
+
+    /* Clean URL */
+    window.history.replaceState({}, '', window.location.pathname);
+
+    /* Mark piece as sold in user pieces */
+    try {
+      var myPieces = JSON.parse(localStorage.getItem('arts_my_pieces') || '[]');
+      for (var i = 0; i < myPieces.length; i++) {
+        if (myPieces[i].id === purchasedId) {
+          myPieces[i].status = 'sOLD';
+          localStorage.setItem('arts_my_pieces', JSON.stringify(myPieces));
+          break;
+        }
+      }
+    } catch(e) {}
+
+    /* Show branded full-screen overlay */
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:var(--c-bg);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font);color:var(--c-text);opacity:0;transition:opacity 0.4s ease;';
+    overlay.innerHTML = [
+      '<div style="height:4px;width:min(320px,60vw);background:var(--c-accent);border-radius:2px;margin-bottom:clamp(24px,4vh,40px);"></div>',
+      '<div style="font-size:0.55rem;font-weight:300;letter-spacing:0.36em;color:var(--c-accent-muted);margin-bottom:12px;">pURCHASE cONFIRMED</div>',
+      '<div style="font-size:clamp(1.8rem,7vw,3.2rem);font-weight:700;letter-spacing:0.06em;">sOLD</div>',
+      '<div style="font-size:0.62rem;font-weight:300;letter-spacing:0.14em;color:var(--c-text-tertiary);margin-top:14px;line-height:1.7;text-align:center;max-width:360px;padding:0 20px;">tHE sELLER wILL bE nOTIFIED · cONFIRMATION sENT vIA eMaIL</div>',
+      '<button style="font-family:var(--font);font-size:0.62rem;font-weight:300;letter-spacing:0.18em;color:var(--c-text-ghost);border:1px solid var(--c-border);border-radius:var(--r-sm);padding:0.5rem 1.2rem;cursor:crosshair;margin-top:clamp(28px,4vh,44px);background:transparent;transition:color 0.12s,border-color 0.12s;" onmouseover="this.style.color=\'var(--c-text-secondary)\';this.style.borderColor=\'var(--c-border-hover)\'" onmouseout="this.style.color=\'var(--c-text-ghost)\';this.style.borderColor=\'var(--c-border)\'" onclick="this.closest(\'div\').remove()">bACK tO gALLERY</button>',
+    ].join('');
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function(){ overlay.style.opacity = '1'; });
   })();
   </script>
 
@@ -1122,6 +1205,23 @@
       <div class="detail-info" id="detail-info"></div>
     </div>
   </div>
+
+<!-- Scroll-to-top -->
+<button id="scroll-top" aria-label="Scroll to top">↑ tOP</button>
+<script>
+(function(){
+  var btn=document.getElementById('scroll-top');
+  if(!btn)return;
+  var ticking=false;
+  window.addEventListener('scroll',function(){
+    if(!ticking){requestAnimationFrame(function(){
+      btn.classList.toggle('visible',window.scrollY>400);
+      ticking=false;
+    });ticking=true;}
+  },{passive:true});
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
 
 <script src="theme.js?v=4"></script>
 <script src="btn-fx.js"></script>

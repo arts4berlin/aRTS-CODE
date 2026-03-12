@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>[aRTS] algorithm test</title>
-  <link href="../assets/fonts/space-grotesk.css" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
-  <script src="../theme.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -185,104 +184,10 @@
       font-style: italic;
     }
 
-    /* ── Bot register ── */
-    .bot-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.8rem; }
-    .bot-form-grid.full { grid-template-columns: 1fr; }
-    .bot-input {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--fg);
-      font-family: inherit;
-      font-size: 0.78rem;
-      padding: 0.55rem 0.75rem;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .bot-input::placeholder { color: rgba(255,255,255,0.22); }
-    .bot-input:focus { border-color: rgba(255,255,255,0.25); }
-    .bot-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-top: 0.6rem; }
-    .bot-table th {
-      text-align: left; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--muted); padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border);
-    }
-    .bot-table td {
-      padding: 0.45rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.8); vertical-align: middle;
-    }
-    .bot-table tr:last-child td { border-bottom: none; }
-    .bot-key-mask { font-family: monospace; font-size: 0.66rem; color: rgba(255,255,255,0.4); }
-    .bot-remove {
-      background: transparent; border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.5);
-      font-family: inherit; font-size: 0.66rem; font-weight: 300; border-radius: 3px;
-      padding: 0.15rem 0.45rem; cursor: pointer; transition: border-color 0.15s, color 0.15s;
-    }
-    .bot-remove:hover { border-color: rgba(255,80,80,0.5); color: rgba(255,80,80,0.8); }
-    .bot-empty { font-size: 0.72rem; color: rgba(255,255,255,0.25); font-style: italic; padding: 0.6rem 0; }
-    .bot-stat-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.25rem; }
-    .bot-stat-pill {
-      font-size: 0.58rem; letter-spacing: 0.06em; padding: 0.12rem 0.45rem; border-radius: 3px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: rgba(255,255,255,0.55);
-    }
-    .ok-num { color: #5fff7e; }
-    .bot-stat-pill .ok-num { color: #5fff7e; }
-    .bot-stat-pill .fail-num { color: #ff4444; }
-    .bot-active-sel { margin-bottom: 0.8rem; }
-
     /* Scrollbar */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-
-    /* ── Day Mode ── */
-    html[data-theme="day"] {
-      --bg:     #fff;
-      --fg:     #000;
-      --muted:  rgba(0,0,0,0.5);
-      --glass:  rgba(0,0,0,0.03);
-      --border: rgba(0,0,0,0.08);
-    }
-    html[data-theme="day"] select { background: rgba(0,0,0,0.03); }
-    html[data-theme="day"] select option { background: #fff; color: #000; }
-    html[data-theme="day"] .status.ok  { color: #1a7a2e; }
-    html[data-theme="day"] .status.err { color: #c02020; }
-    html[data-theme="day"] .result-box {
-      background: rgba(0,0,0,0.04);
-      color: rgba(0,0,0,0.7);
-    }
-    html[data-theme="day"] .result-box .key  { color: var(--accent); }
-    html[data-theme="day"] .result-box .str  { color: rgba(0,0,0,0.65); }
-    html[data-theme="day"] .result-box .num  { color: #7a5c00; }
-    html[data-theme="day"] .result-box .bool { color: var(--accent); }
-    html[data-theme="day"] .result-box .null { color: rgba(0,0,0,0.35); }
-    html[data-theme="day"] .xp-table td {
-      color: rgba(0,0,0,0.75);
-      border-bottom-color: rgba(0,0,0,0.04);
-    }
-    html[data-theme="day"] .xp-key-tag {
-      background: rgba(0,0,0,0.04);
-      color: rgba(0,0,0,0.55);
-    }
-    html[data-theme="day"] .xp-note { color: rgba(0,0,0,0.35); }
-    html[data-theme="day"] .bot-input {
-      background: rgba(0,0,0,0.03);
-      color: #000;
-    }
-    html[data-theme="day"] .bot-input::placeholder { color: rgba(0,0,0,0.25); }
-    html[data-theme="day"] .bot-input:focus { border-color: rgba(0,0,0,0.25); }
-    html[data-theme="day"] .bot-table td {
-      color: rgba(0,0,0,0.75);
-      border-bottom-color: rgba(0,0,0,0.04);
-    }
-    html[data-theme="day"] .bot-key-mask { color: rgba(0,0,0,0.4); }
-    html[data-theme="day"] .bot-remove { color: rgba(0,0,0,0.45); border-color: rgba(0,0,0,0.14); }
-    html[data-theme="day"] .bot-empty { color: rgba(0,0,0,0.28); }
-    html[data-theme="day"] .bot-stat-pill { color: rgba(0,0,0,0.5); }
-    html[data-theme="day"] .ok-num,
-    html[data-theme="day"] .bot-stat-pill .ok-num { color: #1a7a2e; }
-    html[data-theme="day"] .bot-stat-pill .fail-num { color: #c02020; }
-    html[data-theme="day"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.14); }
   </style>
 </head>
 <body>
@@ -297,12 +202,6 @@
   </div>
 
   <div class="section-label">aLGORITHM eNDPOINTS</div>
-
-  <div class="bot-active-sel">
-    <select id="sel-bot-tester" style="max-width:400px">
-      <option value="">— nO bOT tESTER sELECTED —</option>
-    </select>
-  </div>
 
   <div class="grid">
 
@@ -344,50 +243,6 @@
     <button class="run-btn" id="btn-stats">lOAD sTATS</button>
     <div class="status" id="st-stats"></div>
     <div class="result-box" id="res-stats"></div>
-  </div>
-
-  <!-- ═══ BOT TESTER REGISTER ═══ -->
-  <div class="section-label" style="margin-top:2.5rem;">bOT tESTER rEGISTER</div>
-
-  <div class="grid">
-    <!-- Registration form -->
-    <div class="panel">
-      <div class="panel-title">rEGISTER nEW bOT</div>
-      <p>Add a tester with their Claude API key. Key is stored locally and masked in the register.</p>
-      <div class="bot-form-grid">
-        <input class="bot-input" id="bot-alias"  type="text"     placeholder="aLIAS" autocomplete="off">
-        <input class="bot-input" id="bot-email"  type="email"    placeholder="eMAIL" autocomplete="off">
-      </div>
-      <div class="bot-form-grid full">
-        <input class="bot-input" id="bot-apikey" type="password" placeholder="sk-ant-api03-..." autocomplete="off">
-      </div>
-      <button class="run-btn" id="btn-bot-register">rEGISTER bOT</button>
-      <div class="status" id="st-bot-register"></div>
-    </div>
-
-    <!-- Registered testers table -->
-    <div class="panel">
-      <div class="panel-title">rEGISTERED tESTERS</div>
-      <p>All bot testers with usage stats per endpoint. Select a tester above to track their runs.</p>
-      <div id="bot-table-wrap">
-        <p class="bot-empty" id="bot-empty">nO bOT tESTERS rEGISTERED yET</p>
-        <table class="bot-table" id="bot-table" hidden>
-          <thead>
-            <tr>
-              <th>aLIAS</th>
-              <th>eMAIL</th>
-              <th>kEY</th>
-              <th>rEGISTERED</th>
-              <th>lAST aCTIVE</th>
-              <th>tESTS</th>
-              <th>rATE</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="bot-tbody"></tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
   <!-- ═══ XP SYSTEM CONFIG ═══ -->
@@ -501,160 +356,6 @@
     var PROXY_BASE = 'https://4-arts.com/proxy';   /* adjust if testing locally: http://localhost:8099 */
     var pieces = [];
     var users  = [];
-    var BOT_KEY = 'arts_bot_testers';
-
-    /* ── Bot tester helpers ── */
-    function getTesters() {
-      try { return JSON.parse(localStorage.getItem(BOT_KEY) || '[]'); } catch(e) { return []; }
-    }
-    function saveTesters(arr) { localStorage.setItem(BOT_KEY, JSON.stringify(arr)); }
-
-    function maskKey(key) {
-      if (!key || key.length < 12) return '***';
-      return key.slice(0, 7) + '***…' + key.slice(-4);
-    }
-
-    function shortDate(iso) {
-      if (!iso) return '—';
-      var d = new Date(iso);
-      return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'2-digit' });
-    }
-
-    function getSelectedBotId() {
-      return document.getElementById('sel-bot-tester').value;
-    }
-
-    function trackBotRun(endpoint, ok) {
-      var id = getSelectedBotId();
-      if (!id) return;
-      var testers = getTesters();
-      for (var i = 0; i < testers.length; i++) {
-        if (testers[i].id === id) {
-          testers[i].lastActive = new Date().toISOString();
-          if (!testers[i].endpoints) testers[i].endpoints = {};
-          if (!testers[i].endpoints[endpoint]) testers[i].endpoints[endpoint] = { runs:0, ok:0, fail:0 };
-          testers[i].endpoints[endpoint].runs++;
-          testers[i].endpoints[endpoint][ok ? 'ok' : 'fail']++;
-          break;
-        }
-      }
-      saveTesters(testers);
-      renderBotTable();
-    }
-
-    function renderBotSelect() {
-      var sel = document.getElementById('sel-bot-tester');
-      var cur = sel.value;
-      /* Remove all but the first option */
-      while (sel.options.length > 1) sel.remove(1);
-      var testers = getTesters();
-      testers.forEach(function(t) {
-        var opt = document.createElement('option');
-        opt.value = t.id;
-        opt.textContent = t.alias + ' · ' + maskKey(t.apiKey);
-        sel.appendChild(opt);
-      });
-      if (cur) sel.value = cur;
-    }
-
-    function renderBotTable() {
-      var testers = getTesters();
-      var empty = document.getElementById('bot-empty');
-      var table = document.getElementById('bot-table');
-      var tbody = document.getElementById('bot-tbody');
-      if (!testers.length) {
-        empty.hidden = false;
-        table.hidden = true;
-        return;
-      }
-      empty.hidden = true;
-      table.hidden = false;
-      tbody.innerHTML = '';
-      testers.forEach(function(t) {
-        var tr = document.createElement('tr');
-        var ep = t.endpoints || {};
-        var totalRuns = 0, totalOk = 0, totalFail = 0;
-        ['analyze','recommend','provenance'].forEach(function(e) {
-          if (ep[e]) { totalRuns += ep[e].runs; totalOk += ep[e].ok; totalFail += ep[e].fail; }
-        });
-        var rate = totalRuns ? Math.round((totalOk / totalRuns) * 100) : 0;
-        tr.innerHTML =
-          '<td>' + (t.alias || '—') + '</td>' +
-          '<td style="font-size:0.66rem;color:rgba(255,255,255,0.5)">' + (t.email || '—') + '</td>' +
-          '<td><span class="bot-key-mask">' + maskKey(t.apiKey) + '</span></td>' +
-          '<td>' + shortDate(t.registered) + '</td>' +
-          '<td>' + shortDate(t.lastActive) + '</td>' +
-          '<td>' + totalRuns + '</td>' +
-          '<td>' + (totalRuns ? '<span class="ok-num">' + rate + '%</span>' : '—') + '</td>' +
-          '<td><button class="bot-remove" data-id="' + t.id + '">[×]</button></td>';
-
-        /* Stat pills row */
-        if (totalRuns) {
-          var tr2 = document.createElement('tr');
-          var pillsHtml = '';
-          ['analyze','recommend','provenance'].forEach(function(e) {
-            var s = ep[e];
-            if (s && s.runs) {
-              pillsHtml += '<span class="bot-stat-pill">' + e +
-                ' <span class="ok-num">' + s.ok + '✓</span>' +
-                (s.fail ? ' <span class="fail-num">' + s.fail + '✗</span>' : '') +
-                '</span>';
-            }
-          });
-          tr2.innerHTML = '<td colspan="8"><div class="bot-stat-pills">' + pillsHtml + '</div></td>';
-          tbody.appendChild(tr);
-          tbody.appendChild(tr2);
-        } else {
-          tbody.appendChild(tr);
-        }
-      });
-
-      /* Remove buttons */
-      tbody.querySelectorAll('.bot-remove').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var rid = btn.dataset.id;
-          var arr = getTesters().filter(function(t) { return t.id !== rid; });
-          saveTesters(arr);
-          renderBotTable();
-          renderBotSelect();
-        });
-      });
-    }
-
-    /* ── Bot register button ── */
-    document.getElementById('btn-bot-register').addEventListener('click', function() {
-      var st = document.getElementById('st-bot-register');
-      var alias  = document.getElementById('bot-alias').value.trim();
-      var email  = document.getElementById('bot-email').value.trim();
-      var apiKey = document.getElementById('bot-apikey').value.trim();
-
-      if (!alias) { st.textContent = '— aLIAS rEQUIRED'; st.className = 'status err'; return; }
-      if (!apiKey) { st.textContent = '— aPi kEY rEQUIRED'; st.className = 'status err'; return; }
-      if (!/^sk-ant-/.test(apiKey)) { st.textContent = '— iNVALID kEY fORMAT (must start with sk-ant-)'; st.className = 'status err'; return; }
-
-      var testers = getTesters();
-      var dup = testers.some(function(t) { return t.apiKey === apiKey; });
-      if (dup) { st.textContent = '— kEY aLREADY rEGISTERED'; st.className = 'status err'; return; }
-
-      testers.push({
-        id: 'bot_' + Date.now(),
-        alias: alias,
-        email: email,
-        apiKey: apiKey,
-        registered: new Date().toISOString(),
-        lastActive: null,
-        endpoints: { analyze: {runs:0,ok:0,fail:0}, recommend: {runs:0,ok:0,fail:0}, provenance: {runs:0,ok:0,fail:0} }
-      });
-      saveTesters(testers);
-      renderBotTable();
-      renderBotSelect();
-
-      document.getElementById('bot-alias').value = '';
-      document.getElementById('bot-email').value = '';
-      document.getElementById('bot-apikey').value = '';
-      st.textContent = '— ✓ bOT tESTER rEGISTERED';
-      st.className = 'status ok';
-    });
 
     /* ── Load mock data ── */
     function loadData() {
@@ -764,7 +465,6 @@
       }, function(data, ok) {
         clearBusy('btn-analyze');
         showResult('res-analyze', 'st-analyze', data, ok);
-        trackBotRun('analyze', ok);
       });
     });
 
@@ -782,7 +482,6 @@
       }, function(data, ok) {
         clearBusy('btn-recommend');
         showResult('res-recommend', 'st-recommend', data, ok);
-        trackBotRun('recommend', ok);
       });
     });
 
@@ -797,7 +496,6 @@
       }, function(data, ok) {
         clearBusy('btn-provenance');
         showResult('res-provenance', 'st-provenance', data, ok);
-        trackBotRun('provenance', ok);
       });
     });
 
@@ -821,8 +519,6 @@
 
     /* Init */
     loadData();
-    renderBotTable();
-    renderBotSelect();
 
     /* ── XP Quick Test ── */
     document.getElementById('btn-xp-test').addEventListener('click', function() {

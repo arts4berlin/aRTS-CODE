@@ -13,11 +13,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — pRIVACY pOLICY</title>
   <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
@@ -25,9 +25,7 @@
       window.location.replace('captcha.html');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -193,7 +191,7 @@
 
   <div class="nav-overlay" id="nav-overlay">
     <button class="burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
     <a href="art.html">aRT</a>
@@ -214,10 +212,10 @@
       <p>Authentication on [aRTS] is handled via Google Identity Services and Apple Sign In. When you choose to sign in, your device interacts directly with Google or Apple — we receive only a stable, anonymised user identifier (a "sub" claim from the OAuth token), your email address, and your display name. We do not receive or store passwords. Biometric verification (Face ID, Touch ID) is handled entirely by your device's operating system and the OAuth provider — [aRTS] has no access to any biometric data at any point.</p>
 
       <h2>dEVICE sESSIONS</h2>
-      <p>When you sign in, a session token is created and stored in your browser's localStorage. This token ties your membership to the current device, allowing you to return to the platform without re-authenticating. Sessions are persistent per device until you explicitly sign out or destroy your ID. If you sign in on multiple devices, each device maintains an independent session. You may revoke device sessions at any time by signing out via your <a href="id.html" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard.</p>
+      <p>When you sign in, a session token is created and stored in your browser's localStorage. This token ties your membership to the current device, allowing you to return to the platform without re-authenticating. Sessions are persistent per device until you explicitly sign out or destroy your ID. If you sign in on multiple devices, each device maintains an independent session. You may revoke device sessions at any time by signing out via your <a href="id.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard.</p>
 
       <h2>iP lOGGING</h2>
-      <p>For security and abuse prevention, your IP address is logged server-side at the moment of each login event. This log entry also records the login provider (Google or Apple), your membership tier, and a timestamp. IP logs are stored on our VPS and are never shared with third parties. Logs are retained for a maximum of 90 days. The IP log does not contain your full OAuth identifier — only a truncated reference. You may request deletion of your IP log entries by contacting us through the <a href="inquire.html" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
+      <p>For security and abuse prevention, your IP address is logged server-side at the moment of each login event. This log entry also records the login provider (Google or Apple), your membership tier, and a timestamp. IP logs are stored on our VPS and are never shared with third parties. Logs are retained for a maximum of 90 days. The IP log does not contain your full OAuth identifier — only a truncated reference. You may request deletion of your IP log entries by contacting us through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
 
       <h2>fORMSPREE</h2>
       <p>Form submissions — including inquiries, reports, and art submissions — are processed through Formspree. Data submitted via forms is stored on Formspree servers and is subject to their privacy policy. [aRTS] does not independently store form submission data.</p>
@@ -229,13 +227,13 @@
       <p>Favourites data is encrypted using AES-GCM with keys derived from your OAuth identifier. Encrypted data is stored locally in your browser and never leaves your device. [aRTS] has no ability to read, decrypt, or access your favourites data.</p>
 
       <h2>tHIRD-pARTY pROVIDERS</h2>
-      <p>By using Google Sign In, you are subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">Google's Privacy Policy</a>. By using Apple Sign In, you are subject to <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">Apple's Privacy Policy</a>. [aRTS] has no control over data collected by these providers during the authentication flow.</p>
+      <p>By using Google Sign In, you are subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Google's Privacy Policy</a>. By using Apple Sign In, you are subject to <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Apple's Privacy Policy</a>. [aRTS] has no control over data collected by these providers during the authentication flow.</p>
 
       <h2>yOUR rIGHTS</h2>
-      <p>You can delete all locally stored data at any time through your <a href="id.html" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard (dESTROY iD). Local data deletion is immediate and irreversible. For deletion of server-side IP logs, contact us. Under GDPR and equivalent regulations, you have the right to access, rectify, or erase personal data we hold about you.</p>
+      <p>You can delete all locally stored data at any time through your <a href="id.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard (dESTROY iD). Local data deletion is immediate and irreversible. For deletion of server-side IP logs, contact us. Under GDPR and equivalent regulations, you have the right to access, rectify, or erase personal data we hold about you.</p>
 
       <h2>cONTACT</h2>
-      <p>Privacy concerns and data requests can be raised through the <a href="inquire.html" style="color:rgba(255,255,255,0.65);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
+      <p>Privacy concerns and data requests can be raised through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
 
       <div class="legal-divider"></div>
       <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>

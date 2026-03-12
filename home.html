@@ -13,11 +13,11 @@
   <meta property="og:url"          content="https://4-arts.com/">
   <meta property="og:title"        content="[aRTS]">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
-  <meta property="og:image"        content="https://4-arts.com/assets/og.png">
-  <meta name="twitter:card"        content="summary">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="[aRTS]">
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
-  <meta name="twitter:image"       content="https://4-arts.com/assets/og.png">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — TRaDE + CONNeCT</title>
   <!-- Gate: redirect to CAPTCHA if not verified; lock bg immediately to kill white flash -->
   <script>
@@ -30,9 +30,7 @@
   <link rel="preload" as="image" href="assets/bear.png">
   <link rel="prefetch" href="about.html">
   <link rel="prefetch" href="audience.html">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     /* ── Page-specific: hero layout ── */
@@ -185,7 +183,7 @@
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
-    <a href="id.html" class="site-logo home-mark" id="home-mark">[aRTS]</a>
+    <a href="id.html" class="site-logo home-mark" id="home-mark">[iD]</a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -195,14 +193,14 @@
     </nav>
     <button class="site-burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label">[mENU]</span>
     </button>
   </header>
 
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
     <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[×]</span>
+      <span class="burger-label">[exit]</span>
     </button>
     <a href="art.html">aRT</a>
     <a href="boutique.html">bOUTIQUE</a>
@@ -449,35 +447,17 @@
       setTimeout(tick,1200+Math.random()*1800);
     })();
 
-    /* [aRTS] home mark expand */
+    /* [iD] home mark — accent if logged in */
     (function(){
       var mark=document.getElementById('home-mark');
       if(!mark)return;
       var loggedIn=false;
       try{loggedIn=!!localStorage.getItem('arts_id_hash');}catch(e){}
-      var SUFFIX=loggedIn?' ID':' LOGIN';
       if(loggedIn){
         mark.style.opacity='1';
         mark.style.color='var(--c-accent)';
         mark.title='mEMBER iD';
       }
-      var timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){mark.textContent='[aRTS'+SUFFIX.slice(0,n)+']';}
-      mark.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<SUFFIX.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      mark.addEventListener('mouseleave',function(){
-        clr();
-        var from=state;
-        for(var i=0;i<from;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
-        })(i);
-      });
     })();
 
     /* aSSETS button word-cycle scramble */
@@ -756,10 +736,12 @@
         var today=new Date().toISOString().slice(0,10);
         if(localStorage.getItem('arts_xp_daily')!==today){
           localStorage.setItem('arts_xp_daily',today);
+          var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
+          var dailyPts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.daily_login!=null)?ptsCfg.events.daily_login:25;
           var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
-          localStorage.setItem('arts_points',String(cur+25));
+          localStorage.setItem('arts_points',String(cur+dailyPts));
           var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
-          pending.push({label:'dAILY lOGIN',pts:25});
+          pending.push({label:'dAILY lOGIN',pts:dailyPts});
           sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
         }
       }
