@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>[aRTS] — aDMIN</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
   <link href="../assets/fonts/space-grotesk.css" rel="stylesheet">
   <style>
     :root {
@@ -58,7 +62,7 @@
       flex-direction: column;
       padding: 28px 0;
       z-index: 100;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .sidebar-logo {
@@ -763,6 +767,53 @@
     @media (max-width: 520px) {
       #login-screen .id-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] {
+      --bg:           #fff;
+      --bg-card:      rgba(0,0,0,0.02);
+      --bg-card-hover:rgba(0,0,0,0.04);
+      --border:       rgba(0,0,0,0.08);
+      --border-hover: rgba(0,0,0,0.15);
+      --text:         #000;
+      --text-dim:     rgba(0,0,0,0.58);
+      --text-muted:   rgba(0,0,0,0.38);
+    }
+    [data-theme="day"] .sidebar { background: rgba(0,0,0,0.01); }
+    [data-theme="day"] .nav-item:hover { color: rgba(0,0,0,0.72); background: rgba(0,0,0,0.015); }
+    [data-theme="day"] .nav-item.active { background: rgba(255,92,0,0.04); }
+    [data-theme="day"] .sidebar-footer .logout-btn:hover { color: #fff; }
+    [data-theme="day"] .dash-btn.primary:hover { color: #fff; }
+    [data-theme="day"] .dash-table td { border-bottom-color: rgba(0,0,0,0.03); }
+    [data-theme="day"] .dash-table tr:hover td { background: rgba(0,0,0,0.01); }
+    [data-theme="day"] .badge.soon { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
+    [data-theme="day"] .search-input { background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .prompt-input { background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .console { background: rgba(0,0,0,0.015); }
+    [data-theme="day"] .log-tag.content { background: rgba(0,0,0,0.04); }
+    [data-theme="day"] .bot-name { color: rgba(0,0,0,0.78); }
+    [data-theme="day"] .log-entry { border-bottom-color: rgba(0,0,0,0.02); }
+    [data-theme="day"] .id-cell { background: rgba(0,0,0,0.09); border-color: rgba(0,0,0,0.09); }
+    [data-theme="day"] .id-num { color: rgba(0,0,0,0.38); }
+    [data-theme="day"] .id-cell.active { border-color: var(--accent); }
+    [data-theme="day"] .id-input { color: #000; border-bottom-color: rgba(0,0,0,0.12); }
+    [data-theme="day"] .id-input::placeholder { color: rgba(0,0,0,0.10); }
+    [data-theme="day"] .id-input:focus { border-bottom-color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .adm-priv-track { background: rgba(0,0,0,0.10); border-color: rgba(0,0,0,0.18); }
+    [data-theme="day"] .adm-priv-thumb { background: rgba(0,0,0,0.50); }
+    [data-theme="day"] .adm-priv-label { color: rgba(0,0,0,0.42); }
+    [data-theme="day"] .adm-priv-btn:hover .adm-priv-label { color: rgba(0,0,0,0.58); }
+    /* Day mode: modals */
+    [data-theme="day"] #verifyModal,
+    [data-theme="day"] #memberModal { background: rgba(255,255,255,0.82) !important; }
+    [data-theme="day"] .adm-modal-inner { background: #f0f0f0 !important; border-color: rgba(0,0,0,0.10) !important; }
+    [data-theme="day"] .adm-modal-close { border-color: rgba(0,0,0,0.18) !important; color: rgba(0,0,0,0.65) !important; }
+    [data-theme="day"] .adm-modal-label { color: rgba(0,0,0,0.50) !important; }
+    [data-theme="day"] #verify-admin-notes { border-color: rgba(0,0,0,0.12) !important; color: #000 !important; }
+    /* Day mode: login screen */
+    [data-theme="day"] #login-screen { background: #fff !important; }
+    [data-theme="day"] .btn-verify { background: #000; color: #fff; border-color: #000; }
+    [data-theme="day"] .btn-verify:hover { background: #FF5C00; border-color: #FF5C00; color: #fff; }
   </style>
 </head>
 <body>
@@ -774,7 +825,7 @@
       <p style="font-size:1.4rem;font-weight:300;letter-spacing:0.05em;color:#fff;margin-bottom:6px;text-align:center;">
         <span style="color:#FF5C00;font-weight:700;">[aRTS]</span> aDMIN
       </p>
-      <p style="font-size:0.48rem;letter-spacing:0.32em;color:rgba(255,255,255,0.3);margin-bottom:32px;text-align:center;">eNTER 12-wORD pHRASE</p>
+      <p style="font-size:0.48rem;letter-spacing:0.32em;color:var(--text-muted);margin-bottom:32px;text-align:center;">eNTER 12-wORD pHRASE</p>
 
       <button class="adm-priv-btn on" id="admin-priv-btn" role="switch" aria-checked="true">
         <span class="adm-priv-pill"></span>
@@ -787,7 +838,7 @@
 
       <button class="btn-verify" id="admin-verify-btn">vERIFY pHRASE</button>
 
-      <p style="font-size:0.42rem;letter-spacing:0.18em;color:rgba(255,255,255,0.15);margin-top:24px;text-align:center;">4-arts.com · bERLIN</p>
+      <p style="font-size:0.42rem;letter-spacing:0.18em;color:var(--text-muted);margin-top:24px;text-align:center;">4-arts.com · bERLIN</p>
     </div>
     </div>
   </div>
@@ -1067,21 +1118,25 @@
         return;
       }
 
-      /* Fallback: Caddy basic-auth (sends hash as password) */
-      fetch('/admin/auth-check', {
-        method: 'HEAD',
-        headers: { 'Authorization': 'Basic ' + btoa('admin:' + hash) }
-      }).then(function(res) {
-        if (res.ok || res.status === 404) {
+      /* Server-side vault authentication — never validate client-side */
+      try {
+        var res = await fetch('/api/vault/unlock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ words: words }),
+        });
+        var data = await res.json();
+        if (res.ok && data.ok) {
+          sessionStorage.setItem('arts_vault_token', data.vault_token);
           grantAccess();
         } else {
-          errEl.textContent = '— wRONG pHRASE';
+          errEl.textContent = data.error?.message || '— wRONG pHRASE';
           inputs.forEach(function(inp){ inp.classList.remove('ok'); inp.classList.add('err'); });
         }
-      }).catch(function() {
-        /* Dev/offline mode — grant if words are valid pool words */
-        grantAccess();
-      });
+      } catch(e) {
+        errEl.textContent = '— cONNECTION eRROR — tRY aGAIN';
+        inputs.forEach(function(inp){ inp.classList.remove('ok'); inp.classList.add('err'); });
+      }
     });
   })();
   </script>
@@ -1122,6 +1177,9 @@
       <div class="nav-item" data-section="points">
         <span class="nav-icon">♢</span> pOINTS
       </div>
+      <div class="nav-item" data-section="rewards">
+        <span class="nav-icon">★</span> rEWaRDS
+      </div>
       <div class="nav-item" data-section="vouchers">
         <span class="nav-icon">%</span> vOUCHERS
       </div>
@@ -1133,6 +1191,9 @@
       </div>
       <div class="nav-item" data-section="verification">
         <span class="nav-icon">✓</span> vERIFICATION
+      </div>
+      <div class="nav-item" data-section="ai-learning">
+        <span class="nav-icon">◈</span> aI lEARNING
       </div>
     </div>
     <div class="sidebar-footer">
@@ -1236,6 +1297,15 @@
             <div class="card-row"><span class="k">aVG rATING</span><span class="v" id="ov-fb-avg">--</span></div>
             <div class="card-row"><span class="k">pOSITIVE</span><span class="v green" id="ov-fb-pos">--</span></div>
             <div class="card-row"><span class="k">nEGaTIVE</span><span class="v" id="ov-fb-neg" style="color:var(--danger)">--</span></div>
+          </div>
+        </div>
+        <div class="card" data-goto="rewards">
+          <span class="card-label">rEWaRDS</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">cATALOG</span><span class="v" id="ov-rw-count">6</span></div>
+            <div class="card-row"><span class="k">rEDEMPTIONS</span><span class="v" id="ov-rw-redemptions">0</span></div>
+            <div class="card-row"><span class="k">rEFERRALS</span><span class="v" id="ov-rw-referrals">aCTIVE</span></div>
+            <div class="card-row"><span class="k">sTREAKS</span><span class="v" id="ov-rw-streaks">aCTIVE</span></div>
           </div>
         </div>
       </div>
@@ -1684,53 +1754,16 @@
     <!-- ═══════════ LOGS ═══════════ -->
     <div class="section" id="sec-logs">
       <p class="section-title">aCTIVITY lOG</p>
-      <p class="section-desc">Platform events — deploys, member actions, system changes. Logs are mock data until backend is connected.</p>
+      <p class="section-desc">Platform events — sessions, moderation, member actions. Live from backend.</p>
 
       <div class="search-bar">
         <input type="text" class="search-input" id="logSearch" placeholder="fILTER lOGS...">
-        <button class="dash-btn" onclick="alert('Backend required')">rEFRESH</button>
+        <button class="dash-btn" onclick="loadLogs()">rEFRESH</button>
       </div>
 
       <div class="log-feed" id="logFeed">
         <div class="log-entry">
-          <span class="log-ts">2026-03-10 12:46</span>
-          <span class="log-tag deploy">dEPLOY</span>
-          <span class="log-msg">admin.4-arts.com deployed</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-10 12:40</span>
-          <span class="log-tag deploy">dEPLOY</span>
-          <span class="log-msg">sITE deployed to production</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-10 12:38</span>
-          <span class="log-tag content">cONTENT</span>
-          <span class="log-msg">pieces.json updated (1 piece)</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-10 11:20</span>
-          <span class="log-tag system">sYSTEM</span>
-          <span class="log-msg">Caddy reloaded with admin block</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-10 10:15</span>
-          <span class="log-tag system">sYSTEM</span>
-          <span class="log-msg">admin.4-arts.com DNS + Caddy configured</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-10 10:00</span>
-          <span class="log-tag system">sYSTEM</span>
-          <span class="log-msg">preview.4-arts.com configured</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-09 18:45</span>
-          <span class="log-tag system">sYSTEM</span>
-          <span class="log-msg">SSL certificates provisioned via Caddy</span>
-        </div>
-        <div class="log-entry">
-          <span class="log-ts">2026-03-09 14:12</span>
-          <span class="log-tag deploy">dEPLOY</span>
-          <span class="log-msg">Initial site deployment to 4-arts.com</span>
+          <span class="log-ts" style="color:var(--text-muted)">lOADING...</span>
         </div>
       </div>
     </div>
@@ -2092,6 +2125,195 @@
       </p>
     </div>
 
+    <!-- ═══════════ REWARDS ═══════════ -->
+    <div class="section" id="sec-rewards">
+      <p class="section-title">rEWaRDS sYSTEM</p>
+      <p class="section-desc">Manage redeemable rewards, referral bonuses, and login streak multipliers. All config saved to localStorage.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="rw-save-btn" onclick="saveRewardsConfig()">sAVE aLL cHANGES</button>
+        <button class="dash-btn" onclick="resetRewardsConfig()" style="color:var(--danger);border-color:var(--danger-bdr);">rESET tO dEFAULTS</button>
+        <span id="rw-save-status" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Reward Catalog -->
+      <div class="sub-header">
+        <span>REWARD CATALOG</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">redeemable with points</span>
+      </div>
+      <div id="rw-catalog-grid" class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-bottom:28px;"></div>
+
+      <!-- Add Reward -->
+      <div class="sub-header">
+        <span>ADD REWARD</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">create new redeemable reward</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:28px;">
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">lABEL</label>
+          <input type="text" id="rw-new-label" placeholder="e.g. 15% cOUPON"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.78rem;font-weight:700;padding:6px 0;width:160px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">cOST (pTS)</label>
+          <input type="number" id="rw-new-cost" placeholder="500" min="0" max="99999"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.78rem;font-weight:700;padding:6px 0;width:70px;outline:none;text-align:center;">
+        </div>
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">tYPE</label>
+          <select id="rw-new-type" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.72rem;font-weight:600;padding:6px 0;width:120px;outline:none;">
+            <option value="coupon" style="background:#111;">coupon</option>
+            <option value="membership" style="background:#111;">membership</option>
+            <option value="badge" style="background:#111;">badge</option>
+            <option value="perk" style="background:#111;">perk</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.48rem;font-weight:300;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:4px;">dETAIL</label>
+          <input type="text" id="rw-new-detail" placeholder="e.g. 15%, 30d"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.78rem;font-weight:300;padding:6px 0;width:140px;outline:none;">
+        </div>
+        <button class="dash-btn" onclick="addReward()" style="margin-bottom:2px;">+ aDD rEWaRD</button>
+      </div>
+
+      <!-- Referral System -->
+      <div class="sub-header">
+        <span>REFERRAL SYSTEM</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">invite codes + bonus XP</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">rEFERRER bONUS</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" id="rw-ref-referrer" value="100" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">rEFEREE bONUS</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" id="rw-ref-referee" value="50" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">mAX rEFERRALS</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <input type="number" id="rw-ref-max" value="20" min="1" max="999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pER uSER</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">sTATUS</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <span id="rw-ref-dot" style="width:8px;height:8px;border-radius:50%;background:var(--success);"></span>
+            <span id="rw-ref-status-text" style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;color:var(--success);">aCTIVE</span>
+          </div>
+          <button class="dash-btn" onclick="toggleReferralActive()" id="rw-ref-toggle" style="margin-top:8px;font-size:0.48rem;padding:4px 10px;">dISABLE</button>
+        </div>
+      </div>
+
+      <!-- Login Streaks -->
+      <div class="sub-header">
+        <span>LOGIN STREAKS</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">multiplier progression + safety caps</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">7-dAY mULTIPLIER</p>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <input type="number" id="rw-streak-7" value="1.5" min="1" max="10" step="0.1"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.78rem;color:var(--accent);font-weight:700;">x</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">14-dAY mULTIPLIER</p>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <input type="number" id="rw-streak-14" value="2" min="1" max="10" step="0.1"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.78rem;color:var(--accent);font-weight:700;">x</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">30-dAY mULTIPLIER</p>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <input type="number" id="rw-streak-30" value="3" min="1" max="10" step="0.1"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.78rem;color:var(--accent);font-weight:700;">x</span>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-label">dAILY cAP</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <input type="number" id="rw-streak-cap-daily" value="75" min="1" max="9999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:55px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.42rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">mAX fROM sTREAK/dAY</p>
+        </div>
+        <div class="card">
+          <p class="card-label">sTREAK cAP</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <input type="number" id="rw-streak-cap-days" value="30" min="1" max="365"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:50px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">dAYS</span>
+          </div>
+          <p style="font-size:0.42rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">mULTIPLIER fREEZES</p>
+        </div>
+        <div class="card">
+          <p class="card-label">sTATUS</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <span id="rw-streak-dot" style="width:8px;height:8px;border-radius:50%;background:var(--success);"></span>
+            <span id="rw-streak-status-text" style="font-size:0.68rem;font-weight:600;letter-spacing:0.12em;color:var(--success);">aCTIVE</span>
+          </div>
+          <button class="dash-btn" onclick="toggleStreakActive()" id="rw-streak-toggle" style="margin-top:8px;font-size:0.48rem;padding:4px 10px;">dISABLE</button>
+        </div>
+      </div>
+
+      <!-- Redemption Log -->
+      <div class="sub-header">
+        <span>REDEMPTION LOG</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">from arts_redemptions</span>
+      </div>
+      <table class="dash-table" id="rw-redemption-table" style="margin-bottom:18px;">
+        <thead>
+          <tr><th>dATE</th><th>rEWaRD</th><th>cOST</th><th>tYPE</th><th>cODE</th></tr>
+        </thead>
+        <tbody id="rw-redemption-tbody"></tbody>
+      </table>
+      <div id="rw-redemption-empty" style="font-size:0.58rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);margin-bottom:18px;">nO rEDEMPTIONS yET</div>
+
+      <!-- Storage Keys -->
+      <div class="sub-header">
+        <span>STORAGE KEYS</span>
+      </div>
+      <table class="data-table" style="margin-bottom:18px;">
+        <thead>
+          <tr><th>KEY</th><th>TYPE</th><th>DESCRIPTION</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_rewards_config</td><td>localStorage</td><td>Reward catalog (JSON array)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_referral_config</td><td>localStorage</td><td>Referral system settings (JSON)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_streak_config</td><td>localStorage</td><td>Streak multipliers + caps (JSON)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_streak_data</td><td>localStorage</td><td>User's streak count + last date (JSON)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_redemptions</td><td>localStorage</td><td>Redemption history (JSON array)</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_referral_code</td><td>localStorage</td><td>User's unique referral code</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:0.62rem;color:var(--accent);">arts_referral_count</td><td>localStorage</td><td>Successful referrals count</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:0.52rem;color:var(--text-muted);letter-spacing:0.1em;font-weight:300;">
+        Reward catalog saved to <span style="font-family:var(--mono);color:var(--accent);">arts_rewards_config</span>.
+        Streak and referral configs are separate keys. All read at runtime — no deploy needed.
+      </p>
+    </div>
+
     <!-- ═══════════ VOUCHERS ═══════════ -->
     <div class="section" id="sec-vouchers">
       <p class="section-title">vOUCHER mANAGEMENT</p>
@@ -2287,12 +2509,12 @@
 
       <!-- Review modal -->
       <div id="verifyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-        <div style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:28px 32px;max-width:520px;width:92%;position:relative;max-height:80vh;overflow-y:auto;">
-          <button id="verifyModalClose" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[x]</button>
+        <div class="adm-modal-inner" style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:28px 32px;max-width:520px;width:92%;position:relative;max-height:80vh;overflow-y:auto;">
+          <button id="verifyModalClose" class="adm-modal-close" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[x]</button>
           <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:18px;">vERIFICATION rEVIEW</p>
           <div id="verifyModalBody" style="display:flex;flex-direction:column;gap:12px;"></div>
           <div style="margin-top:20px;">
-            <label style="font-size:0.55rem;font-weight:300;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-transform:uppercase;">aDMIN nOTES</label>
+            <label class="adm-modal-label" style="font-size:0.55rem;font-weight:300;letter-spacing:0.2em;color:rgba(255,255,255,0.3);text-transform:uppercase;">aDMIN nOTES</label>
             <textarea id="verify-admin-notes" style="width:100%;height:60px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.75rem;padding:8px;outline:none;resize:none;margin-top:6px;"></textarea>
           </div>
           <div style="display:flex;gap:10px;margin-top:16px;">
@@ -2304,10 +2526,88 @@
       </div>
     </div>
 
+    <!-- ═══════════ AI LEARNING ═══════════ -->
+    <div class="section" id="sec-ai-learning">
+      <p class="section-title">aI lEARNING</p>
+      <p class="section-desc">sELF-lEARNING fEEDBACK lOOP. tRACKS mODEL aGREEMENT, oPTIMISES cONFIDENCE rOUTING, eXPORTS tRAINING dATA fOR hUGGINGfACE fINE-tUNING.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="ai-refresh-btn">rEFRESH</button>
+        <span id="ai-status-badge" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Metric cards -->
+      <div class="card-grid" id="ai-cards">
+        <div class="card">
+          <span class="card-label">tRAINING dATA</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">mODERATION</span><span class="v" id="ai-mod-count">--</span></div>
+            <div class="card-row"><span class="k">rECOMMENDATION</span><span class="v" id="ai-rec-count">--</span></div>
+            <div class="card-row"><span class="k">oVERRIDES</span><span class="v" id="ai-override-count">--</span></div>
+            <div class="card-row"><span class="k">tOTAL</span><span class="v" style="color:#FF5C00;" id="ai-total">--</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-label">mODEL aGREEMENT</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">7-dAY</span><span class="v" id="ai-agree-7d">--</span></div>
+            <div class="card-row"><span class="k">30-dAY</span><span class="v" id="ai-agree-30d">--</span></div>
+            <div class="card-row"><span class="k">dRIFT</span><span class="v" id="ai-drift">--</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-label">cLAUDE aPi sAVINGS</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">sKIPPED</span><span class="v" style="color:rgba(110,230,110,0.85);" id="ai-skipped">--</span></div>
+            <div class="card-row"><span class="k">eSCALATED</span><span class="v" id="ai-escalated">--</span></div>
+            <div class="card-row"><span class="k">sAVINGS %</span><span class="v" style="color:rgba(110,230,110,0.85);" id="ai-savings-pct">--</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-label">cONFIDENCE rOUTING</span>
+          <div class="card-rows">
+            <div class="card-row"><span class="k">nSFW sKIP</span><span class="v" id="ai-nsfw-skip">--</span></div>
+            <div class="card-row"><span class="k">nSFW eSC.</span><span class="v" id="ai-nsfw-esc">--</span></div>
+            <div class="card-row"><span class="k">tEXT sKIP</span><span class="v" id="ai-text-skip">--</span></div>
+            <div class="card-row"><span class="k">lOOP</span><span class="v" id="ai-loop-status">--</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toggle feedback loop -->
+      <div style="margin:20px 0 24px;">
+        <button class="dash-btn" id="ai-toggle-loop" style="opacity:0.7;">eNABLE fEEDBACK lOOP</button>
+        <span id="ai-loop-note" style="font-size:0.55rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);margin-left:12px;"></span>
+      </div>
+
+      <!-- Constitutional overrides table -->
+      <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:14px;">— cONSTITUTIONAL oVERRIDES —</p>
+      <div id="ai-overrides-empty" style="font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);padding:12px 0;">nO oVERRIDES yET — cLAUDE & hF aGREE oN eVERYTHING sO fAR.</div>
+      <table class="dash-table" id="ai-override-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>dATE</th>
+            <th>hF sAID</th>
+            <th>cLAUDE sAID</th>
+            <th>rEASONING</th>
+          </tr>
+        </thead>
+        <tbody id="ai-override-tbody"></tbody>
+      </table>
+
+      <!-- Export -->
+      <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin:28px 0 14px;">— eXPORT tRAINING dATA —</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="dash-btn" id="ai-export-mod" style="background:rgba(255,92,0,0.08);border-color:rgba(255,92,0,0.2);color:rgba(255,92,0,0.8);">mODERATION .jSONL</button>
+        <button class="dash-btn" id="ai-export-rec" style="background:rgba(255,92,0,0.08);border-color:rgba(255,92,0,0.2);color:rgba(255,92,0,0.8);">rECOMMENDATION .jSONL</button>
+        <button class="dash-btn" id="ai-export-all" style="background:rgba(255,92,0,0.08);border-color:rgba(255,92,0,0.2);color:rgba(255,92,0,0.8);">aLL .jSONL</button>
+      </div>
+    </div>
+
     <!-- ═══════════ MEMBER DETAIL MODAL ═══════════ -->
     <div id="memberModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
-      <div style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:28px 32px;max-width:420px;width:90%;position:relative;">
-        <button id="memberModalClose" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[x]</button>
+      <div class="adm-modal-inner" style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:28px 32px;max-width:420px;width:90%;position:relative;">
+        <button id="memberModalClose" class="adm-modal-close" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[x]</button>
         <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.3em;color:rgba(255,92,0,0.6);text-transform:uppercase;margin-bottom:18px;">mEMBER dETAIL</p>
         <div id="memberModalBody" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
@@ -2388,6 +2688,13 @@
       item.addEventListener('mouseleave', function(){ clearInterval(timer); label.textContent = original; });
     });
 
+    /* ── Vault-authed fetch helper ── */
+    function vaultFetch(path, opts) {
+      var token = sessionStorage.getItem('arts_vault_token') || '';
+      var headers = Object.assign({ 'X-Vault-Token': token }, (opts && opts.headers) || {});
+      return fetch(path, Object.assign({}, opts || {}, { headers: headers }));
+    }
+
     /* ── File list with descriptions ── */
     var FILES = [
       { name:'index.html',     desc:'Landing page — robot/human gate question' },
@@ -2445,18 +2752,14 @@
     ovPages.textContent = FILES.length + ' fILES';
     fileSearch.addEventListener('input', function(){ renderFiles(this.value); });
 
-    /* ── Members: fetch from API & render ── */
-    var MEMBERS_API = (location.hostname === 'admin.4-arts.com' || location.hostname === '4-arts.com')
-      ? '/api/users'
-      : 'https://4-arts.com/api/users';
-
+    /* ── Members: fetch from vault API & render ── */
     var _membersCache = [];
 
     function loadMembers(){
-      fetch(MEMBERS_API)
-        .then(function(r){ return r.json(); })
+      vaultFetch('/api/vault/users')
+        .then(function(r){ return r.ok ? r.json() : Promise.reject('auth'); })
         .then(function(data){
-          _membersCache = data.users || [];
+          _membersCache = data.users || data || [];
           renderMembers(_membersCache);
           updateTierCounts(_membersCache);
           updateOverviewCard(_membersCache);
@@ -2589,6 +2892,39 @@
     if(membersCard) membersCard.addEventListener('click', function(){ setTimeout(loadMembers, 80); });
     /* Initial load for overview count */
     loadMembers();
+
+    /* ── Logs: fetch from backend ── */
+    var _logsCache = [];
+    function loadLogs() {
+      var feed = document.getElementById('logFeed');
+      feed.innerHTML = '<div class="log-entry"><span class="log-ts" style="color:var(--text-muted)">lOADING...</span></div>';
+      vaultFetch('/api/admin/logs')
+        .then(function(r){ return r.ok ? r.json() : Promise.reject('auth'); })
+        .then(function(data){
+          _logsCache = data.logs || [];
+          renderLogs(_logsCache);
+        })
+        .catch(function(){
+          feed.innerHTML = '<div class="log-entry"><span class="log-ts" style="color:var(--danger)">fAILED tO lOAD — vAULT sESSION mAY hAVE eXPIRED</span></div>';
+        });
+    }
+    function renderLogs(logs) {
+      var feed = document.getElementById('logFeed');
+      if (!logs.length) {
+        feed.innerHTML = '<div class="log-entry"><span class="log-ts" style="color:var(--text-muted)">nO lOGS yET</span></div>';
+        return;
+      }
+      feed.innerHTML = logs.map(function(l) {
+        var ts = l.ts ? l.ts.replace('T', ' ').substring(0, 16) : '—';
+        var tagClass = l.tag || 'system';
+        return '<div class="log-entry">' +
+          '<span class="log-ts">' + ts + '</span>' +
+          '<span class="log-tag ' + tagClass + '">' + (l.tag || 'sYSTEM').toUpperCase() + '</span>' +
+          '<span class="log-msg">' + (l.msg || '') + '</span>' +
+        '</div>';
+      }).join('');
+    }
+    loadLogs();
 
     /* ── Log search ── */
     var logSearch = document.getElementById('logSearch');
@@ -3133,12 +3469,265 @@
   });
 
   /* ══════════════════════════════════════
+     REWARDS SYSTEM ENGINE
+     ══════════════════════════════════════ */
+
+  var DEFAULT_REWARDS = [
+    { id:'coupon_10',  label:'10% aPPaREL cOUPON',     cost:500,  type:'coupon',     detail:'10%, 30d, ARTS-10-REWARD',  active:true },
+    { id:'coupon_20',  label:'20% aPPaREL cOUPON',     cost:1000, type:'coupon',     detail:'20%, 30d, ARTS-20-REWARD',  active:true },
+    { id:'mem_brig',   label:'fREE BRIGaDIER (1 mO)',  cost:2000, type:'membership', detail:'BRIGaDIER, 30d',            active:true },
+    { id:'mem_cur',    label:'fREE CURaTOR (1 mO)',     cost:5000, type:'membership', detail:'CURaTOR, 30d',              active:true },
+    { id:'badge_patron', label:'pROFILE bADGE: pATRON', cost:300,  type:'badge',     detail:'patron_badge',              active:true },
+    { id:'feat_spot',  label:'fEATURED aRTIST sPOT',   cost:1500, type:'perk',       detail:'7d featured',               active:true }
+  ];
+
+  var DEFAULT_REFERRAL = { referrer_bonus:100, referee_bonus:50, max_referrals:20, active:true };
+  var DEFAULT_STREAK   = { m7:1.5, m14:2, m30:3, daily_cap:75, streak_cap:30, active:true };
+
+  function getRewardsConfig(){
+    try { var c = JSON.parse(localStorage.getItem('arts_rewards_config')); if(c && c.length) return c; } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT_REWARDS));
+  }
+  function getReferralConfig(){
+    try { var c = JSON.parse(localStorage.getItem('arts_referral_config')); if(c) return c; } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT_REFERRAL));
+  }
+  function getStreakConfig(){
+    try { var c = JSON.parse(localStorage.getItem('arts_streak_config')); if(c) return c; } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT_STREAK));
+  }
+
+  function rwEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function renderRewardCatalog(rewards){
+    var grid = document.getElementById('rw-catalog-grid');
+    grid.innerHTML = '';
+    rewards.forEach(function(rw, i){
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.setAttribute('data-rw-idx', i);
+      var typeBadge = rw.type === 'coupon' ? 'var(--accent)' : rw.type === 'membership' ? 'var(--blue)' : rw.type === 'badge' ? 'var(--pending)' : 'var(--success)';
+      card.innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<span style="font-size:0.52rem;font-weight:700;letter-spacing:0.14em;color:' + typeBadge + ';text-transform:uppercase;">' + rwEsc(rw.type) + '</span>' +
+          '<button onclick="removeReward('+i+')" style="background:transparent;border:1px solid rgba(255,255,255,0.14);color:var(--text-dim);font-size:0.52rem;padding:1px 6px;border-radius:3px;cursor:pointer;font-weight:300;">[x]</button>' +
+        '</div>' +
+        '<p style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;margin-bottom:8px;">' + rwEsc(rw.label) + '</p>' +
+        '<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">' +
+          '<span style="color:var(--accent);font-weight:700;font-size:1.1rem;">' + rw.cost + '</span>' +
+          '<span style="font-size:0.52rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>' +
+        '</div>' +
+        '<p style="font-size:0.48rem;color:var(--text-muted);letter-spacing:0.08em;font-family:var(--mono);">' + rwEsc(rw.detail) + '</p>' +
+        '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;">' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:' + (rw.active ? 'var(--success)' : 'var(--danger)') + ';"></span>' +
+          '<span style="font-size:0.48rem;font-weight:600;letter-spacing:0.12em;color:' + (rw.active ? 'var(--success)' : 'var(--danger)') + ';">' + (rw.active ? 'aCTIVE' : 'dISABLED') + '</span>' +
+          '<button onclick="toggleRewardActive('+i+')" style="margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,0.14);color:var(--text-dim);font-size:0.42rem;padding:2px 6px;border-radius:3px;cursor:pointer;font-weight:300;">' + (rw.active ? 'dISABLE' : 'eNABLE') + '</button>' +
+        '</div>';
+      grid.appendChild(card);
+    });
+  }
+
+  var _rwCatalog = [];
+
+  function toggleRewardActive(idx){
+    _rwCatalog[idx].active = !_rwCatalog[idx].active;
+    renderRewardCatalog(_rwCatalog);
+  }
+
+  function removeReward(idx){
+    _rwCatalog.splice(idx, 1);
+    renderRewardCatalog(_rwCatalog);
+  }
+
+  function addReward(){
+    var label = document.getElementById('rw-new-label').value.trim();
+    var cost  = parseInt(document.getElementById('rw-new-cost').value, 10);
+    var type  = document.getElementById('rw-new-type').value;
+    var detail = document.getElementById('rw-new-detail').value.trim();
+    if(!label || isNaN(cost) || cost < 0){
+      document.getElementById('rw-new-label').style.borderColor = 'var(--danger)';
+      setTimeout(function(){ document.getElementById('rw-new-label').style.borderColor = ''; }, 1500);
+      return;
+    }
+    var id = type + '_' + Date.now().toString(36);
+    _rwCatalog.push({ id:id, label:label, cost:cost, type:type, detail:detail, active:true });
+    renderRewardCatalog(_rwCatalog);
+    document.getElementById('rw-new-label').value = '';
+    document.getElementById('rw-new-cost').value = '';
+    document.getElementById('rw-new-detail').value = '';
+  }
+
+  var _rwRefActive = true;
+  var _rwStreakActive = true;
+
+  function toggleReferralActive(){
+    _rwRefActive = !_rwRefActive;
+    var dot = document.getElementById('rw-ref-dot');
+    var txt = document.getElementById('rw-ref-status-text');
+    var btn = document.getElementById('rw-ref-toggle');
+    dot.style.background = _rwRefActive ? 'var(--success)' : 'var(--danger)';
+    txt.textContent = _rwRefActive ? 'aCTIVE' : 'dISABLED';
+    txt.style.color = _rwRefActive ? 'var(--success)' : 'var(--danger)';
+    btn.textContent = _rwRefActive ? 'dISABLE' : 'eNABLE';
+  }
+
+  function toggleStreakActive(){
+    _rwStreakActive = !_rwStreakActive;
+    var dot = document.getElementById('rw-streak-dot');
+    var txt = document.getElementById('rw-streak-status-text');
+    var btn = document.getElementById('rw-streak-toggle');
+    dot.style.background = _rwStreakActive ? 'var(--success)' : 'var(--danger)';
+    txt.textContent = _rwStreakActive ? 'aCTIVE' : 'dISABLED';
+    txt.style.color = _rwStreakActive ? 'var(--success)' : 'var(--danger)';
+    btn.textContent = _rwStreakActive ? 'dISABLE' : 'eNABLE';
+  }
+
+  function saveRewardsConfig(){
+    localStorage.setItem('arts_rewards_config', JSON.stringify(_rwCatalog));
+
+    var refCfg = {
+      referrer_bonus: parseInt(document.getElementById('rw-ref-referrer').value,10) || 100,
+      referee_bonus:  parseInt(document.getElementById('rw-ref-referee').value,10)  || 50,
+      max_referrals:  parseInt(document.getElementById('rw-ref-max').value,10)      || 20,
+      active: _rwRefActive
+    };
+    localStorage.setItem('arts_referral_config', JSON.stringify(refCfg));
+
+    var streakCfg = {
+      m7:         parseFloat(document.getElementById('rw-streak-7').value)          || 1.5,
+      m14:        parseFloat(document.getElementById('rw-streak-14').value)         || 2,
+      m30:        parseFloat(document.getElementById('rw-streak-30').value)         || 3,
+      daily_cap:  parseInt(document.getElementById('rw-streak-cap-daily').value,10) || 75,
+      streak_cap: parseInt(document.getElementById('rw-streak-cap-days').value,10)  || 30,
+      active: _rwStreakActive
+    };
+    localStorage.setItem('arts_streak_config', JSON.stringify(streakCfg));
+
+    updateRewardsOverview();
+
+    var btn = document.getElementById('rw-save-btn');
+    var status = document.getElementById('rw-save-status');
+    btn.textContent = '\u2713 sAVED';
+    btn.style.color = 'rgba(110,230,110,0.75)';
+    btn.style.borderColor = 'rgba(110,230,110,0.3)';
+    status.textContent = 'saved ' + new Date().toLocaleTimeString();
+    setTimeout(function(){
+      btn.textContent = 'sAVE aLL cHANGES';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1800);
+  }
+
+  function resetRewardsConfig(){
+    if(!confirm('Reset all rewards config to defaults?')) return;
+    localStorage.removeItem('arts_rewards_config');
+    localStorage.removeItem('arts_referral_config');
+    localStorage.removeItem('arts_streak_config');
+    loadRewardsConfig();
+    var status = document.getElementById('rw-save-status');
+    status.textContent = 'reset to defaults';
+    setTimeout(function(){ status.textContent = ''; }, 2000);
+  }
+
+  function loadRewardsConfig(){
+    _rwCatalog = getRewardsConfig();
+    renderRewardCatalog(_rwCatalog);
+
+    var ref = getReferralConfig();
+    document.getElementById('rw-ref-referrer').value = ref.referrer_bonus;
+    document.getElementById('rw-ref-referee').value  = ref.referee_bonus;
+    document.getElementById('rw-ref-max').value      = ref.max_referrals;
+    _rwRefActive = ref.active !== false;
+    var dot = document.getElementById('rw-ref-dot');
+    var txt = document.getElementById('rw-ref-status-text');
+    var btn = document.getElementById('rw-ref-toggle');
+    dot.style.background = _rwRefActive ? 'var(--success)' : 'var(--danger)';
+    txt.textContent = _rwRefActive ? 'aCTIVE' : 'dISABLED';
+    txt.style.color = _rwRefActive ? 'var(--success)' : 'var(--danger)';
+    btn.textContent = _rwRefActive ? 'dISABLE' : 'eNABLE';
+
+    var sk = getStreakConfig();
+    document.getElementById('rw-streak-7').value         = sk.m7;
+    document.getElementById('rw-streak-14').value        = sk.m14;
+    document.getElementById('rw-streak-30').value        = sk.m30;
+    document.getElementById('rw-streak-cap-daily').value = sk.daily_cap;
+    document.getElementById('rw-streak-cap-days').value  = sk.streak_cap;
+    _rwStreakActive = sk.active !== false;
+    var sdot = document.getElementById('rw-streak-dot');
+    var stxt = document.getElementById('rw-streak-status-text');
+    var sbtn = document.getElementById('rw-streak-toggle');
+    sdot.style.background = _rwStreakActive ? 'var(--success)' : 'var(--danger)';
+    stxt.textContent = _rwStreakActive ? 'aCTIVE' : 'dISABLED';
+    stxt.style.color = _rwStreakActive ? 'var(--success)' : 'var(--danger)';
+    sbtn.textContent = _rwStreakActive ? 'dISABLE' : 'eNABLE';
+
+    loadRedemptionLog();
+    updateRewardsOverview();
+  }
+
+  function loadRedemptionLog(){
+    var entries = [];
+    try { entries = JSON.parse(localStorage.getItem('arts_redemptions') || '[]'); } catch(e){}
+    var tbody = document.getElementById('rw-redemption-tbody');
+    var empty = document.getElementById('rw-redemption-empty');
+    var table = document.getElementById('rw-redemption-table');
+    tbody.innerHTML = '';
+    if(!entries.length){
+      table.style.display = 'none';
+      empty.style.display = '';
+      return;
+    }
+    table.style.display = '';
+    empty.style.display = 'none';
+    entries.slice().reverse().forEach(function(e){
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + new Date(e.ts).toLocaleDateString() + '</td>' +
+        '<td>' + rwEsc(e.label) + '</td>' +
+        '<td style="color:var(--accent);font-family:var(--mono);">-' + e.cost + '</td>' +
+        '<td>' + rwEsc(e.type) + '</td>' +
+        '<td style="font-family:var(--mono);font-size:0.58rem;">' + rwEsc(e.code || '—') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function updateRewardsOverview(){
+    var el = document.getElementById('ov-rw-count');
+    if(el) el.textContent = _rwCatalog.filter(function(r){return r.active;}).length;
+    var rdEl = document.getElementById('ov-rw-redemptions');
+    if(rdEl){
+      try { var rd = JSON.parse(localStorage.getItem('arts_redemptions') || '[]'); rdEl.textContent = rd.length; } catch(e){ rdEl.textContent = '0'; }
+    }
+    var refEl = document.getElementById('ov-rw-referrals');
+    if(refEl) refEl.textContent = _rwRefActive ? 'aCTIVE' : 'oFF';
+    var skEl = document.getElementById('ov-rw-streaks');
+    if(skEl) skEl.textContent = _rwStreakActive ? 'aCTIVE' : 'oFF';
+  }
+
+  loadRewardsConfig();
+  document.querySelectorAll('.nav-item[data-section="rewards"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadRewardsConfig, 80); });
+  });
+
+  /* ══════════════════════════════════════
      FEEDBACK ANALYSIS ENGINE
      ══════════════════════════════════════ */
   function fbEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function loadFeedback() {
-    var entries = [];
-    try { entries = JSON.parse(localStorage.getItem('arts_feedback') || '[]'); } catch(e){}
+    /* Try backend first, fall back to localStorage */
+    vaultFetch('/api/admin/feedback')
+      .then(function(r){ return r.ok ? r.json() : Promise.reject('not ok'); })
+      .then(function(data){
+        _renderFeedback(data.feedback || []);
+      })
+      .catch(function(){
+        var entries = [];
+        try { entries = JSON.parse(localStorage.getItem('arts_feedback') || '[]'); } catch(e){}
+        _renderFeedback(entries);
+      });
+  }
+
+  function _renderFeedback(entries) {
 
     var tableEl  = document.getElementById('fb-table');
     var tbodyEl  = document.getElementById('fb-tbody');
@@ -3162,23 +3751,25 @@
     /* ── Render table ── */
     tbodyEl.innerHTML = '';
     entries.slice().reverse().forEach(function(e) {
-      var d = new Date(e.ts);
+      var d = new Date(e.created_at || e.ts);
       var dateStr = d.toISOString().substring(0, 10);
       var stars = '';
       for (var i = 1; i <= 5; i++) {
         stars += i <= e.rating ? '★' : '☆';
       }
-      var sentiment = getSentiment(e.text, e.rating);
+      var sentiment = getSentiment(e.text, e.rating, e);
+      var isAI = !!(e.ai_sentiment || e.ai_topics);
       var sentStyle = sentiment === 'pOSITIVE' ?
         'color:var(--success)' : sentiment === 'nEGaTIVE' ?
         'color:var(--danger)' : 'color:var(--text-dim)';
+      var aiBadge = isAI ? '<span style="font-size:0.42rem;background:rgba(255,92,0,0.15);color:#FF5C00;padding:1px 4px;border-radius:2px;margin-left:4px;letter-spacing:0.08em;">aI</span>' : '';
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td style="font-family:var(--mono);font-size:0.68rem;">' + fbEsc(dateStr) + '</td>' +
         '<td style="letter-spacing:0.05em;color:#FF5C00;">' + stars + '</td>' +
         '<td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + fbEsc(e.text) + '">' + fbEsc(e.text) + '</td>' +
         '<td style="font-size:0.62rem;color:var(--text-dim);">' + fbEsc(e.page || '—') + '</td>' +
-        '<td style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;' + sentStyle + '">' + sentiment + '</td>';
+        '<td style="font-size:0.62rem;font-weight:700;letter-spacing:0.14em;' + sentStyle + '">' + sentiment + aiBadge + '</td>';
       tbodyEl.appendChild(tr);
     });
 
@@ -3186,7 +3777,12 @@
     runBotAnalysis(entries);
   }
 
-  function getSentiment(text, rating) {
+  function getSentiment(text, rating, entry) {
+    /* Use AI sentiment if available */
+    if(entry && entry.ai_sentiment && entry.ai_sentiment.label){
+      return entry.ai_sentiment.label;
+    }
+    /* Fallback: keyword matching */
     var t = (text || '').toLowerCase();
     var posWords = ['great','love','amazing','awesome','perfect','good','nice','excellent','fantastic','beautiful','clean','fast','easy','smooth','intuitive','cool','brilliant'];
     var negWords = ['bad','broken','wrong','error','confusing','slow','ugly','hard','difficult','worst','terrible','awful','hate','bug','issue','problem','crash','fail','weird','boring'];
@@ -3198,7 +3794,12 @@
     return 'nEUTRaL';
   }
 
-  function getTopics(text) {
+  function getTopics(text, entry) {
+    /* Use AI topics if available */
+    if(entry && entry.ai_topics && entry.ai_topics.length){
+      return entry.ai_topics.map(function(t){ return t.topic; });
+    }
+    /* Fallback: keyword matching */
     var t = (text || '').toLowerCase();
     var topics = {
       'dESIGN':      ['design','look','visual','layout','color','font','style','ui','interface','clean','beautiful','aesthetic'],
@@ -3220,11 +3821,12 @@
     var total      = entries.length;
     var sumRating  = entries.reduce(function(a,e){ return a + (e.rating||0); }, 0);
     var avgRating  = total ? (sumRating / total).toFixed(1) : 0;
-    var positives  = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='pOSITIVE'; });
-    var negatives  = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEGaTIVE'; });
-    var neutrals   = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEUTRaL'; });
+    var positives  = entries.filter(function(e){ return getSentiment(e.text,e.rating,e)==='pOSITIVE'; });
+    var negatives  = entries.filter(function(e){ return getSentiment(e.text,e.rating,e)==='nEGaTIVE'; });
+    var neutrals   = entries.filter(function(e){ return getSentiment(e.text,e.rating,e)==='nEUTRaL'; });
+    var aiCount    = entries.filter(function(e){ return !!(e.ai_sentiment||e.ai_topics); }).length;
     var topicCounts= {};
-    entries.forEach(function(e){ getTopics(e.text).forEach(function(t){ topicCounts[t]=(topicCounts[t]||0)+1; }); });
+    entries.forEach(function(e){ getTopics(e.text,e).forEach(function(t){ topicCounts[t]=(topicCounts[t]||0)+1; }); });
 
     /* Score grid */
     var scoreGrid = document.getElementById('fb-score-grid');
@@ -3233,7 +3835,8 @@
       { label:'aVG rATING',   value: avgRating + ' / 5', color: parseFloat(avgRating)>=4?'var(--success)':parseFloat(avgRating)>=3?'var(--pending)':'var(--danger)' },
       { label:'pOSITIVE',     value: positives.length + ' (' + Math.round(100*positives.length/total) + '%)', color:'var(--success)' },
       { label:'nEGaTIVE',     value: negatives.length + ' (' + Math.round(100*negatives.length/total) + '%)', color:'var(--danger)' },
-      { label:'nEUTRaL',      value: neutrals.length + ' (' + Math.round(100*neutrals.length/total) + '%)',  color:'var(--text-dim)' }
+      { label:'nEUTRaL',      value: neutrals.length + ' (' + Math.round(100*neutrals.length/total) + '%)',  color:'var(--text-dim)' },
+      { label:'aI aNaLYZED',  value: aiCount + ' / ' + total, color:'#FF5C00' }
     ];
     cards.forEach(function(c){
       var div = document.createElement('div');
@@ -3270,15 +3873,31 @@
       negEl.innerHTML = '<span style="font-size:0.62rem;color:var(--text-muted);">nO nEGaTIVE fEEDBaCK — gREaT sIGN!</span>';
     }
 
-    /* Topics */
+    /* Topics — with AI confidence when available */
     var topicsEl = document.getElementById('fb-topics');
     topicsEl.innerHTML = '';
+    /* Collect avg AI confidence per topic */
+    var topicAIScores = {};
+    var topicAICounts = {};
+    entries.forEach(function(e){
+      if(e.ai_topics){
+        e.ai_topics.forEach(function(t){
+          topicAIScores[t.topic] = (topicAIScores[t.topic]||0) + (t.score||0);
+          topicAICounts[t.topic] = (topicAICounts[t.topic]||0) + 1;
+        });
+      }
+    });
     var sortedTopics = Object.keys(topicCounts).sort(function(a,b){ return topicCounts[b]-topicCounts[a]; });
     if (sortedTopics.length) {
       sortedTopics.forEach(function(t){
         var pill = document.createElement('span');
         pill.style.cssText = 'font-size:0.52rem;font-weight:700;letter-spacing:0.18em;padding:4px 10px;border:1px solid rgba(255,255,255,0.12);border-radius:3px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.03);';
-        pill.textContent = t + ' ×' + topicCounts[t];
+        var label = t + ' \u00d7' + topicCounts[t];
+        if(topicAICounts[t]){
+          var avg = Math.round((topicAIScores[t]/topicAICounts[t])*100);
+          label += ' (' + avg + '%)';
+        }
+        pill.textContent = label;
         topicsEl.appendChild(pill);
       });
     } else {
@@ -3287,7 +3906,7 @@
   }
 
   function clearFeedback() {
-    if (!confirm('Delete all feedback entries?')) return;
+    if (!confirm('Clear local feedback cache? (Server data is preserved)')) return;
     localStorage.removeItem('arts_feedback');
     loadFeedback();
   }
@@ -3298,27 +3917,32 @@
   });
 
   /* Populate overview feedback card on init */
+  function _updateFbOverview(entries) {
+    var total = entries.length;
+    var countEl = document.getElementById('ov-fb-count');
+    var avgEl   = document.getElementById('ov-fb-avg');
+    var posEl   = document.getElementById('ov-fb-pos');
+    var negEl   = document.getElementById('ov-fb-neg');
+    if (!countEl) return;
+    countEl.textContent = total || '0';
+    if (total) {
+      var sum = entries.reduce(function(a,e){ return a+(e.rating||0); }, 0);
+      avgEl.textContent = (sum/total).toFixed(1) + ' / 5';
+      var pos = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='pOSITIVE'; }).length;
+      var neg = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEGaTIVE'; }).length;
+      posEl.textContent = pos + ' (' + Math.round(100*pos/total) + '%)';
+      negEl.textContent = neg + ' (' + Math.round(100*neg/total) + '%)';
+    } else {
+      avgEl.textContent = '—'; posEl.textContent = '—'; negEl.textContent = '—';
+    }
+  }
   (function(){
-    try {
-      var entries = JSON.parse(localStorage.getItem('arts_feedback') || '[]');
-      var total = entries.length;
-      var countEl = document.getElementById('ov-fb-count');
-      var avgEl   = document.getElementById('ov-fb-avg');
-      var posEl   = document.getElementById('ov-fb-pos');
-      var negEl   = document.getElementById('ov-fb-neg');
-      if (!countEl) return;
-      countEl.textContent = total || '0';
-      if (total) {
-        var sum = entries.reduce(function(a,e){ return a+(e.rating||0); }, 0);
-        avgEl.textContent = (sum/total).toFixed(1) + ' / 5';
-        var pos = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='pOSITIVE'; }).length;
-        var neg = entries.filter(function(e){ return getSentiment(e.text,e.rating)==='nEGaTIVE'; }).length;
-        posEl.textContent = pos + ' (' + Math.round(100*pos/total) + '%)';
-        negEl.textContent = neg + ' (' + Math.round(100*neg/total) + '%)';
-      } else {
-        avgEl.textContent = '—'; posEl.textContent = '—'; negEl.textContent = '—';
-      }
-    } catch(e){}
+    vaultFetch('/api/admin/feedback')
+      .then(function(r){ return r.ok ? r.json() : Promise.reject('not ok'); })
+      .then(function(data){ _updateFbOverview(data.feedback || []); })
+      .catch(function(){
+        try { _updateFbOverview(JSON.parse(localStorage.getItem('arts_feedback') || '[]')); } catch(e){}
+      });
   })();
 
   /* ═══════════ SALES DASHBOARD ═══════════ */
@@ -3575,6 +4199,125 @@
   document.querySelectorAll('.nav-item[data-section="verification"]').forEach(function(n){
     n.addEventListener('click', function(){ setTimeout(loadVerifications, 80); });
   });
+
+  /* ═══════════ AI LEARNING ═══════════ */
+  function loadAiLearning() {
+    vaultFetch('/api/admin/ai-learning')
+      .then(function(r){ return r.ok ? r.json() : Promise.reject('auth'); })
+      .then(function(data){
+        // Training data counts
+        var c = data.counts || {};
+        document.getElementById('ai-mod-count').textContent = (c.moderation || 0).toLocaleString();
+        document.getElementById('ai-rec-count').textContent = (c.recommendation || 0).toLocaleString();
+        document.getElementById('ai-override-count').textContent = (c.moderation_override || 0).toLocaleString();
+        document.getElementById('ai-total').textContent = (data.total || 0).toLocaleString();
+
+        // Agreement
+        var a7 = data.agreement_7d || {};
+        var a30 = data.agreement_30d || {};
+        document.getElementById('ai-agree-7d').textContent = a7.rate ? a7.rate + '% (' + a7.total + ')' : 'n/a';
+        document.getElementById('ai-agree-30d').textContent = a30.rate ? a30.rate + '% (' + a30.total + ')' : 'n/a';
+
+        var drift = data.config && data.config.drift_alert === '1';
+        var driftEl = document.getElementById('ai-drift');
+        driftEl.textContent = drift ? 'wARNING' : 'oK';
+        driftEl.style.color = drift ? 'rgba(255,80,80,0.85)' : 'rgba(110,230,110,0.85)';
+
+        // Savings
+        var s = data.savings || {};
+        document.getElementById('ai-skipped').textContent = (s.skipped || 0).toLocaleString();
+        document.getElementById('ai-escalated').textContent = (s.escalated || 0).toLocaleString();
+        document.getElementById('ai-savings-pct').textContent = (s.rate || 0) + '%';
+
+        // Config
+        var cfg = data.config || {};
+        document.getElementById('ai-nsfw-skip').textContent = cfg.nsfw_skip_threshold || '--';
+        document.getElementById('ai-nsfw-esc').textContent = cfg.nsfw_escalate_threshold || '--';
+        document.getElementById('ai-text-skip').textContent = cfg.text_mod_skip_threshold || '--';
+
+        var loopOn = cfg.feedback_loop_enabled === '1';
+        var loopEl = document.getElementById('ai-loop-status');
+        loopEl.textContent = loopOn ? 'oN' : 'oFF';
+        loopEl.style.color = loopOn ? 'rgba(110,230,110,0.85)' : 'rgba(255,80,80,0.6)';
+
+        var toggleBtn = document.getElementById('ai-toggle-loop');
+        toggleBtn.textContent = loopOn ? 'dISABLE fEEDBACK lOOP' : 'eNABLE fEEDBACK lOOP';
+        toggleBtn.style.background = loopOn ? 'rgba(255,80,80,0.1)' : 'rgba(110,230,110,0.1)';
+        toggleBtn.style.borderColor = loopOn ? 'rgba(255,80,80,0.25)' : 'rgba(110,230,110,0.25)';
+        toggleBtn.style.color = loopOn ? 'rgba(255,80,80,0.75)' : 'rgba(110,230,110,0.75)';
+
+        var note = document.getElementById('ai-loop-note');
+        if (!loopOn && (data.total || 0) < 50) {
+          note.textContent = 'rECOMMENDED: wAIT fOR 50+ sAMPLES bEFORE eNABLING (' + (data.total || 0) + ' cURRENT)';
+        } else {
+          note.textContent = '';
+        }
+
+        // Overrides table
+        var overrides = data.overrides || [];
+        var tbody = document.getElementById('ai-override-tbody');
+        var table = document.getElementById('ai-override-table');
+        var empty = document.getElementById('ai-overrides-empty');
+        tbody.innerHTML = '';
+        if (overrides.length > 0) {
+          table.style.display = '';
+          empty.style.display = 'none';
+          overrides.forEach(function(o){
+            var hfPred = ''; var claudeLabel = ''; var reason = '';
+            try { var hp = JSON.parse(o.hf_prediction); hfPred = hp.hf_said || hp.nsfw_score || JSON.stringify(hp); } catch(e){ hfPred = o.hf_prediction; }
+            claudeLabel = o.claude_label || '--';
+            try { var r = JSON.parse(o.reasoning); reason = r.why || o.reasoning; } catch(e){ reason = o.reasoning; }
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + (o.created_at || '').slice(0,10) + '</td><td>' + hfPred + '</td><td>' + claudeLabel + '</td><td style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + reason + '</td>';
+            tbody.appendChild(tr);
+          });
+        } else {
+          table.style.display = 'none';
+          empty.style.display = '';
+        }
+
+        document.getElementById('ai-status-badge').textContent = data.total + ' sAMPLES · lAST rEFRESH ' + new Date().toLocaleTimeString();
+      })
+      .catch(function(){ });
+  }
+
+  // Toggle feedback loop
+  document.getElementById('ai-toggle-loop').addEventListener('click', function(){
+    var loopEl = document.getElementById('ai-loop-status');
+    var isOn = loopEl.textContent.trim() === 'oN';
+    var newVal = isOn ? '0' : '1';
+    vaultFetch('/api/admin/ai-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'feedback_loop_enabled', value: newVal })
+    }).then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+      .then(function(){ loadAiLearning(); });
+  });
+
+  // Export buttons
+  function aiExport(type) {
+    var url = '/api/admin/ai-export' + (type ? '?type=' + type : '');
+    vaultFetch(url)
+      .then(function(r){ return r.ok ? r.json() : Promise.reject('auth'); })
+      .then(function(data){
+        var lines = data.data || [];
+        var blob = new Blob([lines.join('\n')], { type: 'application/jsonl' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (data.task_type || 'training_data') + '.jsonl';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+  }
+  document.getElementById('ai-export-mod').addEventListener('click', function(){ aiExport('moderation'); });
+  document.getElementById('ai-export-rec').addEventListener('click', function(){ aiExport('recommendation'); });
+  document.getElementById('ai-export-all').addEventListener('click', function(){ aiExport(null); });
+
+  document.getElementById('ai-refresh-btn').addEventListener('click', loadAiLearning);
+  document.querySelectorAll('.nav-item[data-section="ai-learning"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadAiLearning, 80); });
+  });
   </script>
+<script src="../theme.js?v=4"></script>
 </body>
 </html>

@@ -19,12 +19,13 @@
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — TRaDE + CONNeCT</title>
-  <!-- Gate: redirect to CAPTCHA if not verified; lock bg immediately to kill white flash -->
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link rel="preload" as="image" href="assets/bear.png">
@@ -161,18 +162,16 @@
 
     /* Guide card overrides */
     .guide-overlay { position:fixed; inset:0; z-index:10000; pointer-events:none; }
-    .guide-dim { position:absolute; inset:0; background:var(--c-bg-overlay); pointer-events:auto; transition:opacity 0.3s; }
+    .guide-dim { position:absolute; inset:0; background:var(--c-bg-overlay); pointer-events:auto; transition:opacity 0.35s; opacity:0; }
+    .guide-dim.visible { opacity:1; }
     .guide-card {
       position:absolute; z-index:10001; pointer-events:auto;
-      padding:20px 22px 16px; max-width:320px; width:90vw;
+      max-width:340px; width:90vw;
       left:50%; transform:translateX(-50%);
-      top:50%; margin-top:-60px;
+      top:50%; margin-top:-80px;
+      opacity:0;
     }
-    .guide-btns { display:flex; gap:8px; justify-content:flex-end; }
-    .guide-btn {
-      font-family:var(--font); font-size:0.58rem; font-weight:var(--fw-bold);
-      letter-spacing:0.18em; padding:7px 16px; border-radius:var(--r-sm); cursor:crosshair;
-    }
+    .guide-card.visible { opacity:1; }
   </style>
 </head>
 <body>
@@ -387,6 +386,7 @@
     }
     document.addEventListener('click',function(ev){
       var a=ev.target.closest('a[href]');
+      if(window._guideActive){if(a){ev.preventDefault();ev.stopPropagation();}return;}
       if(!a)return;
       var h=a.getAttribute('href');
       if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
@@ -666,37 +666,168 @@
   <script>
   (function(){
     if(localStorage.getItem('arts_id_hash')||localStorage.getItem('arts_guide_done'))return;
+    window._guideActive=true;
+
+    var POOL='▒░▓█◆◇○●◎△▽▼►◄≡≈≠±×÷∞∑∏∆'.split('');
     var steps=[
-      {title:'wELCOME tO [aRTS]',desc:'a tRADING nETWORK fOR aRT cOLLECTORS aND cREATORS, bORN iN bERLIN.'},
-      {title:'bROWSE tHE gALLERY',desc:'tAP "aRT" iN tHE nAV tO eXPLORE aVAILABLE pIECES fROM aRTISTS wORLDWIDE.'},
-      {title:'vIEW dETAILS',desc:'cLICK aNY pIECE tO sEE fULL dETAILS — iMAGES, dIMENSIONS, pROVENANCE, aND mORE.'},
-      {title:'iNQUIRE',desc:'fOUND sOMETHING yOU lIKE? hIT "iNQUiRE" tO sTART a cONVERSATION wITH tHE sELLER.'},
-      {title:'jOIN tHE nETWORK',desc:'bECOME a mEMBER tO uNLOCK fAVOURITES, bOUTIQUE aCCESS, aND mORE. fREE tIER aVAILABLE.'}
+      {icon:'◆', title:'wELCOME tO [aRTS]',   desc:'a tRADING nETWORK fOR aRT cOLLECTORS aND cREATORS, bORN iN bERLIN.', highlight:null},
+      {icon:'▦', title:'bROWSE tHE gALLERY',   desc:'tAP "aRT" iN tHE nAV tO eXPLORE aVAILABLE pIECES fROM aRTISTS wORLDWIDE.', highlight:'.site-nav a[href="art.html"]'},
+      {icon:'◎', title:'vIEW dETAILS',          desc:'cLICK aNY pIECE tO sEE fULL dETAILS — iMAGES, dIMENSIONS, pROVENANCE, aND mORE.', highlight:null},
+      {icon:'◈', title:'iNQUIRE',               desc:'fOUND sOMETHING yOU lIKE? hIT "TaLK" tO sTART a cONVERSATION wITH tHE sELLER.', highlight:'.site-nav a[href="inquire.html"]'},
+      {icon:'△', title:'jOIN tHE nETWORK',      desc:'bECOME a mEMBER tO uNLOCK fAVOURITES, bOUTIQUE aCCESS, aND mORE. fREE tIER aVAILABLE.', highlight:'#home-mark'}
     ];
-    var cur=0;
+    var cur=0, direction=1, prevHighlight=null;
+
+    /* Build DOM */
     var overlay=document.createElement('div');
     overlay.className='guide-overlay';
-    overlay.innerHTML='<div class="guide-dim"></div><div class="guide-card"><div class="guide-stripe"></div><p class="guide-step"></p><p class="guide-title"></p><p class="guide-desc"></p><div class="guide-btns"><button class="guide-btn guide-btn-skip">sKIP</button><button class="guide-btn guide-btn-next">nEXT</button></div></div>';
-    function render(){
+    var dotsHTML='';
+    for(var i=0;i<steps.length;i++) dotsHTML+='<button class="guide-dot'+(i===0?' active':'')+'" data-i="'+i+'"></button>';
+    overlay.innerHTML=
+      '<div class="guide-dim"></div>'+
+      '<div class="guide-card">'+
+        '<div class="guide-progress"><div class="guide-progress-fill" style="width:'+(100/steps.length)+'%"></div></div>'+
+        '<div class="guide-body">'+
+          '<div class="guide-content">'+
+            '<span class="guide-icon guide-el"></span>'+
+            '<p class="guide-title guide-el"></p>'+
+            '<p class="guide-desc guide-el"></p>'+
+          '</div>'+
+          '<div class="guide-dots">'+dotsHTML+'</div>'+
+          '<div class="guide-btns">'+
+            '<button class="guide-btn guide-btn-skip">sKIP</button>'+
+            '<button class="guide-btn guide-btn-next">nEXT</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+    var card=overlay.querySelector('.guide-card');
+    var dim=overlay.querySelector('.guide-dim');
+    var content=overlay.querySelector('.guide-content');
+    var iconEl=overlay.querySelector('.guide-icon');
+    var titleEl=overlay.querySelector('.guide-title');
+    var descEl=overlay.querySelector('.guide-desc');
+    var nextBtn=overlay.querySelector('.guide-btn-next');
+    var progressFill=overlay.querySelector('.guide-progress-fill');
+    var dots=overlay.querySelectorAll('.guide-dot');
+
+    /* Scramble effect for title */
+    function scrambleTitle(target){
+      var frames=14, rate=35, step=0;
+      var iv=setInterval(function(){
+        var settled=Math.floor((step/frames)*target.length);
+        var out='';
+        for(var i=0;i<target.length;i++){
+          out+=i<settled?target[i]:POOL[Math.floor(Math.random()*POOL.length)];
+        }
+        titleEl.textContent=out;
+        step++;
+        if(step>frames){clearInterval(iv);titleEl.textContent=target;}
+      },rate);
+    }
+
+    /* Stagger entrance */
+    function staggerIn(){
+      var els=content.querySelectorAll('.guide-el');
+      for(var i=0;i<els.length;i++) els[i].classList.remove('visible');
+      for(var j=0;j<els.length;j++){
+        (function(el,delay){
+          setTimeout(function(){el.classList.add('visible');},delay);
+        })(els[j], j*90);
+      }
+    }
+
+    /* Highlight nav element */
+    function setHighlight(selector){
+      if(prevHighlight){
+        var old=document.querySelector(prevHighlight);
+        if(old) old.classList.remove('guide-highlight');
+      }
+      prevHighlight=selector;
+      if(selector){
+        var el=document.querySelector(selector);
+        if(el) el.classList.add('guide-highlight');
+      }
+    }
+
+    /* Render current step */
+    function render(animate){
       var s=steps[cur];
-      overlay.querySelector('.guide-step').textContent=(cur+1)+' / '+steps.length;
-      overlay.querySelector('.guide-title').textContent=s.title;
-      overlay.querySelector('.guide-desc').textContent=s.desc;
-      overlay.querySelector('.guide-btn-next').textContent=cur===steps.length-1?'gOT iT':'nEXT';
+      progressFill.style.width=((cur+1)/steps.length*100)+'%';
+      for(var i=0;i<dots.length;i++){
+        dots[i].classList.remove('active','done');
+        if(i===cur) dots[i].classList.add('active');
+        else if(i<cur) dots[i].classList.add('done');
+      }
+      nextBtn.textContent=cur===steps.length-1?'gOT iT':'nEXT';
+      setHighlight(s.highlight);
+
+      if(animate){
+        var outClass=direction>0?'slide-out-left':'slide-out-right';
+        var inClass=direction>0?'slide-in-right':'slide-in-left';
+        content.classList.add(outClass);
+        setTimeout(function(){
+          iconEl.textContent=s.icon;
+          descEl.textContent=s.desc;
+          titleEl.textContent='';
+          content.classList.remove(outClass);
+          content.classList.add(inClass);
+          void content.offsetWidth;
+          content.classList.remove(inClass);
+          staggerIn();
+          scrambleTitle(s.title);
+        },280);
+      } else {
+        iconEl.textContent=s.icon;
+        descEl.textContent=s.desc;
+        staggerIn();
+        scrambleTitle(s.title);
+      }
     }
+
+    function goTo(idx,animate){
+      if(idx<0||idx>=steps.length||idx===cur)return;
+      direction=idx>cur?1:-1;
+      cur=idx;
+      render(animate!==false);
+    }
+
     function finish(){
-      localStorage.setItem('arts_guide_done','1');
-      overlay.querySelector('.guide-dim').style.opacity='0';
-      overlay.querySelector('.guide-card').style.opacity='0';
-      setTimeout(function(){if(overlay.parentNode)overlay.parentNode.removeChild(overlay);},350);
+      artsAuth.setSetting('arts_guide_done','1');
+      window._guideActive=false;
+      setHighlight(null);
+      card.classList.add('guide-exit');
+      dim.classList.remove('visible');
+      setTimeout(function(){if(overlay.parentNode)overlay.parentNode.removeChild(overlay);},400);
+      document.removeEventListener('keydown',onKey);
     }
-    render();
-    setTimeout(function(){document.body.appendChild(overlay);},1400);
-    overlay.querySelector('.guide-btn-next').addEventListener('click',function(){
-      cur++;if(cur>=steps.length)finish();else render();
+
+    function onKey(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();if(cur<steps.length-1)goTo(cur+1);else finish();}
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();if(cur>0)goTo(cur-1);}
+      else if(e.key==='Escape')finish();
+    }
+
+    /* Mount after delay, then render */
+    setTimeout(function(){
+      document.body.appendChild(overlay);
+      setTimeout(function(){
+        dim.classList.add('visible');
+        card.classList.add('visible');
+        render(false);
+      },30);
+    },1400);
+
+    /* Event listeners */
+    nextBtn.addEventListener('click',function(){
+      if(cur>=steps.length-1)finish();else goTo(cur+1);
     });
     overlay.querySelector('.guide-btn-skip').addEventListener('click',finish);
-    overlay.querySelector('.guide-dim').addEventListener('click',finish);
+    dim.addEventListener('click',finish);
+    document.addEventListener('keydown',onKey);
+    for(var d=0;d<dots.length;d++){
+      dots[d].addEventListener('click',function(){goTo(parseInt(this.getAttribute('data-i')));});
+    }
   })();
   </script>
 
@@ -718,38 +849,75 @@
     var banner=document.getElementById('gdpr-banner');
     banner.style.display='block';
     document.getElementById('gdpr-accept').addEventListener('click',function(){
-      localStorage.setItem('arts_gdpr_consent',new Date().toISOString());
+      artsAuth.setSetting('arts_gdpr_consent',new Date().toISOString());
       banner.style.display='none';
     });
     document.getElementById('gdpr-decline').addEventListener('click',function(){
-      localStorage.setItem('arts_gdpr_consent','declined');
+      artsAuth.setSetting('arts_gdpr_consent','declined');
       banner.style.display='none';
     });
   })();
   </script>
 
-  <!-- Daily login XP -->
+  <!-- Daily login XP + Streak system -->
   <script>
   (function(){
     try{
-      if(localStorage.getItem('arts_id_hash')){
-        var today=new Date().toISOString().slice(0,10);
-        if(localStorage.getItem('arts_xp_daily')!==today){
-          localStorage.setItem('arts_xp_daily',today);
-          var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
-          var dailyPts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.daily_login!=null)?ptsCfg.events.daily_login:25;
-          var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
-          localStorage.setItem('arts_points',String(cur+dailyPts));
-          var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
-          pending.push({label:'dAILY lOGIN',pts:dailyPts});
-          sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
-        }
+      if(!localStorage.getItem('arts_id_hash')) return;
+      var today=new Date().toISOString().slice(0,10);
+      if(localStorage.getItem('arts_xp_daily')===today) return;
+      artsAuth.setSetting('arts_xp_daily',today);
+
+      /* Points config */
+      var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
+      var basePts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.daily_login!=null)?ptsCfg.events.daily_login:25;
+
+      /* Streak tracking */
+      var streak={count:0,last_date:''};
+      try{var sd=JSON.parse(localStorage.getItem('arts_streak_data'));if(sd)streak=sd;}catch(e){}
+      var yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+      if(streak.last_date===yesterday){
+        streak.count++;
+      } else if(streak.last_date!==today){
+        streak.count=1;
       }
+      streak.last_date=today;
+      artsAuth.setSetting('arts_streak_data',JSON.stringify(streak));
+
+      /* Streak multiplier from config */
+      var skCfg=null;try{skCfg=JSON.parse(localStorage.getItem('arts_streak_config'));}catch(e){}
+      var mult=1;
+      var streakActive=!skCfg||skCfg.active!==false;
+      if(streakActive && streak.count>1){
+        var m7 =(skCfg&&skCfg.m7 )||1.5;
+        var m14=(skCfg&&skCfg.m14)||2;
+        var m30=(skCfg&&skCfg.m30)||3;
+        var cap=(skCfg&&skCfg.streak_cap)||30;
+        var effectiveDays=Math.min(streak.count,cap);
+        if(effectiveDays>=30) mult=m30;
+        else if(effectiveDays>=14) mult=m14;
+        else if(effectiveDays>=7) mult=m7;
+      }
+
+      var dailyPts=Math.round(basePts*mult);
+      var dailyCap=(skCfg&&skCfg.daily_cap)||75;
+      if(streakActive && dailyPts>dailyCap) dailyPts=dailyCap;
+
+      var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
+      localStorage.setItem('arts_points',String(cur+dailyPts));
+      var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
+      var lbl='dAILY lOGIN';
+      if(streakActive && mult>1) lbl='dAILY lOGIN ('+mult+'x sTREAK)';
+      pending.push({label:lbl,pts:dailyPts});
+      sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
     }catch(e){}
   })();
   </script>
 
   <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
+<script>if(artsAuth.isLoggedIn())artsAuth.syncSettings();</script>
+  <script src="hf-utils.js"></script>
   <script src="btn-fx.js"></script>
   <script>
     window.artsCornerAdd({label:'rEPORT',href:'report.html'});
@@ -850,11 +1018,73 @@
       submitEl.disabled=!(rating>0&&hasText);
     });
     submitEl.addEventListener('click',function(){
-      try{
-        var existing=JSON.parse(localStorage.getItem('arts_feedback')||'[]');
-        existing.push({ts:Date.now(),rating:rating,text:textEl.value.trim(),page:'home'});
-        localStorage.setItem('arts_feedback',JSON.stringify(existing));
-      }catch(e){}
+      var feedbackText=textEl.value.trim();
+      /* ── Toxicity pre-check (soft block) ── */
+      if(window.artsHF && artsHF.enabled() && artsHF.rateCheck() && !submitEl._toxCleared){
+        submitEl.disabled=true;
+        submitEl.textContent='cHECKING…';
+        artsHF.query('unitary/toxic-bert',{inputs:feedbackText}).then(function(r){
+          var toxic=r&&r[0]&&r[0].find(function(l){return l.label==='toxic';});
+          if(toxic&&toxic.score>0.7){
+            var warnEl=document.createElement('p');
+            warnEl.style.cssText='font-size:0.48rem;color:#FF5C00;letter-spacing:0.12em;margin-top:6px;';
+            warnEl.textContent='yOUR mESSaGE wAS fLaGGED — pLEaSE rEVISE';
+            textEl.parentNode.appendChild(warnEl);
+            submitEl.disabled=false;
+            submitEl.textContent='sEND';
+            return;
+          }
+          submitEl._toxCleared=true;
+          submitEl.click();
+        }).catch(function(){
+          submitEl._toxCleared=true;
+          submitEl.click();
+        });
+        return;
+      }
+      var entry={ts:Date.now(),rating:rating,text:feedbackText,page:'home'};
+
+      /* ── AI analysis (non-blocking — store immediately, enrich async) ── */
+      var aiDone=false;
+      function persist(){
+        if(aiDone)return; aiDone=true;
+        try{
+          var existing=JSON.parse(localStorage.getItem('arts_feedback')||'[]');
+          existing.push(entry);
+          localStorage.setItem('arts_feedback',JSON.stringify(existing));
+        }catch(e){}
+        if(window.artsAuth){
+          artsAuth.submitFeedback(rating,feedbackText,'home').catch(function(){});
+        }
+      }
+
+      /* Fire AI sentiment + topics in parallel, then persist enriched entry */
+      if(window.artsHF && artsHF.enabled() && artsHF.rateCheck()){
+        var sentimentP=artsHF.query('distilbert/distilbert-base-uncased-finetuned-sst-2-english',{inputs:feedbackText})
+          .then(function(r){
+            if(r&&r[0]){
+              var best=r[0].reduce(function(a,b){return b.score>a.score?b:a;},{score:0});
+              entry.ai_sentiment={label:best.label==='POSITIVE'?'pOSITIVE':'nEGaTIVE',score:Math.round(best.score*100)/100};
+            }
+          }).catch(function(){});
+        var topicsP=artsHF.query('facebook/bart-large-mnli',{
+          inputs:feedbackText,
+          parameters:{candidate_labels:['design','navigation','performance','content','pricing','boutique','account']}
+        }).then(function(r){
+            if(r&&r.labels){
+              var found=[];
+              var TOPIC_MAP={design:'dESIGN',navigation:'nAVIGaTION',performance:'pERFORMANCE',content:'cONTENT',pricing:'pRICING',boutique:'bOTIQUE',account:'iD / lOGIN'};
+              r.labels.forEach(function(l,i){if(r.scores[i]>0.3)found.push({topic:TOPIC_MAP[l]||l,score:Math.round(r.scores[i]*100)/100});});
+              if(found.length) entry.ai_topics=found;
+            }
+          }).catch(function(){});
+        Promise.all([sentimentP,topicsP]).then(persist).catch(persist);
+        /* Timeout fallback — persist after 8s regardless */
+        setTimeout(persist,8000);
+      } else {
+        persist();
+      }
+
       formEl.hidden=true;successEl.hidden=false;
       var fbCorner=document.getElementById('corner-feedback-item');
       if(fbCorner){fbCorner.textContent='tHaNKS \u2713';fbCorner.classList.add('submitted');}

@@ -19,6 +19,8 @@
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — aDD aRT</title>
   <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -34,43 +36,6 @@
       min-height: 100vh;
     }
 
-    /* ── Fixed header ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 2.4rem;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
 
     /* ── Main column ── */
     main {
@@ -409,9 +374,9 @@
       color: rgba(255,255,255,0.5);
       font-weight: 600;
     }
-    [data-theme="day"] .commission-breakdown { border-top-color: rgba(0,0,0,0.06); }
-    [data-theme="day"] .comm-line { color: rgba(0,0,0,0.28); }
-    [data-theme="day"] .comm-payout { color: rgba(0,0,0,0.5); }
+    [data-theme="day"] .commission-breakdown { border-top-color: rgba(0,0,0,0.08); }
+    [data-theme="day"] .comm-line { color: rgba(0,0,0,0.48); }
+    [data-theme="day"] .comm-payout { color: rgba(0,0,0,0.65); }
 
     /* ── Stripe Connect gate ── */
     .stripe-gate {
@@ -465,36 +430,15 @@
       letter-spacing: 0.18em;
       color: rgba(110,230,110,0.7);
     }
-    [data-theme="day"] .stripe-gate { border-color: rgba(0,0,0,0.08); background: rgba(0,0,0,0.02); }
-    [data-theme="day"] .stripe-gate-title { color: rgba(0,0,0,0.45); }
-    [data-theme="day"] .stripe-gate-text { color: rgba(0,0,0,0.28); }
+    [data-theme="day"] .stripe-gate { border-color: rgba(0,0,0,0.10); background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .stripe-gate-title { color: rgba(0,0,0,0.62); }
+    [data-theme="day"] .stripe-gate-text { color: rgba(0,0,0,0.48); }
     [data-theme="day"] .stripe-connected { color: rgba(40,160,80,0.7); }
 
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     header, nav, a, button { touch-action: manipulation; }
 
-    /* ── Mobile hamburger + overlay ── */
-    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
-    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
-    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
-    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
-    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
-    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
-    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
-    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
-    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
-
-    @media (max-width: 520px) {
-      header { padding: 18px 16px; }
-      nav { display: none; }
-      .burger { display:flex; gap:0; }
-      .burger span:not(.burger-label) { display:none; }
-      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
-      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
-      .mobile-id { display:block; }
-      .nav-overlay, .nav-overlay.is-open { transition:none; }
-    }
 
     /* ── Moderation panel ── */
     .mod-overlay {
@@ -664,50 +608,117 @@
 
     /* ── Day mode: mod panel ── */
     [data-theme="day"] .mod-overlay { background: rgba(255,255,255,0.88) !important; }
-    [data-theme="day"] .mod-panel { background: rgba(250,250,250,0.98) !important; border-color: rgba(0,0,0,0.1) !important; }
+    [data-theme="day"] .mod-panel { background: rgba(250,250,250,0.98) !important; border-color: rgba(0,0,0,0.12) !important; }
     [data-theme="day"] .mod-title { color: #000 !important; }
-    [data-theme="day"] .mod-subtitle { color: rgba(0,0,0,0.32) !important; }
-    [data-theme="day"] .mod-checks { border-color: rgba(0,0,0,0.08) !important; }
-    [data-theme="day"] .mod-check { border-bottom-color: rgba(0,0,0,0.06) !important; }
-    [data-theme="day"] .mod-icon.pending { color: rgba(0,0,0,0.15) !important; }
-    [data-theme="day"] .mod-icon.running { color: rgba(0,0,0,0.3) !important; }
-    [data-theme="day"] .mod-label { color: rgba(0,0,0,0.55) !important; }
-    [data-theme="day"] .mod-result { color: rgba(0,0,0,0.32) !important; }
+    [data-theme="day"] .mod-subtitle { color: rgba(0,0,0,0.52) !important; }
+    [data-theme="day"] .mod-checks { border-color: rgba(0,0,0,0.10) !important; }
+    [data-theme="day"] .mod-check { border-bottom-color: rgba(0,0,0,0.08) !important; }
+    [data-theme="day"] .mod-icon.pending { color: rgba(0,0,0,0.30) !important; }
+    [data-theme="day"] .mod-icon.running { color: rgba(0,0,0,0.50) !important; }
+    [data-theme="day"] .mod-label { color: rgba(0,0,0,0.68) !important; }
+    [data-theme="day"] .mod-result { color: rgba(0,0,0,0.52) !important; }
     [data-theme="day"] .mod-result.fail-msg { color: rgba(200,40,40,0.6) !important; }
     [data-theme="day"] .mod-result.pass-msg { color: rgba(40,160,80,0.6) !important; }
     [data-theme="day"] .mod-result.warn-msg { color: rgba(180,120,20,0.6) !important; }
-    [data-theme="day"] .mod-summary { border-color: rgba(0,0,0,0.08) !important; color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .mod-summary { border-color: rgba(0,0,0,0.10) !important; color: rgba(0,0,0,0.58) !important; }
     [data-theme="day"] .mod-summary.all-pass { border-color: rgba(40,160,80,0.2) !important; color: rgba(40,160,80,0.6) !important; }
     [data-theme="day"] .mod-summary.has-fail { border-color: rgba(200,40,40,0.15) !important; color: rgba(200,40,40,0.55) !important; }
-    [data-theme="day"] .btn-mod-close { color: rgba(0,0,0,0.35) !important; border-color: rgba(0,0,0,0.1) !important; }
-    [data-theme="day"] .btn-mod-close:hover { color: rgba(0,0,0,0.6) !important; }
+    [data-theme="day"] .btn-mod-close { color: rgba(0,0,0,0.55) !important; border-color: rgba(0,0,0,0.12) !important; }
+    [data-theme="day"] .btn-mod-close:hover { color: rgba(0,0,0,0.72) !important; }
 
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ─────────────────────────────────────────
+       DAY MODE OVERRIDES  (add.html)
+       Orange accent = #FF5C00
+    ───────────────────────────────────────── */
+
+    /* Page base */
+    [data-theme="day"] body { background: #fff; color: #000; }
+
+
+    /* Section label */
+    [data-theme="day"] .section-label { color: rgba(0,0,0,0.45); }
+
+    /* Form title */
+    [data-theme="day"] .form-title { color: #000; }
+
+    /* Upload zone */
+    [data-theme="day"] .upload-zone { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .upload-zone:hover { border-color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .upload-zone.has-image { border-color: rgba(0,0,0,0.08); }
+    [data-theme="day"] .upload-icon { color: rgba(0,0,0,0.38); }
+    [data-theme="day"] .upload-text { color: rgba(0,0,0,0.38); }
+    [data-theme="day"] .upload-change { color: rgba(0,0,0,0.48); background: rgba(255,255,255,0.55); }
+
+    /* Multi-upload slots */
+    [data-theme="day"] .upload-label { color: rgba(0,0,0,0.52); }
+    [data-theme="day"] .upload-slot { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .upload-slot:hover { border-color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .upload-slot.has-img { border-color: rgba(0,0,0,0.08); }
+    [data-theme="day"] .upload-slot .slot-hint { color: rgba(0,0,0,0.38); }
+    [data-theme="day"] .upload-slot .slot-remove { background: rgba(255,255,255,0.7); color: #000; }
+
+    /* Divider */
+    [data-theme="day"] .divider { background: rgba(0,0,0,0.09); }
+
+    /* Field labels */
+    [data-theme="day"] .field-group label { color: rgba(0,0,0,0.52); }
+
+    /* Field inputs + textareas */
+    [data-theme="day"] .field-group input,
+    [data-theme="day"] .field-group textarea { border-bottom-color: rgba(0,0,0,0.15); color: #000; }
+    [data-theme="day"] .field-group input::placeholder,
+    [data-theme="day"] .field-group textarea::placeholder { color: rgba(0,0,0,0.30); }
+    [data-theme="day"] .field-group input:focus,
+    [data-theme="day"] .field-group textarea:focus { border-bottom-color: rgba(0,0,0,0.62); }
+
+    /* Select */
+    [data-theme="day"] .field-group select { border-bottom-color: rgba(0,0,0,0.15); color: #000; }
+    [data-theme="day"] .field-group select option { background: #fff; color: #000; }
+    [data-theme="day"] .field-group select:focus { border-bottom-color: rgba(0,0,0,0.62); }
+
+    /* Checkbox label */
+    [data-theme="day"] .check-group label { color: rgba(0,0,0,0.68); }
+
+    /* Submit button (white bg → black bg + white text) */
+    [data-theme="day"] .btn-submit { background: #000; color: #fff; border-color: #000; border-right-color: rgba(255,255,255,0.18); }
+    [data-theme="day"] .btn-submit:hover:not(:disabled) { background: #FF5C00; border-color: #FF5C00; color: #000; }
+
+    /* Back button */
+    [data-theme="day"] .btn-back { color: #000; border-color: #000; }
+    [data-theme="day"] .btn-back:hover { background: #000; color: #fff; }
+
+    /* Submit note */
+    [data-theme="day"] .submit-note { color: rgba(0,0,0,0.42); }
+
+    /* Verification gate (inline styles — override with specificity) */
+    [data-theme="day"] #verify-gate div[style] { border-color: rgba(0,0,0,0.10) !important; background: rgba(0,0,0,0.02) !important; }
 </style>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-    <nav>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
       <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
-    <a href="id.html" class="mobile-id">[iD]</a>
-    <button class="burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
       <span class="burger-label">[aRTS]</span>
     </button>
   </header>
 
+  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
@@ -715,7 +726,8 @@
     <a href="boutique.html">bOUTIQUE</a>
     <a href="about.html">aBOUT</a>
     <a href="inquire.html">TaLK</a>
-    <a href="id.html" style="color:#FF5C00">[iD]</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
   <main>
@@ -773,6 +785,13 @@
           <span class="slot-hint">+</span>
           <button type="button" class="slot-remove" aria-label="remove">&times;</button>
         </div>
+      </div>
+
+      <!-- AI Auto-Tag Suggestions -->
+      <div id="ai-tag-area" style="display:none;margin-top:12px;">
+        <p style="font-size:0.42rem;letter-spacing:0.22em;font-weight:600;color:var(--c-text-secondary);margin-bottom:6px;">aI sUGGESTED tAGS <span style="font-size:0.38rem;background:rgba(255,92,0,0.15);color:#FF5C00;padding:1px 4px;border-radius:2px;margin-left:4px;">aI</span></p>
+        <div id="ai-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <p id="ai-caption" style="font-size:0.52rem;color:var(--c-text-secondary);margin-top:8px;font-style:italic;display:none;"></p>
       </div>
 
       <div class="divider"></div>
@@ -906,7 +925,8 @@
   <script>
   (function(){
     var slots = document.querySelectorAll('.upload-slot');
-    slots.forEach(function(slot){
+    var _aiRan = {};
+    slots.forEach(function(slot, slotIdx){
       var inp = slot.querySelector('input[type="file"]');
       var img = slot.querySelector('img');
       var rem = slot.querySelector('.slot-remove');
@@ -915,6 +935,8 @@
         if(!file) return;
         img.src = URL.createObjectURL(file);
         slot.classList.add('has-img');
+        /* Auto-tag first image only */
+        if(slotIdx === 0 && !_aiRan[0]) _runAutoTag(file);
       });
       rem.addEventListener('click', function(e){
         e.stopPropagation();
@@ -923,6 +945,64 @@
         slot.classList.remove('has-img');
       });
     });
+
+    function _runAutoTag(file){
+      if(!window.artsHF || !artsHF.enabled() || !artsHF.rateCheck()) return;
+      _aiRan[0] = true;
+      var tagArea = document.getElementById('ai-tag-area');
+      var tagsEl  = document.getElementById('ai-tags');
+      var capEl   = document.getElementById('ai-caption');
+      tagArea.style.display = '';
+      tagsEl.innerHTML = '<span style="font-size:0.46rem;color:var(--c-text-secondary);animation:pulse 1.2s infinite;">aNaLYZING…</span>';
+
+      /* Read file as blob for HF image API */
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        var dataUrl = ev.target.result;
+        /* Classification + captioning in parallel */
+        var classP = artsHF.image('google/vit-base-patch16-224', dataUrl).catch(function(){ return []; });
+        var captP  = artsHF.image('Salesforce/blip-image-captioning-base', dataUrl).catch(function(){ return []; });
+
+        Promise.all([classP, captP]).then(function(results){
+          var classes = results[0] || [];
+          var captions = results[1] || [];
+          tagsEl.innerHTML = '';
+
+          /* Show top 5 classification labels as clickable pills */
+          var shown = classes.slice(0, 5);
+          if(shown.length){
+            shown.forEach(function(c){
+              var pill = document.createElement('button');
+              pill.type = 'button';
+              pill.style.cssText = 'font-family:"Space Grotesk",sans-serif;font-size:0.46rem;font-weight:600;letter-spacing:0.14em;padding:3px 8px;border:1px solid rgba(255,92,0,0.3);border-radius:3px;color:#FF5C00;background:rgba(255,92,0,0.08);cursor:pointer;transition:opacity 0.15s;';
+              pill.textContent = c.label.replace(/_/g,' ');
+              pill.title = Math.round(c.score * 100) + '% confidence';
+              pill.addEventListener('click', function(){
+                /* Append to media field */
+                var mediaField = document.getElementById('f-media');
+                var cur = mediaField.value.trim();
+                var tag = c.label.replace(/_/g,' ');
+                if(cur.toLowerCase().indexOf(tag.toLowerCase()) === -1){
+                  mediaField.value = cur ? cur + ' · ' + tag : tag;
+                }
+                pill.style.opacity = '0.3';
+                pill.disabled = true;
+              });
+              tagsEl.appendChild(pill);
+            });
+          } else {
+            tagsEl.innerHTML = '<span style="font-size:0.46rem;color:var(--c-text-secondary);">nO tAGS dETECTED</span>';
+          }
+
+          /* Show caption */
+          if(captions.length && captions[0].generated_text){
+            capEl.textContent = '"' + captions[0].generated_text + '"';
+            capEl.style.display = '';
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   })();
   </script>
 
@@ -1268,6 +1348,40 @@
               done({ status: 'warn', msg: 'sCAN uNAVAILABLE — pROCEED wITH cAUTION' });
             });
           }
+        }
+      },
+      {
+        id: 'hf-toxicity',
+        name: 'tOXICITY sCAN',
+        async: true,
+        run: function(done) {
+          if(!window.artsHF || !artsHF.enabled() || !artsHF.rateCheck()){
+            done({ status: 'pass', msg: 'sKIPPED (aI uNAVAILABLE)' });
+            return;
+          }
+          var title = (document.getElementById('f-title').value || '').trim();
+          var noteVal = (document.getElementById('f-note').value || '').trim();
+          var prov = (document.getElementById('f-provenance').value || '').trim();
+          var allText = [title, noteVal, prov].filter(Boolean).join('. ');
+          if(!allText){
+            done({ status: 'pass', msg: 'nO tEXT tO sCAN' });
+            return;
+          }
+          artsHF.query('unitary/toxic-bert', { inputs: allText })
+            .then(function(r) {
+              if(!r || !r[0]) { done({ status: 'pass', msg: 'sCAN cOMPLETE' }); return; }
+              var toxic = r[0].find(function(l){ return l.label === 'toxic'; });
+              if(toxic && toxic.score > 0.7){
+                done({ status: 'fail', msg: 'tOXIC cONTENT dETECTED (' + Math.round(toxic.score*100) + '%)' });
+              } else if(toxic && toxic.score > 0.4){
+                done({ status: 'warn', msg: 'pOSSIBLY iNAPPROPRIATE (' + Math.round(toxic.score*100) + '%)' });
+              } else {
+                done({ status: 'pass', msg: 'cLEAN (' + (toxic ? Math.round(toxic.score*100) : 0) + '% tOXIC)' });
+              }
+            })
+            .catch(function() {
+              done({ status: 'pass', msg: 'sCAN uNAVAILABLE — sKIPPED' });
+            });
         }
       }
     ];
@@ -1711,7 +1825,9 @@
   }
 })();
 </script>
+<script src="hf-utils.js"></script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

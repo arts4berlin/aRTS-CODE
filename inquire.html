@@ -21,16 +21,25 @@
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* ── Page-specific: inquire form ── */
+    /* ── Page-specific: inquire layout ── */
+    .inq-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      width: min(92vw, 1100px);
+      align-items: start;
+    }
+
     .form-col {
-      width: min(92vw, 560px);
       display: flex;
       flex-direction: column;
     }
@@ -152,9 +161,18 @@
       color: var(--c-bg);
       border: 2px solid var(--c-text);
       border-radius: 4px;
-      transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
+      transition:
+        background 0.22s cubic-bezier(.4,0,.2,1),
+        color 0.22s cubic-bezier(.4,0,.2,1),
+        border-color 0.22s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.32s ease-out;
     }
-    .btn-send:hover   { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-bg); }
+    .btn-send:hover {
+      background: var(--c-bg);
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+      box-shadow: 0 0 20px rgba(255,92,0,0.12), inset 0 0 20px rgba(255,92,0,0.04);
+    }
     .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .back-link {
@@ -197,6 +215,75 @@
       margin: clamp(14px, 2vh, 22px) 0;
     }
 
+    /* ── Flow steps (right column) ── */
+    .flow-col {
+      display: flex;
+      flex-direction: column;
+      padding-top: clamp(38px, 6vh, 56px);
+    }
+    .flow-label {
+      font-size: 0.55rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.32em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+      margin-bottom: clamp(20px, 3vh, 36px);
+    }
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(28px, 4vh, 42px);
+    }
+    .flow-step {}
+    .flow-num {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      color: var(--c-text);
+      line-height: 1.1;
+    }
+    .flow-title {
+      font-size: 0.82rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.14em;
+      color: var(--c-text-secondary);
+      margin-top: 8px;
+    }
+    .flow-desc {
+      font-size: 0.65rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.1em;
+      color: var(--c-text-tertiary);
+      margin-top: 6px;
+      line-height: 1.7;
+    }
+    .flow-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--c-border);
+      margin-top: clamp(28px, 4vh, 42px);
+    }
+    .flow-note {
+      font-size: 0.58rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.14em;
+      color: var(--c-text-ghost);
+      line-height: 1.8;
+      margin-top: clamp(16px, 2.5vh, 24px);
+    }
+
+    @media (max-width: 720px) {
+      .inq-layout {
+        grid-template-columns: 1fr;
+        gap: clamp(32px, 5vh, 48px);
+      }
+      .flow-col {
+        padding-top: 0;
+        border-top: 1px solid var(--c-border);
+        padding-top: clamp(24px, 4vh, 36px);
+      }
+    }
+
     /* Page entrance */
     @keyframes pageIn {
       from { opacity: 0; transform: translateY(12px); }
@@ -206,6 +293,7 @@
       animation: pageIn 0.5s var(--ease-out) backwards;
     }
     .site-main .form-col { animation-delay: 0.05s; }
+    .site-main .flow-col { animation-delay: 0.15s; }
 
     /* ── Day mode overrides ── */
     [data-theme="day"] .form-title { color: var(--c-text); }
@@ -228,7 +316,8 @@
       border-color: var(--c-text);
     }
     [data-theme="day"] .btn-send:hover {
-      background: var(--c-accent);
+      background: var(--c-bg);
+      color: var(--c-accent);
       border-color: var(--c-accent);
     }
     [data-theme="day"] .piece-ref-name { color: var(--c-accent); }
@@ -259,12 +348,27 @@
       <a href="inquire.html" aria-current="page">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="Menu">
-      <span></span><span></span>
+    <button class="site-burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
     </button>
   </header>
 
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[exit]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+  </div>
+
   <main class="site-main">
+    <div class="inq-layout">
     <div class="form-col">
 
       <!-- ── Form state ── -->
@@ -322,6 +426,32 @@
       </div>
 
     </div>
+
+    <!-- ── Flow steps (right column) ── -->
+    <div class="flow-col">
+      <p class="flow-label">hOW iT wORKS</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <p class="flow-num">01</p>
+          <p class="flow-title">wRITE</p>
+          <p class="flow-desc">fILL iN yOUR nAME, eMAIL, aNd mESSAGE. iF yOU cAME fROM a pIECE, iT'S aLREADY rEFERENCED.</p>
+        </div>
+        <div class="flow-step">
+          <p class="flow-num">02</p>
+          <p class="flow-title">sEND</p>
+          <p class="flow-desc">hIT sEND iNQUIRY. yOUR mESSAGE gOES dIRECTLY tO tHE aRTIST oR [aRTS] tEAM.</p>
+        </div>
+        <div class="flow-step">
+          <p class="flow-num">03</p>
+          <p class="flow-title">cONNECT</p>
+          <p class="flow-desc">eXPECT a rEPLY iN yOUR iNBOX. fROM tHERE — nEGOTIATE, aSK qUESTIONS, oR sCHEDULE a vIEWING.</p>
+        </div>
+      </div>
+      <div class="flow-divider"></div>
+      <p class="flow-note">nO aCCOUNT nEEDED. nO fEES. jUST dIRECT cONVERSATION bETWEEN yOU aNd tHE cREATOR.</p>
+    </div>
+
+    </div>
   </main>
 
   <script>
@@ -348,25 +478,19 @@
       }
     } catch(e) {}
 
-    /* ── Check if piece is admin-listed (routes to admin inbox) ── */
+    /* ── Check if piece is admin-listed ── */
     var isAdminPiece = false;
-    var ADMIN_ENDPOINT = 'https://formspree.io/f/xaqpqzea'; /* TODO: Replace with separate admin Formspree endpoint */
-    var PUBLIC_ENDPOINT = 'https://formspree.io/f/xaqpqzea';
     if(piece){
       fetch('data/pieces.json?v=' + Date.now())
         .then(function(r){ return r.ok ? r.json() : []; })
         .then(function(pieces){
           var match = pieces.find(function(p){ return p.title === piece; });
-          if(match && match.admin){
-            isAdminPiece = true;
-            /* Update subject for admin routing */
-            document.querySelector('input[name="_subject"]').value = '[aRTS] — aDMIN iNQUIRY';
-          }
+          if(match && match.admin) isAdminPiece = true;
         })
         .catch(function(){});
     }
 
-    /* ── Form submission via Formspree (AJAX) ── */
+    /* ── Form submission via VPS API ── */
     var form   = document.getElementById('inq-form');
     var btn    = document.getElementById('btn-send');
     var errEl  = document.getElementById('err-msg');
@@ -379,7 +503,6 @@
       var email = document.getElementById('f-email').value.trim();
       var msg   = document.getElementById('f-msg').value.trim();
 
-      /* Basic client-side validation */
       if(!name)  { errEl.textContent = '— nAME rEQUIRED'; return; }
       if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
         errEl.textContent = '— vALID eMAIL rEQUIRED'; return;
@@ -388,16 +511,14 @@
 
       btn.disabled    = true;
       btn.textContent = 'sENDING…';
-      /* Dim the form fields while request is in-flight */
       form.style.opacity = '0.4';
       form.style.pointerEvents = 'none';
 
       try {
-        var endpoint = isAdminPiece ? ADMIN_ENDPOINT : PUBLIC_ENDPOINT;
-        var res = await fetch(endpoint, {
+        var res = await fetch('https://4-arts.com/api/inquire', {
           method:  'POST',
-          headers: { 'Accept': 'application/json' },
-          body:    new FormData(form)
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ name: name, email: email, message: msg, piece: piece || '', admin: isAdminPiece })
         });
 
         if(res.ok){
@@ -503,7 +624,38 @@
   })();
   </script>
 
+<script>
+(function(){
+  var burger=document.getElementById('burger');
+  var overlay=document.getElementById('nav-overlay');
+  var closer=document.getElementById('burger-close');
+  var oLinks=Array.from(overlay.querySelectorAll('a'));
+  var oLabels=oLinks.map(function(el){return el.textContent;});
+  function decapCascade(){
+    oLinks.forEach(function(el,li){
+      var target=oLabels[li];
+      el.textContent=target.toLowerCase();
+      var base=li*100+120;
+      Array.from(target).forEach(function(ch,i){
+        setTimeout(function(){
+          if(!overlay.classList.contains('is-open'))return;
+          var chars=el.textContent.split('');
+          chars[i]=ch;
+          el.textContent=chars.join('');
+        },base+i*50);
+      });
+    });
+  }
+  function openMenu(){overlay.classList.add('is-open');burger.classList.add('is-open');decapCascade();}
+  function closeMenu(){oLinks.forEach(function(el,i){el.textContent=oLabels[i];});overlay.classList.remove('is-open');burger.classList.remove('is-open');}
+  burger.addEventListener('click',openMenu);
+  closer.addEventListener('click',closeMenu);
+  overlay.addEventListener('click',function(e){if(e.target===overlay)closeMenu();});
+})();
+</script>
+
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 <script src="btn-fx.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>

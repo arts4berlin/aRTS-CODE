@@ -33,36 +33,6 @@
       min-height: 100vh;
     }
 
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-    }
-
-    nav { display: flex; align-items: center; gap: 2.4rem; }
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
 
     main {
       padding-top: clamp(90px, 14vh, 120px);
@@ -193,9 +163,18 @@
       color: #000;
       border: 2px solid #fff;
       border-radius: 4px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition:
+        background 0.22s cubic-bezier(.4,0,.2,1),
+        color 0.22s cubic-bezier(.4,0,.2,1),
+        border-color 0.22s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.32s ease-out;
     }
-    .btn-send:hover   { background: #FF5C00; border-color: #FF5C00; }
+    .btn-send:hover {
+      background: #000;
+      color: #FF5C00;
+      border-color: #FF5C00;
+      box-shadow: 0 0 20px rgba(255,92,0,0.12), inset 0 0 20px rgba(255,92,0,0.04);
+    }
     .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .back-link {
@@ -237,87 +216,72 @@
       margin: clamp(14px, 2vh, 22px) 0;
     }
 
-    /* ── Mobile hamburger + overlay ── */
-    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
-    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
-    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
-    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
-    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
-    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
-    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
-    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
-    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
-
     html { background: #000; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     header, nav, a, button { touch-action: manipulation; }
-
-    @media (max-width: 520px) {
-      header { padding: 18px 16px; }
-      nav { display: none; }
-      .burger { display:flex; gap:0; }
-      .burger span:not(.burger-label) { display:none; }
-      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
-      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
-      .mobile-id { display:block; }
-      .nav-overlay, .nav-overlay.is-open { transition:none; }
-    }
 
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
 
     /* ── Day mode overrides ── */
-    [data-theme="day"] .section-label,
-    [data-theme="day"] .field label { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] body { background: #fff !important; color: #000 !important; }
+    [data-theme="day"] html { background: #fff !important; }
+    [data-theme="day"] .form-title { color: #000 !important; }
+    [data-theme="day"] .error-msg { color: rgba(255,80,80,0.8) !important; }
 
-    [data-theme="day"] .form-desc { color: rgba(0,0,0,0.38) !important; }
+
+    [data-theme="day"] .section-label,
+    [data-theme="day"] .field label { color: rgba(0,0,0,0.55) !important; }
+
+    [data-theme="day"] .form-desc { color: rgba(0,0,0,0.58) !important; }
 
     [data-theme="day"] .field input,
     [data-theme="day"] .field textarea,
     [data-theme="day"] .field select {
-      border-bottom-color: rgba(0,0,0,0.18) !important;
+      border-bottom-color: rgba(0,0,0,0.38) !important;
       color: #000 !important;
     }
     [data-theme="day"] .field input::placeholder,
-    [data-theme="day"] .field textarea::placeholder { color: rgba(0,0,0,0.22) !important; }
+    [data-theme="day"] .field textarea::placeholder { color: rgba(0,0,0,0.42) !important; }
     [data-theme="day"] .field input:focus,
     [data-theme="day"] .field textarea:focus,
-    [data-theme="day"] .field select:focus { border-bottom-color: rgba(0,0,0,0.5) !important; }
+    [data-theme="day"] .field select:focus { border-bottom-color: rgba(0,0,0,0.65) !important; }
 
     [data-theme="day"] .field select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(0,0,0,0.35)'/%3E%3C/svg%3E") !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(0,0,0,0.55)'/%3E%3C/svg%3E") !important;
     }
     [data-theme="day"] .field select option { background: #fff !important; color: #000 !important; }
 
-    [data-theme="day"] .divider-thin { background: rgba(0,0,0,0.08) !important; }
+    [data-theme="day"] .divider-thin { background: rgba(0,0,0,0.10) !important; }
 
-    [data-theme="day"] .back-link { color: rgba(0,0,0,0.3) !important; }
-    [data-theme="day"] .back-link:hover { color: rgba(0,0,0,0.6) !important; }
+    [data-theme="day"] .back-link { color: rgba(0,0,0,0.50) !important; }
+    [data-theme="day"] .back-link:hover { color: rgba(0,0,0,0.72) !important; }
 
     [data-theme="day"] .btn-send { background: #000 !important; color: #fff !important; border-color: #000 !important; }
-    [data-theme="day"] .btn-send:hover { background: #FF5C00 !important; border-color: #FF5C00 !important; }
+    [data-theme="day"] .btn-send:hover { background: #fff !important; color: #FF5C00 !important; border-color: #FF5C00 !important; }
 
-    [data-theme="day"] .success-sub { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .success-sub { color: rgba(0,0,0,0.58) !important; }
 </style>
 </head>
 <body>
-  <header>
-    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-    <nav>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
       <a href="inquire.html">TaLK</a>
+      <a href="work.html">wORK</a>
     </nav>
-    <a href="id.html" class="mobile-id">[iD]</a>
-    <button class="burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
       <span class="burger-label">[aRTS]</span>
     </button>
   </header>
 
+  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
@@ -326,7 +290,7 @@
     <a href="about.html">aBOUT</a>
     <a href="inquire.html">TaLK</a>
     <a href="work.html">wORK</a>
-    <a href="id.html" style="color:#FF5C00">[iD]</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
   <main>
@@ -421,11 +385,10 @@
       form.style.pointerEvents = 'none';
 
       try {
-        /* TODO: Replace with your Formspree endpoint for arts4berlin@outlook.com */
-        var res = await fetch('https://formspree.io/f/xaqpqzea', {
+        var res = await fetch('https://4-arts.com/api/report', {
           method:  'POST',
-          headers: { 'Accept': 'application/json' },
-          body:    new FormData(form)
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email: email, category: cat, message: msg })
         });
 
         if(res.ok){
@@ -505,6 +468,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 <script src="btn-fx.js"></script>
 </body>
 </html>
