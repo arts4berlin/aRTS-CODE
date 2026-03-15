@@ -10,10 +10,10 @@
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
   <meta property="og:url"          content="https://4-arts.com/">
-  <meta property="og:title"        content="[aRTS] — rEPORT">
+  <meta property="og:title"        content="[aRTS] — bOUNTY">
   <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
   <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
-  <title>[aRTS] — rEPORT</title>
+  <title>[aRTS] — bOUNTY</title>
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
@@ -32,7 +32,6 @@
       font-family: 'Space Grotesk', sans-serif;
       min-height: 100vh;
     }
-
 
     main {
       padding-top: clamp(90px, 14vh, 120px);
@@ -63,7 +62,7 @@
       letter-spacing: 0.08em;
       line-height: 1;
       color: #fff;
-      margin-bottom: clamp(20px, 3.5vh, 36px);
+      margin-bottom: clamp(14px, 2vh, 22px);
     }
 
     .form-desc {
@@ -75,6 +74,61 @@
       margin-bottom: clamp(20px, 3vh, 32px);
     }
 
+    /* ── Reward tiers banner ── */
+    .bounty-tiers {
+      display: flex;
+      gap: 12px;
+      margin-bottom: clamp(24px, 3.5vh, 36px);
+      flex-wrap: wrap;
+    }
+
+    .tier-pill {
+      flex: 1;
+      min-width: 120px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .tier-pill:hover { border-color: rgba(255,255,255,0.14); }
+
+    .tier-sev {
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .tier-sev.low    { color: var(--c-accent, #FF5C00); opacity: 0.5; }
+    .tier-sev.medium { color: var(--c-accent, #FF5C00); opacity: 0.75; }
+    .tier-sev.critical { color: var(--c-accent, #FF5C00); }
+
+    .tier-pts {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #fff;
+      line-height: 1;
+    }
+    .tier-pts span {
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.28);
+      margin-left: 3px;
+    }
+
+    .tier-what {
+      font-size: 0.46rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.2);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── Form fields ── */
     .field {
       display: flex;
       flex-direction: column;
@@ -134,7 +188,7 @@
       border-bottom-color: rgba(255,255,255,0.35);
     }
 
-    .field textarea { min-height: 110px; line-height: 1.6; }
+    .field textarea { min-height: 90px; line-height: 1.6; }
 
     .error-msg {
       font-size: 0.65rem;
@@ -159,9 +213,9 @@
       letter-spacing: 0.18em;
       cursor: pointer;
       padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
-      background: #fff;
+      background: #FF5C00;
       color: #000;
-      border: 2px solid #fff;
+      border: 2px solid #FF5C00;
       border-radius: 4px;
       transition:
         background 0.22s cubic-bezier(.4,0,.2,1),
@@ -229,7 +283,6 @@
     [data-theme="day"] .form-title { color: #000 !important; }
     [data-theme="day"] .error-msg { color: rgba(255,80,80,0.8) !important; }
 
-
     [data-theme="day"] .section-label,
     [data-theme="day"] .field label { color: rgba(0,0,0,0.55) !important; }
 
@@ -257,11 +310,14 @@
     [data-theme="day"] .back-link { color: rgba(0,0,0,0.50) !important; }
     [data-theme="day"] .back-link:hover { color: rgba(0,0,0,0.72) !important; }
 
-    [data-theme="day"] .btn-send { background: #000 !important; color: #fff !important; border-color: #000 !important; }
-    [data-theme="day"] .btn-send:hover { background: #fff !important; color: #FF5C00 !important; border-color: #FF5C00 !important; }
-
     [data-theme="day"] .success-sub { color: rgba(0,0,0,0.58) !important; }
-</style>
+
+    [data-theme="day"] .tier-pill { border-color: rgba(0,0,0,0.08) !important; }
+    [data-theme="day"] .tier-pill:hover { border-color: rgba(0,0,0,0.18) !important; }
+    [data-theme="day"] .tier-pts { color: #000 !important; }
+    [data-theme="day"] .tier-pts span { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .tier-what { color: rgba(0,0,0,0.38) !important; }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -296,43 +352,82 @@
   <main>
     <div class="form-col">
 
-      <div id="report-form-wrap">
-        <p class="section-label">rEPORT a pROBLEM</p>
-        <h1 class="form-title">hELP</h1>
+      <div id="bounty-form-wrap">
+        <p class="section-label">bUG bOUNTY</p>
+        <h1 class="form-title">lOOPHOLE?</h1>
 
         <p class="form-desc">
-          sOMETHING nOT wORKING? lET uS kNOW.<br>
-          wE'LL lOOK iNTO iT aND gET bACK tO yOU.
+          fOUND a gLITCH, eXPLOIT, oR bROKEN fLOW?<br>
+          rEPORT iT &amp; eARN bIG pOINTS wHEN cONFIRMED.
         </p>
 
-        <form id="report-form" novalidate>
-          <input type="hidden" name="_subject" value="[aRTS] — pROBLEM rEPORT">
+        <!-- Reward tiers -->
+        <div class="bounty-tiers">
+          <div class="tier-pill">
+            <div class="tier-sev low">lOW</div>
+            <div class="tier-pts" id="tier-low-pts">500<span>pTS</span></div>
+            <div class="tier-what">uI gLITCH · mINOR</div>
+          </div>
+          <div class="tier-pill">
+            <div class="tier-sev medium">mEDIUM</div>
+            <div class="tier-pts" id="tier-med-pts">1,000<span>pTS</span></div>
+            <div class="tier-what">lOGIC eRROR · bROKEN fLOW</div>
+          </div>
+          <div class="tier-pill">
+            <div class="tier-sev critical">cRITICaL</div>
+            <div class="tier-pts" id="tier-crit-pts">2,500<span>pTS</span></div>
+            <div class="tier-what">sECURITY · xP eXPLOIT</div>
+          </div>
+        </div>
+
+        <form id="bounty-form" novalidate>
 
           <div class="field">
-            <label for="r-email">yOUR eMAIL</label>
-            <input type="email" id="r-email" name="email" placeholder="· · ·" autocomplete="email">
+            <label for="b-email">yOUR eMAIL</label>
+            <input type="email" id="b-email" name="email" placeholder="· · ·" autocomplete="email">
           </div>
 
           <div class="field">
-            <label for="r-category">cATEGORY</label>
-            <select id="r-category" name="category">
+            <label for="b-severity">sEVERITY</label>
+            <select id="b-severity" name="severity">
               <option value="">— sELECT —</option>
-              <option value="bUG">bUG</option>
-              <option value="aCCOUNT iSSUE">aCCOUNT iSSUE</option>
-              <option value="fEEDBACK">fEEDBACK</option>
+              <option value="lOW">lOW — uI gLITCH, mINOR bUG</option>
+              <option value="mEDIUM">mEDIUM — lOGIC eRROR, bROKEN fLOW</option>
+              <option value="cRITICaL">cRITICaL — sECURITY hOLE, xP eXPLOIT</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="b-category">cATEGORY</label>
+            <select id="b-category" name="category">
+              <option value="">— sELECT —</option>
+              <option value="pOINTS eXPLOIT">pOINTS eXPLOIT</option>
+              <option value="sECURITY">sECURITY</option>
+              <option value="uI/uX bUG">uI/uX bUG</option>
+              <option value="lOGIC eRROR">lOGIC eRROR</option>
               <option value="oTHER">oTHER</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="r-msg">dESCRIBE tHE iSSUE</label>
-            <textarea id="r-msg" name="message" placeholder="What happened…"></textarea>
+            <label for="b-title">tITLE</label>
+            <input type="text" id="b-title" name="title" placeholder="Short description of the loophole">
+          </div>
+
+          <div class="field">
+            <label for="b-steps">sTEPS tO rEPRODUCE</label>
+            <textarea id="b-steps" name="steps" placeholder="1. Go to…  2. Click…  3. Observe…"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="b-expected">eXPECTED vS aCTUAL</label>
+            <textarea id="b-expected" name="expected" placeholder="Expected: …&#10;Actual: …"></textarea>
           </div>
 
           <p class="error-msg" id="err-msg"></p>
 
           <div class="submit-row">
-            <button type="submit" class="btn-send" id="btn-send">sEND rEPORT</button>
+            <button type="submit" class="btn-send" id="btn-send">sUBMIT bOUNTY</button>
             <a href="home.html" class="back-link">&larr; bACK</a>
           </div>
         </form>
@@ -340,11 +435,11 @@
 
       <div id="success">
         <p class="section-label">sENT &#10003;</p>
-        <h1 class="form-title">rEPORT<br>sENT</h1>
+        <h1 class="form-title">bOUNTY<br>sUBMITTED</h1>
         <div class="success-check">&#10003;</div>
         <p class="success-sub">
-          wE rECEIVED yOUR rEPORT<br>
-          wE'LL lOOK iNTO iT sOON
+          wE'LL rEVIEW yOUR rEPORT<br>
+          pOINTS aWARDED oN cONFIRMATION
         </p>
         <div class="divider-thin"></div>
         <a href="home.html" class="back-link">&larr; bACK tO hOME</a>
@@ -355,29 +450,45 @@
 
   <script>
   (function(){
-    var form   = document.getElementById('report-form');
+    var form   = document.getElementById('bounty-form');
     var btn    = document.getElementById('btn-send');
     var errEl  = document.getElementById('err-msg');
 
     /* Pre-fill email if member is logged in */
     try {
       var storedEmail = localStorage.getItem('arts_email');
-      if(storedEmail) document.getElementById('r-email').value = storedEmail;
+      if(storedEmail) document.getElementById('b-email').value = storedEmail;
+    } catch(e) {}
+
+    /* Load bounty point values from config */
+    try {
+      var ptsCfg = JSON.parse(localStorage.getItem('arts_points_config'));
+      if(ptsCfg && ptsCfg.events) {
+        var ev = ptsCfg.events;
+        if(ev.bounty_low != null)      document.getElementById('tier-low-pts').innerHTML  = Number(ev.bounty_low).toLocaleString() + '<span>pTS</span>';
+        if(ev.bounty_medium != null)   document.getElementById('tier-med-pts').innerHTML  = Number(ev.bounty_medium).toLocaleString() + '<span>pTS</span>';
+        if(ev.bounty_critical != null) document.getElementById('tier-crit-pts').innerHTML = Number(ev.bounty_critical).toLocaleString() + '<span>pTS</span>';
+      }
     } catch(e) {}
 
     form.addEventListener('submit', async function(e){
       e.preventDefault();
       errEl.textContent = '';
 
-      var email = document.getElementById('r-email').value.trim();
-      var cat   = document.getElementById('r-category').value;
-      var msg   = document.getElementById('r-msg').value.trim();
+      var email    = document.getElementById('b-email').value.trim();
+      var severity = document.getElementById('b-severity').value;
+      var category = document.getElementById('b-category').value;
+      var title    = document.getElementById('b-title').value.trim();
+      var steps    = document.getElementById('b-steps').value.trim();
+      var expected = document.getElementById('b-expected').value.trim();
 
       if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
         errEl.textContent = '— vALID eMAIL rEQUIRED'; return;
       }
-      if(!cat)   { errEl.textContent = '— sELECT a cATEGORY'; return; }
-      if(!msg)   { errEl.textContent = '— dESCRIBE tHE iSSUE'; return; }
+      if(!severity) { errEl.textContent = '— sELECT sEVERITY'; return; }
+      if(!category) { errEl.textContent = '— sELECT a cATEGORY'; return; }
+      if(!title)    { errEl.textContent = '— tITLE rEQUIRED'; return; }
+      if(!steps)    { errEl.textContent = '— dESCRIBE sTEPS tO rEPRODUCE'; return; }
 
       btn.disabled    = true;
       btn.textContent = 'sENDING\u2026';
@@ -385,26 +496,67 @@
       form.style.pointerEvents = 'none';
 
       try {
-        var res = await fetch('https://4-arts.com/api/report', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email: email, category: cat, message: msg })
-        });
+        var payload = {
+          email: email,
+          severity: severity,
+          category: category,
+          title: title,
+          steps: steps,
+          expected: expected
+        };
+
+        var res = await fetch(
+          (location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+            ? 'http://localhost:8099' : 'https://4-arts.com') + '/api/bounty',
+          {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload)
+          }
+        );
 
         if(res.ok){
-          /* Award moderation XP */
+          /* Store submission locally */
+          var subId = 'b_' + Date.now().toString(36);
+          var entry = {
+            id: subId,
+            ts: Date.now(),
+            severity: severity,
+            category: category,
+            title: title,
+            steps: steps,
+            expected: expected,
+            status: 'pending'
+          };
+          try {
+            var subs = JSON.parse(localStorage.getItem('arts_bounty_submissions') || '[]');
+            subs.push(entry);
+            localStorage.setItem('arts_bounty_submissions', JSON.stringify(subs));
+          } catch(e) {}
+
+          /* Also push to bounty log (admin reads this) */
+          try {
+            var log = JSON.parse(localStorage.getItem('arts_bounty_log') || '[]');
+            entry.email = email;
+            log.push(entry);
+            localStorage.setItem('arts_bounty_log', JSON.stringify(log));
+          } catch(e) {}
+
+          /* Award submission XP */
           try {
             if(localStorage.getItem('arts_id_hash')){
-              var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
-              var rptPts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.submit_report!=null)?ptsCfg.events.submit_report:50;
-              var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
-              localStorage.setItem('arts_points',String(cur+rptPts));
-              var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
-              pending.push({label:'mODERATION',pts:rptPts});
-              sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
+              var ptsCfg2 = null;
+              try { ptsCfg2 = JSON.parse(localStorage.getItem('arts_points_config')); } catch(e) {}
+              var subPts = (ptsCfg2 && ptsCfg2.events && ptsCfg2.events.bounty_submit != null) ? ptsCfg2.events.bounty_submit : 25;
+              var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+              localStorage.setItem('arts_points', String(cur + subPts));
+              var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
+              pending.push({ label: 'bOUNTY', pts: subPts });
+              sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
             }
-          } catch(xpe){}
-          var wrap = document.getElementById('report-form-wrap');
+          } catch(xpe) {}
+
+          var wrap = document.getElementById('bounty-form-wrap');
           wrap.style.transition = 'opacity 0.22s ease';
           wrap.style.opacity = '0';
           setTimeout(function(){
@@ -419,14 +571,14 @@
         } else {
           errEl.textContent = '— sEND fAILED \u00b7 tRY aGAIN';
           btn.disabled    = false;
-          btn.textContent = 'sEND rEPORT';
+          btn.textContent = 'sUBMIT bOUNTY';
           form.style.opacity = '1';
           form.style.pointerEvents = '';
         }
       } catch(err){
         errEl.textContent = '— nETWORK eRROR \u00b7 cHECK cONNECTION';
         btn.disabled    = false;
-        btn.textContent = 'sEND rEPORT';
+        btn.textContent = 'sUBMIT bOUNTY';
         form.style.opacity = '1';
         form.style.pointerEvents = '';
       }

@@ -915,16 +915,53 @@
   </script>
 
   <script src="theme.js?v=4"></script>
+<script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>if(artsAuth.isLoggedIn())artsAuth.syncSettings();</script>
   <script src="hf-utils.js"></script>
   <script src="btn-fx.js"></script>
   <script>
     window.artsCornerAdd({label:'rEPORT',href:'report.html'});
+    window.artsCornerAdd({label:'tASTE',href:'taste.html'});
     window.artsCornerAdd({label:'fEEDBaCK',id:'corner-feedback-item',action:function(){
       var bd=document.getElementById('fb-backdrop');
       if(bd)bd.classList.add('open');
     }});
+  </script>
+
+  <!-- TASTE TEST WEEKLY PROMPT -->
+  <div class="taste-prompt-backdrop" id="taste-prompt">
+    <div class="taste-prompt-card">
+      <div class="taste-prompt-icon">◈</div>
+      <div class="taste-prompt-title">sTYLE tEST rEaDY</div>
+      <p class="taste-prompt-desc">sWIPE tHROUGH 10 pIECES — hELP uS lEaRN wHaT yOU lOVE</p>
+      <div class="taste-prompt-actions">
+        <button class="btn btn-secondary" id="taste-prompt-later">lATER</button>
+        <a href="taste.html" class="btn btn-primary">tAKE tEST</a>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var KEY='arts_taste_last_week';
+    function isoWeek(d){
+      var dt=new Date(d.getTime());dt.setHours(0,0,0,0);
+      dt.setDate(dt.getDate()+3-(dt.getDay()+6)%7);
+      var w1=new Date(dt.getFullYear(),0,4);
+      var n=1+Math.round(((dt-w1)/864e5-3+(w1.getDay()+6)%7)/7);
+      return dt.getFullYear()+'-W'+String(n).padStart(2,'0');
+    }
+    var last=localStorage.getItem(KEY);
+    var now=isoWeek(new Date());
+    if(last===now)return;
+    var bd=document.getElementById('taste-prompt');
+    if(!bd)return;
+    setTimeout(function(){bd.classList.add('open');},1200);
+    document.getElementById('taste-prompt-later').addEventListener('click',function(){
+      bd.classList.remove('open');
+    });
+    bd.addEventListener('click',function(e){if(e.target===bd)bd.classList.remove('open');});
+  })();
   </script>
 
   <!-- FEEDBACK WIDGET -->

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,27 +7,30 @@
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
   <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+
   <link rel="apple-touch-icon" href="assets/favicon-180.png">
   <meta property="og:type"         content="website">
-  <meta property="og:url"          content="https://4-arts.com/">
-  <meta property="og:title"        content="[aRTS]">
-  <meta property="og:description"  content="TRaDE + CONNeCT — now in BERLIN">
+  <meta property="og:url"          content="https://4-arts.com/impressum.html">
+  <meta property="og:title"        content="[aRTS] — Impressum">
+  <meta property="og:description"  content="Legal notice — Impressum">
   <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
   <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="[aRTS]">
-  <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
+  <meta name="twitter:title"       content="[aRTS] — Impressum">
+  <meta name="twitter:description" content="Legal notice — Impressum">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
-  <title>[aRTS] — aRTICLES</title>
+  <title>[aRTS] — iMPRESSUM</title>
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
   </script>
+  <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('index.html');
+      window.location.replace('captcha.html');
     }
   </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -38,79 +41,71 @@
       min-height: 100vh;
     }
 
-
-    /* ── Article list ── */
+    /* ── Legal content ── */
     main {
-      padding-top: clamp(100px, 14vh, 130px);
-      padding-bottom: clamp(60px, 8vh, 100px);
-      padding-left: clamp(24px, 8vw, 120px);
-      padding-right: clamp(24px, 8vw, 120px);
-      max-width: 860px;
-      margin: 0 auto;
+      padding-top: clamp(100px, 15vh, 140px);
+      padding-bottom: clamp(80px, 12vh, 140px);
       display: flex;
       flex-direction: column;
-      gap: clamp(32px, 5vw, 56px);
+      align-items: center;
     }
 
-    .section-label {
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.3);
-      text-transform: uppercase;
-      margin-bottom: clamp(16px, 3vh, 28px);
+    .legal {
+      width: min(92vw, 640px);
     }
 
-    .article-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .article-item {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1.5rem;
-      padding: clamp(16px, 2.5vh, 22px) 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      text-decoration: none;
-      color: #fff;
-      transition: color 0.15s;
-      cursor: default;
-    }
-    .article-item:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
-    .article-item.linked { cursor: pointer; }
-    .article-item.linked:hover .article-title { color: #FF5C00; }
-
-    .article-title {
-      font-size: clamp(0.95rem, 2.2vw, 1.15rem);
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      transition: color 0.15s;
-      flex: 1;
-    }
-
-    .article-meta {
-      font-size: 0.72rem;
+    .legal-title {
+      font-size: clamp(1.1rem, 3.5vw, 1.5rem);
       font-weight: 300;
       letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.28);
-      white-space: nowrap;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: clamp(48px, 8vh, 80px);
     }
 
-    /* Placeholder state */
-    .article-item.wip .article-title { color: rgba(255,255,255,0.22); }
-    .article-item.wip .article-meta  { color: rgba(255,255,255,0.12); }
+    .legal h2 {
+      font-size: clamp(0.82rem, 2.2vw, 0.95rem);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 0.8rem;
+      margin-top: clamp(36px, 5vh, 56px);
+    }
 
-    /* ── dvh fix ── */
-    @supports (height: 100dvh) { body { min-height: 100dvh; } }
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    .logo, .nav-about, header { touch-action: manipulation; }
+    .legal h2:first-of-type {
+      margin-top: 0;
+    }
+
+    .legal p {
+      font-size: clamp(0.78rem, 2vw, 0.88rem);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .legal-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin-top: clamp(48px, 8vh, 80px);
+    }
+
+    .legal-back {
+      display: inline-block;
+      margin-top: clamp(20px, 3vh, 32px);
+      font-size: 0.68rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.22);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .legal-back:hover { color: rgba(255,255,255,0.5); }
+
+    /* ── Mobile ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
+    .logo, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
-
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
@@ -118,14 +113,13 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .section-label { color: rgba(0,0,0,0.5); }
-    [data-theme="day"] .article-item { color: #000; border-bottom-color: rgba(0,0,0,0.10); }
-    [data-theme="day"] .article-item:first-child { border-top-color: rgba(0,0,0,0.10); }
-    [data-theme="day"] .article-meta { color: rgba(0,0,0,0.48); }
-    [data-theme="day"] .article-item.wip .article-title { color: rgba(0,0,0,0.42); }
-    [data-theme="day"] .article-item.wip .article-meta { color: rgba(0,0,0,0.30); }
+    [data-theme="day"] .legal-title { color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .legal h2 { color: rgba(0,0,0,0.78); }
+    [data-theme="day"] .legal p { color: rgba(0,0,0,0.62); }
+    [data-theme="day"] .legal-divider { background: rgba(0,0,0,0.06); }
+    [data-theme="day"] .legal-back { color: rgba(0,0,0,0.42); }
+    [data-theme="day"] .legal-back:hover { color: rgba(0,0,0,0.65); }
 </style>
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
@@ -158,12 +152,45 @@
   </div>
 
   <main>
-    <p class="section-label">aRTICLES &amp; wRITINGS</p>
-    <div class="article-list">
-      <div class="article-item wip">
-        <span class="article-title">— cOMING SOON —</span>
-        <span class="article-meta">2026</span>
-      </div>
+    <div class="legal">
+      <p class="legal-title">iMPRESSUM</p>
+      <p style="margin-bottom:clamp(36px,6vh,60px);font-size:0.68rem;color:var(--c-text-ghost,rgba(255,255,255,0.22));">Angaben gem&auml;&szlig; &sect;5 TMG &amp; &sect;18 MStV</p>
+
+      <!-- Provider identity (TMG §5) -->
+      <h2>aNGABEN zUM dIENSTEANBIETER</h2>
+      <p>[TO BE FILLED: Full Legal Name]<br>
+      [TO BE FILLED: Street Address]<br>
+      [TO BE FILLED: Postal Code, City], Germany</p>
+
+      <h2>kONTAKT</h2>
+      <p>Email: <a href="mailto:arts4berlin@outlook.com" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">arts4berlin@outlook.com</a><br>
+      Phone: [TO BE FILLED]</p>
+
+      <h2>uMSATZSTEUER-iD</h2>
+      <p>Umsatzsteuer-Identifikationsnummer gem&auml;&szlig; &sect;27a UStG:<br>
+      [TO BE FILLED — or remove this section if not applicable]</p>
+
+      <h2>vERANTWORTLICH f&Uuml;R dEN iNHALT (&sect;18 mStV)</h2>
+      <p>[TO BE FILLED: Name of responsible person]<br>
+      [TO BE FILLED: Address]</p>
+
+      <h2>eU-sTREITBEILEGUNG</h2>
+      <p>Die Europ&auml;ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">https://ec.europa.eu/consumers/odr/</a>.<br>
+      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+
+      <h2>hAFTUNG f&Uuml;R iNHALTE</h2>
+      <p>Als Diensteanbieter sind wir gem&auml;&szlig; &sect;7 Abs. 1 TMG f&uuml;r eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach &sect;&sect;8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, &uuml;bermittelte oder gespeicherte fremde Informationen zu &uuml;berwachen.</p>
+
+      <h2>hAFTUNG f&Uuml;R lINKS</h2>
+      <p>Unser Angebot enth&auml;lt Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb k&ouml;nnen wir f&uuml;r diese fremden Inhalte auch keine Gew&auml;hr &uuml;bernehmen.</p>
+
+      <div class="legal-divider"></div>
+      <p style="margin-top:clamp(20px,3vh,32px);font-size:0.62rem;color:var(--c-text-ghost,rgba(255,255,255,0.18));">
+        <a href="privacy.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">pRIVACY pOLICY</a> &nbsp;|&nbsp;
+        <a href="listing-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">lISTING tERMS</a> &nbsp;|&nbsp;
+        <a href="bot-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">bOT tERMS</a>
+      </p>
+      <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>
     </div>
   </main>
 
@@ -200,32 +227,37 @@
         el.textContent=s;
       }
       el.addEventListener('mouseenter',function(){
-        clr(); var from=state;
+        clr();
+        var from=state;
         for(var i=0;i<orig.length-1-from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));
         })(i);
       });
       el.addEventListener('mouseleave',function(){
-        clr(); var from=state;
+        clr();
+        var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
       });
     }
-    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
+    document.querySelectorAll('nav a').forEach(navHover);
+
     document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
       var inner=logo.dataset.inner;
       var timers=[], state=0;
       function clr(){ timers.forEach(clearTimeout); timers.length=0; }
       function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
       logo.addEventListener('mouseenter',function(){
-        clr(); var from=state;
+        clr();
+        var from=state;
         for(var i=from;i<inner.length;i++)(function(i){
           timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
         })(i);
       });
       logo.addEventListener('mouseleave',function(){
-        clr(); var from=state;
+        clr();
+        var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
         })(i);
@@ -244,24 +276,8 @@
     overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('is-open');});
   })();
   </script>
-<script>
-  /* ── Article publish XP hook (call when article is created) ── */
-  function awardArticleXP() {
-    try {
-      if (!localStorage.getItem('arts_id_hash')) return;
-      var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
-      var artPts=(ptsCfg&&ptsCfg.events&&ptsCfg.events.article_view!=null)?ptsCfg.events.article_view:150;
-      var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
-      localStorage.setItem('arts_points', String(cur + artPts));
-      var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
-      pending.push({ label: 'aRTICLE', pts: artPts });
-      sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
-    } catch(e) {}
-  }
-</script>
 <script src="theme.js?v=4"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
-<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

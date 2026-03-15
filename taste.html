@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <title>[aRTS] — sTYLE tEST</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('index.html');
+    }
+  </script>
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <a class="site-logo" href="home.html">[aRTS]</a>
+    <nav class="site-nav">
+      <a href="home.html">hOME</a>
+      <a href="assets.html">aSSETS</a>
+      <a href="about.html">aBOUT</a>
+      <a href="id.html">iD</a>
+    </nav>
+    <button class="site-burger" id="burger" aria-label="Menu">
+      <span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
+    <div class="nav-overlay" id="nav-overlay">
+      <nav>
+        <a href="home.html">hOME</a>
+        <a href="assets.html">aSSETS</a>
+        <a href="about.html">aBOUT</a>
+        <a href="id.html">iD</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+
+    <!-- ── Swipe UI ── -->
+    <div class="taste-wrap" id="taste-wrap">
+      <div class="taste-header">
+        <h1 class="taste-title">sTYLE tEST</h1>
+        <p class="taste-sub">sWIPE · tAP · lEARN</p>
+      </div>
+
+      <div class="taste-progress" id="taste-progress"></div>
+
+      <div class="taste-stack" id="taste-stack">
+        <!-- Cards injected by taste.js -->
+      </div>
+
+      <div class="taste-actions">
+        <button class="taste-btn taste-btn-nope" id="taste-nope" aria-label="Dislike">✕</button>
+        <button class="taste-btn taste-btn-love" id="taste-love" aria-label="Love">♥</button>
+        <button class="taste-btn taste-btn-like" id="taste-like" aria-label="Like">✓</button>
+      </div>
+
+      <div class="taste-hints">
+        <span class="taste-hint">← nOPE</span>
+        <span class="taste-hint">↑ lOVE</span>
+        <span class="taste-hint">lIKE →</span>
+      </div>
+    </div>
+
+    <!-- ── Results ── -->
+    <div class="taste-results" id="taste-results">
+      <h2 class="taste-results-title">YOUR tASTE</h2>
+
+      <div id="taste-r-styles">
+        <p class="taste-section-label">tOP sTYLES</p>
+        <div class="taste-pills" id="taste-pills-styles"></div>
+      </div>
+
+      <div id="taste-r-moods">
+        <p class="taste-section-label">mOOD</p>
+        <div id="taste-bars-moods"></div>
+      </div>
+
+      <div id="taste-r-periods">
+        <p class="taste-section-label">pERIOD</p>
+        <div id="taste-bars-periods"></div>
+      </div>
+
+      <div id="taste-r-loved" style="display:none;">
+        <p class="taste-section-label">♥ lOVED</p>
+        <div class="taste-loved" id="taste-loved-strip"></div>
+      </div>
+
+      <div class="taste-result-actions">
+        <a href="home.html" class="btn btn-secondary">dONE</a>
+        <a href="art.html" class="btn btn-primary">bROWSE aRT →</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="theme.js?v=4"></script>
+<script src="consent.js"></script>
+  <script src="auth.js"></script>
+  <script src="btn-fx.js"></script>
+  <script src="taste.js"></script>
+  <script>
+    window.artsCornerAdd({ label: 'hOME', href: 'home.html' });
+  </script>
+
+  <!-- Burger toggle -->
+  <script>
+  (function(){
+    var b=document.getElementById('burger'),o=document.getElementById('nav-overlay');
+    if(b&&o){b.addEventListener('click',function(){o.classList.toggle('open');b.classList.toggle('open');});}
+    o.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){o.classList.remove('open');b.classList.remove('open');});});
+  })();
+  </script>
+</body>
+</html>

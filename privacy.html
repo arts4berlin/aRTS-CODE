@@ -158,38 +158,143 @@
   <main>
     <div class="legal">
       <p class="legal-title">pRIVACY pOLICY</p>
+      <p style="margin-bottom:clamp(36px,6vh,60px);font-size:0.68rem;color:var(--c-text-ghost,rgba(255,255,255,0.22));">Last updated: 15 March 2026 &nbsp;|&nbsp; <a href="legal/privacy-policy.pdf" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">dOWNLOAD PDF</a></p>
 
-      <h2>dATA cOLLECTION</h2>
-      <p>We use localStorage for session data, member preferences, and encrypted favourites. No advertising cookies are used. No personal data is collected without your explicit action. No third-party tracking scripts or analytics are embedded on this site.</p>
+      <!-- 1. Controller -->
+      <h2>1. cONTROLLER (GDPR aRT. 13(1)(a))</h2>
+      <p>[aRTS] — operated by [TO BE FILLED: Legal Name], [TO BE FILLED: Street Address], [TO BE FILLED: City, Postal Code], Germany.<br>
+      Email: <a href="mailto:arts4berlin@outlook.com" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">arts4berlin@outlook.com</a><br>
+      See also our <a href="impressum.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Impressum</a> for full legal contact details.</p>
 
-      <h2>oAUTH aUTHENTICATION</h2>
-      <p>Authentication on [aRTS] is handled via Google Identity Services and Apple Sign In. When you choose to sign in, your device interacts directly with Google or Apple — we receive only a stable, anonymised user identifier (a "sub" claim from the OAuth token), your email address, and your display name. We do not receive or store passwords. Biometric verification (Face ID, Touch ID) is handled entirely by your device's operating system and the OAuth provider — [aRTS] has no access to any biometric data at any point.</p>
+      <!-- 2. Data collection overview -->
+      <h2>2. dATA wE cOLLECT</h2>
+      <p>We collect data only when you take an explicit action (sign in, submit a form, make a purchase). No advertising cookies, third-party tracking scripts, or analytics are used. Data is stored both on your device (browser localStorage) and on our server (encrypted SQLite database on a Hetzner VPS in Helsinki, Finland — EU jurisdiction).</p>
 
-      <h2>dEVICE sESSIONS</h2>
-      <p>When you sign in, a session token is created and stored in your browser's localStorage. This token ties your membership to the current device, allowing you to return to the platform without re-authenticating. Sessions are persistent per device until you explicitly sign out or destroy your ID. If you sign in on multiple devices, each device maintains an independent session. You may revoke device sessions at any time by signing out via your <a href="id.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard.</p>
+      <!-- 3. Processing activities -->
+      <h2>3. pROCESSING aCTIVITIES &amp; lEGAL bASIS</h2>
 
-      <h2>iP lOGGING</h2>
-      <p>For security and abuse prevention, your IP address is logged server-side at the moment of each login event. This log entry also records the login provider (Google or Apple), your membership tier, and a timestamp. IP logs are stored on our VPS and are never shared with third parties. Logs are retained for a maximum of 90 days. The IP log does not contain your full OAuth identifier — only a truncated reference. You may request deletion of your IP log entries by contacting us through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
+      <p><strong>Authentication (OAuth / Email+Password)</strong><br>
+      Data: anonymised user identifier ("sub" claim), email address, display name. We do not receive or store passwords for OAuth logins. Email+password credentials are hashed with bcrypt.<br>
+      Legal basis: Contract performance — GDPR Art. 6(1)(b).<br>
+      Retention: Until account deletion.</p>
 
-      <h2>fORMSPREE</h2>
-      <p>Form submissions — including inquiries, reports, and art submissions — are processed through Formspree. Data submitted via forms is stored on Formspree servers and is subject to their privacy policy. [aRTS] does not independently store form submission data.</p>
+      <p style="margin-top:16px"><strong>Session tokens</strong><br>
+      Data: cryptographic session token stored in your browser's localStorage (or sessionStorage in Stealth Mode). Server stores a SHA-256 hash of the token.<br>
+      Legal basis: Contract performance — Art. 6(1)(b).<br>
+      Retention: 7 days (sliding window), or until logout/account deletion.</p>
 
-      <h2>sTRIPE</h2>
-      <p>Payment processing for premium memberships is handled by Stripe. All payment card details are collected and processed directly by Stripe. [aRTS] does not store, access, or retain payment card information at any point during the transaction.</p>
+      <p style="margin-top:16px"><strong>IP logging</strong><br>
+      Data: encrypted IP address, login provider, membership tier, timestamp, encrypted user-agent. IP is encrypted at rest using AES-GCM; only a truncated hash is used for analytics.<br>
+      Legal basis: Legitimate interest — security and abuse prevention — Art. 6(1)(f).<br>
+      Retention: 90 days maximum.</p>
 
-      <h2>eNCRYPTION</h2>
-      <p>Favourites data is encrypted using AES-GCM with keys derived from your OAuth identifier. Encrypted data is stored locally in your browser and never leaves your device. [aRTS] has no ability to read, decrypt, or access your favourites data.</p>
+      <p style="margin-top:16px"><strong>User profile &amp; preferences</strong><br>
+      Data: alias, membership tier, join date, XP points, display settings. PII fields (email, name, OAuth sub) are encrypted at rest with AES-GCM.<br>
+      Legal basis: Contract performance — Art. 6(1)(b).<br>
+      Retention: Until account deletion.</p>
 
-      <h2>tHIRD-pARTY pROVIDERS</h2>
-      <p>By using Google Sign In, you are subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Google's Privacy Policy</a>. By using Apple Sign In, you are subject to <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Apple's Privacy Policy</a>. [aRTS] has no control over data collected by these providers during the authentication flow.</p>
+      <p style="margin-top:16px"><strong>Favourites</strong><br>
+      Data: piece IDs you have favourited, stored server-side. Client-side favourites are additionally encrypted with AES-GCM using keys derived from your OAuth identifier.<br>
+      Legal basis: Contract performance — Art. 6(1)(b).<br>
+      Retention: Until account deletion.</p>
 
-      <h2>yOUR rIGHTS</h2>
-      <p>You can delete all locally stored data at any time through your <a href="id.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard (dESTROY iD). Local data deletion is immediate and irreversible. For deletion of server-side IP logs, contact us. Under GDPR and equivalent regulations, you have the right to access, rectify, or erase personal data we hold about you.</p>
+      <p style="margin-top:16px"><strong>Feedback</strong><br>
+      Data: star rating, text (encrypted at rest), page context.<br>
+      Legal basis: Consent — Art. 6(1)(a). You may withdraw consent at any time.<br>
+      Retention: Until account deletion or consent withdrawal.</p>
 
-      <h2>cONTACT</h2>
-      <p>Privacy concerns and data requests can be raised through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
+      <p style="margin-top:16px"><strong>Newsletter</strong><br>
+      Data: email address (encrypted at rest), name, subscription source.<br>
+      Legal basis: Consent — Art. 6(1)(a).<br>
+      Retention: Until unsubscribe or account deletion.</p>
+
+      <p style="margin-top:16px"><strong>Payments &amp; transactions (Stripe)</strong><br>
+      Data: payment card details are collected and processed exclusively by Stripe. [aRTS] never stores, accesses, or retains card data. We store: transaction ID, amount, commission, Stripe session ID — no payment card details.<br>
+      Legal basis: Contract performance — Art. 6(1)(b); Legal obligation for tax record retention — Art. 6(1)(c).<br>
+      Retention: Transaction records are retained in pseudonymised form for 10 years per German tax law (AO §147, UStG §14b).</p>
+
+      <p style="margin-top:16px"><strong>Algorithm &amp; recommendations</strong><br>
+      Data: behavioural signals (views, favourites, purchases), recommendation cache, click-through tracking.<br>
+      Legal basis: Legitimate interest — personalised experience — Art. 6(1)(f). You may object at any time (see rights below).<br>
+      Retention: Impressions are purged after 180 days. Recommendation cache is regenerated periodically. All data deleted on account deletion.</p>
+
+      <p style="margin-top:16px"><strong>Content moderation (AI-assisted)</strong><br>
+      Data: listing metadata, moderation verdicts, AI confidence scores. Content is evaluated by automated models (HuggingFace classifiers + Claude) for safety compliance.<br>
+      Legal basis: Legitimate interest — platform safety — Art. 6(1)(f).<br>
+      Retention: Moderation logs are retained (anonymised on account deletion) for audit purposes. You have the right to request human review of any automated decision (Art. 22).</p>
+
+      <p style="margin-top:16px"><strong>Form submissions (Formspree)</strong><br>
+      Data: inquiry content, reports, art submissions. Data is transmitted to Formspree servers.<br>
+      Legal basis: Consent — Art. 6(1)(a).<br>
+      Retention: Subject to <a href="https://formspree.io/legal/privacy-policy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Formspree's Privacy Policy</a>.</p>
+
+      <!-- 4. Device storage (TTDSG §25) -->
+      <h2>4. dEVICE sTORAGE (TTDSG §25)</h2>
+      <p>We use your browser's localStorage (and sessionStorage in Stealth Mode) instead of cookies. Under the German Telekommunikation-Telemedien-Datenschutz-Gesetz (TTDSG) §25, accessing storage on your device requires consent unless strictly necessary.</p>
+      <p style="margin-top:12px"><strong>Strictly necessary (no consent required):</strong> session token, theme preference, CAPTCHA verification state, stealth mode flag.</p>
+      <p style="margin-top:12px"><strong>Consent-based:</strong> feedback data, apparel voucher, view preferences (grid/list), streak data, XP tracking, bot settings, GDPR consent record. These are only stored after you provide consent via our storage consent banner. You may withdraw consent at any time through your <a href="id.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard or by clearing browser storage.</p>
+      <p style="margin-top:12px">No advertising cookies are used. No document.cookie is set at any point.</p>
+
+      <!-- 5. Recipients -->
+      <h2>5. rECIPIENTS &amp; tHIRD pARTIES</h2>
+      <p>Your data may be shared with the following service providers (data processors under GDPR Art. 28):</p>
+      <p style="margin-top:12px"><strong>Stripe</strong> (Stripe, Inc. — US/EU) — payment processing. Subject to <a href="https://stripe.com/privacy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Stripe's Privacy Policy</a>.</p>
+      <p style="margin-top:8px"><strong>Cloudflare</strong> (Cloudflare, Inc. — US/EU) — CDN, DDoS protection, DNS. Processes IP addresses and request metadata. Subject to <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Cloudflare's Privacy Policy</a>.</p>
+      <p style="margin-top:8px"><strong>Hetzner</strong> (Hetzner Online GmbH — Germany) — VPS hosting. Data is stored on servers in Helsinki, Finland (EU). Subject to <a href="https://www.hetzner.com/legal/privacy-policy/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Hetzner's Privacy Policy</a>.</p>
+      <p style="margin-top:8px"><strong>Formspree</strong> (Formspree, Inc. — US) — form submissions. Subject to <a href="https://formspree.io/legal/privacy-policy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Formspree's Privacy Policy</a>.</p>
+      <p style="margin-top:8px"><strong>Google</strong> (Google LLC — US) — OAuth authentication. Subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Google's Privacy Policy</a>.</p>
+      <p style="margin-top:8px"><strong>Apple</strong> (Apple Inc. — US) — Sign In with Apple. Subject to <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Apple's Privacy Policy</a>.</p>
+      <p style="margin-top:8px"><strong>Resend</strong> (Resend, Inc. — US) — transactional emails (password resets, notifications). Subject to <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">Resend's Privacy Policy</a>.</p>
+
+      <!-- 6. International transfers -->
+      <h2>6. iNTERNATIONAL dATA tRANSFERS</h2>
+      <p>Some of our service providers (Stripe, Cloudflare, Google, Apple, Formspree, Resend) may process data in the United States. These transfers are safeguarded by the EU-U.S. Data Privacy Framework and/or Standard Contractual Clauses (SCCs) pursuant to GDPR Art. 46(2)(c). Our primary database is hosted within the EU (Hetzner, Helsinki, Finland).</p>
+
+      <!-- 7. Encryption -->
+      <h2>7. eNCRYPTION &amp; sECURITY</h2>
+      <p>All personal data stored on our server is encrypted at rest using AES-GCM with a server-side encryption key. IP addresses and user-agents are encrypted before storage. Email addresses, names, and OAuth identifiers are encrypted at the field level. Client-side favourites are additionally encrypted with keys derived from your OAuth identifier. All connections use TLS 1.2+ (enforced by Cloudflare and Caddy). The server is protected by UFW firewall, fail2ban, and Cloudflare-only IP whitelisting.</p>
+
+      <!-- 8. Your rights -->
+      <h2>8. yOUR rIGHTS (GDPR aRT. 15–22)</h2>
+      <p>Under the General Data Protection Regulation, you have the following rights:</p>
+      <p style="margin-top:12px"><strong>Right of access (Art. 15)</strong> — request a copy of all personal data we hold about you.</p>
+      <p style="margin-top:8px"><strong>Right to rectification (Art. 16)</strong> — correct inaccurate personal data.</p>
+      <p style="margin-top:8px"><strong>Right to erasure (Art. 17)</strong> — request deletion of your personal data. You can delete your account immediately via the <a href="id.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">iD</a> dashboard (dELETE aCCOUNT button). This deletes all personal data from our server and your device immediately. Transaction records are retained in pseudonymised form for 10 years per German tax law (AO §147). A non-reversible tombstone hash is retained for 3 years for fraud prevention.</p>
+      <p style="margin-top:8px"><strong>Right to restriction (Art. 18)</strong> — restrict processing of your data in certain circumstances.</p>
+      <p style="margin-top:8px"><strong>Right to data portability (Art. 20)</strong> — receive your data in a structured, machine-readable format.</p>
+      <p style="margin-top:8px"><strong>Right to object (Art. 21)</strong> — object to processing based on legitimate interest (e.g., algorithm recommendations, IP logging).</p>
+      <p style="margin-top:8px"><strong>Right regarding automated decisions (Art. 22)</strong> — our content moderation uses AI-assisted decision-making. You may request human review of any automated moderation decision.</p>
+      <p style="margin-top:8px"><strong>Withdrawal of consent (Art. 7(3))</strong> — where processing is based on consent (feedback, newsletter), you may withdraw consent at any time without affecting the lawfulness of prior processing.</p>
+      <p style="margin-top:16px"><strong>Deletion timeline:</strong> requests are fulfilled within 30 days (GDPR Art. 12(3)). Self-service deletion via the iD dashboard is immediate. Backup propagation completes within 30 days.</p>
+
+      <!-- 9. Supervisory authority -->
+      <h2>9. sUPERVISORY aUTHORITY</h2>
+      <p>You have the right to lodge a complaint with a data protection supervisory authority. The competent authority for Berlin is:<br>
+      Berliner Beauftragte f&uuml;r Datenschutz und Informationsfreiheit<br>
+      Friedrichstr. 219, 10969 Berlin<br>
+      <a href="https://www.datenschutz-berlin.de" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">www.datenschutz-berlin.de</a></p>
+
+      <!-- 10. Data retention summary -->
+      <h2>10. dATA rETENTION sUMMARY</h2>
+      <p>Session tokens: 7 days (sliding) or until logout.<br>
+      IP logs: 90 days maximum.<br>
+      User profile, favourites, settings, feedback, redemptions: until account deletion.<br>
+      Impressions (behavioural data): 180 days.<br>
+      Newsletter subscription: until unsubscribe.<br>
+      Transaction/sales records: 10 years (AO §147, UStG §14b) — pseudonymised after account deletion.<br>
+      Tombstone hash (post-deletion): 3 years (Art. 6(1)(f) — fraud prevention).<br>
+      Moderation audit logs: indefinite (anonymised on account deletion).</p>
+
+      <!-- 11. Contact -->
+      <h2>11. cONTACT</h2>
+      <p>Privacy concerns, data access requests, and erasure requests can be raised through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page or by emailing <a href="mailto:arts4berlin@outlook.com" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">arts4berlin@outlook.com</a>.</p>
 
       <div class="legal-divider"></div>
+      <p style="margin-top:clamp(20px,3vh,32px);font-size:0.62rem;color:var(--c-text-ghost,rgba(255,255,255,0.18));">
+        <a href="impressum.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">iMPRESSUM</a> &nbsp;|&nbsp;
+        <a href="listing-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">lISTING tERMS</a> &nbsp;|&nbsp;
+        <a href="bot-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">bOT tERMS</a>
+      </p>
       <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>
     </div>
   </main>
@@ -281,6 +386,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>

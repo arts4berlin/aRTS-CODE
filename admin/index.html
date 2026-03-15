@@ -1082,7 +1082,10 @@
       sessionStorage.setItem('arts_admin_auth', '1');
       loginScreen.style.transition = 'opacity 0.3s';
       loginScreen.style.opacity = '0';
-      setTimeout(function(){ loginScreen.style.display = 'none'; }, 350);
+      setTimeout(function(){
+        loginScreen.style.display = 'none';
+        if(typeof loadNewsletter === 'function') loadNewsletter();
+      }, 350);
     }
 
     /* ── Verify ── */
@@ -1185,6 +1188,9 @@
       </div>
       <div class="nav-item" data-section="feedback">
         <span class="nav-icon">♦</span> fEEDBaCK
+      </div>
+      <div class="nav-item" data-section="bounty">
+        <span class="nav-icon">◉</span> bOUNTY
       </div>
       <div class="nav-item" data-section="sales">
         <span class="nav-icon">♦</span> sALES
@@ -1383,7 +1389,7 @@
         <tbody>
           <tr>
             <td class="name-cell">aLLY</td>
-            <td><span style="color:var(--accent)">&#8364;</span>0.33 / mo</td>
+            <td><span style="color:var(--accent)">&#8364;</span>0.55 / mo</td>
             <td class="desc-cell">member card &middot; community access &middot; trading network &middot; bOUTIQUE aCCESS</td>
             <td>0</td>
             <td><span class="badge active">aCTIVE</span></td>
@@ -1623,51 +1629,34 @@
         <textarea id="nl-body" rows="8" placeholder="Write your newsletter content here..."
           style="background:var(--bg-card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:0.78rem;font-weight:300;letter-spacing:0.02em;padding:12px;width:100%;outline:none;resize:vertical;line-height:1.6;"></textarea>
       </div>
-      <button disabled title="Requires backend — Phase 2"
-        style="font-family:'Space Grotesk',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;padding:10px 24px;background:var(--text-muted);color:var(--bg);border:none;border-radius:4px;cursor:not-allowed;opacity:0.4;">sEND nEWSLETTER /* REQUIRES BACKEND */</button>
+      <button id="btn-send-newsletter" onclick="sendNewsletter()"
+        style="font-family:'Space Grotesk',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;padding:10px 24px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;cursor:pointer;">sEND nEWSLETTER</button>
 
       <!-- Campaign history -->
       <div class="sub-header" style="margin-top:32px;">
         <span>CAMPAIGN HISTORY</span>
+        <span id="campaignCount" style="font-size:0.58rem;color:var(--text-muted)"></span>
       </div>
       <table class="dash-table">
         <thead>
-          <tr><th>DATE</th><th>SUBJECT</th><th style="text-align:center;">SENT</th><th style="text-align:center;">OPENS</th><th style="text-align:center;">CLICKS</th><th style="text-align:right;">PTS AWARDED</th></tr>
+          <tr><th>DATE</th><th>SUBJECT</th><th style="text-align:center;">SENT</th><th style="text-align:center;">FAILED</th></tr>
         </thead>
-        <tbody>
-          <tr>
-            <td style="white-space:nowrap;">2026-03-08</td>
-            <td class="name-cell">wELCOME tO [aRTS]</td>
-            <td style="text-align:center;">24</td>
-            <td style="text-align:center;color:var(--success);">18 <span class="desc-cell">(75%)</span></td>
-            <td style="text-align:center;color:var(--accent);">9 <span class="desc-cell">(38%)</span></td>
-            <td style="text-align:right;color:var(--accent);">+270</td>
-          </tr>
-          <tr>
-            <td style="white-space:nowrap;">2026-03-01</td>
-            <td class="name-cell">mARCH UpDaTE — nEW fEATURES</td>
-            <td style="text-align:center;">22</td>
-            <td style="text-align:center;color:var(--success);">15 <span class="desc-cell">(68%)</span></td>
-            <td style="text-align:center;color:var(--accent);">6 <span class="desc-cell">(27%)</span></td>
-            <td style="text-align:right;color:var(--accent);">+195</td>
-          </tr>
+        <tbody id="campaignTableBody">
+          <tr><td colspan="4" style="color:var(--text-muted);font-size:0.72rem;">Loading...</td></tr>
         </tbody>
       </table>
 
       <!-- Subscriber list -->
       <div class="sub-header" style="margin-top:28px;">
         <span>SUBSCRIBERS</span>
-        <span style="font-size:0.58rem;color:var(--text-muted)">24 total</span>
+        <span id="subscriberCount" style="font-size:0.58rem;color:var(--text-muted)"></span>
       </div>
       <table class="dash-table">
         <thead>
-          <tr><th>TIER</th><th style="text-align:center;">COUNT</th><th style="text-align:center;">AVG POINTS</th><th style="text-align:right;">LAST SENT</th></tr>
+          <tr><th>EMAIL</th><th>NAME</th><th>SOURCE</th><th style="text-align:right;">SUBSCRIBED</th></tr>
         </thead>
-        <tbody>
-          <tr><td class="name-cell" style="color:var(--accent);">aLLY</td><td style="text-align:center;">14</td><td style="text-align:center;">320</td><td style="text-align:right;">2026-03-08</td></tr>
-          <tr><td class="name-cell" style="color:var(--accent);">BRIGaDIER</td><td style="text-align:center;">6</td><td style="text-align:center;">780</td><td style="text-align:right;">2026-03-08</td></tr>
-          <tr><td class="name-cell" style="color:var(--accent);">CURaTOR</td><td style="text-align:center;">2</td><td style="text-align:center;">1540</td><td style="text-align:right;">2026-03-08</td></tr>
-          <tr><td class="name-cell" style="color:var(--text-dim);">aUDIENCE</td><td style="text-align:center;">2</td><td style="text-align:center;">65</td><td style="text-align:right;">2026-03-01</td></tr>
+        <tbody id="subscriberTableBody">
+          <tr><td colspan="4" style="color:var(--text-muted);font-size:0.72rem;">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -2069,6 +2058,54 @@
         </div>
       </div>
 
+      <!-- Bug Bounty -->
+      <div class="sub-header">
+        <span>BUG BOUNTY</span>
+        <span style="font-size:0.58rem;color:var(--text-muted)">loophole report rewards</span>
+      </div>
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">sUBMIT bOUNTY</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="bounty_submit" value="25" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">bounty.html · on submit</p>
+        </div>
+        <div class="card">
+          <p class="card-label">lOW sEVERITY</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="bounty_low" value="500" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">uI glitch · minor bug</p>
+        </div>
+        <div class="card">
+          <p class="card-label">mEDIUM sEVERITY</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="bounty_medium" value="1000" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">logic error · broken flow</p>
+        </div>
+        <div class="card">
+          <p class="card-label">cRITICaL sEVERITY</p>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span style="color:var(--accent);font-size:1.4rem;font-weight:700;">+</span>
+            <input type="number" data-pts-event="bounty_critical" value="2500" min="0" max="99999"
+              style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:1.2rem;font-weight:700;width:60px;outline:none;text-align:center;">
+            <span style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.1em;">pTS</span>
+          </div>
+          <p style="font-size:0.48rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.1em;">security · xP exploit</p>
+        </div>
+      </div>
+
       <!-- Add Custom Event -->
       <div class="sub-header">
         <span>ADD CUSTOM EVENT</span>
@@ -2435,6 +2472,65 @@
         </thead>
         <tbody id="fb-tbody"></tbody>
       </table>
+    </div>
+
+    <!-- ═══════════ BOUNTY ═══════════ -->
+    <div class="section" id="sec-bounty">
+      <p class="section-title">bUG bOUNTY</p>
+      <p class="section-desc">Review loophole reports from users. Confirm valid findings to award big point rewards.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+        <button class="dash-btn" id="bounty-refresh-btn" onclick="loadBountyLog()">rEFRESH</button>
+        <button class="dash-btn" onclick="clearBountyLog()" style="color:var(--danger);border-color:var(--danger-bdr);">cLEaR aLL</button>
+        <span id="bounty-count-badge" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--text-dim);"></span>
+      </div>
+
+      <!-- Overview cards -->
+      <div class="card-grid" id="bounty-overview" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:28px;">
+        <div class="card">
+          <p class="card-label">tOTAL</p>
+          <p style="font-size:1.4rem;font-weight:700;color:var(--text);" id="bounty-total">0</p>
+        </div>
+        <div class="card">
+          <p class="card-label">pENDING</p>
+          <p style="font-size:1.4rem;font-weight:700;color:var(--pending);" id="bounty-pending">0</p>
+        </div>
+        <div class="card">
+          <p class="card-label">cONFIRMED</p>
+          <p style="font-size:1.4rem;font-weight:700;color:var(--success);" id="bounty-confirmed">0</p>
+        </div>
+        <div class="card">
+          <p class="card-label">pTS aWARDED</p>
+          <p style="font-size:1.4rem;font-weight:700;color:var(--accent);" id="bounty-pts-awarded">0</p>
+        </div>
+      </div>
+
+      <!-- No submissions state -->
+      <div id="bounty-empty" style="display:none;font-size:0.65rem;font-weight:300;letter-spacing:0.16em;color:var(--text-dim);padding:28px 0;">nO bOUNTY sUBMISSIONS yET.</div>
+
+      <!-- Submissions table -->
+      <table class="dash-table" id="bounty-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>dATE</th>
+            <th>sEVERITY</th>
+            <th>cATEGORY</th>
+            <th>tITLE</th>
+            <th>sTATUS</th>
+            <th>aCTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="bounty-tbody"></tbody>
+      </table>
+
+      <!-- Expanded detail panel (hidden by default) -->
+      <div id="bounty-detail" style="display:none;margin-top:18px;padding:18px;border:1px solid var(--border);border-radius:4px;background:var(--bg-card);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <p style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;">bOUNTY dETAIL</p>
+          <button class="dash-btn" onclick="document.getElementById('bounty-detail').style.display='none'" style="font-size:0.52rem;padding:4px 10px;">[×]</button>
+        </div>
+        <div id="bounty-detail-body" style="font-size:0.62rem;font-weight:300;letter-spacing:0.08em;color:var(--text-dim);line-height:1.8;white-space:pre-wrap;"></div>
+      </div>
     </div>
 
     <!-- ═══════════ SALES ═══════════ -->
@@ -3176,6 +3272,117 @@
     } catch(e){}
   })();
 
+  /* ── Newsletter: send + load data from API ── */
+  var NL_API = (location.hostname === 'admin.4-arts.com')
+    ? '/api/admin/newsletter'
+    : 'https://admin.4-arts.com/api/admin/newsletter';
+  var NL_SEND_API = (location.hostname === 'admin.4-arts.com')
+    ? '/api/admin/newsletter/send'
+    : 'https://admin.4-arts.com/api/admin/newsletter/send';
+
+  function nlEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function loadNewsletter(){
+    var token = sessionStorage.getItem('arts_vault_token');
+    if(!token) return;
+    fetch(NL_API, { headers: { 'X-Vault-Token': token } })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var subs = data.subscribers || [];
+        var stb = document.getElementById('subscriberTableBody');
+        var sc = document.getElementById('subscriberCount');
+        if(sc) sc.textContent = subs.length + ' total';
+        if(stb){
+          if(!subs.length){
+            stb.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);font-size:0.72rem;">No subscribers yet</td></tr>';
+          } else {
+            stb.innerHTML = subs.map(function(s){
+              return '<tr>'
+                + '<td style="font-family:var(--mono);font-size:0.68rem;">' + nlEsc(s.email||'') + '</td>'
+                + '<td>' + nlEsc(s.name||'\u2014') + '</td>'
+                + '<td style="font-size:0.68rem;">' + nlEsc(s.source||'\u2014') + '</td>'
+                + '<td style="font-family:var(--mono);font-size:0.68rem;text-align:right;">' + nlEsc((s.subscribed_at||'').slice(0,10)) + '</td>'
+                + '</tr>';
+            }).join('');
+          }
+        }
+        var camps = data.campaigns || [];
+        var ctb = document.getElementById('campaignTableBody');
+        var cc = document.getElementById('campaignCount');
+        if(cc) cc.textContent = camps.length + ' sent';
+        if(ctb){
+          if(!camps.length){
+            ctb.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);font-size:0.72rem;">No campaigns yet</td></tr>';
+          } else {
+            ctb.innerHTML = camps.map(function(c){
+              return '<tr>'
+                + '<td style="white-space:nowrap;">' + nlEsc((c.sent_at||'').slice(0,10)) + '</td>'
+                + '<td class="name-cell">' + nlEsc(c.subject||'') + '</td>'
+                + '<td style="text-align:center;color:var(--success);">' + (c.sent_count||0) + '</td>'
+                + '<td style="text-align:center;color:' + ((c.fail_count||0) > 0 ? 'var(--danger)' : 'var(--text-muted)') + ';">' + (c.fail_count||0) + '</td>'
+                + '</tr>';
+            }).join('');
+          }
+        }
+      })
+      .catch(function(err){ console.error('[aRTS] newsletter fetch error', err); });
+  }
+
+  function sendNewsletter(){
+    var subject = document.getElementById('nl-subject').value.trim();
+    var body = document.getElementById('nl-body').value.trim();
+    if(!subject || !body){ alert('Subject and body are required.'); return; }
+    if(!confirm('Send newsletter to all subscribers?\n\nSubject: ' + subject)) return;
+    var token = sessionStorage.getItem('arts_vault_token');
+    if(!token){ alert('Vault auth required.'); return; }
+    var btn = document.getElementById('btn-send-newsletter');
+    btn.disabled = true;
+    btn.textContent = 'sENDING...';
+    btn.style.opacity = '0.5';
+    var html = '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#e8e4db;background:#0a0a0a;">'
+      + '<h2 style="font-weight:700;letter-spacing:0.08em;color:#FF5C00;margin-bottom:16px;">[aRTS]</h2>'
+      + '<h3 style="font-weight:700;letter-spacing:0.04em;margin-bottom:12px;">' + nlEsc(subject) + '</h3>'
+      + '<div style="line-height:1.7;font-size:14px;white-space:pre-wrap;">' + nlEsc(body) + '</div>'
+      + '<hr style="border:none;border-top:1px solid #222;margin:24px 0;">'
+      + '<p style="font-size:11px;color:#666;letter-spacing:0.06em;">You received this because you subscribed to the [aRTS] newsletter.</p>'
+      + '</div>';
+    fetch(NL_SEND_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Vault-Token': token },
+      body: JSON.stringify({ subject: subject, html: html })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      if(data.error){
+        btn.textContent = 'sEND nEWSLETTER';
+        alert('Error: ' + data.error);
+      } else {
+        btn.textContent = '\u2713 sENT (' + data.sent + '/' + data.total + ')';
+        btn.style.background = 'rgba(110,230,110,0.15)';
+        btn.style.color = 'rgba(110,230,110,0.85)';
+        document.getElementById('nl-subject').value = '';
+        document.getElementById('nl-body').value = '';
+        loadNewsletter();
+        setTimeout(function(){
+          btn.textContent = 'sEND nEWSLETTER';
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 3000);
+      }
+    })
+    .catch(function(err){
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.textContent = 'sEND nEWSLETTER';
+      alert('Failed to send: ' + err.message);
+    });
+  }
+
+  /* Load newsletter data if vault token already exists (page refresh) */
+  if(sessionStorage.getItem('arts_vault_token')) loadNewsletter();
+
   /* ══════════════════════════════════════
      POINTS SYSTEM ENGINE
      ══════════════════════════════════════ */
@@ -3202,7 +3409,11 @@
       helper_curate:        60,
       nl_open:              5,
       nl_click:             10,
-      nl_interact:          25
+      nl_interact:          25,
+      bounty_submit:        25,
+      bounty_low:           500,
+      bounty_medium:        1000,
+      bounty_critical:      2500
     },
     milestones: {
       patron:    100,
@@ -4317,7 +4528,143 @@
   document.querySelectorAll('.nav-item[data-section="ai-learning"]').forEach(function(n){
     n.addEventListener('click', function(){ setTimeout(loadAiLearning, 80); });
   });
+
+  /* ═══════════ BOUNTY ═══════════ */
+
+  var SEV_COLORS = { 'lOW': 'var(--accent-dim)', 'mEDIUM': 'var(--pending)', 'cRITICaL': 'var(--danger)' };
+  var STATUS_COLORS = { pending: 'var(--pending)', confirmed: 'var(--success)', rejected: 'var(--danger)' };
+
+  function getBountyLog() {
+    try { return JSON.parse(localStorage.getItem('arts_bounty_log') || '[]'); }
+    catch(e) { return []; }
+  }
+
+  function loadBountyLog() {
+    var log = getBountyLog();
+    var total = log.length;
+    var pending = log.filter(function(b){ return b.status === 'pending'; }).length;
+    var confirmed = log.filter(function(b){ return b.status === 'confirmed'; }).length;
+    var ptsAwarded = log.reduce(function(sum, b){ return sum + (b.pts_awarded || 0); }, 0);
+
+    document.getElementById('bounty-total').textContent = total;
+    document.getElementById('bounty-pending').textContent = pending;
+    document.getElementById('bounty-confirmed').textContent = confirmed;
+    document.getElementById('bounty-pts-awarded').textContent = ptsAwarded.toLocaleString();
+    document.getElementById('bounty-count-badge').textContent = total + ' submissions · ' + pending + ' pending';
+
+    var table = document.getElementById('bounty-table');
+    var empty = document.getElementById('bounty-empty');
+
+    if(total === 0) {
+      table.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    table.style.display = 'table';
+    empty.style.display = 'none';
+
+    var tbody = document.getElementById('bounty-tbody');
+    tbody.innerHTML = '';
+
+    log.slice().reverse().forEach(function(b, ri) {
+      var idx = log.length - 1 - ri;
+      var tr = document.createElement('tr');
+      tr.style.cursor = 'pointer';
+      tr.addEventListener('click', function(){ showBountyDetail(idx); });
+
+      var d = new Date(b.ts);
+      var dateStr = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'2-digit' });
+
+      var sevColor = SEV_COLORS[b.severity] || 'var(--text-dim)';
+      var statusColor = STATUS_COLORS[b.status] || 'var(--text-dim)';
+
+      tr.innerHTML =
+        '<td style="font-size:0.58rem;color:var(--text-dim);font-family:var(--mono);">' + dateStr + '</td>' +
+        '<td><span style="font-size:0.5rem;font-weight:700;letter-spacing:0.14em;color:' + sevColor + ';border:1px solid ' + sevColor + ';padding:2px 6px;border-radius:3px;opacity:0.85;">' + (b.severity || '—') + '</span></td>' +
+        '<td style="font-size:0.58rem;color:var(--text-dim);">' + (b.category || '—') + '</td>' +
+        '<td style="font-size:0.62rem;font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (b.title || '—') + '</td>' +
+        '<td><span style="font-size:0.5rem;font-weight:700;letter-spacing:0.14em;color:' + statusColor + ';">' + (b.status || 'pending') + '</span></td>' +
+        '<td style="display:flex;gap:6px;">' +
+          (b.status === 'pending'
+            ? '<button class="dash-btn" style="font-size:0.46rem;padding:3px 8px;color:var(--success);border-color:var(--success-bdr);" onclick="event.stopPropagation();confirmBounty(' + idx + ')">cONFIRM</button>' +
+              '<button class="dash-btn" style="font-size:0.46rem;padding:3px 8px;color:var(--danger);border-color:var(--danger-bdr);" onclick="event.stopPropagation();rejectBounty(' + idx + ')">rEJECT</button>'
+            : (b.status === 'confirmed' ? '<span style="font-size:0.5rem;color:var(--success);">+' + (b.pts_awarded || 0) + ' pTS</span>' : '<span style="font-size:0.5rem;color:var(--text-muted);">—</span>')
+          ) +
+        '</td>';
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showBountyDetail(idx) {
+    var log = getBountyLog();
+    var b = log[idx];
+    if(!b) return;
+    var panel = document.getElementById('bounty-detail');
+    var body = document.getElementById('bounty-detail-body');
+    body.innerHTML =
+      '<strong style="color:var(--text);letter-spacing:0.1em;">' + (b.title || '—') + '</strong>\n\n' +
+      '<span style="color:var(--accent);">sEVERITY:</span> ' + (b.severity || '—') + '    ' +
+      '<span style="color:var(--accent);">cATEGORY:</span> ' + (b.category || '—') + '    ' +
+      '<span style="color:var(--accent);">sTATUS:</span> ' + (b.status || 'pending') + '\n' +
+      '<span style="color:var(--accent);">eMAIL:</span> ' + (b.email || '—') + '\n\n' +
+      '<span style="color:var(--accent);">sTEPS tO rEPRODUCE:</span>\n' + (b.steps || '(none)') + '\n\n' +
+      '<span style="color:var(--accent);">eXPECTED vS aCTUAL:</span>\n' + (b.expected || '(none)');
+    panel.style.display = 'block';
+  }
+
+  function confirmBounty(idx) {
+    var log = getBountyLog();
+    var b = log[idx];
+    if(!b || b.status !== 'pending') return;
+
+    var cfg = getPointsConfig();
+    var sevKey = 'bounty_' + (b.severity === 'cRITICaL' ? 'critical' : b.severity === 'mEDIUM' ? 'medium' : 'low');
+    var pts = (cfg.events && cfg.events[sevKey] != null) ? cfg.events[sevKey] : (b.severity === 'cRITICaL' ? 2500 : b.severity === 'mEDIUM' ? 1000 : 500);
+
+    b.status = 'confirmed';
+    b.pts_awarded = pts;
+    b.confirmed_at = Date.now();
+    log[idx] = b;
+    localStorage.setItem('arts_bounty_log', JSON.stringify(log));
+
+    /* Award points to user */
+    var cur = parseInt(localStorage.getItem('arts_points') || '0', 10);
+    localStorage.setItem('arts_points', String(cur + pts));
+
+    /* Queue toast for next page load */
+    try {
+      var pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]');
+      pending.push({ label: 'bOUNTY cONFIRMED', pts: pts });
+      sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
+    } catch(e) {}
+
+    loadBountyLog();
+  }
+
+  function rejectBounty(idx) {
+    var log = getBountyLog();
+    var b = log[idx];
+    if(!b || b.status !== 'pending') return;
+    b.status = 'rejected';
+    b.pts_awarded = 0;
+    log[idx] = b;
+    localStorage.setItem('arts_bounty_log', JSON.stringify(log));
+    loadBountyLog();
+  }
+
+  function clearBountyLog() {
+    if(!confirm('Clear all bounty submissions?')) return;
+    localStorage.removeItem('arts_bounty_log');
+    loadBountyLog();
+  }
+
+  document.querySelectorAll('.nav-item[data-section="bounty"]').forEach(function(n){
+    n.addEventListener('click', function(){ setTimeout(loadBountyLog, 80); });
+  });
   </script>
 <script src="../theme.js?v=4"></script>
+<script src="../consent.js"></script>
 </body>
 </html>

@@ -800,6 +800,8 @@
     html[data-theme="day"] .vc-history-toggle { color: rgba(0,0,0,0.48); }
     html[data-theme="day"] .vc-history-toggle:hover { color: rgba(0,0,0,0.65); }
     html[data-theme="day"] .vc-history-item { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] #vc-bounty-submitted + span,
+    html[data-theme="day"] #vc-bounty-confirmed + span { color: rgba(0,0,0,0.48) !important; }
     html[data-theme="day"] .vc-reward-item { border-color: rgba(0,0,0,0.04); }
     html[data-theme="day"] .verified-card { border-color: rgba(0,0,0,0.10); }
     html[data-theme="day"] .card-eyebrow { color: rgba(255,92,0,0.55); }
@@ -1363,6 +1365,23 @@
                 <button class="vc-history-toggle" id="vc-history-toggle" onclick="toggleHistory()">rEDEMPTION hISTORY ▸</button>
                 <div class="vc-history-list" id="vc-history-list" hidden></div>
               </div>
+
+              <!-- Bounty Hunter -->
+              <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.04);">
+                <p class="vc-redeem-title">bOUNTY hUNTER</p>
+                <div style="display:flex;gap:18px;align-items:baseline;margin-bottom:10px;">
+                  <div>
+                    <span id="vc-bounty-submitted" style="font-size:1.2rem;font-weight:700;color:var(--c-accent,#FF5C00);">0</span>
+                    <span style="font-size:0.48rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.28);margin-left:3px;">sUBMITTED</span>
+                  </div>
+                  <div>
+                    <span id="vc-bounty-confirmed" style="font-size:1.2rem;font-weight:700;color:rgba(110,230,110,0.75);">0</span>
+                    <span style="font-size:0.48rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.28);margin-left:3px;">cONFIRMED</span>
+                  </div>
+                </div>
+                <a href="bounty.html" style="font-size:0.55rem;font-weight:600;letter-spacing:0.14em;color:var(--c-accent,#FF5C00);text-decoration:none;transition:opacity 0.15s;"
+                   onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='1'">rEPORT a lOOPHOLE →</a>
+              </div>
             </div>
           </div>
 
@@ -1454,8 +1473,8 @@
       <div id="destroy-step1">
         <p class="destroy-eyebrow">⚠ iRREVERSIBLE</p>
         <p class="destroy-heading">dELETE aCCOUNT?</p>
-        <p class="destroy-sub">tHIS wILL pERMANENTLY rEMOVE yOUR pREFERENCES, fAVORITES, vOUCHERS, aND fEEDBACK. tHIS cANNOT bE uNDONE.</p>
-        <p class="destroy-sub" style="margin-top:8px;font-size:0.52rem;color:var(--c-text-ghost);">iN tHE fUTURE, tHIS wILL aLSO rEMOVE yOUR pAYMENT dATA.</p>
+        <p class="destroy-sub">tHIS wILL pERMANENTLY rEMOVE yOUR pROFILE, pREFERENCES, fAVORITES, vOUCHERS, fEEDBACK, aND aLL sERVER dATA. tHIS cANNOT bE uNDONE.</p>
+        <p class="destroy-sub" style="margin-top:8px;font-size:0.52rem;color:var(--c-text-ghost);">yOUR dATA wILL bE dELETED iMMEDIATELY. tRANSACTION rECORDS aRE rETAINED iN pSEUDONYMISED fORM fOR 10 yEARS pER gERMAN tAX lAW (AO §147).</p>
         <div class="destroy-btns">
           <button class="btn-destroy-cancel" id="destroy-cancel-1">cANCEL</button>
           <button class="btn-destroy-confirm" id="destroy-next">cONFIRM →</button>
@@ -2060,6 +2079,14 @@
       }
       renderHistory();
 
+      /* Bounty hunter stats */
+      try {
+        var bSubs = JSON.parse(localStorage.getItem('arts_bounty_submissions') || '[]');
+        var bConf = bSubs.filter(function(b){ return b.status === 'confirmed'; }).length;
+        document.getElementById('vc-bounty-submitted').textContent = bSubs.length;
+        document.getElementById('vc-bounty-confirmed').textContent = bConf;
+      } catch(e) {}
+
       /* Seller info: commission rate + Stripe Connect status */
       var COMM_RATES = { 'aUDIENCE': 20, 'aLLY': 15, 'BRIGaDIER': 10, 'CURaTOR': 7 };
       var rate = COMM_RATES[tier] || COMM_RATES['aUDIENCE'];
@@ -2474,35 +2501,60 @@
     }
 
     function nukeAndSign() {
-      /* Clear all arts_ keys from both storages */
-      var keys = [];
-      for (var k in localStorage) { if (k.indexOf('arts_') === 0) keys.push(k); }
-      keys.forEach(function(k){ localStorage.removeItem(k); });
-      try {
-        var sKeys = [];
-        for (var sk in sessionStorage) { if (sk.indexOf('arts_') === 0) sKeys.push(sk); }
-        sKeys.forEach(function(sk){ sessionStorage.removeItem(sk); });
-      } catch(e){}
-      closeDestroyModal();
-      /* Transition back to s1 */
-      var s2Out = document.getElementById('s2');
-      s2Out.style.opacity = '0';
-      setTimeout(function() {
-        s2Out.hidden = true;
-        var s1Back = document.getElementById('s1');
-        s1Back.style.opacity = '0';
-        s1Back.hidden = false;
-        requestAnimationFrame(function() {
+      /* Disable button to prevent double-clicks */
+      var execBtn = document.getElementById('destroy-execute');
+      if (execBtn) execBtn.disabled = true;
+
+      /* Call server-side deletion API (GDPR Art. 17) */
+      var token = (typeof artsAuth !== 'undefined' && artsAuth.getToken()) || store.get('arts_session_token');
+      var headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      fetch(PROXY_BASE + '/api/account/delete', {
+        method: 'POST',
+        headers: headers,
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data.ok && !data.deleted) {
+          console.warn('[aRTS] Server deletion returned:', data);
+          /* Proceed with local cleanup even if server call had issues */
+        }
+      })
+      .catch(function(err) {
+        console.warn('[aRTS] Server deletion failed (proceeding with local cleanup):', err);
+      })
+      .finally(function() {
+        /* Clear all arts_ keys from both storages */
+        var keys = [];
+        for (var k in localStorage) { if (k.indexOf('arts_') === 0) keys.push(k); }
+        keys.forEach(function(k){ localStorage.removeItem(k); });
+        try {
+          var sKeys = [];
+          for (var sk in sessionStorage) { if (sk.indexOf('arts_') === 0) sKeys.push(sk); }
+          sKeys.forEach(function(sk){ sessionStorage.removeItem(sk); });
+        } catch(e){}
+        closeDestroyModal();
+        /* Transition back to s1 */
+        var s2Out = document.getElementById('s2');
+        s2Out.style.opacity = '0';
+        setTimeout(function() {
+          s2Out.hidden = true;
+          var s1Back = document.getElementById('s1');
+          s1Back.style.opacity = '0';
+          s1Back.hidden = false;
           requestAnimationFrame(function() {
-            s1Back.style.opacity = '1';
-            if (typeof scrambleLoginText === 'function') scrambleLoginText();
+            requestAnimationFrame(function() {
+              s1Back.style.opacity = '1';
+              if (typeof scrambleLoginText === 'function') scrambleLoginText();
+            });
           });
-        });
-      }, 230);
-      document.getElementById('vc-remembered').hidden = true;
-      document.getElementById('vc-progress-fill').style.width = '0%';
-      document.getElementById('activate-row').hidden = true;
-      document.getElementById('tier-confirm').hidden = true;
+        }, 230);
+        document.getElementById('vc-remembered').hidden = true;
+        document.getElementById('vc-progress-fill').style.width = '0%';
+        document.getElementById('activate-row').hidden = true;
+        document.getElementById('tier-confirm').hidden = true;
+      });
     }
 
     document.getElementById('btn-destroy').addEventListener('click', function() {
@@ -2682,6 +2734,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>if(artsAuth.isLoggedIn()&&!window.stealthMode)artsAuth.syncSettings();</script>
 <script src="btn-fx.js"></script>
