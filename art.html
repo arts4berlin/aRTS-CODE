@@ -441,6 +441,8 @@
       color: var(--c-text-ghost);
       text-decoration: none;
       transition: color var(--dur-fast);
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
     .detail-source-link:hover { color: var(--c-accent); }
 
@@ -1306,6 +1308,7 @@
 
     function openDetail(pieceId) {
       initDetailEls();
+      initDetailNav();
       var p = null;
       for (var i = 0; i < _allPieces.length; i++) {
         if (_allPieces[i].id === pieceId) { p = _allPieces[i]; break; }
@@ -1448,6 +1451,8 @@
 
       detailBackdrop.hidden = false;
       detailBackdrop._opening = true;
+      detailSheet.scrollTop = 0;
+      updateDetailNav();
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           detailBackdrop.classList.add('is-open');
@@ -1472,6 +1477,44 @@
         detailInfo.innerHTML = '';
         document.body.style.overflow = '';
       }, 260);
+    }
+
+    /* Detail nav: prev/next */
+    var _navInited = false;
+    var _navPrev, _navNext, _navPos;
+    function initDetailNav(){
+      if(_navInited) return;
+      _navPrev = document.getElementById('detail-prev');
+      _navNext = document.getElementById('detail-next');
+      _navPos  = document.getElementById('detail-nav-pos');
+      if(!_navPrev) return;
+      _navInited = true;
+      _navPrev.addEventListener('click', function(){
+        var list = _filteredPieces.length ? _filteredPieces : _allPieces;
+        var idx = _getNavIdx();
+        if(idx > 0) openDetail(list[idx-1].id);
+      });
+      _navNext.addEventListener('click', function(){
+        var list = _filteredPieces.length ? _filteredPieces : _allPieces;
+        var idx = _getNavIdx();
+        if(idx >= 0 && idx < list.length - 1) openDetail(list[idx+1].id);
+      });
+    }
+    function _getNavIdx(){
+      if(!_detailPieceId) return -1;
+      var list = _filteredPieces.length ? _filteredPieces : _allPieces;
+      for(var i=0;i<list.length;i++){
+        if(list[i].id === _detailPieceId) return i;
+      }
+      return -1;
+    }
+    function updateDetailNav(){
+      if(!_navInited) return;
+      var list = _filteredPieces.length ? _filteredPieces : _allPieces;
+      var idx = _getNavIdx();
+      _navPrev.disabled = idx <= 0;
+      _navNext.disabled = idx < 0 || idx >= list.length - 1;
+      _navPos.textContent = idx >= 0 ? (idx+1) + ' / ' + list.length : '';
     }
 
     /* Bind card clicks → open detail */
@@ -1666,6 +1709,11 @@
       <div class="detail-gallery" id="detail-gallery"></div>
       <div class="detail-gallery-dots" id="detail-dots"></div>
       <div class="detail-info" id="detail-info"></div>
+      <div class="detail-nav" id="detail-nav">
+        <button class="detail-nav-btn" id="detail-prev" aria-label="Previous piece">&#8593; pREV</button>
+        <span class="detail-nav-pos" id="detail-nav-pos"></span>
+        <button class="detail-nav-btn" id="detail-next" aria-label="Next piece">nEXT &#8595;</button>
+      </div>
     </div>
   </div>
 

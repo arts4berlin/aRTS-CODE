@@ -986,6 +986,8 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
   font-weight: var(--fw-semi);
   letter-spacing: 0.08em;
   color: var(--c-text-secondary);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .detail-meta-val.cert-yes { color: var(--c-success); }
 .detail-price-row {
@@ -1011,6 +1013,46 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
   text-transform: uppercase;
 }
 .detail-status.sold { color: var(--c-accent-muted); }
+
+/* Detail prev/next navigation */
+.detail-nav {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-3) var(--s-4);
+  background: color-mix(in srgb, var(--c-bg-elevated) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--c-border);
+  z-index: 2;
+}
+.detail-nav-btn {
+  font-family: var(--font);
+  font-size: 0.52rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.18em;
+  color: var(--c-text-tertiary);
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 8px 14px;
+  cursor: crosshair;
+  transition: color var(--dur-fast), border-color var(--dur-fast);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.detail-nav-btn:hover { color: var(--c-text); border-color: var(--c-border-hover); }
+.detail-nav-btn:disabled { opacity: 0.25; cursor: default; }
+.detail-nav-pos {
+  font-size: 0.46rem;
+  font-weight: var(--fw-light);
+  letter-spacing: 0.24em;
+  color: var(--c-text-ghost);
+}
 
 /* Favorite button */
 .btn-fav {
