@@ -115,6 +115,20 @@
     input, textarea { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
     button, a { touch-action: manipulation; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] { background: #fff; }
+    [data-theme="day"] body { background: #fff; color: #000; }
+    [data-theme="day"] .c-back { color: rgba(0,0,0,0.58); }
+    [data-theme="day"] .c-back:hover { color: #000; }
+    [data-theme="day"] .c-card { border-color: #000; background: #fff; }
+    [data-theme="day"] .c-rule { border-top-color: rgba(0,0,0,0.16); }
+    [data-theme="day"] .c-cell { border-color: rgba(0,0,0,0.2); }
+    [data-theme="day"] .c-cell:hover { border-color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.04); }
+    [data-theme="day"] .c-cell.selected { border-color: #000; background: rgba(0,0,0,0.08); }
+    [data-theme="day"] .c-cell svg polygon, [data-theme="day"] .c-cell svg circle, [data-theme="day"] .c-cell svg text, [data-theme="day"] .c-cell svg rect { fill: #000; }
+    [data-theme="day"] .c-pow-track { background: rgba(0,0,0,0.1); }
+    [data-theme="day"] .c-pow-fill { background: #000; }
   </style>
 </head>
 <body>
@@ -251,5 +265,6 @@
   </script>
 
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 </body>
 </html>

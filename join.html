@@ -21,15 +21,13 @@
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- Apple Sign In -->
-  <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
   <link rel="stylesheet" href="styles.css">
   <style>
     /* ── Page-specific: join layout ── */
@@ -164,12 +162,17 @@
       border: 2px solid var(--c-accent);
       border-radius: var(--r-sm);
       cursor: crosshair;
-      transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+      transition:
+        background 0.22s cubic-bezier(.4,0,.2,1),
+        color 0.22s cubic-bezier(.4,0,.2,1),
+        border-color 0.22s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.32s ease-out;
     }
     .btn-access:hover, .pay-trigger-wrap:hover .btn-access {
       background: var(--c-bg);
       color: var(--c-accent);
       border-color: var(--c-accent);
+      box-shadow: 0 0 20px rgba(255,92,0,0.12), inset 0 0 20px rgba(255,92,0,0.04);
     }
 
     .payment-note {
@@ -455,6 +458,25 @@
     .form-col .tiers { animation-delay: 0.1s; }
     .form-col .field-group { animation-delay: 0.14s; }
     .form-col .oauth-row { animation-delay: 0.18s; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] .rm-status.active {
+      color: rgba(0, 120, 50, 0.8);
+      border-color: rgba(0, 120, 50, 0.18);
+    }
+    html[data-theme="day"] .rm-status.active .rm-dot {
+      background: rgba(0, 120, 50, 0.7);
+    }
+    html[data-theme="day"] .btn-audience.done {
+      color: rgba(0, 120, 50, 0.8) !important;
+      border-color: rgba(0, 120, 50, 0.22) !important;
+    }
+    html[data-theme="day"] .co-promo-msg.warn {
+      color: rgba(180, 130, 0, 0.85);
+    }
+    html[data-theme="day"] .btn-oauth.google:not(:disabled):hover {
+      background: rgba(255, 92, 0, 0.06);
+    }
   </style>
 </head>
 <body>
@@ -496,16 +518,16 @@
   <main>
     <div class="form-col">
 
-      <!-- ── STAGE 1: tier + email ── -->
+      <!-- ── Waitlist: tier preview + email capture ── -->
       <div id="s1">
-        <p class="section-label">bECOME a mEMBER</p>
+        <p class="section-label">lAUNCHING sOON</p>
         <h1 class="form-title">jOIN</h1>
 
         <div class="tiers">
           <div class="tier-pick" data-tier="aLLY">
             <div class="tp-info">
               <span class="tp-name">aLLY</span>
-              <span class="tp-price"><span class="euro">€</span>0.33 / month</span>
+              <span class="tp-price"><span class="euro">&euro;</span>0.33 / month</span>
               <span class="tp-perks">member card · community access · trading network · bOUTIQUE aCCESS</span>
             </div>
             <div class="tp-dot"></div>
@@ -513,7 +535,7 @@
           <div class="tier-pick" data-tier="BRIGaDIER">
             <div class="tp-info">
               <span class="tp-name">BRIGaDIER</span>
-              <span class="tp-price"><span class="euro">€</span>3.3 / month</span>
+              <span class="tp-price"><span class="euro">&euro;</span>3.3 / month</span>
               <span class="tp-perks">all above · bOUTIQUE aCCESS · submission slots · 2 guest invites</span>
             </div>
             <div class="tp-dot"></div>
@@ -521,7 +543,7 @@
           <div class="tier-pick" data-tier="CURaTOR">
             <div class="tp-info">
               <span class="tp-name">CURaTOR</span>
-              <span class="tp-price"><span class="euro">€</span>33 / month</span>
+              <span class="tp-price"><span class="euro">&euro;</span>33 / month</span>
               <span class="tp-perks">all above · bOUTIQUE aCCESS · editorial seat · private archive · patronage</span>
             </div>
             <div class="tp-dot"></div>
@@ -536,739 +558,76 @@
           </div>
         </div>
 
-        <div class="field-group">
-          <label for="j-email">yOUR EMaIL</label>
-          <input type="email" id="j-email" class="field" placeholder="you@example.com" autocomplete="email">
-        </div>
+        <form id="waitlist-form" action="https://formspree.io/f/xaqpqzea" method="POST">
+          <input type="hidden" name="_subject" value="wAITLIST sIGNUP">
+          <input type="hidden" name="interest" id="wl-interest" value="">
 
-        <div class="field-group">
-          <label for="j-alias">yOUR NaME / aLIAS <span style="font-size:0.5rem;opacity:0.45;letter-spacing:0.1em;">(OPTIONaL)</span></label>
-          <input type="text" id="j-alias" class="field" placeholder="hOW dO yOU gO?" autocomplete="off" maxlength="40">
-        </div>
-
-        <div class="oauth-row" id="oauth-row">
-          <button class="btn-oauth google" id="btn-google" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex-shrink:0">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="rgba(66,133,244,0.75)"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="rgba(52,168,83,0.75)"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="rgba(251,188,5,0.75)"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="rgba(234,67,53,0.75)"/>
-            </svg>
-            cONTINUE wITH gOOGLE
-          </button>
-          <p class="oauth-divider">— oR —</p>
-          <button class="btn-oauth apple" id="btn-apple" disabled>
-            <svg width="14" height="17" viewBox="0 155 814 840" fill="currentColor" aria-hidden="true" style="flex-shrink:0">
-              <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-155.5-127.4C46 660.3 0 558.3 0 459.7c0-190.4 124.4-291.1 247.4-291.1 63.9 0 116.6 42 156.8 42 38.4 0 98.6-44.5 169.3-44.5 27.5 0 109.4 2.6 163.8 96.6zm-166.5-82.7c-3.9-22-11.7-51-31.4-76-27-32.6-67.4-57.2-105.4-57.2-1.9 0-3.9.1-5.9.3 1.3 26.4 10.9 51.8 29.6 75 18.7 23.2 57.8 49.1 112.9 57.8 0-.1 0-.1 0 0z"/>
-            </svg>
-            cONTINUE wITH aPPLE
-          </button>
-          <p class="oauth-divider">— oR sIGN uP wITH eMail —</p>
-          <div class="email-auth-section" id="email-auth-section">
-            <div class="field-group" style="margin-bottom:10px;">
-              <label for="j-password">pASSWORD <span style="font-size:0.5rem;opacity:0.45;letter-spacing:0.1em;">(mIN 8 cHARS, 1 nUMBER)</span></label>
-              <input type="password" id="j-password" class="field" placeholder="••••••••" autocomplete="new-password" minlength="8">
-            </div>
-            <div class="field-group" style="margin-bottom:12px;">
-              <label for="j-password-confirm">cONFIRM pASSWORD</label>
-              <input type="password" id="j-password-confirm" class="field" placeholder="••••••••" autocomplete="new-password">
-            </div>
-            <button class="btn-oauth" id="btn-email-signup" style="border-color:var(--c-accent);color:var(--c-accent);" disabled>
-              sIGN uP wITH eMail
-            </button>
-            <p class="email-auth-error" id="email-auth-error" style="color:rgba(255,60,60,0.75);font-size:0.58rem;margin-top:8px;min-height:1em;"></p>
+          <div class="field-group">
+            <label for="wl-email">yOUR eMaIL</label>
+            <input type="email" name="email" id="wl-email" class="field" placeholder="you@example.com" autocomplete="email" required>
           </div>
-          <p class="already-member" style="margin-top:4px;"><a href="id.html">already a member? →</a></p>
-        </div>
-      </div>
 
-      <!-- ── STAGE 2: word display ── -->
-      <div id="s2" hidden>
-        <p class="section-label" id="s2-label">mEMBER iD — GENERaTED</p>
-        <h1 class="form-title" id="s2-tier">—</h1>
-
-        <p class="oauth-confirm-badge" id="s2-provider-badge">— ✓ cONNECTED</p>
-        <p id="s2-pts" style="font-size:0.65rem;font-weight:700;letter-spacing:0.14em;color:var(--c-accent);margin-bottom:16px;display:none;"></p>
-
-        <div class="co-promo-row" id="promo-row" hidden>
-          <button class="co-promo-toggle" id="promo-toggle">+ hAVE a pROMO cODE?</button>
-          <div class="co-promo-fields" id="promo-fields" style="display:none;">
-            <input class="co-promo-inp" id="promo-inp" type="text" placeholder="CODE"
-                   maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false">
-            <button class="co-promo-apply" id="promo-apply">aPPLY</button>
+          <div class="field-group" style="margin-top:clamp(16px,2.2vh,24px);">
+            <button type="submit" class="btn-access" id="btn-notify">nOTIFY mE</button>
           </div>
-          <p class="co-promo-msg" id="promo-msg"></p>
+        </form>
+
+        <p class="already-member" style="margin-top:clamp(24px,3vh,36px);"><a href="art.html">bROWSE tHE gALLERY →</a></p>
+
+        <!-- Success state (hidden until submit) -->
+        <div id="wl-success" hidden style="text-align:center;margin-top:clamp(32px,5vh,56px);">
+          <p style="font-size:clamp(1.6rem,5vw,2.6rem);font-weight:var(--fw-bold);letter-spacing:0.08em;color:var(--c-text);">yOU'RE oN tHE lIST</p>
+          <p style="font-size:0.68rem;font-weight:var(--fw-light);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:12px;line-height:1.8;">wE'LL lET yOU kNOW wHEN mEMBERSHIPS oPEN.<br>iN tHE mEANTIME, <a href="art.html" style="color:var(--c-accent);">eXPLORE tHE gALLERY</a>.</p>
         </div>
-
-        <button class="btn-continue" id="btn-access">iDENTITY sAVED — cONTINUE tO aCTIVATE →</button>
-
-        <p class="payment-note" id="payment-note">
-          secure checkout via stripe · your iD activates once payment is confirmed.<br>
-          on this device your key is remembered — return to your member area after paying.
-        </p>
-        <a href="id.html" class="btn-already-paid" id="already-paid-link">already paid? → aCCESS mEMBER iD</a>
-      </div>
-
-      <!-- ── RETURNING MEMBER: iD generated, not yet paid ── -->
-      <div id="s1-inactive" hidden>
-        <p class="section-label" id="ri-label">wELCOME BaCK</p>
-        <h1 class="form-title" id="ri-tier-title">—</h1>
-
-        <div class="rm-status" id="ri-status">
-          <span class="rm-dot"></span>
-          <span>iD REaDY · pENDING aCTIVATION</span>
-        </div>
-
-        <div id="ri-provider-info" style="font-size:0.58rem;font-weight:300;letter-spacing:0.2em;color:var(--c-text-tertiary);margin:clamp(8px,1.2vh,14px) 0 clamp(4px,0.8vh,8px);"></div>
-
-        <p style="font-size:0.65rem;font-weight:300;letter-spacing:0.14em;color:var(--c-text-tertiary);margin:clamp(12px,1.8vh,20px) 0 clamp(4px,0.8vh,8px);line-height:1.8;">
-          sELECT a PLaN aND aCTIVATE yOUR mEMBERSHIP.
-        </p>
-
-        <div class="tiers" id="ri-tiers">
-          <div class="tier-pick" data-tier="aLLY">
-            <div class="tp-info">
-              <span class="tp-name">aLLY</span>
-              <span class="tp-price"><span class="euro">€</span>0.33 / month</span>
-              <span class="tp-perks">member card · community access · trading network · bOUTIQUE aCCESS</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-          <div class="tier-pick" data-tier="BRIGaDIER">
-            <div class="tp-info">
-              <span class="tp-name">BRIGaDIER</span>
-              <span class="tp-price"><span class="euro">€</span>3.3 / month</span>
-              <span class="tp-perks">all above · bOUTIQUE aCCESS · submission slots · 2 guest invites</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-          <div class="tier-pick" data-tier="CURaTOR">
-            <div class="tp-info">
-              <span class="tp-name">CURaTOR</span>
-              <span class="tp-price"><span class="euro">€</span>33 / month</span>
-              <span class="tp-perks">all above · bOUTIQUE aCCESS · editorial seat · private archive · patronage</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-          <div class="tier-pick tier-free" data-tier="aUDIENCE">
-            <div class="tp-info">
-              <span class="tp-name">aUDIENCE</span>
-              <span class="tp-free">fREE</span>
-              <span class="tp-perks">cOMMUNITY aCCESS · eVENT aLERTS · nEWSLETTER</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-        </div>
-
-        <div class="gen-row" style="margin-top:clamp(22px,3.2vh,36px);">
-          <button class="btn-access" id="ri-btn-pay">PaY & aCTIVATE →</button>
-          <button class="btn-oauth" id="ri-btn-regen" style="font-size:0.62rem;padding:0.5rem 1rem;width:auto;letter-spacing:0.12em;">rE-cONNECT</button>
-        </div>
-
-        <p class="payment-note" style="margin-top:clamp(12px,1.8vh,18px);">
-          secure checkout · activates once payment confirmed.
-        </p>
-      </div>
-
-      <!-- ── RETURNING MEMBER: active (paid) ── -->
-      <div id="s1-active" hidden>
-        <p class="section-label">aCTIVE mEMBER</p>
-        <h1 class="form-title" id="ra-tier-title">—</h1>
-
-        <div class="rm-status active">
-          <span class="rm-dot"></span>
-          <span>mEMBERSHIP aCTIVE</span>
-        </div>
-
-        <a href="id.html" class="btn-access" style="display:inline-flex;">aCCESS mEMBER iD →</a>
-
-        <p class="upgrade-label" id="ra-upgrade-label">UPGRaDE yOUR PLaN</p>
-        <div class="tiers" id="ra-upgrade-tiers" style="margin-top:clamp(10px,1.5vh,14px);"></div>
       </div>
 
     </div>
   </main>
-
-  <!-- ══════════════════════════════════════════
-       CHECKOUT SHEET
-       ══════════════════════════════════════════ -->
-  <div id="co-backdrop">
-    <div id="co-sheet">
-      <div class="co-stripe"></div>
-
-      <div class="co-hdr">
-        <span class="co-logo">[aRTS]</span>
-        <span class="co-tag">member pass</span>
-      </div>
-
-      <div class="co-body">
-        <div class="co-tier-name-el" id="co-tier-name-el">—</div>
-        <div class="co-tier-price-el" id="co-tier-price-el">—</div>
-        <div class="co-tier-perks-el" id="co-tier-perks-el">—</div>
-      </div>
-
-      <div class="co-rule"></div>
-
-      <div class="co-email-row">
-        <div class="co-email-label">paying as</div>
-        <div class="co-email-val-el" id="co-email-val-el">—</div>
-      </div>
-
-      <div class="co-pay-row">
-        <button class="co-btn-pay" id="co-btn-pay">
-          <span id="co-action-span">PaY</span> — <span id="co-price-span">—</span>
-        </button>
-      </div>
-
-      <div class="co-foot">
-        <span class="co-secure"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;opacity:0.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>secured by stripe</span>
-        <button class="co-cancel-btn" id="co-cancel-btn">cancel</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Waitlist form handler -->
   <script>
   (function(){
-    var GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-    var APPLE_CLIENT_ID  = 'com.4arts.signin';
-    var PROXY_BASE       = 'https://4-arts.com';
-
-    var selectedTier = null;
-
-    /* Post-payment success handler */
-    (function(){
-      var params = new URLSearchParams(window.location.search);
-      if (params.get('s') !== '1') return;
-      try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
-      try {
-        if (!localStorage.getItem('arts_id_hash')) return;
-        localStorage.setItem('arts_active', 'true');
-      } catch(e) { return; }
-      var overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;background:var(--c-bg);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font);color:var(--c-text);';
-      overlay.innerHTML = '<div style="font-size:0.55rem;font-weight:300;letter-spacing:0.36em;color:var(--c-accent-muted);margin-bottom:12px;">PaYMENT CONfIRMED</div>'
-        + '<div style="font-size:clamp(2rem,8vw,4rem);font-weight:700;letter-spacing:0.06em;">aCTIVaTED</div>'
-        + '<div style="font-size:0.6rem;font-weight:300;letter-spacing:0.16em;color:var(--c-text-tertiary);margin-top:14px;">rEDIRECTING TO yOUR mEMBER aREA…</div>';
-      document.body.appendChild(overlay);
-      setTimeout(function(){ window.location.href = 'id.html'; }, 1600);
-    })();
-
-    var urlTier = new URLSearchParams(window.location.search).get('tier');
-    if (urlTier) {
-      var card = document.querySelector('.tier-pick[data-tier="' + urlTier + '"]');
-      if (card) { card.click(); }
-    }
-
-    /* Tier selection */
+    /* Tier selection — track interest */
     document.querySelectorAll('#s1 .tier-pick').forEach(function(card) {
       card.addEventListener('click', function() {
         document.querySelectorAll('#s1 .tier-pick').forEach(function(c) { c.classList.remove('selected'); });
         card.classList.add('selected');
-        selectedTier = card.dataset.tier;
-        checkReady();
+        document.getElementById('wl-interest').value = card.dataset.tier;
       });
     });
 
-    document.getElementById('j-email').addEventListener('input', checkReady);
+    /* Waitlist form submission */
+    var form = document.getElementById('waitlist-form');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('btn-notify');
+      var email = document.getElementById('wl-email').value.trim();
+      if (!email) return;
 
-    function checkReady() {
-      var disabled = !selectedTier;
-      document.getElementById('btn-google').disabled = disabled;
-      document.getElementById('btn-apple').disabled  = disabled;
-      document.getElementById('btn-email-signup').disabled = disabled;
-    }
-
-    /* ── Email + password signup ── */
-    document.getElementById('btn-email-signup').addEventListener('click', async function() {
-      var errEl = document.getElementById('email-auth-error');
-      errEl.textContent = '';
-
-      if (!selectedTier) { errEl.textContent = 'sELECT a tIER fIRST'; return; }
-
-      var email = document.getElementById('j-email').value.trim();
-      var alias = document.getElementById('j-alias').value.trim() || 'mEMBER';
-      var pw    = document.getElementById('j-password').value;
-      var pw2   = document.getElementById('j-password-confirm').value;
-
-      if (!email || !email.includes('@')) { errEl.textContent = 'vALID eMail rEQUIRED'; return; }
-      if (pw.length < 8) { errEl.textContent = 'pASSWORD mUST bE aT lEAST 8 cHARACTERS'; return; }
-      if (!/\d/.test(pw)) { errEl.textContent = 'pASSWORD mUST cONTAIN aT lEAST 1 nUMBER'; return; }
-      if (pw !== pw2) { errEl.textContent = 'pASSWORDS dO nOT mATCH'; return; }
-
-      var btn = this;
+      btn.textContent = 'sENDING...';
       btn.disabled = true;
-      btn.textContent = 'cREATING aCCOUNT...';
 
-      try {
-        var res = await fetch(PROXY_BASE + '/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, password: pw, alias: alias }),
-        });
-        var data = await res.json();
-
-        if (!res.ok || !data.ok) {
-          errEl.textContent = (data.error && data.error.message) || 'rEGISTRATION fAILED';
+      var data = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      }).then(function(res) {
+        if (res.ok) {
+          document.getElementById('s1').querySelector('.tiers').hidden = true;
+          form.hidden = true;
+          document.getElementById('s1').querySelector('.already-member').hidden = true;
+          document.getElementById('wl-success').hidden = false;
+        } else {
+          btn.textContent = 'nOTIFY mE';
           btn.disabled = false;
-          btn.textContent = 'sIGN uP wITH eMail';
-          return;
         }
-
-        // Store session + user data (same pattern as OAuth)
-        try {
-          localStorage.setItem('arts_session_token', data.session_token);
-          localStorage.setItem('arts_id_hash', data.user_id_hash);
-          localStorage.setItem('arts_email', email);
-          localStorage.setItem('arts_alias', alias);
-          localStorage.setItem('arts_tier', selectedTier);
-          localStorage.setItem('arts_oauth_provider', 'email');
-          localStorage.setItem('arts_since', new Date().toISOString().split('T')[0]);
-          var startPtsMap = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000, 'aUDIENCE': 50 };
-          localStorage.setItem('arts_points', String(startPtsMap[selectedTier] || 50));
-          if (selectedTier === 'aUDIENCE') localStorage.setItem('arts_active', 'true');
-        } catch(e) {}
-
-        // Proceed to Stage 2 (same as OAuth flow)
-        onOAuthSuccess('email', data.user_id_hash, email, alias);
-
-      } catch(e) {
-        errEl.textContent = 'cONNECTION eRROR — tRY aGAIN';
+      }).catch(function() {
+        btn.textContent = 'nOTIFY mE';
         btn.disabled = false;
-        btn.textContent = 'sIGN uP wITH eMail';
-      }
-    });
-
-    async function sha256(str) {
-      var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-    }
-
-    window.appliedPromoCode = null;
-
-    async function onOAuthSuccess(provider, sub, oauthEmail, oauthName) {
-      var email = oauthEmail || document.getElementById('j-email').value.trim();
-      var alias = oauthName  || document.getElementById('j-alias').value.trim();
-      var idHash = await sha256('arts_oauth_' + sub);
-      var ptsCfg=null;try{ptsCfg=JSON.parse(localStorage.getItem('arts_points_config'));}catch(e){}
-      var startPtsMap = { 'aLLY': 100, 'BRIGaDIER': 500, 'CURaTOR': 1000, 'aUDIENCE': 50 };
-      if(ptsCfg&&ptsCfg.events){
-        if(ptsCfg.events.signup_ally!=null) startPtsMap['aLLY']=ptsCfg.events.signup_ally;
-        if(ptsCfg.events.signup_brigadier!=null) startPtsMap['BRIGaDIER']=ptsCfg.events.signup_brigadier;
-        if(ptsCfg.events.signup_curator!=null) startPtsMap['CURaTOR']=ptsCfg.events.signup_curator;
-      }
-      var startPts = startPtsMap[selectedTier] || 50;
-
-      try {
-        localStorage.setItem('arts_oauth_provider', provider);
-        localStorage.setItem('arts_oauth_sub',      sub);
-        localStorage.setItem('arts_oauth_email',    email);
-        localStorage.setItem('arts_oauth_name',     oauthName || '');
-        localStorage.setItem('arts_id_hash',        idHash);
-        localStorage.setItem('arts_tier',           selectedTier);
-        localStorage.setItem('arts_alias',          alias || 'mEMBER');
-        localStorage.setItem('arts_since',          new Date().toISOString().split('T')[0]);
-        localStorage.setItem('arts_points',         String(startPts));
-        localStorage.setItem('arts_email',          email);
-        if (selectedTier === 'aUDIENCE') {
-          localStorage.setItem('arts_active', 'true');
-        }
-      } catch(e) {}
-
-      try {
-        fetch(PROXY_BASE + '/api/session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event: 'register', provider: provider, user_id: sub.slice(0, 8) + '...', tier: selectedTier, ts: Date.now() })
-        }).catch(function(){});
-      } catch(e) {}
-
-      try {
-        fetch(PROXY_BASE + '/api/user/sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: idHash, email: email, name: oauthName || '', alias: alias || 'mEMBER', tier: selectedTier, provider: provider, oauth_sub: sub, since: new Date().toISOString().split('T')[0] })
-        }).catch(function(){});
-      } catch(e) {}
-
-      var badge = document.getElementById('s2-provider-badge');
-      if (badge) badge.textContent = '— ✓ cONNECTED vIA ' + provider.toUpperCase();
-
-      document.getElementById('s1').hidden = true;
-      var s2 = document.getElementById('s2');
-      s2.hidden = false;
-      document.getElementById('s2-tier').textContent = selectedTier;
-      document.getElementById('s2-label').textContent = alias
-        ? ('wELCOME ' + alias.toUpperCase() + ' — iDENTITY sAVED')
-        : '02 — iDENTITY sAVED';
-
-      var ptsEl = document.getElementById('s2-pts');
-      ptsEl.textContent = '+ ' + startPts + ' STaRTING pOINTS aWARDED';
-      ptsEl.style.display = 'block';
-
-      var btnAccess = document.getElementById('btn-access');
-      var newBtn = btnAccess.cloneNode(true);
-      btnAccess.parentNode.replaceChild(newBtn, btnAccess);
-
-      if (selectedTier === 'aUDIENCE') {
-        var pNote = document.getElementById('payment-note');
-        if (pNote) pNote.textContent = 'fREE aCCESS — connected via ' + provider + ' · your session is active on this device.';
-        var alreadyLink = document.getElementById('already-paid-link');
-        if (alreadyLink) alreadyLink.style.display = 'none';
-        document.getElementById('promo-row').hidden = true;
-        newBtn.textContent = 'iDENTITY sAVED — aCCESS mEMBER aREA →';
-        newBtn.addEventListener('click', function() {
-          newBtn.textContent = '✓ rEGISTERED';
-          newBtn.style.color = 'var(--c-success)';
-          newBtn.style.borderColor = 'rgba(110,227,110,0.22)';
-          newBtn.style.pointerEvents = 'none';
-          setTimeout(function() { window.location.href = 'id.html'; }, 700);
-        });
-      } else {
-        document.getElementById('promo-row').hidden = false;
-        window.appliedPromoCode = null;
-        var promoMsg = document.getElementById('promo-msg');
-        promoMsg.textContent = ''; promoMsg.className = 'co-promo-msg';
-        document.getElementById('promo-inp').value = '';
-        document.getElementById('promo-fields').style.display = 'none';
-        document.getElementById('promo-toggle').textContent = '+ hAVE a pROMO cODE?';
-        var pNote2 = document.getElementById('payment-note');
-        if (pNote2) pNote2.innerHTML = 'secure checkout via stripe · your account activates once payment confirmed.<br>on this device you stay signed in — return to your member area after paying.';
-        var alreadyLink2 = document.getElementById('already-paid-link');
-        if (alreadyLink2) alreadyLink2.style.display = '';
-        newBtn.textContent = 'iDENTITY sAVED — cONTINUE tO aCTIVATE →';
-        newBtn.addEventListener('click', function() {
-          if (typeof window.openCheckoutSheet === 'function') {
-            window.openCheckoutSheet(selectedTier, email);
-          }
-        });
-      }
-
-      var data = new FormData();
-      data.append('_subject', '[aRTS] member backlog: ' + selectedTier + ' — ' + email);
-      data.append('tier',     selectedTier);
-      data.append('email',    email);
-      data.append('alias',    alias || '');
-      data.append('provider', provider);
-      data.append('note',     'NEW MEMBER via OAuth — ' + provider);
-      fetch('https://formspree.io/f/xlgpgbeq', {
-        method: 'POST', body: data, headers: { 'Accept': 'application/json' }
-      }).catch(function(){});
-    }
-
-    /* Google Sign-In */
-    function initGoogle() {
-      if (typeof google === 'undefined' || !google.accounts) return;
-      google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        auto_select: false,
-        cancel_on_tap_outside: true,
-        callback: function(response) {
-          try {
-            var parts = response.credential.split('.');
-            var payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
-            onOAuthSuccess('google', payload.sub, payload.email, payload.name || payload.given_name || '');
-          } catch(e) { console.error('[aRTS] Google decode error', e); }
-        }
       });
-    }
-
-    document.getElementById('btn-google').addEventListener('click', function() {
-      if (!selectedTier) return;
-      if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com') {
-        var devEmail = document.getElementById('j-email').value.trim() || 'dev@4-arts.com';
-        var devAlias = document.getElementById('j-alias').value.trim() || '';
-        onOAuthSuccess('google', 'dev_google_' + Date.now(), devEmail, devAlias);
-        return;
-      }
-      if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.id.prompt(function(notification) {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            var params = [
-              'client_id=' + encodeURIComponent(GOOGLE_CLIENT_ID),
-              'redirect_uri=' + encodeURIComponent(window.location.origin + '/id.html'),
-              'response_type=id_token',
-              'scope=openid+email+profile',
-              'nonce=' + Math.random().toString(36).slice(2)
-            ].join('&');
-            window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params,
-              'google_signin', 'width=480,height=620,resizable=yes');
-          }
-        });
-      }
-    });
-
-    /* Apple Sign-In */
-    function initApple() {
-      if (typeof AppleID === 'undefined') return;
-      try {
-        AppleID.auth.init({
-          clientId: APPLE_CLIENT_ID,
-          scope: 'name email',
-          redirectURI: window.location.origin + '/id.html',
-          usePopup: true,
-        });
-      } catch(e) {}
-    }
-
-    document.addEventListener('AppleIDSignInOnSuccess', function(event) {
-      try {
-        var d = event.detail;
-        var parts = d.authorization.id_token.split('.');
-        var payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
-        var sub = payload.sub;
-        var email = payload.email || (d.user && d.user.email) || '';
-        var name = '';
-        if (d.user && d.user.name) {
-          name = ((d.user.name.firstName || '') + ' ' + (d.user.name.lastName || '')).trim();
-        }
-        onOAuthSuccess('apple', sub, email, name);
-      } catch(e) { console.error('[aRTS] Apple decode error', e); }
-    });
-
-    document.getElementById('btn-apple').addEventListener('click', function() {
-      if (!selectedTier) return;
-      if (APPLE_CLIENT_ID === 'com.4arts.signin') {
-        var devEmail = document.getElementById('j-email').value.trim() || 'dev@4-arts.com';
-        var devAlias = document.getElementById('j-alias').value.trim() || '';
-        onOAuthSuccess('apple', 'dev_apple_' + Date.now(), devEmail, devAlias);
-        return;
-      }
-      if (typeof AppleID !== 'undefined') {
-        AppleID.auth.signIn().catch(function(e) {
-          console.error('[aRTS] Apple sign in error', e);
-        });
-      }
-    });
-
-    window.addEventListener('load', function() { initGoogle(); initApple(); });
-
-    /* Promo code UI */
-    document.getElementById('promo-toggle').addEventListener('click', function() {
-      var fields = document.getElementById('promo-fields');
-      var showing = fields.style.display !== 'none';
-      fields.style.display = showing ? 'none' : 'flex';
-      this.textContent = showing ? '+ hAVE a pROMO cODE?' : '— hIDE';
-    });
-    document.getElementById('promo-apply').addEventListener('click', function() {
-      var code = (document.getElementById('promo-inp').value || '').trim().toUpperCase();
-      var msgEl = document.getElementById('promo-msg');
-      if (!code) { msgEl.textContent = '— eNTER a cODE'; msgEl.className = 'co-promo-msg err'; return; }
-      window.appliedPromoCode = code;
-      msgEl.textContent = '✓ cODE aPPLIED — sTRIPE wILL vALIDATE aT cHECKOUT';
-      msgEl.className = 'co-promo-msg ok';
-    });
-    document.getElementById('promo-inp').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('promo-apply').click(); }
     });
   })();
   </script>
-
-  <!-- Smart member flow -->
-  <script>
-  (function(){
-    var oauthSub = null, isActive = false;
-    var storedTier = '', storedEmail = '', storedAlias = '', storedProvider = '';
-    try {
-      oauthSub      = localStorage.getItem('arts_oauth_sub') || null;
-      isActive      = localStorage.getItem('arts_active') === 'true';
-      storedTier    = localStorage.getItem('arts_tier')   || '';
-      storedEmail   = localStorage.getItem('arts_email')  || '';
-      storedAlias   = localStorage.getItem('arts_alias')  || '';
-      storedProvider= localStorage.getItem('arts_oauth_provider') || '';
-    } catch(e) {}
-
-    if (!oauthSub) return;
-    document.getElementById('s1').hidden = true;
-
-    var PAYMENT_LINKS = {
-      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
-      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
-      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
-    };
-    var TIER_PRICES = { 'aLLY': '0.33', 'BRIGaDIER': '3.3', 'CURaTOR': '33' };
-    var TIER_PERKS  = {
-      'aLLY':      'member card · community access · trading network · bOUTIQUE aCCESS',
-      'BRIGaDIER': 'all above · bOUTIQUE aCCESS · submission slots · 2 guest invites',
-      'CURaTOR':   'all above · bOUTIQUE aCCESS · editorial seat · private archive · patronage'
-    };
-
-    if (isActive) { showActiveView(); } else { showInactiveView(); }
-
-    function showActiveView() {
-      var el = document.getElementById('s1-active');
-      el.hidden = false;
-      var titleEl = document.getElementById('ra-tier-title');
-      if (titleEl && storedTier) titleEl.textContent = storedTier;
-
-      var tierOrder = ['aLLY', 'BRIGaDIER', 'CURaTOR'];
-      var currentIdx = tierOrder.indexOf(storedTier);
-      var upgradeTiers = currentIdx >= 0 ? tierOrder.slice(currentIdx + 1) : tierOrder.slice();
-      var upgradeLabel = document.getElementById('ra-upgrade-label');
-      var upgradeContainer = document.getElementById('ra-upgrade-tiers');
-
-      if (upgradeLabel && storedTier === 'aUDIENCE') upgradeLabel.textContent = 'cHOOSE a PLaN';
-      if (upgradeTiers.length === 0) { if (upgradeLabel) upgradeLabel.hidden = true; }
-      else {
-        upgradeTiers.forEach(function(tier) {
-          var div = document.createElement('div');
-          div.className = 'tier-pick';
-          div.setAttribute('data-tier', tier);
-          div.innerHTML =
-            '<div class="tp-info">' +
-              '<span class="tp-name">' + tier + '</span>' +
-              '<span class="tp-price"><span class="euro">€</span>' + (TIER_PRICES[tier] || '?') + ' / month</span>' +
-              '<span class="tp-perks">' + (TIER_PERKS[tier] || '') + '</span>' +
-            '</div><div class="tp-dot"></div>';
-          div.addEventListener('click', function() {
-            if (typeof window.openCheckoutSheet === 'function') {
-              window.openCheckoutSheet(tier, storedEmail);
-            } else {
-              window.location.href = PAYMENT_LINKS[tier] || '#';
-            }
-          });
-          upgradeContainer.appendChild(div);
-        });
-      }
-    }
-
-    function showInactiveView() {
-      var el = document.getElementById('s1-inactive');
-      el.hidden = false;
-      if (storedAlias && storedAlias !== 'mEMBER') {
-        var labelEl = document.getElementById('ri-label');
-        if (labelEl) labelEl.textContent = 'wELCOME BaCK ' + storedAlias.toUpperCase();
-      }
-      var titleEl = document.getElementById('ri-tier-title');
-      if (titleEl && storedTier) titleEl.textContent = storedTier;
-
-      var riProviderInfo = document.getElementById('ri-provider-info');
-      if (riProviderInfo && storedProvider) riProviderInfo.textContent = '✓ cONNECTED vIA ' + storedProvider.toUpperCase();
-
-      var riSelectedTier = storedTier || null;
-      var riPayBtn = document.getElementById('ri-btn-pay');
-      function updateRiPayBtn(tier) {
-        if (!riPayBtn) return;
-        riPayBtn.textContent = tier === 'aUDIENCE' ? 'aCTIVATE fREE →' : 'PaY & aCTIVATE →';
-      }
-      updateRiPayBtn(riSelectedTier);
-
-      document.querySelectorAll('#ri-tiers .tier-pick').forEach(function(card) {
-        if (card.dataset.tier === riSelectedTier) card.classList.add('selected');
-        card.addEventListener('click', function() {
-          riSelectedTier = card.dataset.tier;
-          updateRiPayBtn(riSelectedTier);
-        });
-      });
-
-      if (riPayBtn) {
-        riPayBtn.addEventListener('click', function() {
-          if (!riSelectedTier) return;
-          if (riSelectedTier === 'aUDIENCE') {
-            try { localStorage.setItem('arts_active', 'true'); } catch(e) {}
-            riPayBtn.textContent = '✓ aCTIVATED';
-            riPayBtn.classList.add('btn-audience', 'done');
-            setTimeout(function() { window.location.href = 'id.html'; }, 700);
-            return;
-          }
-          if (typeof window.openCheckoutSheet === 'function') {
-            window.openCheckoutSheet(riSelectedTier, storedEmail);
-          } else {
-            var payUrl = PAYMENT_LINKS[riSelectedTier] || '#';
-            var riParams = [];
-            if (storedEmail) riParams.push('prefilled_email=' + encodeURIComponent(storedEmail));
-            riParams.push('client_reference_id=' + encodeURIComponent((riSelectedTier + '|' + (storedEmail || 'unknown')).slice(0, 200)));
-            if (riParams.length) payUrl += (payUrl.indexOf('?') === -1 ? '?' : '&') + riParams.join('&');
-            window.location.href = payUrl;
-          }
-        });
-      }
-
-      var regenBtn = document.getElementById('ri-btn-regen');
-      if (regenBtn) {
-        regenBtn.addEventListener('click', function() {
-          el.hidden = true;
-          document.getElementById('s1').hidden = false;
-          var emailInput = document.getElementById('j-email');
-          if (emailInput && storedEmail) { emailInput.value = storedEmail; emailInput.dispatchEvent(new Event('input', { bubbles: true })); }
-          if (storedTier) {
-            var tierCard = document.querySelector('#s1 .tier-pick[data-tier="' + storedTier + '"]');
-            if (tierCard) tierCard.click();
-          }
-        });
-      }
-    }
-  })();
-  </script>
-
-  <!-- Checkout Sheet controller -->
-  <script>
-  (function(){
-    var TIER_INFO = {
-      'aLLY':      { price: '€0.33', period: '/ month', perks: 'member card · community access · trading network · bOUTIQUE aCCESS' },
-      'BRIGaDIER': { price: '€3.3',  period: '/ month', perks: 'all above · bOUTIQUE aCCESS · submission slots · 2 guest invites' },
-      'CURaTOR':   { price: '€33',   period: '/ month', perks: 'all above · bOUTIQUE aCCESS · editorial seat · private archive · patronage' }
-    };
-    var PAYMENT_LINKS = {
-      'aLLY':      'https://buy.stripe.com/aFa28rdMOgOtfOBdTm4ZG02',
-      'BRIGaDIER': 'https://buy.stripe.com/4gM8wPaAC0Pvbyl5mQ4ZG01',
-      'CURaTOR':   'https://buy.stripe.com/00w3cv6km1TzgSF16A4ZG00'
-    };
-
-    var currentTier = null;
-
-    function closeSheet() { document.getElementById('co-backdrop').classList.remove('open'); }
-
-    function triggerStripe() {
-      if (!currentTier || !PAYMENT_LINKS[currentTier]) return;
-      var url = PAYMENT_LINKS[currentTier];
-      var params = [];
-      var emailEl = document.getElementById('co-email-val-el');
-      var email = emailEl ? emailEl.textContent.trim() : '';
-      if (email && email !== '—') params.push('prefilled_email=' + encodeURIComponent(email));
-      try { params.push('client_reference_id=' + encodeURIComponent((currentTier + '|' + (email || 'unknown')).slice(0, 200))); } catch(e) {}
-      if (params.length) url += (url.indexOf('?') === -1 ? '?' : '&') + params.join('&');
-      window.location.href = url;
-    }
-
-    window.openCheckoutSheet = function(tier, email) {
-      currentTier = tier;
-      var info = TIER_INFO[tier] || {};
-      document.getElementById('co-tier-name-el').textContent  = tier;
-      document.getElementById('co-tier-price-el').textContent = (info.price || '') + ' ' + (info.period || '');
-      document.getElementById('co-tier-perks-el').textContent = info.perks || '';
-      document.getElementById('co-email-val-el').textContent  = email || '—';
-      document.getElementById('co-price-span').textContent    = (info.price || '') + ' ' + (info.period || '');
-      var _actionMap = { 'aLLY': 'jOIN', 'BRIGaDIER': 'eNLIST', 'CURaTOR': 'pROVIDE' };
-      var _actionSpan = document.getElementById('co-action-span');
-      if (_actionSpan) _actionSpan.textContent = _actionMap[tier] || 'PaY';
-      document.getElementById('co-backdrop').classList.add('open');
-    };
-
-    document.getElementById('co-btn-pay').addEventListener('click', triggerStripe);
-    document.getElementById('co-cancel-btn').addEventListener('click', closeSheet);
-    document.getElementById('co-backdrop').addEventListener('click', function(e) {
-      if (e.target === this) closeSheet();
-    });
-
-    /* Swipe-down to close */
-    var sheet = document.getElementById('co-sheet');
-    var startY = 0, dragging = false;
-    sheet.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; dragging = true; }, { passive: true });
-    sheet.addEventListener('touchmove', function(e) {
-      if (!dragging) return;
-      var dy = e.touches[0].clientY - startY;
-      if (dy > 0) sheet.style.transform = 'translateX(-50%) translateY(' + dy + 'px)';
-    }, { passive: true });
-    sheet.addEventListener('touchend', function(e) {
-      if (!dragging) return;
-      dragging = false;
-      var dy = e.changedTouches[0].clientY - startY;
-      sheet.style.transform = '';
-      if (dy > 80) closeSheet();
-    }, { passive: true });
-  })();
-  </script>
-
   <!-- Nav hover + logo expand + idle glitch -->
   <script>
   (function(){
@@ -1365,6 +724,7 @@
   </script>
 
 <script src="theme.js?v=4"></script>
+<script src="funnel.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

@@ -22,8 +22,10 @@
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
@@ -74,7 +76,109 @@
     }
     .about-doc-link:hover .doc-link-sub { color: var(--c-text-tertiary); }
 
+    /* ── Founder & Manifesto trigger buttons ── */
+    .founder-section {
+      width: min(92vw, 1000px);
+      padding-top: clamp(28px, 5vh, 52px);
+      border-top: 1px solid var(--c-border);
+    }
+    .founder-label {
+      font-size: 0.55rem; font-weight: var(--fw-light);
+      letter-spacing: 0.32em; color: var(--c-text-ghost);
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .about-trigger {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; border: 1px solid var(--c-border);
+      background: var(--c-bg); color: var(--c-text-secondary);
+      padding: clamp(14px, 2.5vh, 20px) clamp(16px, 2.5vw, 22px);
+      border-radius: var(--r-lg);
+      font-family: inherit; font-size: 0.82rem; font-weight: var(--fw-bold);
+      letter-spacing: 0.14em; cursor: pointer;
+      transition: background var(--dur-fast), color var(--dur-fast);
+    }
+    .about-trigger:hover { background: var(--c-border); color: var(--c-text); }
+    .about-trigger .trigger-arrow {
+      font-size: 0.7rem; transition: transform 0.2s ease;
+    }
+    .about-trigger:hover .trigger-arrow { transform: translateX(3px); }
+    .about-trigger + .about-trigger { margin-top: 1px; }
+
+    /* ── Modal overlay (shared by founder + manifesto) ── */
+    .about-modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.94);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      z-index: 9000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .about-modal-backdrop.open {
+      opacity: 1; pointer-events: auto;
+    }
+    .about-modal-sheet {
+      background: var(--c-bg-elevated);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      width: min(92vw, 640px);
+      max-height: 88vh;
+      overflow-y: auto;
+      transform: translateY(16px) scale(0.97);
+      opacity: 0;
+      transition: transform 0.35s var(--ease-out), opacity 0.3s ease;
+    }
+    .about-modal-backdrop.open .about-modal-sheet {
+      transform: translateY(0) scale(1); opacity: 1;
+    }
+    .about-modal-close {
+      position: absolute; top: clamp(12px, 2vh, 18px); right: clamp(12px, 2vw, 18px);
+      background: transparent; border: 1px solid rgba(255,255,255,0.14);
+      color: var(--c-text-secondary); font-family: inherit;
+      font-size: 0.75rem; font-weight: var(--fw-light);
+      padding: 6px 10px; border-radius: 3px; cursor: pointer;
+      transition: color var(--dur-fast), border-color var(--dur-fast);
+      z-index: 1;
+    }
+    .about-modal-close:hover { color: var(--c-text); border-color: rgba(255,255,255,0.3); }
+
+    /* ── Founder modal content ── */
+    .founder-modal-inner {
+      position: relative;
+      padding: clamp(28px, 4vw, 48px);
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: clamp(20px, 3vh, 32px);
+    }
+    .founder-img {
+      width: clamp(200px, 40vw, 320px);
+      height: clamp(240px, 48vw, 400px);
+      object-fit: cover; border-radius: var(--r-md);
+      filter: grayscale(1);
+    }
+    .founder-quote {
+      font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+      font-weight: var(--fw-light); font-style: italic;
+      letter-spacing: 0.04em; line-height: 1.55;
+      color: var(--c-text-secondary);
+      max-width: 480px;
+    }
+    .founder-quote::before { content: '\201C'; }
+    .founder-quote::after  { content: '\201D'; }
+    .founder-attr {
+      font-size: 0.56rem; font-weight: var(--fw-light);
+      letter-spacing: 0.22em; color: var(--c-text-ghost);
+      text-transform: uppercase;
+    }
+
+
+
     /* Day mode overrides */
+    [data-theme="day"] .about-trigger { background: var(--c-bg); border-color: var(--c-border); }
+    [data-theme="day"] .about-trigger:hover { background: var(--c-bg-surface); }
+    [data-theme="day"] .about-modal-backdrop { background: rgba(255,255,255,0.94); }
+    [data-theme="day"] .about-modal-sheet { background: var(--c-bg); border-color: var(--c-border); }
+    [data-theme="day"] .about-modal-close { border-color: rgba(0,0,0,0.14); color: var(--c-text-secondary); }
+    [data-theme="day"] .about-modal-close:hover { color: var(--c-text); border-color: rgba(0,0,0,0.3); }
     [data-theme="day"] .about-doc-link { background: var(--c-bg); }
     [data-theme="day"] .about-doc-link:hover { background: var(--c-bg-surface); }
     [data-theme="day"] .doc-link-title { color: var(--c-text-secondary); }
@@ -82,12 +186,12 @@
     [data-theme="day"] .doc-link-sub { color: var(--c-text-tertiary); }
     [data-theme="day"] .about-docs-links { background: var(--c-bg-surface); border-color: var(--c-border); }
 
-    /* Page entrance */
+    /* Page entrance — animate children, not main itself (avoids transform containment for fixed modals) */
     @keyframes pageIn {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    main { animation: pageIn 0.5s ease both; }
+    main > :not(.about-modal-backdrop) { animation: pageIn 0.5s ease both; }
   </style>
 </head>
 <body>
@@ -105,14 +209,74 @@
       <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="Menu">
-      <span></span><span></span>
+    <button class="site-burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
     </button>
   </header>
+
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[exit]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+  </div>
 
   <main class="site-main">
     <img class="photo" src="assets/about-2.jpg" alt="" fetchpriority="high">
     <img class="photo" src="assets/about-1.jpg" alt="" loading="lazy">
+
+    <!-- How It Works -->
+    <div class="hiw-section" style="width:min(92vw,1000px);padding-top:clamp(28px,5vh,52px);border-top:1px solid var(--c-border);">
+      <p style="font-size:0.55rem;font-weight:var(--fw-light);letter-spacing:0.32em;color:var(--c-text-ghost);text-transform:uppercase;margin-bottom:clamp(20px,3vh,36px);">hOW iT wORKS</p>
+      <div style="display:flex;gap:clamp(16px,3vw,32px);flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">01</p>
+          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">bROWSE</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">eXPLORE aRT fROM eMERGING bERLIN aRTISTS. nO sIGN-uP rEQUIRED.</p>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">02</p>
+          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">iNQUIRE</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">cONNECT dIRECTLY wITH aRTISTS. aSK qUESTIONS, nEGOTIATE, oR rEQUEST dETAILS.</p>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">03</p>
+          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">cOLLECT</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">sECURE yOUR pIECE. pAYMENTS & vERIFICATION cOMING sOON.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="founder-section">
+      <p class="founder-label">mORE</p>
+      <button class="about-trigger" onclick="document.getElementById('founder-modal').classList.add('open');">
+        <span>fOUNDER</span>
+        <span class="trigger-arrow">→</span>
+      </button>
+      <a class="about-trigger" href="manifesto.html">
+        <span>maNIFESTO</span>
+        <span class="trigger-arrow">→</span>
+      </a>
+    </div>
+
+    <!-- ── Founder modal ── -->
+    <div class="about-modal-backdrop" id="founder-modal" onclick="if(event.target===this)this.classList.remove('open');">
+      <div class="about-modal-sheet">
+        <div class="founder-modal-inner">
+          <button class="about-modal-close" onclick="this.closest('.about-modal-backdrop').classList.remove('open');">[×]</button>
+          <img class="founder-img" src="assets/founder.png" alt="fOUNDER">
+          <p class="founder-quote">building castles in the air</p>
+          <p class="founder-attr">— fOUNDER, aRTS</p>
+        </div>
+      </div>
+    </div>
 
     <div class="about-docs">
       <p class="about-docs-label">dOCUMENTATION</p>
@@ -128,6 +292,15 @@
       </div>
     </div>
   </main>
+
+  <!-- Modal ESC close -->
+  <script>
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.about-modal-backdrop.open').forEach(function(m) { m.classList.remove('open'); });
+    }
+  });
+  </script>
 
   <!-- Page fade-in -->
   <script>
@@ -201,7 +374,38 @@
   })();
   </script>
 
+<script>
+(function(){
+  var burger=document.getElementById('burger');
+  var overlay=document.getElementById('nav-overlay');
+  var closer=document.getElementById('burger-close');
+  var oLinks=Array.from(overlay.querySelectorAll('a'));
+  var oLabels=oLinks.map(function(el){return el.textContent;});
+  function decapCascade(){
+    oLinks.forEach(function(el,li){
+      var target=oLabels[li];
+      el.textContent=target.toLowerCase();
+      var base=li*100+120;
+      Array.from(target).forEach(function(ch,i){
+        setTimeout(function(){
+          if(!overlay.classList.contains('is-open'))return;
+          var chars=el.textContent.split('');
+          chars[i]=ch;
+          el.textContent=chars.join('');
+        },base+i*50);
+      });
+    });
+  }
+  function openMenu(){overlay.classList.add('is-open');burger.classList.add('is-open');decapCascade();}
+  function closeMenu(){oLinks.forEach(function(el,i){el.textContent=oLabels[i];});overlay.classList.remove('is-open');burger.classList.remove('is-open');}
+  burger.addEventListener('click',openMenu);
+  closer.addEventListener('click',closeMenu);
+  overlay.addEventListener('click',function(e){if(e.target===overlay)closeMenu();});
+})();
+</script>
+
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

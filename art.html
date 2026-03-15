@@ -260,6 +260,170 @@
     .site-main .art-grid { animation-delay: 0.12s; }
     .site-main .add-row { animation-delay: 0.18s; }
 
+    /* ── Filter bar ── */
+    .filter-bar {
+      max-width: var(--content-max);
+      margin: 0 auto var(--s-3);
+      padding: 0 var(--s-3);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .filter-search {
+      position: relative;
+      width: 100%;
+    }
+    .filter-search input {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.62rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      padding: 10px 14px 10px 32px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      background: var(--c-bg-surface);
+      color: var(--c-text);
+      outline: none;
+      transition: border-color var(--dur-fast);
+      box-sizing: border-box;
+    }
+    .filter-search input::placeholder { color: var(--c-text-ghost); }
+    .filter-search input:focus { border-color: var(--c-accent); }
+    .filter-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.6rem;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .filter-pill {
+      font-family: var(--font);
+      font-size: 0.44rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.2em;
+      padding: 5px 10px;
+      border: 1px solid var(--c-border);
+      border-radius: 100px;
+      background: transparent;
+      color: var(--c-text-tertiary);
+      cursor: crosshair;
+      transition: all var(--dur-fast);
+      white-space: nowrap;
+    }
+    .filter-pill:hover { border-color: var(--c-border-hover); color: var(--c-text-secondary); }
+    .filter-pill.active {
+      background: var(--c-accent);
+      color: #000;
+      border-color: var(--c-accent);
+    }
+    .filter-group-label {
+      font-size: 0.38rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.32em;
+      color: var(--c-accent);
+      margin-right: 4px;
+      text-transform: uppercase;
+    }
+    .filter-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* ── Load More ── */
+    .load-more-row {
+      text-align: center;
+      padding: var(--s-4) 0 var(--s-2);
+    }
+    .btn-load-more {
+      font-family: var(--font);
+      font-size: 0.58rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.22em;
+      padding: 12px 32px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      background: transparent;
+      color: var(--c-text-secondary);
+      cursor: crosshair;
+      transition: all var(--dur-normal);
+    }
+    .btn-load-more:hover { border-color: var(--c-accent); color: var(--c-accent); }
+    .load-more-count {
+      font-size: 0.42rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      color: var(--c-text-ghost);
+      margin-top: 8px;
+    }
+
+    /* ── Seed badge ── */
+    .seed-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      font-family: var(--font);
+      font-size: 0.34rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.16em;
+      padding: 2px 6px;
+      border-radius: 2px;
+      background: rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.6);
+      backdrop-filter: blur(4px);
+      pointer-events: none;
+    }
+    [data-theme="day"] .seed-badge {
+      background: rgba(255,255,255,0.7);
+      color: rgba(0,0,0,0.45);
+    }
+
+    /* ── AI metadata in detail ── */
+    .detail-ai-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 2px;
+    }
+    .ai-tag {
+      font-family: var(--font);
+      font-size: 0.4rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.16em;
+      padding: 3px 8px;
+      border: 1px solid rgba(255,92,0,0.2);
+      border-radius: 100px;
+      color: var(--c-accent);
+      background: rgba(255,92,0,0.06);
+    }
+    .detail-ai-desc {
+      font-size: 0.52rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+      color: var(--c-text-secondary);
+      font-style: italic;
+      margin: 4px 0;
+    }
+    .detail-source-link {
+      font-size: 0.4rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      color: var(--c-text-ghost);
+      text-decoration: none;
+      transition: color var(--dur-fast);
+    }
+    .detail-source-link:hover { color: var(--c-accent); }
+
     /* ── Day mode ── */
     /* All shared components (piece-card, detail-sheet, bid system, listing-header,
        view-toggle, etc.) already inherit day mode through CSS variable swaps in
@@ -320,62 +484,142 @@
       try { return !!localStorage.getItem('arts_id_hash'); } catch(e) { return false; }
     }
 
+    /* ── Pagination state ── */
+    var PAGE_SIZE = 24;
+    var _showCount = PAGE_SIZE;
+    var _filteredPieces = [];
+    var _activeFilters = { search: '', style: '', mood: '', period: '' };
+
+    /* ── Extract unique filter values from seed pieces ── */
+    function extractFilterOptions(pieces) {
+      var styles = {}, moods = {}, periods = {};
+      pieces.forEach(function(p) {
+        if (p.ai_style) styles[p.ai_style] = (styles[p.ai_style]||0) + 1;
+        if (p.ai_mood) moods[p.ai_mood] = (moods[p.ai_mood]||0) + 1;
+        if (p.ai_period) periods[p.ai_period] = (periods[p.ai_period]||0) + 1;
+      });
+      /* Sort by count desc, take top items */
+      function topKeys(obj, max) {
+        return Object.keys(obj).sort(function(a,b){ return obj[b]-obj[a]; }).slice(0, max);
+      }
+      return { styles: topKeys(styles, 8), moods: topKeys(moods, 8), periods: topKeys(periods, 8) };
+    }
+
+    /* ── Filter logic ── */
+    function applyFilters(pieces) {
+      var q = _activeFilters.search.toLowerCase();
+      return pieces.filter(function(p) {
+        if (p.status === 'pENDING') return false;
+        if (q) {
+          var hay = (p.title + ' ' + (p.artist||'') + ' ' + (p.media||'') + ' ' + (p.ai_style||'') + ' ' + (p.ai_mood||'') + ' ' + (p.ai_period||'') + ' ' + (p.tags||[]).join(' ')).toLowerCase();
+          if (hay.indexOf(q) < 0) return false;
+        }
+        if (_activeFilters.style && (p.ai_style||'').toLowerCase() !== _activeFilters.style.toLowerCase()) return false;
+        if (_activeFilters.mood && (p.ai_mood||'').toLowerCase() !== _activeFilters.mood.toLowerCase()) return false;
+        if (_activeFilters.period && (p.ai_period||'').toLowerCase() !== _activeFilters.period.toLowerCase()) return false;
+        return true;
+      });
+    }
+
+    /* ── Render filter bar ── */
+    function renderFilterBar(opts) {
+      function pills(key, values) {
+        if (!values.length) return '';
+        var label = key === 'style' ? 'sTYLE' : key === 'mood' ? 'mOOD' : 'pERIOD';
+        var html = '<div class="filter-row"><span class="filter-group-label">' + label + '</span>';
+        values.forEach(function(v) {
+          var active = _activeFilters[key] === v ? ' active' : '';
+          html += '<button class="filter-pill' + active + '" data-filter-key="' + key + '" data-filter-val="' + esc(v) + '">' + esc(v) + '</button>';
+        });
+        html += '</div>';
+        return html;
+      }
+      return [
+        '<div class="filter-bar" id="filter-bar">',
+          '<div class="filter-search">',
+            '<span class="filter-search-icon">⌕</span>',
+            '<input type="text" id="filter-search-input" placeholder="sEARCH aRTiST, sTYLE, mEDIUM…" value="' + esc(_activeFilters.search) + '">',
+          '</div>',
+          '<div class="filter-pills">',
+            pills('style', opts.styles),
+            pills('mood', opts.moods),
+            pills('period', opts.periods),
+          '</div>',
+        '</div>'
+      ].join('');
+    }
+
+    function renderCard(p, i) {
+      var isSold = /sold|nOT aVAILABLE/i.test(p.status || '');
+      var priceHtml = p.price && p.price !== '—'
+        ? esc(p.price) + ' <span class="euro">' + esc(p.currency || '€') + '</span>'
+        : '<span style="opacity:0.3">—</span>';
+      var imgHtml = p.image
+        ? '<img class="piece-img" src="'+ esc(p.image) +'" alt="'+ esc(p.title) +'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+'>'
+        : '<div class="piece-img" style="background:var(--c-bg-surface);height:100%"></div>';
+      var mediaHtml = p.media
+        ? '<p class="card-media">'+ esc(p.media) +'</p>'
+        : '';
+
+      /* User listing badge */
+      var badgeHtml = p.userListing ? '<span class="user-badge">yOUR LiSTiNG</span>' : '';
+      /* Seed badge */
+      var seedBadge = p.seed ? '<span class="seed-badge">CC0 · ' + esc(p.ai_period || 'aRCHIVE') + '</span>' : '';
+
+      /* Edit / remove row for user's own pieces */
+      var userActionsHtml = p.userListing
+        ? '<div class="card-user-actions">' +
+            '<button class="btn-user-action btn-edit" data-piece-id="' + esc(p.id) + '">eDIT</button>' +
+            '<button class="btn-user-action btn-remove" data-piece-id="' + esc(p.id) + '">rEMOVE</button>' +
+          '</div>'
+        : '';
+
+      return [
+        '<div class="piece-card">',
+          '<div class="card-img-wrap">'+ badgeHtml + seedBadge + imgHtml +'</div>',
+          '<div class="card-body">',
+            '<p class="card-index">aRT #'+ esc(String(p.id).padStart(3,'0')) +' · '+ esc(p.year||'') +'</p>',
+            '<h2 class="card-title">'+ esc(p.title) +'</h2>',
+            mediaHtml,
+            '<div class="card-rule"></div>',
+            '<div class="card-price-row">',
+              '<span class="card-price">'+ priceHtml +'</span>',
+              '<span class="card-status'+(isSold?' sold':'')+'">'+esc(p.status||'aVAILABLE')+'</span>',
+            '</div>',
+            '<div class="card-actions">',
+              '<button class="btn-inq btn-inq-fill" style="border-radius:var(--r-md)" data-view-id="'+ esc(p.id) +'">ViEW</button>',
+            '</div>',
+            userActionsHtml,
+          '</div>',
+        '</div>'
+      ].join('');
+    }
+
     function renderGrid(pieces){
-      var shown = pieces.filter(function(p){ return p.status !== 'pENDING'; });
-      if (!shown.length) {
-        return '<p class="art-state">nO piECES yET — <a href="add.html" style="color:var(--c-accent);text-decoration:none">+ aDD yOURS</a></p>';
+      var shown = pieces.slice(0, _showCount);
+      if (!_filteredPieces.length && !_activeFilters.search && !_activeFilters.style && !_activeFilters.mood && !_activeFilters.period) {
+        if (!_allPieces.filter(function(p){ return p.status !== 'pENDING'; }).length) {
+          return '<p class="art-state">nO piECES yET — <a href="add.html" style="color:var(--c-accent);text-decoration:none">+ aDD yOURS</a></p>';
+        }
+      }
+      if (!pieces.length) {
+        return '<p class="art-state" style="padding:var(--s-6) 0">nO mATCHES — tRY a dIFFERENT fILTER</p>';
       }
 
-      var cards = shown.map(function(p, i){
-        var isSold = /sold|nOT aVAILABLE/i.test(p.status || '');
-        var priceHtml = p.price && p.price !== '—'
-          ? esc(p.price) + ' <span class="euro">' + esc(p.currency || '€') + '</span>'
-          : '<span style="opacity:0.3">—</span>';
-        var imgHtml = p.image
-          ? '<img class="piece-img" src="'+ esc(p.image) +'" alt="'+ esc(p.title) +'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+'>'
-          : '<div class="piece-img" style="background:var(--c-bg-surface);height:100%"></div>';
-        var mediaHtml = p.media
-          ? '<p class="card-media">'+ esc(p.media) +'</p>'
-          : '';
+      var cards = shown.map(function(p, i){ return renderCard(p, i); }).join('');
 
-        /* User listing badge */
-        var badgeHtml = p.userListing ? '<span class="user-badge">yOUR LiSTiNG</span>' : '';
-
-        /* Edit / remove row for user's own pieces */
-        var userActionsHtml = p.userListing
-          ? '<div class="card-user-actions">' +
-              '<button class="btn-user-action btn-edit" data-piece-id="' + esc(p.id) + '">eDIT</button>' +
-              '<button class="btn-user-action btn-remove" data-piece-id="' + esc(p.id) + '">rEMOVE</button>' +
-            '</div>'
-          : '';
-
-        return [
-          '<div class="piece-card">',
-            '<div class="card-img-wrap">'+ badgeHtml + imgHtml +'</div>',
-            '<div class="card-body">',
-              '<p class="card-index">aRT #'+ esc(String(p.id).padStart(3,'0')) +' · '+ esc(p.year||'') +'</p>',
-              '<h2 class="card-title">'+ esc(p.title) +'</h2>',
-              mediaHtml,
-              '<div class="card-rule"></div>',
-              '<div class="card-price-row">',
-                '<span class="card-price">'+ priceHtml +'</span>',
-                '<span class="card-status'+(isSold?' sold':'')+'">'+esc(p.status||'aVAILABLE')+'</span>',
-              '</div>',
-              '<div class="card-actions">',
-                '<button class="btn-inq btn-inq-fill" style="border-radius:var(--r-md)" data-view-id="'+ esc(p.id) +'">ViEW</button>',
-              '</div>',
-              userActionsHtml,
-            '</div>',
-          '</div>'
-        ].join('');
-      }).join('');
+      var remaining = pieces.length - _showCount;
+      var loadMoreHtml = remaining > 0
+        ? '<div class="load-more-row"><button class="btn-load-more" id="btn-load-more">lOAD mORE</button>' +
+          '<p class="load-more-count">sHOWING ' + Math.min(_showCount, pieces.length) + ' oF ' + pieces.length + '</p></div>'
+        : '';
 
       var savedView = (localStorage.getItem('arts_view_art') || 'grid');
       return [
         '<div class="listing-header">',
           '<div class="listing-header-left">',
             '<span class="listing-label">aRT LiSTiNG</span>',
-            '<span class="listing-count">'+ shown.length +' piECE'+(shown.length!==1?'S':'')+'</span>',
+            '<span class="listing-count">'+ pieces.length +' piECE'+(pieces.length!==1?'S':'')+'</span>',
           '</div>',
           '<div class="view-toggle">',
             '<button class="view-toggle-btn'+(savedView==='grid'?' active':'')+'" data-view="grid">gRID</button>',
@@ -383,6 +627,7 @@
           '</div>',
         '</div>',
         '<div class="art-grid'+(savedView==='list'?' view-list':'')+'" id="art-grid">'+ cards +'</div>',
+        loadMoreHtml,
         '<div class="add-row"><a href="add.html">+ aDD yOUR aRT</a></div>'
       ].join('');
     }
@@ -423,27 +668,127 @@
       });
     }
 
-    var FALLBACK = [{id:'000',title:'pIETRO',year:'2025',price:'88.888.888',currency:'€',status:'aVAILABLE',image:'assets/piece-001.jpg',media:'pLASTER · mOUNTED cANVAS · fLOATING fRAME'}];
+    /* ── Bind filter interactions (once, via delegation) ── */
+    var _filtersBound = false;
+    function bindFilters() {
+      if (_filtersBound) return;
+      _filtersBound = true;
+      var main = document.getElementById('art-main');
 
+      /* Search input — use delegation for input events */
+      main.addEventListener('input', function(e) {
+        if (e.target.id !== 'filter-search-input') return;
+        clearTimeout(main._searchTimer);
+        main._searchTimer = setTimeout(function() {
+          _activeFilters.search = e.target.value.trim();
+          _showCount = PAGE_SIZE;
+          refreshGrid();
+        }, 200);
+      });
+
+      /* Pill clicks */
+      main.addEventListener('click', function(e) {
+        var pill = e.target.closest('.filter-pill');
+        if (pill) {
+          var key = pill.dataset.filterKey;
+          var val = pill.dataset.filterVal;
+          if (_activeFilters[key] === val) {
+            _activeFilters[key] = '';
+          } else {
+            _activeFilters[key] = val;
+          }
+          _showCount = PAGE_SIZE;
+          refreshGrid();
+          return;
+        }
+
+        /* Load More */
+        if (e.target.closest('#btn-load-more')) {
+          _showCount += PAGE_SIZE;
+          refreshGrid(true);
+        }
+      });
+    }
+
+    /* ── Refresh grid keeping filter bar ── */
+    function refreshGrid(keepScroll) {
+      _filteredPieces = applyFilters(_allPieces);
+      var main = document.getElementById('art-main');
+      var filterBar = document.getElementById('filter-bar');
+
+      /* Rebuild filter pills (preserve active states) */
+      var filterHtml = renderFilterBar(_filterOpts);
+      var gridHtml = renderGrid(_filteredPieces);
+
+      main.innerHTML = filterHtml + gridHtml;
+      bindEuroScramble(main);
+      bindUserActions(main);
+      bindCardClicks(main);
+      bindViewToggle(main);
+      bindFilters();
+
+      /* Restore search focus */
+      var newInput = document.getElementById('filter-search-input');
+      if (newInput && _activeFilters.search) {
+        newInput.value = _activeFilters.search;
+        newInput.focus();
+        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+      }
+
+      if (!keepScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    var FALLBACK = [{id:'000',title:'pIETRO',year:'2025',price:'88.888.888',currency:'€',status:'aVAILABLE',image:'assets/pietro-front.jpg',media:'pLASTER · mOUNTED cANVAS · fLOATING fRAME'}];
+    var _filterOpts = { styles: [], moods: [], periods: [] };
+
+    /* ── Load curated pieces, then seed pieces ── */
     fetch('data/pieces.json?v=' + Date.now())
       .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
-      .then(function(pieces){
-        _allPieces = pieces.concat(getUserPieces());
+      .catch(function(){ return FALLBACK; })
+      .then(function(curatedPieces){
+        /* Show curated immediately */
+        _allPieces = curatedPieces.concat(getUserPieces());
+        _filteredPieces = applyFilters(_allPieces);
         var main = document.getElementById('art-main');
-        main.innerHTML = renderGrid(_allPieces);
+        main.innerHTML = renderGrid(_filteredPieces);
         bindEuroScramble(main);
         bindUserActions(main);
         bindCardClicks(main);
         bindViewToggle(main);
+
+        /* Then load seed collection (deferred, larger file) */
+        return fetch('data/seed-pieces.json?v=1')
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .catch(function(){ return []; });
       })
-      .catch(function(){
-        _allPieces = FALLBACK.concat(getUserPieces());
+      .then(function(seedPieces){
+        if (!seedPieces.length) return;
+        /* Curated first, then shuffled seed */
+        var curated = _allPieces.filter(function(p){ return !p.seed; });
+        /* Shuffle seed pieces for variety */
+        for (var i = seedPieces.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = seedPieces[i]; seedPieces[i] = seedPieces[j]; seedPieces[j] = tmp;
+        }
+        _allPieces = curated.concat(seedPieces);
+        _filterOpts = extractFilterOptions(seedPieces);
+        _filteredPieces = applyFilters(_allPieces);
+
         var main = document.getElementById('art-main');
-        main.innerHTML = renderGrid(_allPieces);
+        main.innerHTML = renderFilterBar(_filterOpts) + renderGrid(_filteredPieces);
         bindEuroScramble(main);
         bindUserActions(main);
         bindCardClicks(main);
         bindViewToggle(main);
+        bindFilters();
+
+        /* Deep-link: open detail if ?piece=ID in URL */
+        var _dlParams = new URLSearchParams(window.location.search);
+        var _dlPiece = _dlParams.get('piece');
+        if (_dlPiece) {
+          window.history.replaceState({}, '', window.location.pathname);
+          setTimeout(function(){ openDetail(_dlPiece); }, 300);
+        }
       });
 
     /* ── Store all pieces for detail view lookup ── */
@@ -795,7 +1140,11 @@
         if (e.target === detailBackdrop && !detailBackdrop._opening) closeDetail();
       });
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && detailBackdrop.classList.contains('is-open')) closeDetail();
+        if (e.key === 'Escape' && detailBackdrop.classList.contains('is-open')) {
+          var lb = document.getElementById('lightbox');
+          if (lb && lb.classList.contains('is-open')) return; /* let lightbox handle it */
+          closeDetail();
+        }
       });
       /* Favourite button click (event delegation) */
       detailSheet.addEventListener('click', function(e) {
@@ -1000,12 +1349,32 @@
         actionsHtml = renderDefaultActions(p.id, p);
       }
 
+      /* AI metadata for seed pieces */
+      var aiMetaHtml = '';
+      if (p.seed) {
+        var tags = [];
+        if (p.ai_style) tags.push(p.ai_style);
+        if (p.ai_mood) tags.push(p.ai_mood);
+        if (p.ai_period) tags.push(p.ai_period);
+        if (p.ai_subjects) p.ai_subjects.forEach(function(s){ tags.push(s); });
+        if (tags.length) {
+          aiMetaHtml += '<div class="detail-ai-meta">' + tags.map(function(t){ return '<span class="ai-tag">' + esc(t) + '</span>'; }).join('') + '</div>';
+        }
+        if (p.ai_description) {
+          aiMetaHtml += '<p class="detail-ai-desc">' + esc(p.ai_description) + '</p>';
+        }
+        if (p.source_url) {
+          aiMetaHtml += '<a class="detail-source-link" href="' + esc(p.source_url) + '" target="_blank" rel="noopener">vIEW sOURCE cOLLECTION ↗</a>';
+        }
+      }
+
       detailInfo.innerHTML = [
         '<p class="detail-index">aRT #' + esc(String(p.id).padStart(3,'0')) + ' \xB7 ' + esc(p.year||'') + '</p>',
         '<h2 class="detail-title">' + esc(p.title) + '</h2>',
         p.artist ? '<p class="detail-artist">' + esc(p.artist) + (p.admin || p.verified ? ' <span class="verified-badge" title="vERIFIED">&#10003;</span>' : '') + '</p>' : '',
         p.media ? '<p class="detail-media">' + esc(p.media) + '</p>' : '',
-        (window.artsHF && artsHF.enabled() && imgs.length) ? '<button class="btn-ai-caption" data-piece-id="'+esc(p.id)+'" style="font-family:\'Space Grotesk\',sans-serif;font-size:0.42rem;font-weight:600;letter-spacing:0.14em;padding:3px 8px;border:1px solid rgba(255,92,0,0.3);border-radius:3px;color:#FF5C00;background:rgba(255,92,0,0.08);cursor:pointer;margin:6px 0;">gENERaTE dESCRIPTION <span style="font-size:0.38rem;opacity:0.7;">aI</span></button><p class="ai-caption-result" style="font-size:0.52rem;color:var(--c-text-secondary);font-style:italic;margin:4px 0 0;display:none;"></p>' : '',
+        aiMetaHtml,
+        (window.artsHF && artsHF.enabled() && imgs.length && !p.ai_description) ? '<button class="btn-ai-caption" data-piece-id="'+esc(p.id)+'" style="font-family:\'Space Grotesk\',sans-serif;font-size:0.42rem;font-weight:600;letter-spacing:0.14em;padding:3px 8px;border:1px solid rgba(255,92,0,0.3);border-radius:3px;color:#FF5C00;background:rgba(255,92,0,0.08);cursor:pointer;margin:6px 0;">gENERaTE dESCRIPTION <span style="font-size:0.38rem;opacity:0.7;">aI</span></button><p class="ai-caption-result" style="font-size:0.52rem;color:var(--c-text-secondary);font-style:italic;margin:4px 0 0;display:none;"></p>' : '',
         '<div class="detail-rule"></div>',
         meta ? '<div class="detail-meta">' + meta + '</div><div class="detail-rule"></div>' : '',
         '<div class="detail-price-row">',
@@ -1279,6 +1648,91 @@
       <div class="detail-info" id="detail-info"></div>
     </div>
   </div>
+
+  <!-- Fullscreen image lightbox -->
+  <div class="lightbox-backdrop" id="lightbox" hidden>
+    <button class="lightbox-close">[×]</button>
+    <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
+    <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
+    <img class="lightbox-img" id="lb-img" src="" alt="">
+    <span class="lightbox-counter" id="lb-counter"></span>
+  </div>
+  <script>
+  (function(){
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lb-img');
+    var lbCounter = document.getElementById('lb-counter');
+    var lbPrev = document.getElementById('lb-prev');
+    var lbNext = document.getElementById('lb-next');
+    var imgs = [];
+    var idx = 0;
+
+    function openLightbox(srcs, startIdx) {
+      imgs = srcs;
+      idx = startIdx || 0;
+      showImg();
+      lb.hidden = false;
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ lb.classList.add('is-open'); });
+      });
+      lbPrev.style.display = imgs.length > 1 ? '' : 'none';
+      lbNext.style.display = imgs.length > 1 ? '' : 'none';
+    }
+
+    function closeLightbox() {
+      lb.classList.remove('is-open');
+      setTimeout(function(){ lb.hidden = true; lbImg.src = ''; }, 260);
+    }
+
+    function showImg() {
+      lbImg.src = imgs[idx];
+      lbImg.alt = 'Image ' + (idx + 1) + ' of ' + imgs.length;
+      lbCounter.textContent = imgs.length > 1 ? (idx + 1) + ' / ' + imgs.length : '';
+    }
+
+    function next() { if (imgs.length > 1) { idx = (idx + 1) % imgs.length; showImg(); } }
+    function prev() { if (imgs.length > 1) { idx = (idx - 1 + imgs.length) % imgs.length; showImg(); } }
+
+    lb.querySelector('.lightbox-close').addEventListener('click', function(e){ e.stopPropagation(); closeLightbox(); });
+    lb.addEventListener('click', function(e){ if (e.target === lb) closeLightbox(); });
+    lbPrev.addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+    lbNext.addEventListener('click', function(e){ e.stopPropagation(); next(); });
+
+    document.addEventListener('keydown', function(e){
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { e.stopImmediatePropagation(); closeLightbox(); }
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+    });
+
+    /* Swipe support for mobile */
+    var touchStartX = 0;
+    var touchStartY = 0;
+    lb.addEventListener('touchstart', function(e){
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    lb.addEventListener('touchend', function(e){
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) next(); else prev();
+      }
+    }, { passive: true });
+
+    /* Listen for clicks on detail gallery images */
+    document.addEventListener('click', function(e){
+      var img = e.target.closest('.detail-gallery img');
+      if (!img) return;
+      e.stopPropagation();
+      var gallery = img.closest('.detail-gallery');
+      var allImgs = Array.from(gallery.querySelectorAll('img'));
+      var srcs = allImgs.map(function(i){ return i.src; });
+      var clickedIdx = allImgs.indexOf(img);
+      openLightbox(srcs, clickedIdx >= 0 ? clickedIdx : 0);
+    });
+  })();
+  </script>
 
 <!-- Scroll-to-top -->
 <button id="scroll-top" aria-label="Scroll to top">↑ tOP</button>

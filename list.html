@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type"         content="website">
+  <meta property="og:url"          content="https://4-arts.com/list">
+  <meta property="og:title"        content="[aRTS] — lIST yOUR aRT">
+  <meta property="og:description"  content="sCAN. jOIN. lIST. — sELL aRT iN bERLIN">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="[aRTS] — lIST yOUR aRT">
+  <meta name="twitter:description" content="sCAN. jOIN. lIST. — sELL aRT iN bERLIN">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
+  <title>[aRTS] — lIST yOUR aRT</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+    /* QR card holders bypass the captcha gate */
+    if(!localStorage.getItem('captcha_passed')){
+      localStorage.setItem('captcha_passed','1');
+    }
+    /* Mark funnel entry so downstream pages show progress bar */
+    localStorage.setItem('arts_card_funnel','1');
+  </script>
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    main {
+      padding-top: clamp(70px, 12vh, 110px);
+      padding-bottom: clamp(80px, 10vh, 130px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+    }
+
+    .list-col {
+      width: min(92vw, 560px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Hero ── */
+    .list-eyebrow {
+      font-size: 0.5rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.34em;
+      color: var(--c-accent);
+      text-transform: uppercase;
+      margin-bottom: clamp(6px, 1vh, 10px);
+    }
+
+    .list-title {
+      font-size: clamp(2.6rem, 10vw, 5rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      line-height: 0.95;
+      color: var(--c-text);
+      margin-bottom: clamp(14px, 2.5vh, 24px);
+    }
+
+    .list-sub {
+      font-size: clamp(0.82rem, 2.2vw, 0.95rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.08em;
+      color: var(--c-text-secondary);
+      line-height: 1.65;
+      margin-bottom: clamp(36px, 6vh, 56px);
+    }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 3.5vh, 32px);
+      margin-bottom: clamp(40px, 7vh, 64px);
+    }
+
+    a.step {
+      display: flex;
+      gap: clamp(16px, 3vw, 24px);
+      align-items: flex-start;
+      text-decoration: none;
+      color: inherit;
+      cursor: crosshair;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--c-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.08em;
+      color: var(--c-text-secondary);
+      transition: border-color var(--dur-normal) var(--ease-smooth),
+                  color var(--dur-normal) var(--ease-smooth),
+                  background var(--dur-normal) var(--ease-smooth);
+    }
+    .step:hover .step-num {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+    }
+    .step.done .step-num {
+      border-color: var(--c-accent);
+      background: var(--c-accent);
+      color: #000;
+    }
+
+    .step-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding-top: 2px;
+    }
+
+    .step-label {
+      font-size: clamp(1rem, 2.8vw, 1.25rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.08em;
+      color: var(--c-text);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .step-desc {
+      font-size: clamp(0.72rem, 1.9vw, 0.8rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.06em;
+      color: var(--c-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .step-time {
+      align-self: flex-start;
+      display: inline-block;
+      font-size: 0.52rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.18em;
+      color: var(--c-text-tertiary);
+      border: 1px solid var(--c-border);
+      border-radius: 3px;
+      padding: 3px 8px;
+      margin-bottom: 12px;
+    }
+
+    .step-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.14em;
+      color: var(--c-accent);
+      text-decoration: none;
+      transition: opacity var(--dur-fast);
+    }
+    .step-link:hover { opacity: 0.7; }
+    .step-link svg { flex-shrink: 0; }
+
+    .step-done-tag {
+      display: none;
+      font-size: 0.52rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.18em;
+      color: var(--c-accent);
+      padding: 3px 8px;
+      border: 1px solid rgba(255, 92, 0, 0.25);
+      border-radius: 3px;
+    }
+    .step.done .step-done-tag { display: inline-block; }
+    .step.done .step-link { display: none; }
+
+    /* ── Divider ── */
+    .list-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--c-border);
+      margin-bottom: clamp(28px, 4.5vh, 44px);
+    }
+
+    /* ── FAQ ── */
+    .faq-title {
+      font-size: 0.55rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.28em;
+      color: var(--c-text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: clamp(16px, 2.5vh, 24px);
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--c-border);
+      padding: clamp(14px, 2vh, 20px) 0;
+    }
+    .faq-item:first-of-type {
+      border-top: 1px solid var(--c-border);
+    }
+
+    .faq-q {
+      font-size: clamp(0.82rem, 2.2vw, 0.92rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      color: var(--c-text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .faq-toggle {
+      font-size: 0.8rem;
+      font-weight: var(--fw-light);
+      color: var(--c-text-secondary);
+      transition: transform var(--dur-normal) var(--ease-smooth);
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--dur-slow) var(--ease-out),
+                  opacity var(--dur-normal) var(--ease-smooth);
+      opacity: 0;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .faq-a p {
+      font-size: clamp(0.72rem, 1.9vw, 0.8rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.05em;
+      color: var(--c-text-secondary);
+      line-height: 1.65;
+      padding-top: 10px;
+    }
+
+    /* ── CTA bottom ── */
+    .list-cta {
+      margin-top: clamp(36px, 6vh, 56px);
+      text-align: center;
+    }
+
+    .btn-list-start {
+      display: inline-block;
+      background: var(--c-accent);
+      color: #000;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.78rem, 2vw, 0.88rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.14em;
+      padding: clamp(14px, 2vh, 18px) clamp(32px, 6vw, 48px);
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: crosshair;
+      transition: opacity var(--dur-fast);
+    }
+    .btn-list-start:hover { opacity: 0.85; }
+
+    .list-cta-note {
+      font-size: 0.56rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.14em;
+      color: var(--c-text-tertiary);
+      margin-top: 14px;
+    }
+
+    /* ── Day mode overrides ── */
+    [data-theme="day"] .step.done .step-num { color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
+      <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
+      <a href="about.html">aBOUT</a>
+      <a href="inquire.html">TaLK</a>
+      <a href="work.html">wORK</a>
+    </nav>
+    <button class="site-burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
+  </header>
+
+  <!-- Mobile overlay menu -->
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[exit]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+  </div>
+
+  <main>
+    <div class="list-col">
+
+      <p class="list-eyebrow">lASER cARD hOLDER</p>
+      <h1 class="list-title">lIST yOUR aRT</h1>
+      <p class="list-sub">
+        You've got the card — now get your work online.<br>
+        Three steps. Five minutes. Lower fees with higher tiers.
+      </p>
+
+      <!-- ── Steps ── -->
+      <div class="steps">
+
+        <!-- Step 1: Join -->
+        <a href="join.html" class="step" id="step-1">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <p class="step-label">cREATE yOUR [aRTS] aCCOUNT</p>
+            <p class="step-desc">
+              Pick a tier (starts at €0.55/mo) and sign in with Google or Apple. Your profile is your identity on the platform.
+            </p>
+            <span class="step-time">~1 min</span>
+            <br>
+            <span class="step-link">
+              jOIN nOW
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+            <span class="step-done-tag">✓ dONE</span>
+          </div>
+        </a>
+
+        <!-- Step 2: Verify -->
+        <a href="verify.html" class="step" id="step-2">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <p class="step-label">gET vERIFIED</p>
+            <p class="step-desc">
+              Quick identity check — artist, studio, or individual. This unlocks the listing form and keeps the gallery curated.
+            </p>
+            <span class="step-time">~2 min</span>
+            <br>
+            <span class="step-link">
+              vERIFY
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+            <span class="step-done-tag">✓ dONE</span>
+          </div>
+        </a>
+
+        <!-- Step 3: List -->
+        <a href="add.html" class="step" id="step-3">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <p class="step-label">lIST yOUR wORK</p>
+            <p class="step-desc">
+              Upload images, set your price, add details. Our AI moderator scans every submission — approved listings go live instantly.
+            </p>
+            <span class="step-time">~2 min</span>
+            <br>
+            <span class="step-link">
+              aDd aRT
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+            <span class="step-done-tag">✓ dONE</span>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- ── Divider ── -->
+      <div class="list-divider"></div>
+
+      <!-- ── FAQ ── -->
+      <p class="faq-title">qUICK aNSWERS</p>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          wHaT dOES iT cOST?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Membership starts at €0.55/mo (Ally tier). A platform commission applies to every sale — the higher your tier, the lower your fee.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          hOW dO i gET pAID?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p>You connect your bank via Stripe (one-time setup in step 3). [aRTS] never sees your bank details — payouts go straight to you.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          wHaT cAN i lIST?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Original artwork — paintings, sculpture, prints, photography, mixed media. Every submission is scanned by our AI moderator before going live.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          hOW lONG uNTIL mY aRT iS lIVE?
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-a">
+          <p>If the moderator approves, your listing goes live instantly. Most submissions are approved in under a minute.</p>
+        </div>
+      </div>
+
+      <!-- ── CTA ── -->
+      <div class="list-cta">
+        <a href="join.html" class="btn-list-start" id="btn-start">sTART lISTING</a>
+        <p class="list-cta-note">Already have an account? <a href="add.html" style="color:var(--c-accent);text-decoration:none;">Skip to listing →</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    /* ── FAQ toggles ── */
+    document.querySelectorAll('.faq-q').forEach(function(q){
+      q.addEventListener('click', function(){
+        var item = q.parentElement;
+        var wasOpen = item.classList.contains('open');
+        /* close all */
+        document.querySelectorAll('.faq-item.open').forEach(function(i){ i.classList.remove('open'); });
+        if(!wasOpen) item.classList.add('open');
+      });
+    });
+
+    /* ── Step progress detection ── */
+    function checkProgress(){
+      var hasAccount = localStorage.getItem('arts_id_hash');
+      var isVerified = localStorage.getItem('arts_verified');
+      var hasListed  = localStorage.getItem('arts_my_pieces');
+
+      if(hasAccount){
+        document.getElementById('step-1').classList.add('done');
+      }
+      if(isVerified){
+        document.getElementById('step-2').classList.add('done');
+      }
+      if(hasListed){
+        try {
+          var pieces = JSON.parse(hasListed);
+          if(pieces && pieces.length > 0){
+            document.getElementById('step-3').classList.add('done');
+          }
+        } catch(e){}
+      }
+
+      /* Update CTA button based on progress */
+      var btn = document.getElementById('btn-start');
+      if(hasListed){
+        btn.textContent = 'vIEW gALLERY';
+        btn.href = 'art.html';
+      } else if(isVerified){
+        btn.textContent = 'aDd yOUR aRT';
+        btn.href = 'add.html';
+      } else if(hasAccount){
+        btn.textContent = 'gET vERIFIED';
+        btn.href = 'verify.html';
+      }
+    }
+
+    checkProgress();
+  })();
+  </script>
+
+  <script src="theme.js?v=4"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

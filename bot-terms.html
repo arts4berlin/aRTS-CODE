@@ -171,50 +171,52 @@
     ───────────────────────────────────────── */
 
     /* Page base */
+    [data-theme="day"] html { background: #fff !important; }
     [data-theme="day"] body { background: #fff !important; color: #000 !important; }
 
     /* Back link */
-    [data-theme="day"] .c-back { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .c-back { color: rgba(0,0,0,0.58) !important; }
     [data-theme="day"] .c-back:hover { color: #000 !important; }
 
     /* Doc eyebrow (informational label — muted in day) */
-    [data-theme="day"] .doc-eyebrow { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .doc-eyebrow { color: rgba(0,0,0,0.55) !important; }
 
     /* Doc title — inherits from body; explicit for safety */
     [data-theme="day"] .doc-title { color: #000 !important; }
 
     /* Version / meta */
-    [data-theme="day"] .doc-version { color: rgba(0,0,0,0.25) !important; }
+    [data-theme="day"] .doc-version { color: rgba(0,0,0,0.45) !important; }
 
     /* Divider */
-    [data-theme="day"] .doc-rule { border-top-color: rgba(0,0,0,0.12) !important; }
+    [data-theme="day"] .doc-rule { border-top-color: rgba(0,0,0,0.15) !important; }
 
     /* Section headings */
-    [data-theme="day"] .doc-section-heading { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .doc-section-heading { color: rgba(0,0,0,0.58) !important; }
 
     /* Body text */
-    [data-theme="day"] .doc-section p { color: rgba(0,0,0,0.5) !important; }
+    [data-theme="day"] .doc-section p { color: rgba(0,0,0,0.65) !important; }
 
     /* List items */
-    [data-theme="day"] .doc-section ul li { color: rgba(0,0,0,0.45) !important; }
-    [data-theme="day"] .doc-section ul li::before { color: rgba(0,0,0,0.25) !important; }
+    [data-theme="day"] .doc-section ul li { color: rgba(0,0,0,0.62) !important; }
+    [data-theme="day"] .doc-section ul li::before { color: rgba(0,0,0,0.45) !important; }
 
     /* Highlight block */
     [data-theme="day"] .doc-highlight { border-left-color: rgba(255,92,0,0.35) !important; }
-    [data-theme="day"] .doc-highlight p { color: rgba(0,0,0,0.6) !important; }
+    [data-theme="day"] .doc-highlight p { color: rgba(0,0,0,0.72) !important; }
 
     /* Accept zone divider */
-    [data-theme="day"] .accept-zone { border-top-color: rgba(0,0,0,0.12) !important; }
+    [data-theme="day"] .accept-zone { border-top-color: rgba(0,0,0,0.15) !important; }
 
     /* Accept notice text */
-    [data-theme="day"] .accept-notice { color: rgba(0,0,0,0.38) !important; }
-    [data-theme="day"] .accept-notice strong { color: rgba(0,0,0,0.55) !important; }
+    [data-theme="day"] .accept-notice { color: rgba(0,0,0,0.58) !important; }
+    [data-theme="day"] .accept-notice strong { color: rgba(0,0,0,0.68) !important; }
 
-    /* Accept CTA — stays orange ✓ */
+    /* Accept CTA — stays orange; hover swaps to black in day */
+    [data-theme="day"] .btn-accept:hover { background: #000 !important; border-color: #000 !important; color: #fff !important; }
 
     /* Decline button */
-    [data-theme="day"] .btn-decline { color: rgba(0,0,0,0.28) !important; }
-    [data-theme="day"] .btn-decline:hover { color: rgba(0,0,0,0.55) !important; }
+    [data-theme="day"] .btn-decline { color: rgba(0,0,0,0.48) !important; }
+    [data-theme="day"] .btn-decline:hover { color: rgba(0,0,0,0.68) !important; }
   </style>
 </head>
 <body>
@@ -298,7 +300,7 @@
   <script>
   (function(){
     document.getElementById('btn-accept').addEventListener('click', function(){
-      localStorage.setItem('arts_bot_terms','1');
+      artsAuth.setSetting('arts_bot_terms','1');
       window.location.href='bots.html';
     });
 
@@ -308,6 +310,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 <script src="btn-fx.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>

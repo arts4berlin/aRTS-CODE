@@ -49,7 +49,7 @@
     el.className = 'corner-item';
     if (cfg.id) el.id = cfg.id;
     if (cfg.href) el.href = cfg.href;
-    el.innerHTML = cfg.label;
+    el.textContent = cfg.label;
     el.addEventListener('click', function (e) {
       e.stopPropagation();
       _closePanel();

@@ -20,6 +20,8 @@
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — TaLK</title>
   <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('tail.html');
     }
@@ -194,6 +196,15 @@
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] { background: #fff; }
+    [data-theme="day"] body { background: #fff; color: #000; }
+    [data-theme="day"] .logo { color: #000; }
+    [data-theme="day"] .nav-about { color: #000; }
+    [data-theme="day"] .field { background: #000; border-color: #000; color: #fff; }
+    [data-theme="day"] .field::placeholder { color: rgba(255,255,255,0.38); }
+    [data-theme="day"] .field:focus { border-color: #FF5C00; }
 </style>
 </head>
 <body>
@@ -256,6 +267,12 @@
 
       btn.disabled = true;
       try {
+        // Also subscribe to newsletter via backend
+        const emailVal = data.get('email') || '';
+        const nameVal = data.get('name') || '';
+        if (emailVal && window.artsAuth) {
+          artsAuth.subscribeNewsletter(emailVal, nameVal, 'mail.html').catch(function(){});
+        }
         const res = await fetch('https://formspree.io/f/xgonvgbw', {
           method:  'POST',
           body:    data,
@@ -287,7 +304,8 @@
     (function () {
       function reveal() {
         var c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        var bg = document.documentElement.getAttribute('data-theme')==='day' ? '#fff' : '#000';
+        c.style.cssText = 'position:fixed;inset:0;background:'+bg+';z-index:99998;pointer-events:none;opacity:1;';
         document.body.appendChild(c);
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
@@ -357,5 +375,6 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 </body>
 </html>

@@ -19,12 +19,13 @@
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — aPPaREL</title>
-  <!-- Gate: redirect to CAPTCHA if not verified; lock bg immediately to kill white flash -->
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link rel="preload" as="image" href="assets/bear.png">
@@ -199,9 +200,9 @@
     <button class="voucher-banner-dismiss" id="voucher-banner-dismiss" aria-label="close">&times;</button>
   </div>
   <script>
-  (function(){
-    var VOUCHER_KEY      = 'arts_apparel_voucher_ts';
-    var VOUCHER_DURATION = 30 * 24 * 60 * 60 * 1000;
+  var VOUCHER_KEY      = 'arts_apparel_voucher_ts';
+  var VOUCHER_DURATION = 30 * 24 * 60 * 60 * 1000;
+  function checkVoucherBanner(){
     try {
       var raw = localStorage.getItem(VOUCHER_KEY);
       if (raw) {
@@ -216,6 +217,9 @@
         }
       }
     } catch(e){}
+  }
+  checkVoucherBanner();
+  (function(){
     var dismiss = document.getElementById('voucher-banner-dismiss');
     if (dismiss) {
       dismiss.addEventListener('click', function(){
@@ -312,5 +316,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
+<script>if(artsAuth.isLoggedIn())artsAuth.syncSettings().then(function(){checkVoucherBanner();});</script>
 </body>
 </html>

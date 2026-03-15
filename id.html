@@ -19,8 +19,10 @@
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — mEMBER iD</title>
   <script>
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
@@ -31,44 +33,12 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #000;
-      color: #fff;
+      background: var(--c-bg, #000);
+      color: var(--c-text, #fff);
       font-family: 'Space Grotesk', sans-serif;
       min-height: 100vh;
     }
 
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      cursor: crosshair;
-    }
-
-    nav { display: flex; align-items: center; gap: 2.4rem; }
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      cursor: crosshair;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
 
     main {
       padding-top: clamp(90px, 14vh, 120px);
@@ -98,7 +68,7 @@
       font-weight: 700;
       letter-spacing: 0.06em;
       line-height: 0.95;
-      color: #fff;
+      color: var(--c-text, #fff);
       margin-bottom: clamp(20px, 3.5vh, 36px);
     }
 
@@ -202,6 +172,41 @@
     }
     .email-toggle-link:hover { color: rgba(255,255,255,0.7); }
 
+    /* ── Password login ── */
+    .pw-field {
+      width: 100%;
+      background: var(--c-bg, #000);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      color: var(--c-text, #fff);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .pw-field:focus { border-color: rgba(255,255,255,0.3); }
+    .pw-field::placeholder { color: rgba(255,255,255,0.25); }
+    .btn-pw-submit { border-color: var(--c-accent, #FF5C00); color: var(--c-accent, #FF5C00); }
+    .pw-error {
+      color: rgba(255,60,60,0.75);
+      font-size: 0.58rem;
+      margin-top: 6px;
+      min-height: 1em;
+    }
+    .pw-forgot-row { text-align: center; margin-top: 6px; }
+    .pw-forgot-link {
+      font-size: 0.54rem;
+      color: var(--c-text-secondary, rgba(255,255,255,0.55));
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.15s;
+    }
+    .pw-forgot-link:hover { color: var(--c-text, #fff); }
+    html[data-theme="day"] .pw-field { border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .pw-field::placeholder { color: rgba(0,0,0,0.45); }
+    html[data-theme="day"] .pw-field:focus { border-color: rgba(0,0,0,0.3); }
+
     .not-member {
       text-align: center;
     }
@@ -263,21 +268,16 @@
 
     /* ── Privacy scramble toggle ── */
     .privacy-row {
-      margin-bottom: clamp(12px, 1.8vh, 18px);
       display: flex; align-items: center;
     }
 
-    /* Error message */
-    .error-msg {
-      font-size: 0.65rem;
-      font-weight: 300;
-      letter-spacing: 0.16em;
-      color: rgba(255,80,80,0.8);
-      min-height: 1.2em;
-      margin-bottom: clamp(10px, 1.5vh, 16px);
+    /* ── Stage 2: entity cards ── */
+    .entity-cards {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 2.5vh, 24px);
     }
 
-    /* ── Stage 2: verified ── */
     .verified-card {
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 4px;
@@ -287,10 +287,19 @@
     .vc-stripe { height: 4px; background: #FF5C00; }
 
     .vc-body {
-      padding: clamp(24px, 4vh, 44px) clamp(22px, 4vw, 36px);
+      padding: clamp(20px, 3.5vh, 36px) clamp(20px, 3.5vw, 32px);
       display: flex;
       flex-direction: column;
-      gap: clamp(10px, 1.8vh, 18px);
+      gap: clamp(8px, 1.4vh, 14px);
+    }
+
+    .card-eyebrow {
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      color: rgba(255,92,0,0.5);
+      text-transform: uppercase;
+      margin-bottom: 2px;
     }
 
 
@@ -318,11 +327,7 @@
       text-transform: uppercase;
     }
 
-    .vc-rule {
-      height: 1px;
-      background: rgba(255,255,255,0.06);
-      margin: 4px 0;
-    }
+    /* vc-rule removed — card boundaries provide separation */
 
     /* ── Tier row with change link ── */
     .vc-tier-row {
@@ -628,6 +633,261 @@
       transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
+    /* ── Streak badge ── */
+    .vc-streak-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .vc-streak-count {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: #FF5C00;
+    }
+    .vc-streak-mult {
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: rgba(255,92,0,0.6);
+      background: rgba(255,92,0,0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── Redeem section ── */
+    .vc-redeem-title {
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 10px;
+    }
+    .vc-reward-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .vc-reward-item:last-child { border-bottom: none; }
+    .vc-reward-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .vc-reward-cost {
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.38);
+    }
+    .vc-reward-type {
+      font-size: 0.42rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+    .vc-redeem-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: #FF5C00;
+      background: transparent;
+      border: 1px solid rgba(255,92,0,0.3);
+      padding: 4px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .vc-redeem-btn:hover { background: rgba(255,92,0,0.08); border-color: rgba(255,92,0,0.5); }
+    .vc-redeem-btn:disabled {
+      color: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.06);
+      cursor: not-allowed;
+    }
+    .vc-redeem-btn:disabled:hover { background: transparent; }
+
+    /* ── Referral section ── */
+    .vc-referral-code {
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #FF5C00;
+      margin: 6px 0;
+    }
+    .vc-referral-copy {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.48rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.38);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .vc-referral-copy:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+    .vc-referral-count {
+      font-size: 0.52rem;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.28);
+      margin-top: 4px;
+    }
+    .vc-referral-hint {
+      font-size: 0.42rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.16);
+      margin-top: 4px;
+    }
+
+    /* ── Redemption history ── */
+    .vc-history-toggle {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.28);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .vc-history-toggle:hover { color: rgba(255,255,255,0.5); }
+    .vc-history-list {
+      margin-top: 8px;
+    }
+    .vc-history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 0.5rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.28);
+    }
+    .vc-history-item .cost { color: var(--c-accent, #FF5C00); font-family: 'Courier New', monospace; }
+
+    /* ── JS-generated empty-state messages ── */
+    .no-rewards-msg { color: rgba(255,255,255,0.18); }
+    .no-redemptions-msg { color: rgba(255,255,255,0.16); }
+
+    /* ── Day mode overrides for new sections ── */
+    html[data-theme="day"] .vc-streak-count { color: #FF5C00; }
+    html[data-theme="day"] .vc-streak-mult { color: rgba(255,92,0,0.7); background: rgba(255,92,0,0.06); }
+    html[data-theme="day"] .vc-redeem-title { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .vc-reward-label { color: #111; }
+    html[data-theme="day"] .vc-reward-cost { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .vc-redeem-btn { color: #FF5C00; border-color: rgba(255,92,0,0.3); }
+    html[data-theme="day"] .vc-redeem-btn:hover { background: rgba(255,92,0,0.06); }
+    html[data-theme="day"] .vc-redeem-btn:disabled { color: rgba(0,0,0,0.38); border-color: rgba(0,0,0,0.06); }
+    html[data-theme="day"] .vc-referral-code { color: #FF5C00; }
+    html[data-theme="day"] .vc-referral-copy { color: rgba(0,0,0,0.58); border-color: rgba(0,0,0,0.16); }
+    html[data-theme="day"] .vc-referral-copy:hover { color: #111; border-color: rgba(0,0,0,0.3); }
+    html[data-theme="day"] .vc-referral-count { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .vc-referral-hint { color: rgba(0,0,0,0.35); }
+    html[data-theme="day"] .vc-history-toggle { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .vc-history-toggle:hover { color: rgba(0,0,0,0.65); }
+    html[data-theme="day"] .vc-history-item { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .vc-reward-item { border-color: rgba(0,0,0,0.04); }
+    html[data-theme="day"] .verified-card { border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .card-eyebrow { color: rgba(255,92,0,0.55); }
+    html[data-theme="day"] .vc-alias { color: #111; }
+    html[data-theme="day"] .vc-alias.no-name { color: rgba(0,0,0,0.40); }
+    html[data-theme="day"] .vc-alias.no-name:hover { color: rgba(255,92,0,0.7); }
+    html[data-theme="day"] .vc-alias-input { color: #111; border-bottom-color: rgba(0,0,0,0.20); }
+    html[data-theme="day"] .vc-alias-input::placeholder { color: rgba(0,0,0,0.40); }
+    html[data-theme="day"] .vc-tier { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .vc-tier-change { color: rgba(0,0,0,0.38); }
+    html[data-theme="day"] .vc-tier-change:hover { color: rgba(255,92,0,0.7); }
+    html[data-theme="day"] .vc-status { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .vc-since { color: rgba(0,0,0,0.38); }
+    html[data-theme="day"] .vc-pts-label { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .vc-milestone { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .vc-progress-bg { background: rgba(0,0,0,0.07); }
+    html[data-theme="day"] .vc-progress-label { color: rgba(0,0,0,0.35); }
+    html[data-theme="day"] .vc-benefit-label { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .vc-voucher-desc { color: rgba(0,0,0,0.62); }
+    html[data-theme="day"] .vc-seller-title { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .vc-seller-label { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .vc-seller-dot.not-connected { background: rgba(0,0,0,0.15); }
+    html[data-theme="day"] .vc-favs-title { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .vc-favs-empty { color: rgba(0,0,0,0.42); }
+    html[data-theme="day"] .vc-fav-title { color: #111; }
+    html[data-theme="day"] .vc-fav-price { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .vc-fav-remove { color: rgba(0,0,0,0.55); border-color: rgba(0,0,0,0.15); }
+    html[data-theme="day"] .vc-fav-remove:hover { color: #FF5C00; border-color: rgba(255,92,0,0.5); }
+    html[data-theme="day"] .vc-fav-item { border-bottom-color: rgba(0,0,0,0.06); }
+    html[data-theme="day"] .vc-voucher-btn { color: rgba(255,92,0,0.65); border-color: rgba(255,92,0,0.3); }
+    html[data-theme="day"] .vc-voucher-btn:hover { color: #FF5C00; border-color: rgba(255,92,0,0.7); }
+    html[data-theme="day"] .vc-voucher-btn.claimed { color: rgba(0,0,0,0.38); border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .stealth-toggle-label { color: rgba(0,0,0,0.42); }
+    html[data-theme="day"] .stealth-toggle-btn:hover .stealth-toggle-label { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .stealth-pill { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.16); }
+    html[data-theme="day"] .stealth-pill::after { background: rgba(0,0,0,0.2); }
+    html[data-theme="day"] .stealth-notice { color: rgba(0,0,0,0.42); }
+    html[data-theme="day"] .tier-confirm p { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .btn-oauth.apple:hover { border-color: rgba(0,0,0,0.90); color: #111; background: rgba(0,0,0,0.09); }
+    html[data-theme="day"] .no-rewards-msg { color: rgba(0,0,0,0.38); }
+    html[data-theme="day"] .no-redemptions-msg { color: rgba(0,0,0,0.35); }
+
+    /* ── Day mode: page-level overrides ── */
+    /* header day mode handled by global styles.css */
+    html[data-theme="day"] .section-label { color: rgba(255,92,0,0.65); }
+    html[data-theme="day"] .sub-label { color: rgba(0,0,0,0.52); }
+    html[data-theme="day"] .btn-oauth { color: rgba(0,0,0,0.78); border-color: rgba(0,0,0,0.20); }
+    html[data-theme="day"] .btn-oauth:hover { color: #111; border-color: rgba(0,0,0,0.5); background: rgba(0,0,0,0.03); }
+    html[data-theme="day"] .btn-oauth.google:hover { border-color: rgba(255,92,0,0.7); color: #111; background: rgba(255,92,0,0.06); }
+    html[data-theme="day"] .oauth-divider { color: rgba(0,0,0,0.30); }
+    html[data-theme="day"] .email-input-row input[type="email"] { color: rgba(0,0,0,0.90); border-color: rgba(0,0,0,0.20); }
+    html[data-theme="day"] .email-input-row input[type="email"]::placeholder { color: rgba(0,0,0,0.45); }
+    html[data-theme="day"] .email-input-row input[type="email"]:focus { border-color: rgba(0,0,0,0.5); }
+    html[data-theme="day"] .email-sent-msg { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .email-toggle-link { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .email-toggle-link:hover { color: rgba(0,0,0,0.7); }
+    html[data-theme="day"] .not-member a { color: rgba(0,0,0,0.58); border-color: rgba(0,0,0,0.16); }
+    html[data-theme="day"] .not-member a:hover { color: #111; border-color: rgba(0,0,0,0.35); }
+    html[data-theme="day"] .error-msg { color: rgba(255,60,60,0.8); }
+    html[data-theme="day"] .vc-welcome { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .vc-remembered { color: #FF5C00; background: rgba(255,92,0,0.06); border-color: rgba(255,92,0,0.22); }
+    html[data-theme="day"] .vc-stealth { color: rgba(0,0,0,0.65); background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.20); }
+    html[data-theme="day"] .vc-alias-input { color: #111; border-bottom-color: rgba(0,0,0,0.20); }
+    html[data-theme="day"] .vc-alias-input::placeholder { color: rgba(0,0,0,0.40); }
+    html[data-theme="day"] .vc-benefit-dot { background: rgba(255,92,0,0.55); }
+    html[data-theme="day"] .vc-voucher-reveal { background: rgba(255,92,0,0.03); border-color: rgba(255,92,0,0.15); }
+    html[data-theme="day"] .vc-voucher-link:hover { color: #111; border-color: rgba(0,0,0,0.3); }
+    html[data-theme="day"] .vc-progress-bg { background: rgba(0,0,0,0.07); }
+    html[data-theme="day"] .vc-fav-item { border-bottom-color: rgba(0,0,0,0.06); }
+    html[data-theme="day"] .btn-signout { color: rgba(0,0,0,0.40); border-color: rgba(0,0,0,0.12); }
+    html[data-theme="day"] .btn-signout:hover { color: rgba(0,0,0,0.72); border-color: rgba(0,0,0,0.3); }
+    html[data-theme="day"] .btn-destroy { color: rgba(255,60,60,0.55); border-color: rgba(255,60,60,0.18); }
+    html[data-theme="day"] .btn-destroy:hover { color: rgba(255,60,60,0.8); border-color: rgba(255,60,60,0.45); }
+    html[data-theme="day"] .btn-activate-pay { color: rgba(0,0,0,0.55); border-color: rgba(0,0,0,0.12); }
+    html[data-theme="day"] .btn-activate-pay:hover { color: #FF5C00; border-color: rgba(255,92,0,0.35); }
+    html[data-theme="day"] .btn-tier { color: rgba(0,0,0,0.62); border-color: rgba(0,0,0,0.18); }
+    html[data-theme="day"] .btn-tier:hover, html[data-theme="day"] .btn-tier.active { background: #111; color: #fff; border-color: #111; }
+    html[data-theme="day"] .destroy-overlay { background: rgba(255,255,255,0.88); }
+    html[data-theme="day"] .destroy-modal { background: #f8f8f8; border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .destroy-heading { color: rgba(0,0,0,0.90); }
+    html[data-theme="day"] .destroy-sub { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .destroy-sub strong { color: rgba(0,0,0,0.72); }
+    html[data-theme="day"] .destroy-input { border-bottom-color: rgba(255,60,60,0.3); color: rgba(255,60,60,0.85); }
+    html[data-theme="day"] .destroy-input::placeholder { color: rgba(255,60,60,0.2); }
+    html[data-theme="day"] .btn-destroy-cancel { color: rgba(0,0,0,0.40); border-color: rgba(0,0,0,0.12); }
+    html[data-theme="day"] .btn-destroy-cancel:hover { color: rgba(0,0,0,0.65); border-color: rgba(0,0,0,0.25); }
+    html[data-theme="day"] html { background: #fff; }
+
     /* ── XP Toast ── */
     .xp-toast-wrap {
       position: fixed;
@@ -918,30 +1178,9 @@
     #s1, #s2 { transition: opacity 0.22s ease; }
 
     /* ── Mobile ── */
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--c-bg, #000); }
     header, nav, a, button { touch-action: manipulation; }
 
-    /* ── Mobile hamburger + overlay ── */
-    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
-    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
-    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
-    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
-    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
-    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
-    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
-    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
-    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
-
-    @media (max-width: 520px) {
-      header { padding: 18px 16px; }
-      nav { display: none; }
-      .burger { display:flex; gap:0; }
-      .burger span:not(.burger-label) { display:none; }
-      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
-      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
-      .mobile-id { display:block; }
-      .nav-overlay, .nav-overlay.is-open { transition:none; }
-    }
   
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
@@ -953,24 +1192,24 @@
 <body>
   <div class="xp-toast-wrap" id="xp-toast-wrap"></div>
 
-  <header>
-    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-    <nav>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
       <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
-    <a href="id.html" class="mobile-id">[iD]</a>
-    <button class="burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
       <span class="burger-label">[aRTS]</span>
     </button>
   </header>
 
+  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
@@ -978,7 +1217,8 @@
     <a href="boutique.html">bOUTIQUE</a>
     <a href="about.html">aBOUT</a>
     <a href="inquire.html">TaLK</a>
-    <a href="id.html" style="color:#FF5C00">[iD]</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
   <main>
@@ -1024,14 +1264,14 @@
           <div id="pw-section" hidden>
             <p class="oauth-divider" style="margin:2px 0">— sIGN iN wITH pASSWORD —</p>
             <div style="margin-bottom:8px;">
-              <input type="email" id="pw-email" class="field" placeholder="your@email.com" autocomplete="email" spellcheck="false" style="width:100%;background:var(--c-bg);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:var(--c-text);font-family:var(--font);font-size:0.72rem;padding:10px 12px;outline:none;">
+              <input type="email" id="pw-email" class="pw-field" placeholder="your@email.com" autocomplete="email" spellcheck="false">
             </div>
             <div style="margin-bottom:8px;">
-              <input type="password" id="pw-pass" class="field" placeholder="password" autocomplete="current-password" style="width:100%;background:var(--c-bg);border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:var(--c-text);font-family:var(--font);font-size:0.72rem;padding:10px 12px;outline:none;">
+              <input type="password" id="pw-pass" class="pw-field" placeholder="password" autocomplete="current-password">
             </div>
-            <button class="btn-oauth" id="btn-pw-login" style="border-color:var(--c-accent);color:var(--c-accent);width:100%;">sIGN iN</button>
-            <p id="pw-error" style="color:rgba(255,60,60,0.75);font-size:0.58rem;margin-top:6px;min-height:1em;"></p>
-            <p style="text-align:center;margin-top:6px;"><a href="#" id="btn-forgot" style="font-size:0.54rem;color:var(--c-text-secondary);text-decoration:none;letter-spacing:0.06em;">fORGOT pASSWORD? →</a></p>
+            <button class="btn-oauth btn-pw-submit" id="btn-pw-login">sIGN iN</button>
+            <p id="pw-error" class="pw-error"></p>
+            <p class="pw-forgot-row"><a href="#" id="btn-forgot" class="pw-forgot-link">fORGOT pASSWORD? →</a></p>
           </div>
         </div>
 
@@ -1051,94 +1291,146 @@
         <p class="section-label">vERiFIED</p>
         <h1 class="form-title" id="s2-welcome">wELCOME</h1>
 
-        <div class="privacy-row">
-          <button class="stealth-toggle-btn active" id="btn-privacy-toggle-s2" role="switch" aria-checked="true">
-            <span class="stealth-pill"></span>
-            <span class="stealth-toggle-label">pRIVaCY mODE</span>
-          </button>
+        <div class="entity-cards">
+
+          <!-- ── Card 1: iDENTITY ── -->
+          <div class="verified-card">
+            <div class="vc-stripe"></div>
+            <div class="vc-body">
+              <p class="card-eyebrow">iDENTITY</p>
+              <div class="vc-top-row">
+                <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED</span>
+                <span class="vc-stealth"   id="vc-stealth"   hidden>sTEaLTH mODE</span>
+              </div>
+              <div class="privacy-row">
+                <button class="stealth-toggle-btn active" id="btn-privacy-toggle-s2" role="switch" aria-checked="true">
+                  <span class="stealth-pill"></span>
+                  <span class="stealth-toggle-label">pRIVaCY mODE</span>
+                </button>
+              </div>
+              <p class="vc-alias" id="vc-alias">—</p>
+              <div class="vc-tier-row">
+                <p class="vc-tier" id="vc-tier">—</p>
+                <a href="join.html" class="vc-tier-change">cHANGE →</a>
+              </div>
+              <p class="vc-status" id="vc-status">aCTIVE</p>
+              <p class="vc-since" id="vc-since"></p>
+            </div>
+          </div>
+
+          <!-- ── Card 2: pROGRESS ── -->
+          <div class="verified-card">
+            <div class="vc-stripe"></div>
+            <div class="vc-body">
+              <p class="card-eyebrow">pROGRESS</p>
+              <div class="vc-points-row">
+                <span class="vc-pts-num" id="vc-pts-num">—</span>
+                <span class="vc-pts-label">pOINTS</span>
+              </div>
+              <p class="vc-milestone" id="vc-milestone">—</p>
+              <div class="vc-progress-bg">
+                <div class="vc-progress-fill" id="vc-progress-fill"></div>
+              </div>
+              <p class="vc-progress-label" id="vc-progress-label"></p>
+              <div class="vc-streak-row" id="vc-streak-row" hidden>
+                <span class="vc-streak-count" id="vc-streak-count"></span>
+                <span class="vc-streak-mult" id="vc-streak-mult"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 3: rEWaRDS ── -->
+          <div class="verified-card">
+            <div class="vc-stripe"></div>
+            <div class="vc-body">
+              <p class="card-eyebrow">rEWaRDS</p>
+              <div class="vc-benefit-row" id="vc-benefit-row">
+                <span class="vc-benefit-dot"></span>
+                <span class="vc-benefit-label">11% aPPaREL vOUCHER</span>
+                <button class="vc-voucher-btn" id="vc-voucher-btn">cLAIM</button>
+              </div>
+              <div class="vc-voucher-reveal" id="vc-voucher-reveal" hidden>
+                <p class="vc-voucher-code" id="vc-voucher-code">ARTS-11-APPAREL</p>
+                <p class="vc-voucher-desc">11% off your next aPPaREL order</p>
+                <p class="vc-voucher-timer" id="vc-voucher-timer"></p>
+                <a href="apparel.html" class="vc-voucher-link">sHOP aPPaREL →</a>
+              </div>
+              <div id="vc-redeem-section">
+                <p class="vc-redeem-title">rEDEEM rEWaRDS</p>
+                <div id="vc-rewards-list"></div>
+              </div>
+              <div id="vc-history-section">
+                <button class="vc-history-toggle" id="vc-history-toggle" onclick="toggleHistory()">rEDEMPTION hISTORY ▸</button>
+                <div class="vc-history-list" id="vc-history-list" hidden></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 4: nETWORK ── -->
+          <div class="verified-card">
+            <div class="vc-stripe"></div>
+            <div class="vc-body">
+              <p class="card-eyebrow">nETWORK</p>
+              <div id="vc-referral-section">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="vc-referral-code" id="vc-referral-code">—</span>
+                  <button class="vc-referral-copy" id="vc-referral-copy" onclick="copyReferralCode()">cOPY</button>
+                </div>
+                <p class="vc-referral-count" id="vc-referral-count">0 rEFERRALS</p>
+                <p class="vc-referral-hint">sHARE yOUR cODE — bOTH gET bONUS pOINTS</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 5: sELLER ── -->
+          <div class="verified-card">
+            <div class="vc-stripe"></div>
+            <div class="vc-body">
+              <p class="card-eyebrow">sELLER</p>
+              <div class="vc-seller-section" id="vc-seller-section">
+                <div class="vc-seller-row">
+                  <span class="vc-seller-dot not-connected" id="vc-seller-dot"></span>
+                  <span class="vc-seller-label" id="vc-seller-commission">cOMMISSION: <strong>—</strong></span>
+                </div>
+                <div class="vc-seller-row">
+                  <span class="vc-seller-dot not-connected" id="vc-stripe-dot"></span>
+                  <span class="vc-seller-label" id="vc-stripe-status">sTRIPE: nOT cONNECTED</span>
+                </div>
+                <a href="listing-terms.html" class="vc-seller-terms">lISTING tERMS →</a>
+              </div>
+              <div class="vc-verify-section" id="vc-verify-section" style="margin-top:6px;">
+                <p class="vc-seller-title">vERIFICATION</p>
+                <div class="vc-seller-row">
+                  <span class="vc-seller-dot not-connected" id="vc-verify-dot"></span>
+                  <span class="vc-seller-label" id="vc-verify-status">nOT vERIFIED</span>
+                </div>
+                <a href="verify.html" class="vc-seller-terms" id="vc-verify-link">aPPLY fOR vERIFICATION →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 6: cOLLECTION ── -->
+          <div class="verified-card">
+            <div class="vc-stripe"></div>
+            <div class="vc-body">
+              <p class="card-eyebrow">cOLLECTION</p>
+              <div class="vc-favs-section" id="vc-favs-section">
+                <div class="vc-favs-list" id="vc-favs-list">
+                  <p class="vc-favs-empty" id="vc-favs-empty">nO fAVOURITES yET — bROWSE <a href="art.html" style="color:#FF5C00;text-decoration:none">aRT</a> oR <a href="boutique.html" style="color:#FF5C00;text-decoration:none">bOUTIQUE</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="verified-card">
-          <div class="vc-stripe"></div>
-          <div class="vc-body">
-            <div class="vc-top-row">
-              <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED</span>
-              <span class="vc-stealth"   id="vc-stealth"   hidden>sTEaLTH mODE</span>
-            </div>
-            <p class="vc-alias" id="vc-alias">—</p>
-            <div class="vc-tier-row">
-              <p class="vc-tier" id="vc-tier">—</p>
-              <a href="join.html" class="vc-tier-change">cHANGE →</a>
-            </div>
-            <p class="vc-status" id="vc-status">aCTIVE</p>
-            <div class="vc-rule"></div>
-            <div class="vc-points-row">
-              <span class="vc-pts-num" id="vc-pts-num">—</span>
-              <span class="vc-pts-label">pOINTS</span>
-            </div>
-            <p class="vc-milestone" id="vc-milestone">—</p>
-            <div class="vc-progress-bg">
-              <div class="vc-progress-fill" id="vc-progress-fill"></div>
-            </div>
-            <p class="vc-progress-label" id="vc-progress-label"></p>
-            <div class="vc-rule"></div>
-            <p class="vc-since" id="vc-since"></p>
-            <div class="vc-benefit-row" id="vc-benefit-row">
-              <span class="vc-benefit-dot"></span>
-              <span class="vc-benefit-label">11% aPPaREL vOUCHER</span>
-              <button class="vc-voucher-btn" id="vc-voucher-btn">cLAIM</button>
-            </div>
-            <div class="vc-voucher-reveal" id="vc-voucher-reveal" hidden>
-              <p class="vc-voucher-code" id="vc-voucher-code">ARTS-11-APPAREL</p>
-              <p class="vc-voucher-desc">11% off your next aPPaREL order</p>
-              <p class="vc-voucher-timer" id="vc-voucher-timer"></p>
-              <a href="apparel.html" class="vc-voucher-link">sHOP aPPaREL →</a>
-            </div>
-
-            <!-- Seller info section -->
-            <div class="vc-rule"></div>
-            <div class="vc-seller-section" id="vc-seller-section">
-              <p class="vc-seller-title">sELLER iNFO</p>
-              <div class="vc-seller-row">
-                <span class="vc-seller-dot not-connected" id="vc-seller-dot"></span>
-                <span class="vc-seller-label" id="vc-seller-commission">cOMMISSION: <strong>—</strong></span>
-              </div>
-              <div class="vc-seller-row">
-                <span class="vc-seller-dot not-connected" id="vc-stripe-dot"></span>
-                <span class="vc-seller-label" id="vc-stripe-status">sTRIPE: nOT cONNECTED</span>
-              </div>
-              <a href="listing-terms.html" class="vc-seller-terms">lISTING tERMS →</a>
-            </div>
-
-            <!-- Verification status -->
-            <div class="vc-rule"></div>
-            <div class="vc-verify-section" id="vc-verify-section">
-              <p class="vc-seller-title">vERIFICATION</p>
-              <div class="vc-seller-row">
-                <span class="vc-seller-dot not-connected" id="vc-verify-dot"></span>
-                <span class="vc-seller-label" id="vc-verify-status">nOT vERIFIED</span>
-              </div>
-              <a href="verify.html" class="vc-seller-terms" id="vc-verify-link">aPPLY fOR vERIFICATION →</a>
-            </div>
-
-            <!-- Favourites section -->
-            <div class="vc-rule"></div>
-            <div class="vc-favs-section" id="vc-favs-section">
-              <p class="vc-favs-title">fAVOURITES</p>
-              <div class="vc-favs-list" id="vc-favs-list">
-                <p class="vc-favs-empty" id="vc-favs-empty">nO fAVOURITES yET — bROWSE <a href="art.html" style="color:#FF5C00;text-decoration:none">aRT</a> oR <a href="boutique.html" style="color:#FF5C00;text-decoration:none">bOUTIQUE</a></p>
-              </div>
-            </div>
-
-            <!-- Tier picker shown only on new device -->
-            <div class="tier-confirm" id="tier-confirm" hidden>
-              <p>wHICH tIER aRE yOU?</p>
-              <div class="tier-btns">
-                <button class="btn-tier" data-tier="aLLY">aLLY</button>
-                <button class="btn-tier" data-tier="BRIGaDIER">BRIGaDIER</button>
-                <button class="btn-tier" data-tier="CURaTOR">CURaTOR</button>
-              </div>
-            </div>
+        <!-- Tier picker shown only on new device -->
+        <div class="tier-confirm" id="tier-confirm" hidden>
+          <p>wHICH tIER aRE yOU?</p>
+          <div class="tier-btns">
+            <button class="btn-tier" data-tier="aLLY">aLLY</button>
+            <button class="btn-tier" data-tier="BRIGaDIER">BRIGaDIER</button>
+            <button class="btn-tier" data-tier="CURaTOR">CURaTOR</button>
           </div>
         </div>
 
@@ -1148,7 +1440,7 @@
 
         <div class="signout-row">
           <button class="btn-signout" id="btn-signout">sIGN OuT</button>
-          <button class="btn-destroy" id="btn-destroy">dESTROY iD</button>
+          <button class="btn-destroy" id="btn-destroy">dELETE aCCOUNT</button>
         </div>
       </div>
 
@@ -1161,8 +1453,9 @@
       <!-- Step 1 -->
       <div id="destroy-step1">
         <p class="destroy-eyebrow">⚠ iRREVERSIBLE</p>
-        <p class="destroy-heading">aRE yOU sURE?</p>
-        <p class="destroy-sub">yOUR mEMBER iD, pOINTS, aND sESSION dATA wILL bE pERMANENTLY dELETED. tHIS cANNOT bE uNDONE.</p>
+        <p class="destroy-heading">dELETE aCCOUNT?</p>
+        <p class="destroy-sub">tHIS wILL pERMANENTLY rEMOVE yOUR pREFERENCES, fAVORITES, vOUCHERS, aND fEEDBACK. tHIS cANNOT bE uNDONE.</p>
+        <p class="destroy-sub" style="margin-top:8px;font-size:0.52rem;color:var(--c-text-ghost);">iN tHE fUTURE, tHIS wILL aLSO rEMOVE yOUR pAYMENT dATA.</p>
         <div class="destroy-btns">
           <button class="btn-destroy-cancel" id="destroy-cancel-1">cANCEL</button>
           <button class="btn-destroy-confirm" id="destroy-next">cONFIRM →</button>
@@ -1176,7 +1469,7 @@
         <input type="text" class="destroy-input" id="destroy-input" placeholder="DELETE" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         <div class="destroy-btns">
           <button class="btn-destroy-cancel" id="destroy-cancel-2">cANCEL</button>
-          <button class="btn-destroy-execute" id="destroy-execute" disabled>dESTROY</button>
+          <button class="btn-destroy-execute" id="destroy-execute" disabled>dELETE</button>
         </div>
       </div>
     </div>
@@ -1185,7 +1478,7 @@
   <script>
   (function(){
     /* ── Storage mode: localStorage (normal) or sessionStorage (STEaLTH / incognito) ── */
-    var stealthMode = false;
+    var stealthMode = false; window.stealthMode = false;
 
     /* Auto-detect: if localStorage is blocked (Firefox private etc), force stealth */
     var _inIncognito = false;
@@ -1193,7 +1486,7 @@
       localStorage.setItem('_arts_test', '1');
       localStorage.removeItem('_arts_test');
     } catch(e) {
-      stealthMode = true;
+      stealthMode = true; window.stealthMode = true;
       _inIncognito = true;
     }
     /* Chrome/Safari incognito: localStorage quota is reduced to 0 */
@@ -1204,7 +1497,7 @@
           navigator.storage.estimate().then(function(est) {
             /* In Chrome incognito, quota is typically ~120MB vs ~unlimited in normal mode */
             if (est.quota && est.quota < 200 * 1024 * 1024) {
-              stealthMode = true; _inIncognito = true;
+              stealthMode = true; window.stealthMode = true; _inIncognito = true;
               applyStealthUI();
               var stRow = document.querySelector('.stealth-row');
               if (stRow) stRow.hidden = true;
@@ -1255,7 +1548,7 @@
 
     /* Manual toggle */
     document.getElementById('btn-stealth-toggle').addEventListener('click', function(){
-      stealthMode = !stealthMode;
+      stealthMode = !stealthMode; window.stealthMode = stealthMode;
       applyStealthUI();
     });
 
@@ -1321,7 +1614,7 @@
     ═══════════════════════════════════════════════ */
     var FIREBASE_CONFIG = {
       apiKey:            'AIzaSyAjSw3GSNvS48gP51beBy4xyxgBFuMoM_c',
-      authDomain:        'arts-platform.firebaseapp.com',
+      authDomain:        '4-arts.com',
       projectId:         'arts-platform',
       storageBucket:     'arts-platform.firebasestorage.app',
       messagingSenderId: '25346415951',
@@ -1433,6 +1726,40 @@
     }
 
     /* ── XP Toast system ── */
+    function copyReferralCode() {
+      var code = document.getElementById('vc-referral-code').textContent;
+      if (!code || code === '—') return;
+      var btn = document.getElementById('vc-referral-copy');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(function() {
+          btn.textContent = 'cOPIED';
+          setTimeout(function() { btn.textContent = 'cOPY'; }, 1500);
+        });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = code;
+        ta.style.cssText = 'position:fixed;left:-9999px;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'cOPIED';
+        setTimeout(function() { btn.textContent = 'cOPY'; }, 1500);
+      }
+    }
+
+    function toggleHistory() {
+      var list = document.getElementById('vc-history-list');
+      var btn = document.getElementById('vc-history-toggle');
+      if (list.hidden) {
+        list.hidden = false;
+        btn.textContent = 'rEDEMPTION hISTORY \u25BE';
+      } else {
+        list.hidden = true;
+        btn.textContent = 'rEDEMPTION hISTORY \u25B8';
+      }
+    }
+
     function playXPToasts() {
       try {
         var raw = sessionStorage.getItem('arts_xp_pending');
@@ -1531,12 +1858,207 @@
           vBtn.classList.remove('claimed');
           if (vReveal) vReveal.hidden = true;
           vBtn.onclick = function() {
-            store.set(VOUCHER_KEY, String(Date.now()));
+            var ts = String(Date.now());
+            store.set(VOUCHER_KEY, ts);
+            artsAuth.setSetting(VOUCHER_KEY, ts);
             renderVoucher();
           };
         }
       }
       renderVoucher();
+
+      /* ── Streak display ── */
+      (function(){
+        try {
+          var sd = JSON.parse(localStorage.getItem('arts_streak_data') || '{}');
+          var row = document.getElementById('vc-streak-row');
+          var countEl = document.getElementById('vc-streak-count');
+          var multEl = document.getElementById('vc-streak-mult');
+          if (!sd.count || sd.count < 2) return;
+          row.hidden = false;
+          countEl.textContent = sd.count + ' dAY sTREAK';
+          var skCfg = null;
+          try { skCfg = JSON.parse(localStorage.getItem('arts_streak_config')); } catch(e){}
+          var streakActive = !skCfg || skCfg.active !== false;
+          if (!streakActive) return;
+          var m7 = (skCfg && skCfg.m7) || 1.5;
+          var m14 = (skCfg && skCfg.m14) || 2;
+          var m30 = (skCfg && skCfg.m30) || 3;
+          var cap = (skCfg && skCfg.streak_cap) || 30;
+          var eff = Math.min(sd.count, cap);
+          var mult = 1;
+          if (eff >= 30) mult = m30;
+          else if (eff >= 14) mult = m14;
+          else if (eff >= 7) mult = m7;
+          if (mult > 1) multEl.textContent = mult + 'x';
+          else multEl.hidden = true;
+        } catch(e){}
+      })();
+
+      /* ── Redeem Rewards ── */
+      (function(){
+        var rwCfg = [];
+        try { var r = JSON.parse(localStorage.getItem('arts_rewards_config')); if(r && r.length) rwCfg = r; } catch(e){}
+        if (!rwCfg.length) {
+          rwCfg = [
+            { id:'coupon_10', label:'10% aPPaREL cOUPON', cost:500, type:'coupon', detail:'10%, 30d, ARTS-10-REWARD', active:true },
+            { id:'coupon_20', label:'20% aPPaREL cOUPON', cost:1000, type:'coupon', detail:'20%, 30d, ARTS-20-REWARD', active:true },
+            { id:'mem_brig',  label:'fREE BRIGaDIER (1 mO)', cost:2000, type:'membership', detail:'BRIGaDIER, 30d', active:true },
+            { id:'mem_cur',   label:'fREE CURaTOR (1 mO)', cost:5000, type:'membership', detail:'CURaTOR, 30d', active:true },
+            { id:'badge_patron', label:'pROFILE bADGE: pATRON', cost:300, type:'badge', detail:'patron_badge', active:true },
+            { id:'feat_spot', label:'fEATURED aRTIST sPOT', cost:1500, type:'perk', detail:'7d featured', active:true }
+          ];
+        }
+        var list = document.getElementById('vc-rewards-list');
+        var activeRewards = rwCfg.filter(function(r){ return r.active; });
+        if (!activeRewards.length) {
+          list.innerHTML = '<p class="no-rewards-msg" style="font-size:0.52rem;letter-spacing:0.12em;">nO rEWaRDS aVAILABLE</p>';
+          return;
+        }
+        activeRewards.forEach(function(rw){
+          var item = document.createElement('div');
+          item.className = 'vc-reward-item';
+          var typeColors = { coupon:'#FF5C00', membership:'rgba(100,160,255,0.75)', badge:'rgba(255,200,60,0.75)', perk:'rgba(110,230,110,0.75)' };
+          var tc = typeColors[rw.type] || '#FF5C00';
+          var canAfford = pts >= rw.cost;
+          item.innerHTML =
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="display:flex;align-items:center;gap:6px;">' +
+                '<span class="vc-reward-type" style="color:' + tc + ';border:1px solid ' + tc + '33;">' + rw.type + '</span>' +
+                '<span class="vc-reward-label">' + rw.label + '</span>' +
+              '</div>' +
+              '<span class="vc-reward-cost">' + rw.cost + ' pTS</span>' +
+            '</div>' +
+            '<button class="vc-redeem-btn" data-rw-id="' + rw.id + '" data-rw-cost="' + rw.cost + '" data-rw-label="' + rw.label + '" data-rw-type="' + rw.type + '" data-rw-detail="' + (rw.detail||'') + '"' +
+              (canAfford ? '' : ' disabled') + '>rEDEEM</button>';
+          list.appendChild(item);
+        });
+
+        /* Redeem click handler */
+        list.addEventListener('click', function(e){
+          var btn = e.target.closest('.vc-redeem-btn');
+          if (!btn || btn.disabled) return;
+          var cost = parseInt(btn.getAttribute('data-rw-cost'), 10);
+          var label = btn.getAttribute('data-rw-label');
+          var type = btn.getAttribute('data-rw-type');
+          var detail = btn.getAttribute('data-rw-detail');
+          var rwId = btn.getAttribute('data-rw-id');
+          var curPts = parseInt(store.get('arts_points') || '0', 10);
+          if (curPts < cost) { btn.disabled = true; return; }
+
+          /* Deduct points */
+          store.set('arts_points', String(curPts - cost));
+
+          /* Generate code for coupons */
+          var code = '';
+          if (type === 'coupon') {
+            var parts = detail.split(',');
+            var prefix = (parts[2] || 'ARTS-REWARD').trim();
+            code = prefix + '-' + Date.now().toString(36).toUpperCase().slice(-4);
+          } else if (type === 'membership') {
+            code = 'MEM-' + Date.now().toString(36).toUpperCase().slice(-6);
+          }
+
+          /* Log redemption */
+          var entry = { ts: Date.now(), reward_id: rwId, label: label, cost: cost, type: type, code: code };
+          var redemptions = [];
+          try { redemptions = JSON.parse(store.get('arts_redemptions') || '[]'); } catch(e){}
+          redemptions.push(entry);
+          store.set('arts_redemptions', JSON.stringify(redemptions));
+          artsAuth.addRedemption(entry);
+
+          /* For membership: store grant */
+          if (type === 'membership') {
+            var tierName = detail.split(',')[0].trim();
+            var durDays = parseInt((detail.split(',')[1] || '30').trim(), 10) || 30;
+            store.set('arts_reward_membership', JSON.stringify({ tier: tierName, expires: Date.now() + durDays * 86400000, code: code }));
+          }
+
+          /* For badge: store badge */
+          if (type === 'badge') {
+            var badges = [];
+            try { badges = JSON.parse(store.get('arts_badges') || '[]'); } catch(e){}
+            if (badges.indexOf(detail) === -1) badges.push(detail);
+            store.set('arts_badges', JSON.stringify(badges));
+          }
+
+          /* Show XP toast (negative) */
+          var pending = [];
+          try { pending = JSON.parse(sessionStorage.getItem('arts_xp_pending') || '[]'); } catch(e){}
+          pending.push({ label: label, pts: -cost });
+          sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
+
+          /* Visual feedback */
+          btn.textContent = '\u2713 rEDEEMED';
+          btn.disabled = true;
+          btn.style.color = 'rgba(110,230,110,0.75)';
+          btn.style.borderColor = 'rgba(110,230,110,0.3)';
+
+          /* Update points display */
+          var ptsEl = document.getElementById('vc-pts-num');
+          if (ptsEl) ptsEl.textContent = curPts - cost;
+
+          /* Show code if coupon */
+          if (code) {
+            var codeEl = document.createElement('p');
+            codeEl.style.cssText = 'font-family:monospace;font-size:0.62rem;font-weight:700;color:#FF5C00;letter-spacing:0.1em;margin-top:4px;';
+            codeEl.textContent = code;
+            btn.parentElement.appendChild(codeEl);
+          }
+
+          /* Update history */
+          renderHistory();
+
+          /* Disable buttons user can no longer afford */
+          var newPts = curPts - cost;
+          list.querySelectorAll('.vc-redeem-btn').forEach(function(b){
+            if (!b.disabled && parseInt(b.getAttribute('data-rw-cost'),10) > newPts) b.disabled = true;
+          });
+        });
+      })();
+
+      /* ── Referral Code ── */
+      (function(){
+        var idHash = store.get('arts_id_hash') || '';
+        var refCode = store.get('arts_referral_code');
+        if (!refCode && idHash) {
+          refCode = 'ARTS-' + idHash.slice(0, 6).toUpperCase();
+          store.set('arts_referral_code', refCode);
+        }
+        var codeEl = document.getElementById('vc-referral-code');
+        if (codeEl && refCode) codeEl.textContent = refCode;
+        var countEl = document.getElementById('vc-referral-count');
+        var count = parseInt(store.get('arts_referral_count') || '0', 10);
+        if (countEl) countEl.textContent = count + ' rEFERRAL' + (count !== 1 ? 'S' : '');
+
+        /* Check referral config active */
+        var refCfg = null;
+        try { refCfg = JSON.parse(localStorage.getItem('arts_referral_config')); } catch(e){}
+        if (refCfg && refCfg.active === false) {
+          document.getElementById('vc-referral-section').hidden = true;
+        }
+      })();
+
+      /* ── Redemption History ── */
+      function renderHistory(){
+        var list = document.getElementById('vc-history-list');
+        var entries = [];
+        try { entries = JSON.parse(store.get('arts_redemptions') || '[]'); } catch(e){}
+        list.innerHTML = '';
+        if (!entries.length) {
+          list.innerHTML = '<p class="no-redemptions-msg" style="font-size:0.48rem;letter-spacing:0.12em;margin-top:4px;">nO rEDEMPTIONS yET</p>';
+          return;
+        }
+        entries.slice(-5).reverse().forEach(function(e){
+          var item = document.createElement('div');
+          item.className = 'vc-history-item';
+          item.innerHTML =
+            '<span>' + new Date(e.ts).toLocaleDateString() + ' — ' + e.label + '</span>' +
+            '<span class="cost">-' + e.cost + '</span>';
+          list.appendChild(item);
+        });
+      }
+      renderHistory();
 
       /* Seller info: commission rate + Stripe Connect status */
       var COMM_RATES = { 'aUDIENCE': 20, 'aLLY': 15, 'BRIGaDIER': 10, 'CURaTOR': 7 };
@@ -1849,7 +2371,7 @@
         }
         // Store session
         try {
-          store.set('arts_session_token', data.session_token);
+          artsAuth.login(data.session_token);
           store.set('arts_id_hash', data.user_id_hash);
           store.set('arts_email', data.email);
           store.set('arts_alias', data.alias || 'mEMBER');
@@ -2160,6 +2682,8 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
+<script>if(artsAuth.isLoggedIn()&&!window.stealthMode)artsAuth.syncSettings();</script>
 <script src="btn-fx.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>

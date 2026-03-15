@@ -277,30 +277,31 @@
     ───────────────────────────────────────── */
 
     /* Page base */
+    [data-theme="day"] html { background: #fff !important; }
     [data-theme="day"] body { background: #fff !important; color: #000 !important; }
 
     /* Back link */
-    [data-theme="day"] .c-back { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .c-back { color: rgba(0,0,0,0.58) !important; }
     [data-theme="day"] .c-back:hover { color: #000 !important; }
 
     /* Hub header */
-    [data-theme="day"] .hub-eyebrow { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .hub-eyebrow { color: rgba(0,0,0,0.55) !important; }
     [data-theme="day"] .hub-title   { color: #000 !important; }
-    [data-theme="day"] .hub-subtitle { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .hub-subtitle { color: rgba(0,0,0,0.58) !important; }
 
     /* Divider */
-    [data-theme="day"] .hub-rule { border-top-color: rgba(0,0,0,0.12) !important; }
+    [data-theme="day"] .hub-rule { border-top-color: rgba(0,0,0,0.15) !important; }
 
     /* Tier bar */
-    [data-theme="day"] .tier-bar { border-color: rgba(0,0,0,0.12) !important; }
-    [data-theme="day"] .tier-bar-label { color: rgba(0,0,0,0.35) !important; }
-    [data-theme="day"] .tier-bar-change { color: rgba(0,0,0,0.35) !important; }
-    [data-theme="day"] .tier-bar-change:hover { color: rgba(0,0,0,0.6) !important; }
+    [data-theme="day"] .tier-bar { border-color: rgba(0,0,0,0.15) !important; }
+    [data-theme="day"] .tier-bar-label { color: rgba(0,0,0,0.55) !important; }
+    [data-theme="day"] .tier-bar-change { color: rgba(0,0,0,0.55) !important; }
+    [data-theme="day"] .tier-bar-change:hover { color: rgba(0,0,0,0.72) !important; }
 
     /* Bot grid container */
     [data-theme="day"] .bot-grid {
       background: rgba(0,0,0,0.08) !important;
-      border-color: rgba(0,0,0,0.1) !important;
+      border-color: rgba(0,0,0,0.12) !important;
     }
 
     /* Bot cards */
@@ -309,55 +310,62 @@
 
     /* Status badges */
     [data-theme="day"] .bot-status.soon {
-      color: rgba(0,0,0,0.35) !important;
+      color: rgba(0,0,0,0.55) !important;
       background: rgba(0,0,0,0.04) !important;
-      border-color: rgba(0,0,0,0.12) !important;
+      border-color: rgba(0,0,0,0.15) !important;
     }
 
     /* Bot name / desc / limit */
-    [data-theme="day"] .bot-name  { color: rgba(0,0,0,0.7)  !important; }
-    [data-theme="day"] .bot-desc  { color: rgba(0,0,0,0.42) !important; }
-    [data-theme="day"] .bot-limit { color: rgba(0,0,0,0.3)  !important; }
+    [data-theme="day"] .bot-name  { color: rgba(0,0,0,0.78)  !important; }
+    [data-theme="day"] .bot-desc  { color: rgba(0,0,0,0.58) !important; }
+    [data-theme="day"] .bot-limit { color: rgba(0,0,0,0.50)  !important; }
 
     /* Bot panel */
-    [data-theme="day"] .bot-panel-close { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .bot-panel-close { color: rgba(0,0,0,0.55) !important; }
     [data-theme="day"] .bot-panel-close:hover { color: #000 !important; }
-    [data-theme="day"] .bot-panel-info { color: rgba(0,0,0,0.38) !important; }
+    [data-theme="day"] .bot-panel-info { color: rgba(0,0,0,0.58) !important; }
 
     /* Chat window */
     [data-theme="day"] .bot-chat {
-      border-color: rgba(0,0,0,0.12) !important;
+      border-color: rgba(0,0,0,0.15) !important;
     }
     [data-theme="day"] .bot-msg.bot {
       background: rgba(0,0,0,0.04) !important;
-      border-color: rgba(0,0,0,0.1) !important;
-      color: rgba(0,0,0,0.55) !important;
+      border-color: rgba(0,0,0,0.12) !important;
+      color: rgba(0,0,0,0.68) !important;
     }
 
     /* Input row */
     [data-theme="day"] .bot-input {
-      border-color: rgba(0,0,0,0.18) !important;
+      border-color: rgba(0,0,0,0.38) !important;
       color: #000 !important;
     }
-    [data-theme="day"] .bot-input::placeholder { color: rgba(0,0,0,0.22) !important; }
-    [data-theme="day"] .bot-input:focus { border-color: rgba(0,0,0,0.45) !important; }
+    [data-theme="day"] .bot-input::placeholder { color: rgba(0,0,0,0.42) !important; }
+    [data-theme="day"] .bot-input:focus { border-color: rgba(0,0,0,0.62) !important; }
 
-    /* Send CTA — stays orange ✓ */
+    /* Send CTA — stays orange; hover swaps to black in day */
+    [data-theme="day"] .bot-send:hover { background: #000 !important; border-color: #000 !important; color: #fff !important; }
+
+    /* User chat bubble */
+    [data-theme="day"] .bot-msg.user { color: rgba(0,0,0,0.75) !important; }
+
+    /* Bot upgrade link hover */
+    [data-theme="day"] .bot-upgrade:hover { color: #000 !important; }
 
     /* Custom bot builder */
-    [data-theme="day"] .custom-bot-section .section-label { color: rgba(0,0,0,0.35) !important; }
+    [data-theme="day"] .custom-bot-section .section-label { color: rgba(0,0,0,0.55) !important; }
     [data-theme="day"] .custom-bot-form input,
     [data-theme="day"] .custom-bot-form textarea {
-      border-bottom-color: rgba(0,0,0,0.14) !important;
+      border-bottom-color: rgba(0,0,0,0.16) !important;
       color: #000 !important;
     }
     [data-theme="day"] .custom-bot-form input::placeholder,
-    [data-theme="day"] .custom-bot-form textarea::placeholder { color: rgba(0,0,0,0.2) !important; }
+    [data-theme="day"] .custom-bot-form textarea::placeholder { color: rgba(0,0,0,0.40) !important; }
 
     /* Footer */
-    [data-theme="day"] .hub-footer { color: rgba(0,0,0,0.3) !important; }
-    [data-theme="day"] .hub-footer a { color: rgba(0,0,0,0.32) !important; }
-    [data-theme="day"] .hub-footer a:hover { color: rgba(0,0,0,0.6) !important; }
+    [data-theme="day"] .hub-footer { color: rgba(0,0,0,0.50) !important; }
+    [data-theme="day"] .hub-footer a { color: rgba(0,0,0,0.52) !important; }
+    [data-theme="day"] .hub-footer a:hover { color: rgba(0,0,0,0.72) !important; }
   </style>
 </head>
 <body>
@@ -427,12 +435,20 @@
     ];
 
     var TIER_ORDER = ['aUDIENCE','aLLY','BRIGaDIER','CURaTOR'];
-    var TIER_COLORS = {
+    var TIER_COLORS_NIGHT = {
       'aUDIENCE':  { text:'rgba(255,255,255,0.5)',  border:'rgba(255,255,255,0.15)', bg:'rgba(255,255,255,0.03)' },
       'aLLY':      { text:'rgba(110,230,180,0.7)',   border:'rgba(110,230,180,0.2)',  bg:'rgba(110,230,180,0.04)' },
       'BRIGaDIER': { text:'rgba(255,180,60,0.75)',   border:'rgba(255,180,60,0.2)',   bg:'rgba(255,180,60,0.04)' },
       'CURaTOR':   { text:'rgba(255,92,0,0.8)',      border:'rgba(255,92,0,0.25)',    bg:'rgba(255,92,0,0.05)' }
     };
+    var TIER_COLORS_DAY = {
+      'aUDIENCE':  { text:'rgba(0,0,0,0.45)',       border:'rgba(0,0,0,0.15)',       bg:'rgba(0,0,0,0.03)' },
+      'aLLY':      { text:'rgba(50,160,120,0.75)',   border:'rgba(50,160,120,0.2)',   bg:'rgba(50,160,120,0.04)' },
+      'BRIGaDIER': { text:'rgba(200,130,20,0.8)',    border:'rgba(200,130,20,0.2)',   bg:'rgba(200,130,20,0.04)' },
+      'CURaTOR':   { text:'rgba(255,92,0,0.8)',      border:'rgba(255,92,0,0.25)',    bg:'rgba(255,92,0,0.05)' }
+    };
+    function isDay(){ return document.documentElement.getAttribute('data-theme')==='day'; }
+    var TIER_COLORS = isDay() ? TIER_COLORS_DAY : TIER_COLORS_NIGHT;
 
     function tierLevel(t){ var idx=TIER_ORDER.indexOf(t); return idx>=0?idx:-1; }
     function hasAccess(user,req){ return tierLevel(user)>=tierLevel(req); }
@@ -450,13 +466,14 @@
 
     /* ── Custom bots (CURaTOR) ── */
     function getCustomBots(){ try{return JSON.parse(localStorage.getItem('arts_custom_bots')||'[]');}catch(e){return [];} }
-    function saveCustomBots(b){ try{localStorage.setItem('arts_custom_bots',JSON.stringify(b));}catch(e){} }
+    function saveCustomBots(b){ try{artsAuth.setSetting('arts_custom_bots',JSON.stringify(b));}catch(e){} }
 
     /* ── Render bot grid ── */
     var gridEl=document.getElementById('bot-grid');
     var panelEl=document.getElementById('bot-panel');
 
     function renderBotGrid(){
+      TIER_COLORS = isDay() ? TIER_COLORS_DAY : TIER_COLORS_NIGHT;
       gridEl.innerHTML='';
       var allBots=BOTS.slice();
       if(hasAccess(userTier,'CURaTOR')){
@@ -590,10 +607,16 @@
 
     /* ── Initial render ── */
     renderBotGrid();
+
+    /* Re-render grid when theme changes (MutationObserver on data-theme) */
+    new MutationObserver(function(){ renderBotGrid(); })
+      .observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
   })();
   </script>
 
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
+<script>if(artsAuth.isLoggedIn())artsAuth.syncSettings();</script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

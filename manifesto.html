@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="icon" href="assets/favicon.png" sizes="32x32" type="image/png">
+
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+  <meta property="og:type"         content="website">
+  <meta property="og:url"          content="https://4-arts.com/manifesto.html">
+  <meta property="og:title"        content="[aRTS] — maNIFESTO">
+  <meta property="og:description"  content="wE tAKE a cUT. hERE'S wHY.">
+  <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="[aRTS] — maNIFESTO">
+  <meta name="twitter:description" content="wE tAKE a cUT. hERE'S wHY.">
+  <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
+  <title>[aRTS] — maNIFESTO</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
+    if (!localStorage.getItem('captcha_passed')) {
+      window.location.replace('captcha.html');
+    }
+  </script>
+  <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Manifesto layout ── */
+    .manifesto-wrap {
+      width: min(92vw, 620px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 5vh, 56px);
+      padding-top: clamp(20px, 4vh, 40px);
+      padding-bottom: clamp(80px, 12vh, 140px);
+    }
+
+    /* ── Epigraph ── */
+    .manifesto-epigraph {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vh, 20px);
+      padding-bottom: clamp(28px, 4vh, 48px);
+      border-bottom: 1px solid var(--c-border);
+    }
+    .epigraph-quote {
+      font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+      font-weight: var(--fw-light);
+      font-style: italic;
+      letter-spacing: 0.04em;
+      line-height: 1.55;
+      color: var(--c-text-secondary);
+    }
+    .epigraph-quote::before { content: '\201C'; }
+    .epigraph-quote::after  { content: '\201D'; }
+    .epigraph-attr {
+      font-size: 0.56rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.22em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+    }
+    .epigraph-follow {
+      font-size: clamp(0.8rem, 1.6vw, 0.92rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.04em;
+      line-height: 1.75;
+      color: var(--c-text-tertiary);
+      font-style: italic;
+    }
+
+    /* ── Title ── */
+    .manifesto-title {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      line-height: 1.08;
+      color: var(--c-text);
+    }
+
+    /* ── Body sections ── */
+    .manifesto-sections {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(28px, 4vh, 44px);
+    }
+    .manifesto-section {}
+    .manifesto-section-head {
+      font-size: clamp(0.82rem, 1.6vw, 0.95rem);
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.1em;
+      line-height: 1.4;
+      color: var(--c-text);
+      margin-bottom: clamp(6px, 1vh, 10px);
+    }
+    .manifesto-section-body {
+      font-size: clamp(0.78rem, 1.5vw, 0.88rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.03em;
+      line-height: 1.8;
+      color: var(--c-text-secondary);
+    }
+
+    /* ── Signature ── */
+    .manifesto-footer {
+      padding-top: clamp(24px, 3vh, 40px);
+      border-top: 1px solid var(--c-border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .manifesto-rule {
+      width: 40px;
+      height: 1px;
+      background: var(--c-accent);
+    }
+    .manifesto-sign {
+      font-size: 0.58rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.22em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+    }
+
+    /* ── Back link ── */
+    .manifesto-back {
+      font-size: 0.6rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      color: var(--c-text-ghost);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color var(--dur-fast);
+    }
+    .manifesto-back:hover { color: var(--c-text-secondary); }
+
+    /* ── Page entrance ── */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    main { animation: pageIn 0.5s ease both; }
+  </style>
+</head>
+<body>
+
+  <div class="noise-overlay"></div>
+  <div class="ambient-orb ambient-orb--top"></div>
+  <div class="ambient-orb ambient-orb--bottom"></div>
+
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
+      <a href="art.html">aRT</a>
+      <a href="boutique.html">bOUTIQUE</a>
+      <a href="about.html">aBOUT</a>
+      <a href="inquire.html">TaLK</a>
+      <a href="work.html">wORK</a>
+    </nav>
+    <button class="site-burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
+  </header>
+
+  <div class="nav-overlay" id="nav-overlay">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[exit]</span>
+    </button>
+    <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+  </div>
+
+  <main class="site-main">
+    <div class="manifesto-wrap">
+
+      <a href="about.html" class="manifesto-back">&larr; aBOUT</a>
+
+      <!-- Epigraph -->
+      <div class="manifesto-epigraph">
+        <p class="epigraph-quote">building castles in the air</p>
+        <p class="epigraph-attr">&mdash; fOUNDER, aRTS</p>
+        <p class="epigraph-follow">without dreams we are just a cluster of atoms. this is ours.</p>
+      </div>
+
+      <!-- Title -->
+      <h1 class="manifesto-title">wE tAKE a cUT.<br>hERE'S wHY.</h1>
+
+      <!-- Sections -->
+      <div class="manifesto-sections">
+
+        <div class="manifesto-section">
+          <p class="manifesto-section-head">aRTISTS oWN tHE dECISIONS.</p>
+          <p class="manifesto-section-body">They set the price. They choose the terms. They keep the work. We don't tell creators what to make or what it's worth. That's theirs.</p>
+        </div>
+
+        <div class="manifesto-section">
+          <p class="manifesto-section-head">wE tAKE a cOMMISSION.</p>
+          <p class="manifesto-section-body">20% as audience. 15% as an ally. 10% as a brigadier. 7% as a curator. Your membership lowers our cut.</p>
+        </div>
+
+        <div class="manifesto-section">
+          <p class="manifesto-section-head">tHAT cUT bUILDS tHE sTAGE.</p>
+          <p class="manifesto-section-body">It funds our moderation, the systems that verify, the whole infrastructure that keeps this running.</p>
+        </div>
+
+        <div class="manifesto-section">
+          <p class="manifesto-section-head">bERLIN iS wHERE wE sTART.</p>
+          <p class="manifesto-section-body">This city breeds creators who don't fit clean categories. We don't ask them to. We give them a wall and stay out of the way.</p>
+        </div>
+
+        <div class="manifesto-section">
+          <p class="manifesto-section-head">bOTS aNd aLGORITHMS aSSIST.</p>
+          <p class="manifesto-section-body">But the decisions &mdash; what to make, what to buy, what it's worth &mdash; those stay human.</p>
+        </div>
+
+        <div class="manifesto-section">
+          <p class="manifesto-section-head">nO sCARCITY tACTICS. nO aRTIFICIAL hYPE.</p>
+          <p class="manifesto-section-body">If it's available, it's available. If it's sold, it's sold. We don't manufacture urgency.</p>
+        </div>
+
+      </div>
+
+      <!-- Signature -->
+      <div class="manifesto-footer">
+        <div class="manifesto-rule"></div>
+        <p class="manifesto-sign">&mdash; [aRTS], bERLIN 2026</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Page fade-in + nav transitions -->
+  <script>
+  (function(){
+    document.body.style.opacity='0';
+    document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){document.body.style.opacity='1';});});
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest('a[href]');if(!a)return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
+      ev.preventDefault();
+      document.body.style.opacity='0';document.body.style.transform='scale(0.99)';
+      setTimeout(function(){window.location.href=h;},180);
+    },true);
+  })();
+  </script>
+
+  <!-- Nav hover lowercase animation -->
+  <script>
+  (function(){
+    var DELAY=40;
+    function navHover(el){
+      var orig=el.textContent,timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){var s=orig[0];for(var i=1;i<orig.length;i++)s+=(i<=n?orig[i].toLowerCase():orig[i]);el.textContent=s;}
+      el.addEventListener('mouseenter',function(){clr();var from=state;for(var i=0;i<orig.length-1-from;i++)(function(i){timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));})(i);});
+      el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+    }
+    document.querySelectorAll('.site-nav a').forEach(navHover);
+
+    /* Idle static glitch */
+    (function(){
+      var links=Array.from(document.querySelectorAll('.site-nav a'));
+      var origTxt=links.map(function(el){return el.textContent;});
+      var glyphs='▓░▒│╌·×÷¬±';
+      function tick(){
+        var li=Math.floor(Math.random()*links.length);
+        var el=links[li];
+        var txt=origTxt[li];
+        var ci=1+Math.floor(Math.random()*(txt.length-1));
+        var arr=txt.split('');
+        arr[ci]=glyphs[Math.floor(Math.random()*glyphs.length)];
+        el.textContent=arr.join('');
+        setTimeout(function(){el.textContent=txt;},90);
+        setTimeout(tick,2600+Math.random()*3800);
+      }
+      setTimeout(tick,1200+Math.random()*1800);
+    })();
+
+    /* Logo [a] expand */
+    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
+      var inner=logo.dataset.inner;
+      var timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
+      logo.addEventListener('mouseenter',function(){
+        clr();var from=state;
+        for(var i=from;i<inner.length;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
+        })(i);
+      });
+      logo.addEventListener('mouseleave',function(){
+        clr();var from=state;
+        for(var i=0;i<from;i++)(function(i){
+          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
+        })(i);
+      });
+    });
+  })();
+  </script>
+
+<script>
+(function(){
+  var burger=document.getElementById('burger');
+  var overlay=document.getElementById('nav-overlay');
+  var closer=document.getElementById('burger-close');
+  var oLinks=Array.from(overlay.querySelectorAll('a'));
+  var oLabels=oLinks.map(function(el){return el.textContent;});
+  function decapCascade(){
+    oLinks.forEach(function(el,li){
+      var target=oLabels[li];
+      el.textContent=target.toLowerCase();
+      var base=li*100+120;
+      Array.from(target).forEach(function(ch,i){
+        setTimeout(function(){
+          if(!overlay.classList.contains('is-open'))return;
+          var chars=el.textContent.split('');
+          chars[i]=ch;
+          el.textContent=chars.join('');
+        },base+i*50);
+      });
+    });
+  }
+  function openMenu(){overlay.classList.add('is-open');burger.classList.add('is-open');decapCascade();}
+  function closeMenu(){oLinks.forEach(function(el,i){el.textContent=oLabels[i];});overlay.classList.remove('is-open');burger.classList.remove('is-open');}
+  burger.addEventListener('click',openMenu);
+  closer.addEventListener('click',closeMenu);
+  overlay.addEventListener('click',function(e){if(e.target===overlay)closeMenu();});
+})();
+</script>
+
+<script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
+<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /algorithm-test.html
+Disallow: /data/
+
+Sitemap: https://4-arts.com/sitemap.xml

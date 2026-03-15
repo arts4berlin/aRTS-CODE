@@ -19,6 +19,10 @@
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — lISTING tERMS</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
   <!-- Gate: redirect to CAPTCHA if not verified -->
   <script>
     if (!localStorage.getItem('captcha_passed')) {
@@ -37,46 +41,6 @@
       min-height: 100vh;
     }
 
-    /* ── Fixed header (matches home.html) ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 60%, transparent);
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
-      cursor: crosshair;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 2.4rem;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      cursor: crosshair;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
-    nav a.active { opacity: 1; font-weight: 600; }
 
     /* ── Legal content ── */
     main {
@@ -144,53 +108,42 @@
     .logo, header { touch-action: manipulation; }
     .btn, button, a { touch-action: manipulation; }
 
-    /* ── Mobile hamburger + overlay ── */
-    .burger { display:none; flex-direction:column; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:6px; z-index:101; }
-    .burger span { display:block; width:18px; height:1.5px; background:#fff; border-radius:1px; margin:2px 0; }
-    .burger .burger-label { font-family:'Space Grotesk',sans-serif; font-size:0.42rem; font-weight:700; letter-spacing:0.18em; color:rgba(255,255,255,0.48); margin-top:2px; line-height:1; display:none; width:auto; height:auto; background:none; border-radius:0; }
-    .mobile-id { display:none; text-decoration:none; font-family:'Space Grotesk',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.12em; color:#FF5C00; }
-    .nav-overlay { position:fixed; inset:0; background:#000; z-index:9990; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:clamp(1.2rem,4vh,2rem); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.22s ease, visibility 0s 0.22s; }
-    .nav-overlay.is-open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.22s ease, visibility 0s; }
-    .nav-overlay a { display:block; text-decoration:none; color:#fff; font-size:clamp(1.3rem,7vw,2rem); font-weight:700; letter-spacing:0.16em; opacity:0.85; line-height:1; padding:0.55em 1.6em; transition:opacity 0.12s, color 0.12s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
-    .nav-overlay a:active, .nav-overlay a:hover { opacity:1; color:#FF5C00; }
-    .nav-overlay .overlay-close { position:absolute; top:18px; right:16px; }
-
-    @media (max-width: 520px) {
-      header { padding: 18px 16px; }
-      nav { display: none; }
-      .burger { display:flex; gap:0; }
-      .burger span:not(.burger-label) { display:none; }
-      .burger .burger-label { display:block; font-size:1rem; font-weight:300; letter-spacing:0.05em; color:rgba(255,255,255,0.88); margin-top:0; }
-      .overlay-close .burger-label { font-size:1.1rem; opacity:0.72; }
-      .mobile-id { display:block; }
-      .nav-overlay, .nav-overlay.is-open { transition:none; }
-    }
 
     /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] { background: #fff; }
+    [data-theme="day"] body { background: #fff; color: #000; }
+    [data-theme="day"] .legal-title { color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .legal h2 { color: rgba(0,0,0,0.78); }
+    [data-theme="day"] .legal p { color: rgba(0,0,0,0.62); }
+    [data-theme="day"] .legal-divider { background: rgba(0,0,0,0.06); }
+    [data-theme="day"] .legal-back { color: rgba(0,0,0,0.42); }
+    [data-theme="day"] .legal-back:hover { color: rgba(0,0,0,0.65); }
 </style>
 </head>
 <body>
-  <header>
-    <a href="home.html" class="logo" data-inner="RTS">[a]</a>
-    <nav>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
       <a href="about.html">aBOUT</a>
       <a href="inquire.html">TaLK</a>
       <a href="work.html">wORK</a>
     </nav>
-    <a href="id.html" class="mobile-id">[iD]</a>
-    <button class="burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="open menu">
       <span></span><span></span><span></span>
       <span class="burger-label">[aRTS]</span>
     </button>
   </header>
 
+  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger overlay-close" id="burger-close" aria-label="close menu">
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[exit]</span>
     </button>
     <a href="home.html">hOME</a>
@@ -198,7 +151,8 @@
     <a href="boutique.html">bOUTIQUE</a>
     <a href="about.html">aBOUT</a>
     <a href="inquire.html">TaLK</a>
-    <a href="id.html" style="color:#FF5C00">[iD]</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
   <main>
@@ -214,10 +168,10 @@
       <h2>cOMMISSION tERMS</h2>
       <p>[aRTS] applies a commission on each successful sale facilitated through the platform. Rates are determined by the seller's membership tier at the time of sale:</p>
       <p style="margin-top:12px">
-        <strong style="color:rgba(255,255,255,0.55)">aUDIENCE</strong> (free) — 20% commission<br>
-        <strong style="color:rgba(255,255,255,0.55)">aLLY</strong> (€0.33/mo) — 15% commission<br>
-        <strong style="color:rgba(255,255,255,0.55)">BRIGaDIER</strong> (€3.3/mo) — 10% commission<br>
-        <strong style="color:rgba(255,255,255,0.55)">CURaTOR</strong> (€33/mo) — 7% commission
+        <strong style="color:var(--c-text-secondary)">aUDIENCE</strong> (free) — 20% commission<br>
+        <strong style="color:var(--c-text-secondary)">aLLY</strong> (€0.33/mo) — 15% commission<br>
+        <strong style="color:var(--c-text-secondary)">BRIGaDIER</strong> (€3.3/mo) — 10% commission<br>
+        <strong style="color:var(--c-text-secondary)">CURaTOR</strong> (€33/mo) — 7% commission
       </p>
       <p style="margin-top:12px">Commission is automatically deducted at the time of sale. The remaining balance is paid out to the seller's connected Stripe account within 2–3 business days.</p>
 
@@ -251,7 +205,8 @@
     (function () {
       function reveal() {
         var c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        var _bg = document.documentElement.getAttribute('data-theme') === 'day' ? '#fff' : '#000';
+        c.style.cssText = 'position:fixed;inset:0;background:' + _bg + ';z-index:99998;pointer-events:none;opacity:1;';
         document.body.appendChild(c);
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
@@ -332,6 +287,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
 </body>
 </html>

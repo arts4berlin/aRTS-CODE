@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://4-arts.com/home.html</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://4-arts.com/art.html</loc><priority>0.9</priority><changefreq>daily</changefreq></url>
+  <url><loc>https://4-arts.com/assets.html</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://4-arts.com/boutique.html</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://4-arts.com/apparel.html</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://4-arts.com/about.html</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/manifesto.html</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/join.html</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/articles.html</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://4-arts.com/connect.html</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/bots.html</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/work.html</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/aid.html</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://4-arts.com/privacy.html</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://4-arts.com/listing-terms.html</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://4-arts.com/bot-terms.html</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>
+</urlset>

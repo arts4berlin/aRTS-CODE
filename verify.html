@@ -15,6 +15,8 @@
   <meta property="og:image"        content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — vERiFY</title>
   <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
       window.location.replace('captcha.html');
     }
@@ -30,70 +32,6 @@
       min-height: 100vh;
     }
 
-    /* ── Fixed header ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 26px 32px;
-      z-index: 100;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 60%, transparent);
-    }
-
-    .logo {
-      text-decoration: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      line-height: 1;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 2.4rem;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      opacity: 0.85;
-      transition: opacity 0.15s;
-    }
-    nav a:hover { opacity: 1; }
-
-    /* ── Burger ── */
-    .burger { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 4px; }
-    .nav-overlay { display: none; }
-
-    @media (max-width: 700px) {
-      nav { display: none; }
-      .burger { display: block; }
-      .nav-overlay {
-        display: flex; position: fixed; inset: 0; z-index: 200;
-        background: rgba(0,0,0,0.95); flex-direction: column;
-        align-items: center; justify-content: center; gap: 2rem;
-        opacity: 0; pointer-events: none; transition: opacity 0.25s;
-      }
-      .nav-overlay.is-open { opacity: 1; pointer-events: auto; }
-      .nav-overlay a {
-        text-decoration: none; color: #fff; font-size: 1.2rem;
-        font-weight: 300; letter-spacing: 0.12em; opacity: 0.85;
-      }
-      .nav-overlay a:hover { opacity: 1; }
-      .burger-close {
-        position: absolute; top: 26px; right: 32px;
-        background: none; border: 1px solid rgba(255,255,255,0.14);
-        color: #fff; font-size: 0.9rem; font-weight: 300;
-        padding: 4px 10px; border-radius: 3px; cursor: pointer;
-      }
-    }
 
     /* ── Main ── */
     main {
@@ -377,101 +315,105 @@
 
     /* ── Day mode ── */
     html[data-theme="day"] body { background: #fff; color: #000; }
-    html[data-theme="day"] header { background: linear-gradient(to bottom, rgba(255,255,255,0.92) 60%, transparent); }
-    html[data-theme="day"] .logo { color: #000; }
-    html[data-theme="day"] nav a { color: rgba(0,0,0,0.55); }
     html[data-theme="day"] .section-label { color: #FF5C00; }
     html[data-theme="day"] .form-title { color: #000; }
-    html[data-theme="day"] .form-sub { color: rgba(0,0,0,0.4); }
-    html[data-theme="day"] .divider { background: rgba(0,0,0,0.07); }
-    html[data-theme="day"] .field-group label { color: rgba(0,0,0,0.35); }
+    html[data-theme="day"] .form-sub { color: rgba(0,0,0,0.58); }
+    html[data-theme="day"] .divider { background: rgba(0,0,0,0.09); }
+    html[data-theme="day"] .field-group label { color: rgba(0,0,0,0.55); }
     html[data-theme="day"] .field-group input,
     html[data-theme="day"] .field-group textarea {
       color: #000;
-      border-bottom-color: rgba(0,0,0,0.12);
+      border-bottom-color: rgba(0,0,0,0.15);
     }
     html[data-theme="day"] .field-group input::placeholder,
-    html[data-theme="day"] .field-group textarea::placeholder { color: rgba(0,0,0,0.15); }
+    html[data-theme="day"] .field-group textarea::placeholder { color: rgba(0,0,0,0.30); }
     html[data-theme="day"] .field-group input:focus,
-    html[data-theme="day"] .field-group textarea:focus { border-bottom-color: rgba(0,0,0,0.4); }
+    html[data-theme="day"] .field-group textarea:focus { border-bottom-color: rgba(0,0,0,0.58); }
 
     html[data-theme="day"] .type-btn {
       background: rgba(0,0,0,0.02);
-      border-color: rgba(0,0,0,0.1);
-      color: rgba(0,0,0,0.4);
+      border-color: rgba(0,0,0,0.12);
+      color: rgba(0,0,0,0.58);
     }
     html[data-theme="day"] .type-btn:hover {
-      border-color: rgba(0,0,0,0.25);
-      color: rgba(0,0,0,0.65);
+      border-color: rgba(0,0,0,0.45);
+      color: rgba(0,0,0,0.72);
     }
     html[data-theme="day"] .type-btn.active {
       border-color: #FF5C00;
       color: #FF5C00;
       background: rgba(255,92,0,0.05);
     }
-    html[data-theme="day"] .type-label { color: rgba(0,0,0,0.2); }
+    html[data-theme="day"] .type-label { color: rgba(0,0,0,0.40); }
     html[data-theme="day"] .type-btn.active .type-label { color: rgba(255,92,0,0.5); }
 
-    html[data-theme="day"] .submit-note { color: rgba(0,0,0,0.25); }
+    html[data-theme="day"] .submit-note { color: rgba(0,0,0,0.45); }
 
     html[data-theme="day"] .status-card {
-      border-color: rgba(0,0,0,0.08);
+      border-color: rgba(0,0,0,0.10);
       background: rgba(0,0,0,0.02);
     }
-    html[data-theme="day"] .status-sub { color: rgba(0,0,0,0.4); }
+    html[data-theme="day"] .status-sub { color: rgba(0,0,0,0.58); }
 
     html[data-theme="day"] .btn-reapply {
-      border-color: rgba(0,0,0,0.15);
-      color: rgba(0,0,0,0.5);
+      border-color: rgba(0,0,0,0.18);
+      color: rgba(0,0,0,0.65);
     }
     html[data-theme="day"] .btn-reapply:hover {
-      border-color: rgba(0,0,0,0.35);
+      border-color: rgba(0,0,0,0.55);
       color: #000;
     }
 
     html[data-theme="day"] .admin-notes {
       background: rgba(255,80,80,0.04);
-      border-color: rgba(255,80,80,0.12);
-      color: rgba(0,0,0,0.55);
+      border-color: rgba(255,80,80,0.15);
+      color: rgba(0,0,0,0.68);
     }
 
     html[data-theme="day"] .id-notice {
       background: rgba(0,0,0,0.02);
-      border-color: rgba(0,0,0,0.06);
+      border-color: rgba(0,0,0,0.08);
     }
-    html[data-theme="day"] .id-notice-title { color: rgba(0,0,0,0.35); }
-    html[data-theme="day"] .id-notice-text { color: rgba(0,0,0,0.3); }
+    html[data-theme="day"] .id-notice-title { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .id-notice-text { color: rgba(0,0,0,0.50); }
 
     html[data-theme="day"] .form-error {
       background: rgba(255,80,80,0.06);
-      border-color: rgba(255,80,80,0.15);
+      border-color: rgba(255,80,80,0.18);
     }
 
-    html[data-theme="day"] .nav-overlay { background: rgba(255,255,255,0.97); }
-    html[data-theme="day"] .nav-overlay a { color: rgba(0,0,0,0.55); }
-    html[data-theme="day"] .burger { color: #000; }
-    html[data-theme="day"] .burger-close { color: #000; border-color: rgba(0,0,0,0.14); }
   </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <header>
-    <a class="logo" href="home.html" data-inner="RTS">[a]</a>
-    <nav>
+  <header class="site-header">
+    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <nav class="site-nav">
       <a href="art.html">aRT</a>
-      <a href="assets.html">aSSETS</a>
-      <a href="id.html">iD</a>
+      <a href="boutique.html">bOUTIQUE</a>
+      <a href="about.html">aBOUT</a>
+      <a href="inquire.html">TaLK</a>
+      <a href="work.html">wORK</a>
     </nav>
-    <button class="burger" id="burger">|||</button>
+    <button class="site-burger" id="burger" aria-label="open menu">
+      <span></span><span></span><span></span>
+      <span class="burger-label">[aRTS]</span>
+    </button>
   </header>
 
-  <!-- Mobile overlay -->
+  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="burger-close" id="burger-close">[x]</button>
-    <a href="art.html">aRT</a>
-    <a href="assets.html">aSSETS</a>
-    <a href="id.html">iD</a>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
+      <span class="burger-label">[exit]</span>
+    </button>
     <a href="home.html">hOME</a>
+    <a href="art.html">aRT</a>
+    <a href="boutique.html">bOUTIQUE</a>
+    <a href="about.html">aBOUT</a>
+    <a href="inquire.html">TaLK</a>
+    <a href="work.html">wORK</a>
+    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
   <main>
@@ -771,6 +713,8 @@
   })();
   </script>
   <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
+<script src="funnel.js"></script>
   <script>window.artsCornerAdd({ label: 'iD', href: 'id.html' });</script>
 </body>
 </html>

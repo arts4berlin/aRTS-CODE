@@ -1,4 +1,4 @@
-/* ── btn-fx.js  ·  thematic button particle effects  ── */
+/* ── btn-fx.js  ·  entity button particle effects  ── */
 (function () {
   'use strict';
 
@@ -48,15 +48,16 @@
   /* ── CSS keyframes (injected once) ── */
   var style = document.createElement('style');
   style.textContent = [
+    /* entity shatter — radial burst of angular fragments */
+    '@keyframes bfx-shatter{0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(0)}25%{opacity:1;transform:translate(calc(var(--bfx-dx)*0.5),calc(var(--bfx-dy)*0.5)) rotate(calc(var(--bfx-rot)*0.4)) scale(1)}100%{opacity:0;transform:translate(calc(var(--bfx-dx)*1.8),calc(var(--bfx-dy)*1.8 + 6px)) rotate(var(--bfx-rot)) scale(0.2)}}',
+    /* entity drift — slow upward float with subtle rotation */
+    '@keyframes bfx-drift{0%{opacity:0.8;transform:translateY(0) rotate(0deg) scale(0.5)}40%{opacity:0.9;transform:translateY(-12px) rotate(var(--bfx-rot)) scale(1)}100%{opacity:0;transform:translateY(-30px) rotate(calc(var(--bfx-rot)*1.5)) scale(0.3)}}',
+    /* entity pulse — quick scale flash */
+    '@keyframes bfx-pulse{0%{opacity:0.9;transform:scale(0.3)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(0.6)}}',
+    /* legacy effects kept for non-CTA buttons */
     '@keyframes bfx-heart{0%{opacity:1;transform:translateY(0) scale(.6)}50%{opacity:1}100%{opacity:0;transform:translateY(-48px) scale(1.15)}}',
-    '@keyframes bfx-bubble{0%{opacity:1;transform:translateY(0) scale(.6)}50%{opacity:.85}100%{opacity:0;transform:translateY(-44px) scale(1.1)}}',
-    '@keyframes bfx-plane{0%{opacity:1;transform:translate(0,0) rotate(-20deg) scale(.7)}100%{opacity:0;transform:translate(28px,-34px) rotate(10deg) scale(.5)}}',
     '@keyframes bfx-crumble{0%{opacity:.9;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(22px) rotate(var(--bfx-rot,40deg))}}',
     '@keyframes bfx-smoke{0%{opacity:.5;transform:translate(0,0) scale(.5)}100%{opacity:0;transform:translate(var(--bfx-dx,6px),-28px) scale(1.4)}}',
-    '@keyframes bfx-sparkle{0%{opacity:1;transform:translateY(0) scale(.5) rotate(0deg)}50%{opacity:1;transform:translateY(-16px) scale(1) rotate(90deg)}100%{opacity:0;transform:translateY(-32px) scale(.3) rotate(180deg)}}',
-    '@keyframes bfx-confetti{0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(0)}30%{opacity:1;transform:translate(var(--bfx-dx,10px),var(--bfx-dy,-10px)) rotate(var(--bfx-rot,90deg)) scale(1)}100%{opacity:0;transform:translate(calc(var(--bfx-dx,10px)*2.2),calc(var(--bfx-dy,-10px)*2.2 + 12px)) rotate(calc(var(--bfx-rot,90deg)*2)) scale(.4)}}',
-    '@keyframes bfx-star{0%{opacity:1;transform:translateY(0) scale(.4) rotate(0deg)}40%{opacity:1}100%{opacity:0;transform:translateY(-36px) scale(.9) rotate(120deg)}}',
-    '@keyframes bfx-zap{0%{opacity:1;transform:scaleY(.3) translateY(0)}20%{opacity:1;transform:scaleY(1) translateY(-4px)}60%{opacity:.7;transform:scaleY(.6) translateY(-8px)}100%{opacity:0;transform:scaleY(.2) translateY(-16px)}}',
     '@keyframes bfx-spin{0%{opacity:.8;transform:rotate(0deg) scale(.7)}60%{opacity:1;transform:rotate(270deg) scale(1)}100%{opacity:0;transform:rotate(360deg) scale(.5)}}'
   ].join('\n');
   document.head.appendChild(style);
@@ -66,9 +67,53 @@
     return name + ' ' + dur + 's ' + easing + ' ' + delay + 's both';
   }
 
+  /* ── entity fragment pool — angular, architectural ── */
+  var entityGlyphs = ['▪', '▫', '▴', '▾', '◂', '▸', '◆', '◇', '▬', '┃'];
+
   /* ── effect builders ── */
 
   var effects = {
+
+    /* ── ENTITY: unified shatter for main CTAs ── */
+    shatter: function (btn) {
+      var accent = token('--c-accent');
+      var text = token('--c-text');
+      var colors = [accent, accent, text, accent, accent, text];
+      spawn(btn, 7, function (p, i, n, rect) {
+        p.textContent = entityGlyphs[Math.floor(rnd(0, entityGlyphs.length))];
+        var angle = (i / n) * Math.PI * 2 + rnd(-0.3, 0.3);
+        var dist = rnd(16, 32);
+        p.style.setProperty('--bfx-dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+        p.style.setProperty('--bfx-dy', (Math.sin(angle) * dist * -1).toFixed(1) + 'px');
+        p.style.setProperty('--bfx-rot', rnd(60, 280).toFixed(0) + 'deg');
+        Object.assign(p.style, {
+          fontSize: rnd(5, 9) + 'px',
+          color: colors[i % colors.length],
+          left: (rect.width / 2) + 'px',
+          top: (rect.height / 2) + 'px',
+          animation: anim('bfx-shatter', rnd(0.5, 0.85), 'cubic-bezier(.22,1,.36,1)', i * 0.025)
+        });
+      });
+    },
+
+    /* ── ENTITY: subtle drift for hover on CTAs ── */
+    drift: function (btn) {
+      var accent = token('--c-accent');
+      spawn(btn, 4, function (p, i, n, rect) {
+        p.textContent = entityGlyphs[Math.floor(rnd(0, entityGlyphs.length))];
+        p.style.setProperty('--bfx-rot', rnd(20, 120).toFixed(0) + 'deg');
+        Object.assign(p.style, {
+          fontSize: rnd(5, 8) + 'px',
+          color: accent,
+          opacity: '0.7',
+          left: rnd(8, rect.width - 8) + 'px',
+          top: rnd(0, rect.height * 0.3) + 'px',
+          animation: anim('bfx-drift', rnd(0.55, 0.85), 'ease-out', i * 0.06)
+        });
+      });
+    },
+
+    /* ── non-CTA effects (kept but refined) ── */
 
     hearts: function (btn) {
       spawn(btn, 6, function (p, i, n, rect) {
@@ -79,33 +124,6 @@
           left: rnd(10, rect.width - 10) + 'px',
           top: rnd(-4, rect.height * 0.4) + 'px',
           animation: anim('bfx-heart', rnd(0.6, 1.0), 'cubic-bezier(.34,1.56,.64,1)', i * 0.06)
-        });
-      });
-    },
-
-    bubbles: function (btn) {
-      spawn(btn, 6, function (p, i, n, rect) {
-        p.textContent = ['·','··','·'][i % 3];
-        Object.assign(p.style, {
-          fontSize: rnd(16, 24) + 'px',
-          fontWeight: '700',
-          color: token('--c-text-secondary'),
-          left: rnd(8, rect.width - 8) + 'px',
-          top: rnd(-6, rect.height * 0.2) + 'px',
-          animation: anim('bfx-bubble', rnd(0.6, 1.0), 'ease-out', i * 0.07)
-        });
-      });
-    },
-
-    planes: function (btn) {
-      spawn(btn, 5, function (p, i, n, rect) {
-        p.textContent = '▸';
-        Object.assign(p.style, {
-          fontSize: rnd(9, 13) + 'px',
-          color: token('--c-accent'),
-          left: rnd(rect.width * 0.3, rect.width * 0.8) + 'px',
-          top: rnd(rect.height * 0.1, rect.height * 0.6) + 'px',
-          animation: anim('bfx-plane', rnd(0.55, 0.9), 'ease-out', i * 0.08)
         });
       });
     },
@@ -136,67 +154,6 @@
           left: rnd(6, rect.width - 6) + 'px',
           top: rnd(-2, rect.height * 0.3) + 'px',
           animation: anim('bfx-smoke', rnd(0.6, 1.1), 'ease-out', i * 0.09)
-        });
-      });
-    },
-
-    sparkle: function (btn) {
-      var chars = ['✦', '◇', '✧'];
-      spawn(btn, 6, function (p, i, n, rect) {
-        p.textContent = chars[i % chars.length];
-        Object.assign(p.style, {
-          fontSize: rnd(8, 13) + 'px',
-          color: token('--c-accent'),
-          left: rnd(4, rect.width - 4) + 'px',
-          top: rnd(-2, rect.height * 0.5) + 'px',
-          animation: anim('bfx-sparkle', rnd(0.6, 1.0), 'ease-out', i * 0.07)
-        });
-      });
-    },
-
-    confetti: function (btn) {
-      var accent = token('--c-accent');
-      var text = token('--c-text');
-      var colors = [accent, text, accent, text, accent];
-      spawn(btn, 8, function (p, i, n, rect) {
-        p.textContent = ['■', '●', '▲', '◆'][i % 4];
-        var angle = (i / n) * Math.PI * 2;
-        var dist = rnd(14, 28);
-        p.style.setProperty('--bfx-dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
-        p.style.setProperty('--bfx-dy', (Math.sin(angle) * dist * -1).toFixed(1) + 'px');
-        p.style.setProperty('--bfx-rot', rnd(40, 200).toFixed(0) + 'deg');
-        Object.assign(p.style, {
-          fontSize: rnd(6, 10) + 'px',
-          color: colors[i % colors.length],
-          left: (rect.width / 2) + 'px',
-          top: (rect.height / 2) + 'px',
-          animation: anim('bfx-confetti', rnd(0.55, 0.9), 'cubic-bezier(.34,1.56,.64,1)', i * 0.03)
-        });
-      });
-    },
-
-    stars: function (btn) {
-      spawn(btn, 6, function (p, i, n, rect) {
-        p.textContent = '★';
-        Object.assign(p.style, {
-          fontSize: rnd(8, 13) + 'px',
-          color: token('--c-accent'),
-          left: rnd(6, rect.width - 6) + 'px',
-          top: rnd(-2, rect.height * 0.4) + 'px',
-          animation: anim('bfx-star', rnd(0.5, 0.9), 'ease-out', i * 0.06)
-        });
-      });
-    },
-
-    zap: function (btn) {
-      spawn(btn, 6, function (p, i, n, rect) {
-        p.textContent = '⚡';
-        Object.assign(p.style, {
-          fontSize: rnd(9, 14) + 'px',
-          color: token('--c-accent'),
-          left: rnd(4, rect.width - 4) + 'px',
-          top: rnd(0, rect.height * 0.5) + 'px',
-          animation: anim('bfx-zap', rnd(0.3, 0.6), 'ease-out', i * 0.04)
         });
       });
     },
@@ -265,15 +222,22 @@
 
   /* ── auto-init ── */
   function init() {
+    /* ── Main CTA buttons: entity shatter on click, drift on hover ── */
+    delegateHover('body', '.btn-upgrade', 'drift');
+    delegateHover('body', '.btn-inq-fill', 'drift');
+    delegateHover('body', '.btn-access', 'drift');
+    bindClick('.btn-join', 'shatter');
+    bindClick('.btn-send', 'shatter');
+    bindClick('.fb-submit', 'shatter');
+    bindClick('.btn-access', 'shatter');
+    bindClick('.btn-upgrade', 'shatter');
+    delegateClick('body', '.btn-inq-fill', 'shatter');
+
+    /* ── Semantic non-CTA buttons: keep distinct effects ── */
     delegateClick('body', '.btn-fav', 'hearts');
-    delegateHover('body', '.btn-inq-fill', 'bubbles');
-    bindClick('.btn-send', 'planes');
     bindHover('#btn-destroy, .btn-destroy', 'crumble');
     bindHover('#btn-signout, .btn-signout', 'smoke');
-    bindHover('.btn-upgrade', 'sparkle');
-    bindClick('.btn-join', 'confetti');
-    bindClick('.fb-submit', 'stars');
-    bindHover('.btn-accept', 'zap');
+    bindHover('.btn-accept', 'drift');
     bindHover('.btn-restart', 'spin');
   }
 

@@ -19,6 +19,10 @@
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS]</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
   <!-- Clears captcha on entry — tail end: must reopen to restart -->
   <script> localStorage.removeItem('captcha_passed'); </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
@@ -102,6 +106,13 @@
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] { background: #fff; }
+    [data-theme="day"] body { background: #fff; color: #000; }
+    [data-theme="day"] .s-far  { color: rgba(0,0,0,0.30); }
+    [data-theme="day"] .s-near { color: rgba(0,0,0,0.54); }
+    [data-theme="day"] .s-ctr  { color: #000; }
 </style>
 </head>
 <body>
@@ -238,5 +249,6 @@
   </script>
 
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 </body>
 </html>

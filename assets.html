@@ -22,8 +22,10 @@
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link rel="prefetch" href="art.html">
@@ -299,5 +301,6 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 </body>
 </html>

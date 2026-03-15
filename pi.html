@@ -19,6 +19,10 @@
   <meta name="twitter:description" content="TRaDE + CONNeCT — now in BERLIN">
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS]</title>
+  <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
@@ -200,6 +204,22 @@
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
+
+    /* ── Day mode ── */
+    html[data-theme="day"] { background: #fff; }
+    [data-theme="day"] body { background: #fff; }
+    [data-theme="day"] .letter { color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .letter.done { color: rgba(0,0,0,0.92); }
+    [data-theme="day"] #voucher-overlay { background: rgba(255,255,255,0.72); }
+    [data-theme="day"] #voucher-card { background: #f0f0f0; }
+    [data-theme="day"] .v-logo { color: #000; }
+    [data-theme="day"] .v-type { color: rgba(0,0,0,0.48); }
+    [data-theme="day"] .v-label { color: rgba(0,0,0,0.55); }
+    [data-theme="day"] .v-rule { background: rgba(0,0,0,0.09); }
+    [data-theme="day"] .v-congrats { color: #000; }
+    [data-theme="day"] .v-sublabel { color: rgba(0,0,0,0.52); }
+    [data-theme="day"] .v-code-label { color: rgba(0,0,0,0.42); }
+    [data-theme="day"] #v-code { color: #000; }
 </style>
 </head>
 <body>
@@ -207,7 +227,7 @@
   <span id="big-i">?</span>
   <div id="word-wrap"></div>
   <a href="home.html" id="skip-link" style="position:fixed;bottom:clamp(18px,4vh,32px);left:50%;transform:translateX(-50%);font-family:'Space Grotesk',sans-serif;font-size:0.56rem;font-weight:300;letter-spacing:0.22em;color:rgba(255,255,255,0);text-decoration:none;z-index:30;transition:color 1.8s ease 4s;pointer-events:none;">sKIP →</a>
-  <script>setTimeout(function(){var s=document.getElementById('skip-link');if(s){s.style.color='rgba(255,255,255,0.18)';s.style.pointerEvents='auto';}},4500);</script>
+  <script>setTimeout(function(){var s=document.getElementById('skip-link');if(s){var isDayMode=document.documentElement.getAttribute('data-theme')==='day';s.style.color=isDayMode?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.18)';s.style.pointerEvents='auto';}},4500);</script>
 
   <!-- Easter egg: Apple Wallet voucher -->
   <div id="voucher-overlay">
@@ -476,5 +496,6 @@
   </script>
 
 <script src="theme.js?v=4"></script>
+<script src="auth.js"></script>
 </body>
 </html>
