@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -141,6 +141,48 @@
       transition: color 0.2s, transform 0.2s;
     }
     .funnel-step:hover .funnel-arrow { color: rgba(255,92,0,0.55); transform: translateX(3px); }
+
+    /* ── Funnel step states: done / next / locked ── */
+    .funnel-step.fs-done {
+      border-color: rgba(255,92,0,0.12);
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: default;
+    }
+    .funnel-step.fs-done .funnel-num {
+      color: #FF5C00;
+    }
+    .funnel-step.fs-done .funnel-num span { display: none; }
+    .funnel-step.fs-done .funnel-num::after {
+      content: '✓';
+      font-size: 0.85em;
+    }
+    .funnel-step.fs-done .funnel-arrow { display: none; }
+
+    .funnel-step.fs-next {
+      border-color: rgba(255,92,0,0.35);
+      background: rgba(255,92,0,0.04);
+    }
+    .funnel-step.fs-next .funnel-num { color: #FF5C00; }
+    .funnel-step.fs-next .funnel-arrow { color: #FF5C00; }
+    .funnel-step.fs-next .funnel-name::after {
+      content: ' — nEXT sTEP';
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: #FF5C00;
+      opacity: 0.7;
+    }
+
+    .funnel-step.fs-locked {
+      opacity: 0.22;
+      pointer-events: none;
+      cursor: default;
+    }
+    .funnel-step.fs-locked:hover {
+      border-color: rgba(255,255,255,0.06);
+      background: transparent;
+    }
 
     /* ── Returning member divider ── */
     .returning-divider {
@@ -1192,6 +1234,10 @@
     html[data-theme="day"] .funnel-desc { color: rgba(0,0,0,0.48); }
     html[data-theme="day"] .funnel-arrow { color: rgba(0,0,0,0.15); }
     html[data-theme="day"] .funnel-step:hover .funnel-arrow { color: rgba(255,92,0,0.55); }
+    html[data-theme="day"] .funnel-step.fs-done { border-color: rgba(255,92,0,0.10); }
+    html[data-theme="day"] .funnel-step.fs-next { border-color: rgba(255,92,0,0.35); background: rgba(255,92,0,0.03); }
+    html[data-theme="day"] .funnel-step.fs-locked { opacity: 0.2; }
+    html[data-theme="day"] .funnel-step.fs-locked:hover { border-color: rgba(0,0,0,0.08); background: transparent; }
     html[data-theme="day"] .returning-divider::before,
     html[data-theme="day"] .returning-divider::after { background: rgba(0,0,0,0.08); }
     html[data-theme="day"] .returning-divider span { color: rgba(0,0,0,0.32); }
@@ -1547,36 +1593,36 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n="nav.skip">Zum Inhalt springen</a>
   <div class="xp-toast-wrap" id="xp-toast-wrap"></div>
 
   <header class="site-header">
     <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="art.html">aRT</a>
-      <a href="boutique.html">bOUTIQUE</a>
-      <a href="about.html">aBOUT</a>
-      <a href="inquire.html">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="home.html">hOME</a>
-    <a href="art.html">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
   <main id="main">
@@ -1584,30 +1630,30 @@
 
       <!-- ── STAGE 1: Funnel landing + returning sign-in ── -->
       <div id="s1">
-        <p class="section-label">mEMBER aCCESS</p>
+        <p class="section-label" data-i18n="id.label">mITGLIED-zUGaNG</p>
         <h1 class="form-title">iD</h1>
-        <p class="sub-label">your membership hub — join, verify, or sign in</p>
+        <p class="sub-label" data-i18n="id.sub">Dein Mitgliederbereich — beitreten, verifizieren oder anmelden</p>
 
         <!-- Funnel: 3-step onboarding journey -->
         <div class="funnel-steps">
-          <a href="join.html" class="funnel-step">
-            <span class="funnel-num">01</span>
+          <a href="join.html" class="funnel-step" data-funnel="1">
+            <span class="funnel-num"><span>01</span></span>
             <div class="funnel-body">
               <p class="funnel-name">jOIN</p>
               <p class="funnel-desc">Pick your tier — aLLY · BRIGaDIER · CURaTOR</p>
             </div>
             <span class="funnel-arrow">→</span>
           </a>
-          <a href="verify.html" class="funnel-step">
-            <span class="funnel-num">02</span>
+          <a href="verify.html" class="funnel-step" data-funnel="2">
+            <span class="funnel-num"><span>02</span></span>
             <div class="funnel-body">
               <p class="funnel-name">vERIFY</p>
               <p class="funnel-desc">confirm your identity to unlock seller tools</p>
             </div>
             <span class="funnel-arrow">→</span>
           </a>
-          <a href="add.html" class="funnel-step">
-            <span class="funnel-num">03</span>
+          <a href="add.html" class="funnel-step" data-funnel="3">
+            <span class="funnel-num"><span>03</span></span>
             <div class="funnel-body">
               <p class="funnel-name">aDD</p>
               <p class="funnel-desc">list your first piece and start trading</p>
@@ -1676,8 +1722,8 @@
 
       <!-- ── STAGE 2: verified ── -->
       <div id="s2" hidden>
-        <p class="section-label">vERiFIED</p>
-        <h1 class="form-title" id="s2-welcome">wELCOME</h1>
+        <p class="section-label" data-i18n="id.verified">vERiFIED</p>
+        <h1 class="form-title" id="s2-welcome" data-i18n="id.welcome">wILLKOMMEN</h1>
 
         <div class="entity-cards">
 
@@ -3131,6 +3177,36 @@
     /* Fire on page load */
     scrambleLoginText();
 
+    /* ── Funnel step awareness: mark done / next / locked ── */
+    (function() {
+      var steps = document.querySelectorAll('.funnel-step[data-funnel]');
+      if (!steps.length) return;
+
+      /* Determine current step from localStorage */
+      var hasJoined  = !!store.get('arts_id_hash');
+      var verified   = store.get('arts_verified');
+      var hasVerified = verified === 'approved';
+      var hasPiece   = false;
+      try { var mp = JSON.parse(localStorage.getItem('arts_my_pieces') || '[]'); hasPiece = mp.length > 0; } catch(e){}
+
+      /* currentStep: 1 = join, 2 = verify, 3 = add, 4 = all done */
+      var currentStep = 1;
+      if (hasJoined) currentStep = 2;
+      if (hasJoined && hasVerified) currentStep = 3;
+      if (hasJoined && hasVerified && hasPiece) currentStep = 4;
+
+      steps.forEach(function(el) {
+        var n = parseInt(el.getAttribute('data-funnel'), 10);
+        if (n < currentStep) {
+          el.classList.add('fs-done');
+        } else if (n === currentStep) {
+          el.classList.add('fs-next');
+        } else {
+          el.classList.add('fs-locked');
+        }
+      });
+    })();
+
     /* Auto-login: if OAuth sub stored, skip sign-in and show personalised dashboard */
     (async function() {
       var h = store.get('arts_oauth_sub');
@@ -3430,6 +3506,7 @@ logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i
 </script>
 
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>if(artsAuth.isLoggedIn()&&!window.stealthMode)artsAuth.syncSettings();</script>

@@ -26,7 +26,8 @@
     }
     /* Update toggle icon */
     var btn = document.getElementById('corner-theme-item');
-    if (btn) btn.innerHTML = day ? '&#9789;&thinsp;nIGHT' : '&#9788;&thinsp;dAY';
+    var _t = window.artsI18n ? window.artsI18n.t : function (k) { return k === 'theme.night' ? 'nIGHT' : 'dAY'; };
+    if (btn) btn.innerHTML = day ? '&#9789;&thinsp;' + _t('theme.night') : '&#9788;&thinsp;' + _t('theme.day');
   }
 
   /* ── Apply immediately (before DOM ready) ── */
@@ -79,7 +80,8 @@
     var themeItem = document.createElement('button');
     themeItem.className = 'corner-item';
     themeItem.id = 'corner-theme-item';
-    themeItem.innerHTML = isDayMode() ? '&#9789;&thinsp;nIGHT' : '&#9788;&thinsp;dAY';
+    var _t2 = window.artsI18n ? window.artsI18n.t : function (k) { return k === 'theme.night' ? 'nIGHT' : 'dAY'; };
+    themeItem.innerHTML = isDayMode() ? '&#9789;&thinsp;' + _t2('theme.night') : '&#9788;&thinsp;' + _t2('theme.day');
     themeItem.addEventListener('click', function (e) {
       e.stopPropagation();
       var next = !isDayMode();

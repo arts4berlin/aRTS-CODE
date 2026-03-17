@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,9 +50,15 @@
     }
     .about-docs-links {
       display: flex; flex-direction: column; gap: 1px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       border: 1px solid var(--c-border);
       border-radius: var(--r-lg); overflow: hidden;
+      position: relative;
+      transition: border-color 0.3s ease, box-shadow 0.35s ease;
+    }
+    .about-docs-links:hover {
+      border-color: var(--c-border-hover);
+      box-shadow: 0 0 40px rgba(255,92,0,0.06);
     }
     .about-doc-link {
       display: flex; align-items: center; justify-content: space-between;
@@ -195,74 +201,75 @@
   </style>
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n="nav.skip">Zum Inhalt springen</a>
 
   <div class="noise-overlay"></div>
+  <div class="page-mesh"></div>
   <div class="ambient-orb ambient-orb--top"></div>
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
     <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="art.html">aRT</a>
-      <a href="boutique.html">bOUTIQUE</a>
-      <a href="about.html" aria-current="page">aBOUT</a>
-      <a href="inquire.html">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" aria-current="page" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="home.html">hOME</a>
-    <a href="art.html">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
-  <main id="main" class="site-main">
+  <main id="main" class="site-main page-enter">
     <img class="photo" src="assets/about-2.jpg" alt="" fetchpriority="high">
     <img class="photo" src="assets/about-1.jpg" alt="" loading="lazy">
 
     <!-- How It Works -->
     <div class="hiw-section" style="width:min(92vw,1000px);padding-top:clamp(28px,5vh,52px);border-top:1px solid var(--c-border);">
-      <p style="font-size:0.55rem;font-weight:var(--fw-light);letter-spacing:0.32em;color:var(--c-text-ghost);text-transform:uppercase;margin-bottom:clamp(20px,3vh,36px);">hOW iT wORKS</p>
+      <p style="font-size:0.55rem;font-weight:var(--fw-light);letter-spacing:0.32em;color:var(--c-text-ghost);text-transform:uppercase;margin-bottom:clamp(20px,3vh,36px);" data-i18n="about.hiw">sO fUNKTIONIERTS</p>
       <div style="display:flex;gap:clamp(16px,3vw,32px);flex-wrap:wrap;">
         <div style="flex:1;min-width:200px;">
           <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">01</p>
-          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">bROWSE</p>
-          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">Explore art from emerging Berlin artists. No sign-up required.</p>
+          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;" data-i18n="about.step1.title">sTOEBERN</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;" data-i18n="about.step1.desc">Entdecke Kunst von aufstrebenden Berliner Kuenstlern. Keine Anmeldung noetig.</p>
         </div>
         <div style="flex:1;min-width:200px;">
           <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">02</p>
-          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">iNQUIRE</p>
-          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">Connect directly with artists. Ask questions, negotiate, or request details.</p>
+          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;" data-i18n="about.step2.title">aNFRaGEN</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;" data-i18n="about.step2.desc">Kontaktiere Kuenstler direkt. Stelle Fragen, verhandle oder fordere Details an.</p>
         </div>
         <div style="flex:1;min-width:200px;">
           <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">03</p>
-          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">cOLLECT</p>
-          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">Secure your piece. Payments & verification coming soon.</p>
+          <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;" data-i18n="about.step3.title">sAMMELN</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;" data-i18n="about.step3.desc">Sichere dir dein Stueck. Zahlungen & Verifizierung kommen bald.</p>
         </div>
       </div>
     </div>
 
     <div class="founder-section">
-      <p class="founder-label">mORE</p>
+      <p class="founder-label" data-i18n="about.more">mEHR</p>
       <button class="about-trigger" onclick="document.getElementById('founder-modal').classList.add('open');">
-        <span>fOUNDER</span>
+        <span data-i18n="about.founder">gRUENDER</span>
         <span class="trigger-arrow">→</span>
       </button>
       <a class="about-trigger" href="manifesto.html">
-        <span>maNIFESTO</span>
+        <span data-i18n="about.manifesto">maNIFEST</span>
         <span class="trigger-arrow">→</span>
       </a>
     </div>
@@ -273,34 +280,34 @@
         <div class="founder-modal-inner">
           <button class="about-modal-close" onclick="this.closest('.about-modal-backdrop').classList.remove('open');">[×]</button>
           <img class="founder-img" src="assets/founder.png" alt="fOUNDER">
-          <p class="founder-quote">building castles in the air</p>
-          <p class="founder-attr">— fOUNDER, aRTS</p>
+          <p class="founder-quote" data-i18n="about.founder.quote">Luftschloesser bauen</p>
+          <p class="founder-attr" data-i18n="about.founder.attr">— gRUENDER, aRTS</p>
         </div>
       </div>
     </div>
 
     <div class="about-docs">
-      <p class="about-docs-label">dOCUMENTATION</p>
+      <p class="about-docs-label" data-i18n="about.docs">dOKUMENTaTION</p>
       <div class="about-docs-links">
         <a href="privacy.html" class="about-doc-link">
-          <span class="doc-link-title">pRIVACY pOLICY</span>
-          <span class="doc-link-sub">GDPR aRT. 13/14 · dATA pROCESSING</span>
+          <span class="doc-link-title" data-i18n="about.doc.privacy">dATENSCHUTZ</span>
+          <span class="doc-link-sub" data-i18n="about.doc.privacy.sub">DSGVO aRT. 13/14 · dATENVERaRBEITUNG</span>
         </a>
         <a href="impressum.html" class="about-doc-link">
-          <span class="doc-link-title">iMPRESSUM</span>
-          <span class="doc-link-sub">lEGAL nOTICE · TMG §5</span>
+          <span class="doc-link-title" data-i18n="about.doc.impressum">iMPRESSUM</span>
+          <span class="doc-link-sub" data-i18n="about.doc.impressum.sub">rECHTLICHE aNGaBEN · TMG §5</span>
         </a>
         <a href="listing-terms.html" class="about-doc-link">
-          <span class="doc-link-title">lISTING tERMS</span>
-          <span class="doc-link-sub">mARKETPLACE rULES · cOMMISSION</span>
+          <span class="doc-link-title" data-i18n="about.doc.listing">lISTING-bEDINGUNGEN</span>
+          <span class="doc-link-sub" data-i18n="about.doc.listing.sub">mARKTPLaTZ-rEGELN · pROVISION</span>
         </a>
         <a href="bot-terms.html" class="about-doc-link">
-          <span class="doc-link-title">bOT oPERaTIONS</span>
-          <span class="doc-link-sub">tERMS &amp; pRIVACY · v1.0</span>
+          <span class="doc-link-title" data-i18n="about.doc.bots">bOT-bETRIEB</span>
+          <span class="doc-link-sub" data-i18n="about.doc.bots.sub">bEDINGUNGEN & dATENSCHUTZ · v1.0</span>
         </a>
         <a href="bots.html" class="about-doc-link">
-          <span class="doc-link-title">bOT hUB</span>
-          <span class="doc-link-sub">aGENTS &amp; iNTELLIGENCE sERVICES</span>
+          <span class="doc-link-title" data-i18n="about.doc.hub">bOT hUB</span>
+          <span class="doc-link-sub" data-i18n="about.doc.hub.sub">aGENTEN & iNTELLIGENZ-dIENSTE</span>
         </a>
       </div>
     </div>
@@ -398,6 +405,7 @@
 </script>
 
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>

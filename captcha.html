@@ -21,7 +21,7 @@
       window.location.replace('home.html');
     }
   </script>
-  <link rel="preload" as="image" href="assets/bear.png">
+  <link rel="preload" as="image" href="assets/logo.svg">
   <link rel="prefetch" href="home.html">
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -37,73 +37,81 @@
     /* ── Back button ── */
     .c-back {
       position: fixed; top: 22px; left: 28px;
-      background: none; border: none;
-      color: rgba(255,255,255,0.38);
+      background: none; border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.45);
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.78rem; font-weight: 300;
+      font-size: 0.68rem; font-weight: 300;
       letter-spacing: 0.14em; cursor: pointer;
-      transition: color 0.15s; z-index: 10;
-      padding: 4px 0;
+      transition: color 0.15s, border-color 0.15s; z-index: 10;
+      padding: 6px 12px; border-radius: 3px;
     }
-    .c-back:hover { color: #fff; }
+    .c-back:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
 
     /* ── Card ── */
     .c-card {
-      border: 2px solid #fff;
-      border-radius: 6px;
-      background: #000;
-      padding: clamp(1.4rem, 4vw, 2rem) clamp(1.4rem, 4vw, 2rem) clamp(1.2rem, 3vw, 1.6rem);
-      width: min(360px, 92vw);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      padding: clamp(1.4rem, 4vw, 2rem);
+      width: min(380px, 92vw);
       position: relative;
+      opacity: 0;
+      animation: cardIn 0.5s ease 0.1s forwards;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .c-eyebrow {
-      font-size: 0.63rem; font-weight: 300;
-      letter-spacing: 0.24em; opacity: 0.6;
+      font-size: 0.55rem; font-weight: 300;
+      letter-spacing: 0.28em; color: rgba(255,255,255,0.38);
+      text-transform: uppercase;
     }
     .c-rule {
-      border: none; border-top: 1px solid rgba(255,255,255,0.16);
+      border: none; border-top: 1px solid rgba(255,255,255,0.1);
       margin: 0.65rem 0 0.9rem;
     }
     .c-instruction {
-      font-size: 0.88rem; font-weight: 400;
-      letter-spacing: 0.06em; margin-bottom: 0.85rem;
+      font-size: 0.82rem; font-weight: 600;
+      letter-spacing: 0.08em; margin-bottom: 0.85rem;
     }
 
     /* ── Grid ── */
     .c-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
+      gap: 4px;
     }
     .c-cell {
       aspect-ratio: 1;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       transition: border-color 0.12s, background 0.12s;
       user-select: none; overflow: hidden;
     }
-    .c-cell:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.04); }
-    .c-cell.selected { border: 2px solid #fff; background: rgba(255,255,255,0.08); }
-    .c-cell.wrong { border-color: rgba(255,50,50,0.7); animation: cShake 0.38s ease; }
-    .c-cell img  { width: 62%; height: 62%; object-fit: contain; pointer-events: none; display: block; }
-    .c-cell svg  { width: 44%; height: 44%; display: block; pointer-events: none; }
+    .c-cell:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.04); }
+    .c-cell.selected { border: 2px solid #FF5C00; background: rgba(255,92,0,0.06); }
+    .c-cell.wrong { border-color: rgba(255,50,50,0.6); animation: cShake 0.38s ease; }
+    .c-cell img  { width: 58%; height: 58%; object-fit: contain; pointer-events: none; display: block; }
+    .c-cell svg  { width: 40%; height: 40%; display: block; pointer-events: none; }
 
     @keyframes cShake {
       0%,100% { transform: translateX(0); }
-      20%     { transform: translateX(-6px); }
-      60%     { transform: translateX(6px); }
-      80%     { transform: translateX(-3px); }
+      20%     { transform: translateX(-5px); }
+      60%     { transform: translateX(5px); }
+      80%     { transform: translateX(-2px); }
     }
 
     /* ── Footer ── */
     .c-footer { display: flex; align-items: center; gap: 1rem; margin-top: 0.85rem; }
     .c-pow { flex: 1; }
-    .c-pow-track { height: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
-    .c-pow-fill  { height: 100%; background: #fff; width: 0%; transition: width 0.2s ease; }
-    .c-pow-label { display: block; font-size: 0.59rem; letter-spacing: 0.12em; font-weight: 300; opacity: 0.4; margin-top: 4px; }
-    .c-msg       { font-size: 0.78rem; letter-spacing: 0.14em; font-weight: 600; text-align: center; min-height: 1.4em; margin-top: 0.6rem; }
+    .c-pow-track { height: 2px; background: rgba(255,255,255,0.08); border-radius: 1px; overflow: hidden; }
+    .c-pow-fill  { height: 100%; background: #FF5C00; width: 0%; transition: width 0.2s ease; border-radius: 1px; }
+    .c-pow-label { display: block; font-size: 0.52rem; letter-spacing: 0.14em; font-weight: 300; color: rgba(255,255,255,0.28); margin-top: 4px; }
+    .c-msg       { font-size: 0.72rem; letter-spacing: 0.14em; font-weight: 600; text-align: center; min-height: 1.4em; margin-top: 0.6rem; }
     .c-msg.ok    { color: #00e676; }
     .c-msg.err   { color: rgba(255,70,70,0.9); }
 
@@ -119,26 +127,30 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .c-back { color: rgba(0,0,0,0.58); }
-    [data-theme="day"] .c-back:hover { color: #000; }
-    [data-theme="day"] .c-card { border-color: #000; background: #fff; }
-    [data-theme="day"] .c-rule { border-top-color: rgba(0,0,0,0.16); }
-    [data-theme="day"] .c-cell { border-color: rgba(0,0,0,0.2); }
-    [data-theme="day"] .c-cell:hover { border-color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.04); }
-    [data-theme="day"] .c-cell.selected { border-color: #000; background: rgba(0,0,0,0.08); }
-    [data-theme="day"] .c-cell svg polygon, [data-theme="day"] .c-cell svg circle, [data-theme="day"] .c-cell svg text, [data-theme="day"] .c-cell svg rect { fill: #000; }
-    [data-theme="day"] .c-pow-track { background: rgba(0,0,0,0.1); }
-    [data-theme="day"] .c-pow-fill { background: #000; }
+    [data-theme="day"] .c-back { color: rgba(0,0,0,0.45); border-color: rgba(0,0,0,0.14); }
+    [data-theme="day"] .c-back:hover { color: #000; border-color: rgba(0,0,0,0.3); }
+    [data-theme="day"] .c-card { border-color: rgba(0,0,0,0.12); background: rgba(0,0,0,0.02); }
+    [data-theme="day"] .c-eyebrow { color: rgba(0,0,0,0.38); }
+    [data-theme="day"] .c-rule { border-top-color: rgba(0,0,0,0.1); }
+    [data-theme="day"] .c-cell { border-color: rgba(0,0,0,0.12); }
+    [data-theme="day"] .c-cell:hover { border-color: rgba(0,0,0,0.4); background: rgba(0,0,0,0.04); }
+    [data-theme="day"] .c-cell.selected { border-color: #FF5C00; background: rgba(255,92,0,0.06); }
+    [data-theme="day"] .c-cell svg polygon,
+    [data-theme="day"] .c-cell svg circle,
+    [data-theme="day"] .c-cell svg text,
+    [data-theme="day"] .c-cell svg rect { fill: #000; }
+    [data-theme="day"] .c-pow-track { background: rgba(0,0,0,0.08); }
+    [data-theme="day"] .c-pow-label { color: rgba(0,0,0,0.28); }
   </style>
 </head>
 <body>
-  <button class="c-back" id="c-back">← bACK</button>
+  <button class="c-back" id="c-back">&larr; bACK</button>
 
   <div class="c-card">
     <input id="hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <p class="c-eyebrow">vERIFY HUMaNITY</p>
+    <p class="c-eyebrow">vERIFY hUMaNITY</p>
     <hr class="c-rule">
-    <p class="c-instruction">click aLL [aRTS] bears</p>
+    <p class="c-instruction">Click all [aRTS] bears</p>
     <div class="c-grid" id="c-grid" role="group" aria-label="Select all bears"></div>
     <div class="c-footer">
       <div class="c-pow" style="display:none">
@@ -164,27 +176,27 @@
 
     var N_BEARS=3, N_CELLS=9;
     var bearSet=new Set(), selected=new Set();
-    var openTs=Date.now(), powDone=false, powRan=false;
+    var openTs=Date.now(), powDone=false;
     var token=Math.random().toString(36).slice(2)+Date.now().toString(36);
 
     async function runPoW(){
       if(!window.crypto||!window.crypto.subtle||typeof TextEncoder==='undefined'){
-        powDone=true; setPowUI(100,'verified ✓'); tryVerify(); return;
+        powDone=true; setPowUI(100,'verified'); tryVerify(); return;
       }
       try{
         var enc=new TextEncoder(), BATCH=128, n=0;
         while(!powDone){
-          var jobs=Array.from({length:BATCH},(_,i)=>crypto.subtle.digest('SHA-256',enc.encode(token+':'+(n+i))));
+          var jobs=Array.from({length:BATCH},function(_,i){return crypto.subtle.digest('SHA-256',enc.encode(token+':'+(n+i)));});
           var results=await Promise.all(jobs);
           for(var i=0;i<results.length;i++){
             var b=new Uint8Array(results[i]);
-            if(b[0]===0&&b[1]<8){powDone=true;setPowUI(100,'verified ✓');tryVerify();return;}
+            if(b[0]===0&&b[1]<8){powDone=true;setPowUI(100,'verified');tryVerify();return;}
           }
           n+=BATCH;
           setPowUI(Math.min(95,(n/8192)*100),'computing...');
-          await new Promise(r=>setTimeout(r,0));
+          await new Promise(function(r){setTimeout(r,0);});
         }
-      }catch(e){powDone=true;setPowUI(100,'verified ✓');tryVerify();}
+      }catch(e){powDone=true;setPowUI(100,'verified');tryVerify();}
     }
 
     function setPowUI(pct,label){
@@ -199,19 +211,19 @@
 
     function buildGrid(){
       bearSet.clear(); selected.clear();
-      var positions=shuffle([...Array(N_CELLS).keys()]);
-      positions.slice(0,N_BEARS).forEach(function(p){bearSet.add(p);});
-      var syms=shuffle([...SYMBOLS]); var si=0;
+      var positions=shuffle([0,1,2,3,4,5,6,7,8]);
+      for(var p=0;p<N_BEARS;p++) bearSet.add(positions[p]);
+      var syms=shuffle(SYMBOLS.slice()); var si=0;
       var grid=document.getElementById('c-grid'); grid.innerHTML='';
       for(var i=0;i<N_CELLS;i++){
         var cell=document.createElement('div');
         cell.className='c-cell'; cell.dataset.i=i;
-        if(bearSet.has(i)){var img=document.createElement('img');img.src='assets/bear.png';img.alt='';img.draggable=false;cell.appendChild(img);}
+        if(bearSet.has(i)){var img=document.createElement('img');img.src='assets/logo.svg';img.alt='';img.draggable=false;cell.appendChild(img);}
         else{cell.innerHTML=syms[si++%syms.length];}
         cell.addEventListener('click',(function(idx){return function(){onCell(idx);};})(i));
         grid.appendChild(cell);
       }
-      syncTally(); setMsg('','');
+      setMsg('','');
     }
 
     function onCell(idx){
@@ -219,22 +231,21 @@
       var cell=document.querySelector('.c-cell[data-i="'+idx+'"]');
       if(bearSet.has(idx)){
         if(selected.has(idx))return;
-        selected.add(idx); cell.classList.add('selected'); syncTally();
+        selected.add(idx); cell.classList.add('selected');
         if(selected.size===N_BEARS)tryVerify();
       }else{
         cell.classList.add('wrong');
         setTimeout(function(){cell.classList.remove('wrong');},450);
         selected.forEach(function(i){document.querySelector('.c-cell[data-i="'+i+'"]').classList.remove('selected');});
-        selected.clear(); syncTally();
-        setMsg('wRONG — try again','err');
+        selected.clear();
+        setMsg('Wrong — try again','err');
         setTimeout(function(){setMsg('','');},1500);
       }
     }
 
-    function syncTally(){}
     function setMsg(txt,cls){var el=document.getElementById('c-msg');el.textContent=txt;el.className='c-msg'+(cls?' '+cls:'');}
 
-    function runCRTCollapse(onDone){
+    function runFadeOut(onDone){
       document.body.style.transition='opacity 0.35s ease-out';
       document.body.style.opacity='0';
       setTimeout(onDone, 380);
@@ -244,19 +255,19 @@
       if(selected.size<N_BEARS)return;
       if(document.getElementById('hp').value)return;
       if(Date.now()-openTs<800)return;
-      if(!powDone){return;}
-      setMsg('VeRIFIED ✓','ok');
+      if(!powDone)return;
+      setMsg('vERIFIED','ok');
       localStorage.setItem('captcha_passed','1');
       setTimeout(function(){
-        runCRTCollapse(function(){
+        runFadeOut(function(){
           window.location.href='home.html';
         });
       },300);
     }
 
-    /* Back button — fade exit to index.html */
+    /* Back button */
     document.getElementById('c-back').addEventListener('click', function(){
-      runCRTCollapse(function(){ window.location.href='index.html'; });
+      runFadeOut(function(){ window.location.href='index.html'; });
     });
 
     buildGrid();

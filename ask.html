@@ -142,7 +142,7 @@
       opacity: 0.6;
     }
 
-    .logo {
+    .site-logo {
       position: fixed;
       top: 28px; left: 32px;
       z-index: 100;
@@ -183,7 +183,7 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .logo { color: #000; }
+    [data-theme="day"] .site-logo { color: #000; }
     [data-theme="day"] .nav-about { color: #000; }
     [data-theme="day"] .btn-act { color: #000; border-color: #FF5C00; }
     [data-theme="day"] .btn-act:hover { background: #FF5C00; color: #fff; }
@@ -195,7 +195,7 @@
   </style>
 </head>
 <body>
-  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+  <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="stack">
@@ -203,7 +203,7 @@
       <a href="inquire.html" class="btn-act" id="btn-connect">TaLK</a>
       <a href="work.html"    class="btn-act" id="btn-work">wORK<sup style="font-size:0.45em;opacity:0.55;font-weight:300;vertical-align:super;margin-left:2px">?</sup></a>
     </div>
-    <span class="tagline">… aSK aND aNSWERS aPPEAR …</span>
+    <span class="tagline">... Ask and answers appear ...</span>
 
     <div class="faq">
       <div class="faq-item">
@@ -329,17 +329,7 @@
       });
     }
     document.querySelectorAll('a.nav-about').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner, timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr(); var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr(); var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));

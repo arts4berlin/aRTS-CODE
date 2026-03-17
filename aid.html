@@ -46,7 +46,7 @@
       justify-content: center;
     }
 
-    .logo {
+    .site-logo {
       position: fixed;
       top: 28px;
       left: 32px;
@@ -211,7 +211,7 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .logo { color: #000; }
+    [data-theme="day"] .site-logo { color: #000; }
     [data-theme="day"] .nav-about { color: #000; }
     [data-theme="day"] .tier-name { color: #000; }
     [data-theme="day"] .tier-price { color: rgba(0,0,0,0.48); }
@@ -231,7 +231,7 @@
   <!-- CRT: prevent flash on arrival -->
   <script>(function(){var bg=localStorage.getItem('arts_theme')==='day'?'#fff':'#000';document.documentElement.style.background=bg;if(!sessionStorage.getItem('crt_transition'))return;document.documentElement.style.clipPath='inset(50% 0 50% 0)';})()</script>
 
-  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+  <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <section class="hero">
@@ -249,7 +249,7 @@
     <div class="tier">
       <div class="tier-info">
         <span class="tier-name">aLLY</span>
-        <span class="tier-price"><span class="euro">€</span>3 / month</span>
+        <span class="tier-price"><span class="euro">€</span>0.55 / month</span>
       </div>
       <a href="join.html?tier=aLLY" class="btn-join">jOIN</a>
     </div>
@@ -257,7 +257,7 @@
     <div class="tier">
       <div class="tier-info">
         <span class="tier-name">BRIGaDIER</span>
-        <span class="tier-price"><span class="euro">€</span>33 / month</span>
+        <span class="tier-price"><span class="euro">€</span>3.3 / month</span>
       </div>
       <a href="join.html?tier=BRIGaDIER" class="btn-join">eNLIST</a>
     </div>
@@ -265,7 +265,7 @@
     <div class="tier">
       <div class="tier-info">
         <span class="tier-name">CURaTOR</span>
-        <span class="tier-price"><span class="euro">€</span>333 / month</span>
+        <span class="tier-price"><span class="euro">€</span>33 / month</span>
       </div>
       <a href="join.html?tier=CURaTOR" class="btn-join">pROVIDE</a>
     </div>
@@ -316,7 +316,7 @@
     el.addEventListener('click', function(){
       var text = 'IT82G0329601601000067562553';
       var label = 'IBAN: ' + text;
-      function confirm(){ el.classList.add('copied'); el.textContent='cOPIED'; setTimeout(function(){ el.classList.remove('copied'); el.textContent=label; }, 1800); }
+      function confirm(){ el.classList.add('copied'); el.textContent='Copied'; setTimeout(function(){ el.classList.remove('copied'); el.textContent=label; }, 1800); }
       if(navigator.clipboard){ navigator.clipboard.writeText(text).then(confirm).catch(function(){ fallback(); confirm(); }); } else { fallback(); confirm(); }
       function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
     });
@@ -467,21 +467,7 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){
@@ -501,11 +487,11 @@
     /* Swap the dim 'already a member?' link for a clear member-area CTA */
     var amDiv = document.querySelector('.membership div[style*="text-align:center"]');
     if (amDiv) {
-      amDiv.innerHTML = '<a href="id.html" style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;color:rgba(255,92,0,0.82);text-decoration:none;">✓ aCCESS yOUR mEMBER iD →</a>';
+      amDiv.innerHTML = '<a href="id.html" style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;color:rgba(255,92,0,0.82);text-decoration:none;">✓ Access your member ID →</a>';
     }
   })();
   </script>
-<script src="theme.js?v=3"></script>
+<script src="theme.js?v=4"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 </body>

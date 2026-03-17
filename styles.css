@@ -2497,6 +2497,99 @@ html[data-theme="day"] .site-nav a[aria-current="page"] { color: #000; }
 
 
 /* ══════════════════════════════════════════════════════
+   GLASS / BACKLIGHT — shared funnel-quality patterns
+   ══════════════════════════════════════════════════════ */
+
+/* Gradient mesh backdrop — animated blurred accent orbs */
+.page-mesh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.page-mesh::before,
+.page-mesh::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  opacity: 0.08;
+  animation: meshDrift 22s ease-in-out infinite alternate;
+}
+.page-mesh::before {
+  width: 550px; height: 550px;
+  background: var(--c-accent);
+  top: -12%; left: -8%;
+}
+.page-mesh::after {
+  width: 450px; height: 450px;
+  background: var(--c-accent);
+  bottom: -10%; right: -5%;
+  animation-delay: -11s;
+  animation-direction: alternate-reverse;
+}
+@keyframes meshDrift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(50px, 30px) scale(1.1); }
+}
+html[data-theme="day"] .page-mesh::before,
+html[data-theme="day"] .page-mesh::after { opacity: 0.04; }
+
+/* Glass card — subtle glassmorphism + gradient-mask border on hover */
+.glass-card {
+  position: relative;
+  background: var(--c-bg-elevated);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xl);
+  transition:
+    transform 0.35s var(--ease-out),
+    border-color 0.3s ease,
+    box-shadow 0.35s ease;
+}
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--r-xl);
+  padding: 1px;
+  background: linear-gradient(135deg, transparent, transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.4s ease;
+  z-index: 1;
+}
+.glass-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--c-border-hover);
+}
+.glass-card:hover::after {
+  background: linear-gradient(135deg, rgba(255,92,0,0.2) 0%, rgba(255,92,0,0.04) 50%, rgba(255,92,0,0.15) 100%);
+}
+
+/* Page-enter — cascading fade + slide animation */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter > * {
+  animation: pageIn 0.55s var(--ease-out) backwards;
+}
+.page-enter > *:nth-child(1) { animation-delay: 0s; }
+.page-enter > *:nth-child(2) { animation-delay: 0.04s; }
+.page-enter > *:nth-child(3) { animation-delay: 0.08s; }
+.page-enter > *:nth-child(4) { animation-delay: 0.12s; }
+.page-enter > *:nth-child(5) { animation-delay: 0.16s; }
+.page-enter > *:nth-child(6) { animation-delay: 0.20s; }
+.page-enter > *:nth-child(7) { animation-delay: 0.24s; }
+.page-enter > *:nth-child(8) { animation-delay: 0.28s; }
+.page-enter > *:nth-child(9) { animation-delay: 0.32s; }
+.page-enter > *:nth-child(10) { animation-delay: 0.36s; }
+
+
+/* ══════════════════════════════════════════════════════
    REDUCED MOTION
    ══════════════════════════════════════════════════════ */
 

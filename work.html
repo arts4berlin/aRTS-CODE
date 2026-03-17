@@ -44,7 +44,7 @@
       justify-content: center;
     }
 
-    .logo {
+    .site-logo {
       position: fixed;
       top: 28px;
       left: 32px;
@@ -201,7 +201,7 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .logo { color: #000; }
+    [data-theme="day"] .site-logo { color: #000; }
     [data-theme="day"] .nav-about { color: #000; }
     [data-theme="day"] .field { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.18); color: #000; }
     [data-theme="day"] .field::placeholder { color: rgba(0,0,0,0.48); }
@@ -209,7 +209,7 @@
 </style>
 </head>
 <body>
-  <a href="home.html" class="logo" data-inner="RTS" style="position:fixed;top:28px;left:32px;z-index:100">[a]</a>
+  <a href="home.html" class="site-logo" style="position:fixed;top:28px;left:32px;z-index:100"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="heading">
@@ -223,7 +223,7 @@
     <div class="send-row">
       <input class="field" type="email" placeholder="" data-ph="E-MaIL" name="email"   autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
-        <img src="assets/bear.png" alt="">
+        <img src="assets/logo.svg" alt="">
         <span class="bear-check">✓</span>
       </button>
     </div>
@@ -370,21 +370,7 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

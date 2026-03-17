@@ -57,14 +57,6 @@
       text-shadow: 0 0 70px rgba(255,92,0,0.30);
     }
 
-    /* Blink while no letters are passing through */
-    @keyframes iBlink {
-      0%,  49.9% { color: #FF5C00; text-shadow: 0 0 70px rgba(255,92,0,0.30); }
-      50%, 100%  { color: rgba(255,92,0,0.06); text-shadow: none; }
-    }
-    #big-i.idle {
-      animation: iBlink 1s linear infinite;
-    }
 
     /* Stamp/kick when a letter passes through */
     @keyframes iPress {
@@ -226,7 +218,7 @@
 
   <span id="big-i">?</span>
   <div id="word-wrap"></div>
-  <a href="home.html" id="skip-link" style="position:fixed;bottom:clamp(18px,4vh,32px);left:50%;transform:translateX(-50%);font-family:'Space Grotesk',sans-serif;font-size:0.56rem;font-weight:300;letter-spacing:0.22em;color:rgba(255,255,255,0);text-decoration:none;z-index:30;transition:color 1.8s ease 4s;pointer-events:none;">sKIP →</a>
+  <a href="home.html" id="skip-link" style="position:fixed;bottom:clamp(18px,4vh,32px);left:50%;transform:translateX(-50%);font-family:'Space Grotesk',sans-serif;font-size:0.56rem;font-weight:300;letter-spacing:0.22em;color:rgba(255,255,255,0);text-decoration:none;z-index:30;transition:color 1.8s ease 4s;pointer-events:none;">Skip →</a>
   <script>setTimeout(function(){var s=document.getElementById('skip-link');if(s){var isDayMode=document.documentElement.getAttribute('data-theme')==='day';s.style.color=isDayMode?'rgba(0,0,0,0.18)':'rgba(255,255,255,0.18)';s.style.pointerEvents='auto';}},4500);</script>
 
   <!-- Easter egg: Apple Wallet voucher -->
@@ -234,13 +226,13 @@
     <div id="voucher-card">
       <div class="v-stripe"></div>
       <div class="v-header">
-        <span class="v-logo">[aRTS]</span>
+        <img src="assets/logo.svg" alt="aRTS" class="v-logo" style="height:22px;width:auto;border-radius:3px;">
         <span class="v-type">member pass</span>
       </div>
       <div class="v-label">pAY</div>
       <div class="v-discount">π%</div>
       <div class="v-rule"></div>
-      <div class="v-congrats">cONGRATULATIONS</div>
+      <div class="v-congrats">Congratulations</div>
       <div class="v-sublabel">you found the easter egg</div>
       <div class="v-code-label">redemption code</div>
       <div id="v-code">—</div>
@@ -326,7 +318,6 @@
     ══════════════════════════════════════════════ */
     function beginStream() {
       streaming = true;
-      bigI.classList.add('idle'); // blink until first letter arrives
       loadWord(WORDS[wordIdx]);
       requestAnimationFrame(tick);
     }
@@ -411,22 +402,18 @@
             span.classList.add('done');
 
             /* Press / stamp animation on the I caret */
-            bigI.classList.remove('idle', 'press');
+            bigI.classList.remove('press');
             void bigI.offsetWidth; // force reflow to restart animation
             bigI.classList.add('press');
             setTimeout(() => bigI.classList.remove('press'), 300);
           }
         });
 
-        /* Blink I when idle, solid when a letter is passing through */
-        if (anyNear) { bigI.classList.remove('idle'); }
-        else         { bigI.classList.add('idle'); }
 
         /* Advance to next word once last letter exits left */
         const last = spans[spans.length - 1];
         if (last && last.getBoundingClientRect().right < 0) {
           exited = true;
-          bigI.classList.add('idle'); // restart blink during gap
           sTimers.forEach(clearInterval);
           setTimeout(() => {
             wordIdx = (wordIdx + 1) % WORDS.length;
@@ -485,7 +472,7 @@
           document.body.removeChild(ta);
         }
         var orig=codeEl.textContent;
-        codeEl.textContent='cOPIED ✓'; codeEl.style.color='#FF5C00';
+        codeEl.textContent='Copied ✓'; codeEl.style.color='#FF5C00';
         setTimeout(function(){ codeEl.textContent=orig; codeEl.style.color=''; }, 1600);
       });
     })();

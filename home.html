@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -146,19 +146,8 @@
       text-transform: uppercase;
     }
 
-    /* Page entrance animation */
-    @keyframes pageIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .hero > * {
-      animation: pageIn 0.6s var(--ease-out) backwards;
-    }
-    .hero .bear { animation: pageIn 0.6s var(--ease-out) backwards, float 4s ease-in-out 0.6s infinite; }
-    .hero .tagline { animation-delay: 0.1s; }
-    .hero .access-badge { animation-delay: 0.2s; }
-    .hero .btn-assets { animation-delay: 0.25s; }
-    .hero .ask-hint { animation-delay: 0.3s; }
+    /* Page entrance — uses shared .page-enter from styles.css */
+    .hero .bear { animation: pageIn 0.55s var(--ease-out) backwards, float 4s ease-in-out 0.6s infinite; }
 
     /* Guide card overrides */
     .guide-overlay { position:fixed; inset:0; z-index:10000; pointer-events:none; }
@@ -175,7 +164,7 @@
   </style>
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n="nav.skip">Zum Inhalt springen</a>
 
   <!-- Ambient effects -->
   <div class="noise-overlay"></div>
@@ -185,42 +174,43 @@
   <header class="site-header">
     <a href="id.html" class="site-logo home-mark" id="home-mark" style="margin-left:-6px;"><img src="assets/logo.svg" alt="aRTS" width="36" height="36" style="height:36px;width:auto;"></a>
     <nav class="site-nav">
-      <a href="art.html">aRT</a>
-      <a href="boutique.html">bOUTIQUE</a>
-      <a href="about.html">aBOUT</a>
-      <a href="inquire.html">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[mENU]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="art.html">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
-  <main id="main" class="hero">
-    <img src="assets/logo.svg" alt="aRTS logo" class="bear" fetchpriority="high">
+  <main id="main" class="hero page-enter">
+    <img src="assets/logo.svg" alt="aRTS logo" data-i18n-alt="home.logo.alt" class="bear" fetchpriority="high">
     <div class="tagline">
-      <span class="born">born in</span>
-      <span class="berlin">BERLIN</span>
+      <span class="born" data-i18n="home.born">geboren in</span>
+      <span class="berlin" data-i18n="home.berlin">BERLIN</span>
     </div>
     <div class="access-badge" id="access-badge" hidden>
-      <span class="access-label">Access granted</span>
+      <span class="access-label" data-i18n="home.access">Zugang gewaehrt</span>
     </div>
 
-    <a href="assets.html" class="btn-assets" id="btn-assets"><span>aSSETS</span></a>
+    <a href="assets.html" class="btn-assets" id="btn-assets"><span data-i18n="home.assets">aSSETS</span></a>
   </main>
 
   <!-- Page entrance — fade in from captcha -->
@@ -651,11 +641,11 @@
 
     var POOL='▒░▓█◆◇○●◎△▽▼►◄≡≈≠±×÷∞∑∏∆'.split('');
     var steps=[
-      {icon:'◆', title:'wELCOME tO [aRTS]',   desc:'A trading network for art collectors and creators, born in Berlin.', highlight:null},
-      {icon:'▦', title:'bROWSE tHE gALLERY',   desc:'Tap "aRT" in the nav to explore available pieces from artists worldwide.', highlight:'.site-nav a[href="art.html"]'},
-      {icon:'◎', title:'vIEW dETAILS',          desc:'Click any piece to see full details — images, dimensions, provenance, and more.', highlight:null},
-      {icon:'◈', title:'iNQUIRE',               desc:'Found something you like? Hit "TaLK" to start a conversation with the seller.', highlight:'.site-nav a[href="inquire.html"]'},
-      {icon:'△', title:'jOIN tHE nETWORK',      desc:'Become a member to unlock favourites, boutique access, and more. Free tier available.', highlight:'#home-mark'}
+      {icon:'◆', title:'wILLKOMMEN bEI [aRTS]',   desc:'Ein Handelsnetzwerk fuer Kunstsammler und Kuenstler, geboren in Berlin.', highlight:null, titleKey:'home.guide.welcome.t', descKey:'home.guide.welcome.d'},
+      {icon:'▦', title:'gALERIE eNTDECKEN',   desc:'Tippe auf "kUNST" in der Navigation, um Werke von Kuenstlern weltweit zu entdecken.', highlight:'.site-nav a[href="art.html"]', titleKey:'home.guide.browse.t', descKey:'home.guide.browse.d'},
+      {icon:'◎', title:'dETAILS aNSEHEN',          desc:'Klicke auf ein Werk fuer alle Details — Bilder, Masse, Herkunft und mehr.', highlight:null, titleKey:'home.guide.view.t', descKey:'home.guide.view.d'},
+      {icon:'◈', title:'aNFRaGEN',               desc:'Etwas gefunden? Tippe auf "kONTaKT" um ein Gespraech mit dem Verkaeufer zu starten.', highlight:'.site-nav a[href="inquire.html"]', titleKey:'home.guide.inquire.t', descKey:'home.guide.inquire.d'},
+      {icon:'△', title:'nETZWERK bEITRETEN',      desc:'Werde Mitglied fuer Favoriten, Boutique-Zugang und mehr. Kostenlose Stufe verfuegbar.', highlight:'#home-mark', titleKey:'home.guide.join.t', descKey:'home.guide.join.d'}
     ];
     var cur=0, direction=1, prevHighlight=null;
 
@@ -671,13 +661,13 @@
         '<div class="guide-body">'+
           '<div class="guide-content">'+
             '<span class="guide-icon guide-el"></span>'+
-            '<p class="guide-title guide-el"></p>'+
-            '<p class="guide-desc guide-el"></p>'+
+            '<p class="guide-title guide-el" data-i18n="home.guide.welcome.t"></p>'+
+            '<p class="guide-desc guide-el" data-i18n="home.guide.welcome.d"></p>'+
           '</div>'+
           '<div class="guide-dots">'+dotsHTML+'</div>'+
           '<div class="guide-btns">'+
-            '<button class="guide-btn guide-btn-skip">Skip</button>'+
-            '<button class="guide-btn guide-btn-next">Next</button>'+
+            '<button class="guide-btn guide-btn-skip" data-i18n="home.guide.skip">Ueberspringen</button>'+
+            '<button class="guide-btn guide-btn-next" data-i18n="home.guide.next">Weiter</button>'+
           '</div>'+
         '</div>'+
       '</div>';
@@ -740,7 +730,8 @@
         if(i===cur) dots[i].classList.add('active');
         else if(i<cur) dots[i].classList.add('done');
       }
-      nextBtn.textContent=cur===steps.length-1?'Got it':'Next';
+      nextBtn.textContent=cur===steps.length-1?'Verstanden':'Weiter';
+      nextBtn.setAttribute('data-i18n',cur===steps.length-1?'home.guide.done':'home.guide.next');
       setHighlight(s.highlight);
 
       if(animate){
@@ -750,6 +741,8 @@
         setTimeout(function(){
           iconEl.textContent=s.icon;
           descEl.textContent=s.desc;
+          if(s.titleKey)titleEl.setAttribute('data-i18n',s.titleKey);
+          if(s.descKey)descEl.setAttribute('data-i18n',s.descKey);
           titleEl.textContent='';
           content.classList.remove(outClass);
           content.classList.add(inClass);
@@ -761,6 +754,8 @@
       } else {
         iconEl.textContent=s.icon;
         descEl.textContent=s.desc;
+        if(s.titleKey)titleEl.setAttribute('data-i18n',s.titleKey);
+        if(s.descKey)descEl.setAttribute('data-i18n',s.descKey);
         staggerIn();
         scrambleTitle(s.title);
       }
@@ -816,11 +811,11 @@
   <div id="gdpr-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:color-mix(in srgb, var(--c-bg-elevated) 97%, transparent);backdrop-filter:blur(12px);border-top:1px solid var(--c-accent-subtle);padding:16px 24px;font-family:var(--font);">
     <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
       <p style="flex:1;min-width:200px;font-size:0.62rem;font-weight:300;letter-spacing:0.1em;color:var(--c-text-secondary);line-height:1.6;">
-        We use localStorage to store your session data and preferences. No cookies. <a href="privacy.html" style="color:var(--c-accent);text-decoration:none">Privacy policy</a>
+        <span data-i18n-html="_consent.inner">Wir nutzen Browser-Speicher. <a href="privacy.html#4-device-storage-ttdsg-25" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Mehr erfahren</a></span>
       </p>
       <div style="display:flex;gap:8px;flex-shrink:0;">
-        <button id="gdpr-accept" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:var(--c-accent);color:#fff;border:none;border-radius:var(--r-sm);cursor:crosshair;">Accept</button>
-        <button id="gdpr-decline" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:transparent;color:var(--c-text-tertiary);border:1px solid var(--c-border);border-radius:var(--r-sm);cursor:crosshair;">Decline</button>
+        <button id="gdpr-accept" data-i18n="consent.accept" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:var(--c-accent);color:#fff;border:none;border-radius:var(--r-sm);cursor:crosshair;">Akzeptieren</button>
+        <button id="gdpr-decline" data-i18n="consent.decline" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:transparent;color:var(--c-text-tertiary);border:1px solid var(--c-border);border-radius:var(--r-sm);cursor:crosshair;">Ablehnen</button>
       </div>
     </div>
   </div>
@@ -896,6 +891,7 @@
   </script>
 
   <script src="theme.js?v=4"></script>
+  <script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>if(artsAuth.isLoggedIn())artsAuth.syncSettings();</script>
@@ -914,11 +910,11 @@
   <div class="taste-prompt-backdrop" id="taste-prompt">
     <div class="taste-prompt-card">
       <div class="taste-prompt-icon">◈</div>
-      <div class="taste-prompt-title">sTYLE tEST rEaDY</div>
-      <p class="taste-prompt-desc">Swipe through 10 pieces — help us learn what you love</p>
+      <div class="taste-prompt-title" data-i18n="home.taste.title">sTIL-tEST bEREIT</div>
+      <p class="taste-prompt-desc" data-i18n="home.taste.desc">Swipe durch 10 Werke — hilf uns zu lernen, was dir gefaellt</p>
       <div class="taste-prompt-actions">
-        <button class="btn btn-secondary" id="taste-prompt-later">Later</button>
-        <a href="taste.html" class="btn btn-primary">Take test</a>
+        <button class="btn btn-secondary" id="taste-prompt-later" data-i18n="home.taste.later">Spaeter</button>
+        <a href="taste.html" class="btn btn-primary" data-i18n="home.taste.take">Test starten</a>
       </div>
     </div>
   </div>
@@ -956,7 +952,7 @@
       </div>
       <div id="fb-form" class="fb-body" style="padding:14px 24px 0;">
         <div class="fb-stars-wrap" style="margin-bottom:20px;">
-          <p class="fb-stars-pre" style="font-size:0.42rem;letter-spacing:0.26em;margin-bottom:10px;text-transform:uppercase;font-weight:600;">— How do you feel? —</p>
+          <p class="fb-stars-pre" style="font-size:0.42rem;letter-spacing:0.26em;margin-bottom:10px;text-transform:uppercase;font-weight:600;" data-i18n="home.fb.pre">— Wie fuehlst du dich? —</p>
           <div class="fb-stars" id="fb-stars" style="display:flex;gap:10px;">
             <button class="fb-star" data-v="1" aria-label="1 star" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">B</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
             <button class="fb-star" data-v="2" aria-label="2 stars" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">R</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
@@ -966,14 +962,14 @@
           </div>
           <p class="fb-stars-label" id="fb-stars-label" style="font-size:0.44rem;letter-spacing:0.22em;text-transform:uppercase;margin-top:9px;min-height:1em;"></p>
         </div>
-        <textarea class="fb-text" id="fb-text" rows="3" maxlength="280" placeholder="What do you think? — Be brutal." style="width:100%;font-size:0.88rem;padding:6px 0;resize:none;"></textarea>
+        <textarea class="fb-text" id="fb-text" rows="3" maxlength="280" placeholder="Was denkst du? — Sei ehrlich." data-i18n-placeholder="home.fb.placeholder" style="width:100%;font-size:0.88rem;padding:6px 0;resize:none;"></textarea>
         <p class="fb-char-count" id="fb-char" style="font-size:0.42rem;font-weight:300;letter-spacing:0.18em;text-align:right;margin-top:4px;">0 / 280</p>
         <div class="fb-foot" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 0;gap:12px;">
-          <span class="fb-note" style="font-size:0.42rem;font-weight:300;letter-spacing:0.14em;flex:1;">Stored locally · Helps improve the site</span>
-          <button class="fb-submit" id="fb-submit" disabled style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;padding:0.7rem 1.4rem;flex-shrink:0;">Submit</button>
+          <span class="fb-note" style="font-size:0.42rem;font-weight:300;letter-spacing:0.14em;flex:1;" data-i18n="home.fb.note">Lokal gespeichert · Hilft die Seite zu verbessern</span>
+          <button class="fb-submit" id="fb-submit" disabled style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;padding:0.7rem 1.4rem;flex-shrink:0;" data-i18n="home.fb.submit">Absenden</button>
         </div>
       </div>
-      <div id="fb-success" hidden class="fb-success" style="padding:28px 24px;text-align:center;font-size:0.72rem;font-weight:300;letter-spacing:0.18em;">Thanks — feedback received ✓</div>
+      <div id="fb-success" hidden class="fb-success" style="padding:28px 24px;text-align:center;font-size:0.72rem;font-weight:300;letter-spacing:0.18em;" data-i18n="home.fb.success">Danke — Feedback erhalten</div>
     </div>
   </div>
   <style>

@@ -8,10 +8,11 @@
 
   /* ── Route map ── */
   var page = location.pathname.replace(/^.*\//, '').replace('.html', '') || 'index';
+  var _t = window.artsI18n ? window.artsI18n.t : function (k) { return k; };
   var steps = [
-    { id: 'join',   label: 'jOIN',   page: 'join',   href: 'join.html' },
-    { id: 'verify', label: 'vERIFY', page: 'verify', href: 'verify.html' },
-    { id: 'add',    label: 'lIST',   page: 'add',    href: 'add.html' }
+    { id: 'join',   label: _t('funnel.join')   || 'jOIN',   page: 'join',   href: 'join.html' },
+    { id: 'verify', label: _t('funnel.verify') || 'vERIFY', page: 'verify', href: 'verify.html' },
+    { id: 'add',    label: _t('funnel.list')   || 'lIST',   page: 'add',    href: 'add.html' }
   ];
 
   var currentIdx = -1;
@@ -48,10 +49,10 @@
   /* CTA */
   var ctaHTML = '';
   if (isLast) {
-    ctaHTML = '<span class="funnel-cta-label">fINaL sTEP</span>';
+    ctaHTML = '<span class="funnel-cta-label">' + (_t('funnel.final') || 'fINaL sTEP') + '</span>';
   } else {
     ctaHTML = '<a href="' + nextStep.href + '" class="funnel-cta">' +
-      'nEXT: ' + nextStep.label +
+      (_t('funnel.next') || 'nEXT: ') + nextStep.label +
       ' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>' +
       '</a>';
   }

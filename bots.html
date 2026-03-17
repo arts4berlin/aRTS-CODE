@@ -269,6 +269,13 @@
     * { -webkit-user-select: none; user-select: none; }
     html { touch-action: manipulation; }
 
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .c-back { top: 14px; left: 16px; }
+      .bot-chat { max-height: 50vh; }
+      .bot-input { font-size: 1rem; }
+    }
+
     /* ─────────────────────────────────────────
        DAY MODE OVERRIDES  (bots.html)
        To update: match each selector below to
@@ -369,7 +376,7 @@
   </style>
 </head>
 <body>
-  <a href="about.html" class="c-back">← bACK</a>
+  <a href="about.html" class="c-back">← Back</a>
 
   <div class="hub">
     <div class="hub-header">
@@ -380,9 +387,9 @@
 
     <!-- Tier bar -->
     <div class="tier-bar" id="tier-bar">
-      <span class="tier-bar-label">yOUR tIER</span>
+      <span class="tier-bar-label">Your tier</span>
       <span class="tier-bar-value" id="tier-bar-value">—</span>
-      <a href="join.html" class="tier-bar-change">cHANGE →</a>
+      <a href="join.html" class="tier-bar-change">Change →</a>
     </div>
 
     <hr class="hub-rule">
@@ -394,29 +401,29 @@
     <div class="bot-panel" id="bot-panel">
       <div class="bot-panel-header">
         <span class="bot-panel-name" id="bot-panel-name">—</span>
-        <button class="bot-panel-close" id="bot-panel-close">← bACK</button>
+        <button class="bot-panel-close" id="bot-panel-close">← Back</button>
       </div>
       <p class="bot-panel-info" id="bot-panel-info"></p>
       <div class="bot-chat" id="bot-chat"></div>
       <div class="bot-input-row">
-        <input type="text" class="bot-input" id="bot-input" placeholder="aSK sOMETHING..." autocomplete="off" style="-webkit-user-select:text;user-select:text;">
-        <button class="bot-send" id="bot-send">sEND</button>
+        <input type="text" class="bot-input" id="bot-input" placeholder="Ask something..." autocomplete="off" style="-webkit-user-select:text;user-select:text;">
+        <button class="bot-send" id="bot-send">Send</button>
       </div>
     </div>
 
     <!-- CURaTOR: custom bot builder (hidden unless CURaTOR) -->
     <div class="custom-bot-section" id="custom-bot-section" hidden>
-      <p class="section-label">cUSTOM bOT bUILDER</p>
+      <p class="section-label">Custom bot builder</p>
       <div class="custom-bot-form">
-        <input type="text" id="custom-bot-name" placeholder="bOT nAME" autocomplete="off" maxlength="30">
-        <textarea id="custom-bot-purpose" placeholder="dESCRIBE iTS pURPOSE / iNSTRUCTIONS..."></textarea>
-        <button class="btn-create-bot" id="btn-create-bot">+ cREATE bOT</button>
+        <input type="text" id="custom-bot-name" placeholder="Bot name" autocomplete="off" maxlength="30">
+        <textarea id="custom-bot-purpose" placeholder="Describe its purpose / instructions..."></textarea>
+        <button class="btn-create-bot" id="btn-create-bot">+ Create bot</button>
       </div>
     </div>
 
     <p class="hub-footer">
-      bOT oPERaTIONS · tier-gated access · <a href="join.html">uPGRaDE</a> for more.<br>
-      <a href="bot-terms.html">tERMS &amp; pRIVACY</a> · <a href="about.html">aBOUT [aRTS]</a>
+      bOT oPERaTIONS · tier-gated access · <a href="join.html">Upgrade</a> for more.<br>
+      <a href="bot-terms.html">Terms &amp; privacy</a> · <a href="about.html">About [aRTS]</a>
     </p>
   </div>
 
@@ -466,7 +473,7 @@
 
     /* ── Custom bots (CURaTOR) ── */
     function getCustomBots(){ try{return JSON.parse(localStorage.getItem('arts_custom_bots')||'[]');}catch(e){return [];} }
-    function saveCustomBots(b){ try{artsAuth.setSetting('arts_custom_bots',JSON.stringify(b));}catch(e){} }
+    function saveCustomBots(b){ try{localStorage.setItem('arts_custom_bots',JSON.stringify(b)); if(typeof artsAuth!=='undefined')artsAuth.setSetting('arts_custom_bots',JSON.stringify(b));}catch(e){} }
 
     /* ── Render bot grid ── */
     var gridEl=document.getElementById('bot-grid');
@@ -478,7 +485,7 @@
       var allBots=BOTS.slice();
       if(hasAccess(userTier,'CURaTOR')){
         getCustomBots().forEach(function(cb){
-          allBots.push({ id:cb.id, name:cb.name, desc:cb.purpose||'cUSTOM bOT', tier:'CURaTOR', limit:-1, custom:true });
+          allBots.push({ id:cb.id, name:cb.name, desc:cb.purpose||'Custom bot', tier:'CURaTOR', limit:-1, custom:true });
         });
       }
 
@@ -486,16 +493,16 @@
         var accessible=hasAccess(userTier,bot.tier);
         var colors=TIER_COLORS[bot.tier]||TIER_COLORS['aUDIENCE'];
         var usage=getUsageCount(bot.id);
-        var limitStr=bot.limit===-1?'uNLIMITED':usage+' / '+bot.limit+' tODAY';
+        var limitStr=bot.limit===-1?'Unlimited':usage+' / '+bot.limit+' today';
 
         var card=document.createElement('div');
         card.className='bot-card '+(accessible?'unlocked':'locked');
         card.innerHTML=[
           '<span class="bot-tier-badge" style="color:'+colors.text+';background:'+colors.bg+';border:1px solid '+colors.border+'">'+esc(bot.tier)+'</span>',
-          accessible?'<span class="bot-status active">aCTIVE</span>':'<span class="bot-status locked-st">lOCKED</span>',
+          accessible?'<span class="bot-status active">Active</span>':'<span class="bot-status locked-st">Locked</span>',
           '<p class="bot-name">'+esc(bot.name)+'</p>',
           '<p class="bot-desc">'+esc(bot.desc)+'</p>',
-          accessible?'<p class="bot-limit">'+limitStr+'</p>':'<a href="join.html" class="bot-upgrade">uPGRaDE →</a>'
+          accessible?'<p class="bot-limit">'+limitStr+'</p>':'<a href="join.html" class="bot-upgrade">Upgrade →</a>'
         ].join('');
 
         if(accessible){
@@ -515,7 +522,7 @@
       activeBot=bot;
       document.getElementById('bot-panel-name').textContent=bot.name;
       var usage=getUsageCount(bot.id);
-      var limitStr=bot.limit===-1?'uNLIMITED qUERIES':usage+' / '+bot.limit+' qUERIES tODAY';
+      var limitStr=bot.limit===-1?'Unlimited queries':usage+' / '+bot.limit+' queries today';
       document.getElementById('bot-panel-info').textContent=limitStr;
       document.getElementById('bot-chat').innerHTML='';
       document.getElementById('bot-input').value='';
@@ -549,7 +556,7 @@
 
       var usage=getUsageCount(activeBot.id);
       if(activeBot.limit!==-1 && usage>=activeBot.limit){
-        appendMsg('bot','— dAILY lIMIT rEaCHED. uPGRaDE yOUR tIER fOR mORE qUERIES.');
+        appendMsg('bot','— Daily limit reached. Upgrade your tier for more queries.');
         input.value=''; return;
       }
 
@@ -558,19 +565,19 @@
       recordUsage(activeBot.id);
 
       var newUsage=getUsageCount(activeBot.id);
-      var limitStr=activeBot.limit===-1?'uNLIMITED qUERIES':newUsage+' / '+activeBot.limit+' qUERIES tODAY';
+      var limitStr=activeBot.limit===-1?'Unlimited queries':newUsage+' / '+activeBot.limit+' queries today';
       document.getElementById('bot-panel-info').textContent=limitStr;
 
       /* REQUIRES BACKEND — Phase 2: replace mock with actual API call to Claude */
       setTimeout(function(){
         var mocks={
-          'market-scout':     '[ mOCK ] sCaNNING mARKET dATA... nO aNOMALIES dETECTED. pHASE 2 wILL cONNECT tO lIVE mARKET fEEDS.',
-          'provenance-check': '[ mOCK ] cROSS-rEFERENCING pROVENANCE... nO dISCREPANCIES. pHASE 2 wILL qUERY oPEN dATABASES.',
-          'security-scan':    '[ mOCK ] iNSPECTING mETADATA... nO sUSPICIOUS pATTERNS. pHASE 2 wILL sCAN aCTUAL fILES.',
-          'trade-alert':      '[ mOCK ] mONITORING tRADE aCTIVITY... nO aLERTS. pHASE 2 wILL dELIVER rEAL-tIME nOTIFICATIONS.',
-          'content-moderator':'tHIS bOT rUNS a tIERED pIPELINE wHEN yOU sUBMIT vIA aDD aRT: tIER 1 (fALCONSaI nSFW dETECTION) → tIER 2 (cLAUDE vISION dEEP aNALYSIS). fLAGS pROHIBITED cONTENT, cOPYRIGHT wATERMARKS, aNd aI-gENERATED iMAGES.'
+          'market-scout':     '[ MOCK ] Scanning market data... No anomalies detected. Phase 2 will connect to live market feeds.',
+          'provenance-check': '[ MOCK ] Cross-referencing provenance... No discrepancies. Phase 2 will query open databases.',
+          'security-scan':    '[ MOCK ] Inspecting metadata... No suspicious patterns. Phase 2 will scan actual files.',
+          'trade-alert':      '[ MOCK ] Monitoring trade activity... No alerts. Phase 2 will deliver real-time notifications.',
+          'content-moderator':'This bot runs a tiered pipeline when you submit via Add Art: Tier 1 (FalconsAI NSFW detection) → Tier 2 (Claude Vision deep analysis). Flags prohibited content, copyright watermarks, and AI-generated images.'
         };
-        appendMsg('bot', mocks[activeBot.id] || '[ mOCK ] cUSTOM bOT rESPONSE. pHASE 2 wILL cONNECT tO cLAUDE aPI.');
+        appendMsg('bot', mocks[activeBot.id] || '[ MOCK ] Custom bot response. Phase 2 will connect to Claude API.');
       }, 800+Math.random()*600);
     }
 
@@ -599,7 +606,7 @@
       var purpose=purposeInput.value.trim();
       if(!name){ nameInput.focus(); return; }
       var bots=getCustomBots();
-      bots.push({ id:'custom_'+Date.now(), name:name, purpose:purpose||'cUSTOM bOT', createdAt:Date.now() });
+      bots.push({ id:'custom_'+Date.now(), name:name, purpose:purpose||'Custom bot', createdAt:Date.now() });
       saveCustomBots(bots);
       nameInput.value=''; purposeInput.value='';
       renderBotGrid();
@@ -618,6 +625,6 @@
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>if(artsAuth.isLoggedIn())artsAuth.syncSettings();</script>
-<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
+<script>window.artsCornerAdd({ label: 'Report', href: 'report.html' });</script>
 </body>
 </html>

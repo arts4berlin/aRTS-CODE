@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -336,49 +336,50 @@
 <body>
 
   <div class="noise-overlay"></div>
+  <div class="page-mesh"></div>
   <div class="ambient-orb ambient-orb--top"></div>
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="art.html">aRT</a>
-      <a href="boutique.html">bOUTIQUE</a>
-      <a href="about.html">aBOUT</a>
-      <a href="inquire.html" aria-current="page">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" aria-current="page" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="home.html">hOME</a>
-    <a href="art.html">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
   <main class="site-main">
-    <div class="inq-layout">
+    <div class="inq-layout page-enter">
     <div class="form-col">
 
       <!-- ── Form state ── -->
       <div id="inq-form-wrap">
-        <p class="section-label">iNQUIRE</p>
-        <h1 class="form-title">lETS<br>TaLK</h1>
+        <p class="section-label" data-i18n="inquire.label">aNFRaGE</p>
+        <h1 class="form-title" data-i18n-html="inquire.title">sPRECHEN<br>wIR</h1>
 
         <!-- Piece reference (auto-filled from URL ?piece=) -->
         <div class="piece-ref" id="piece-ref-row">
-          <span class="piece-ref-label">rE:</span>
+          <span class="piece-ref-label" data-i18n="inquire.re">Betr:</span>
           <span class="piece-ref-name" id="piece-ref-name">—</span>
         </div>
 
@@ -388,67 +389,67 @@
           <input type="hidden" name="piece"     id="f-piece">
 
           <div class="field">
-            <label for="f-name">yOUR nAME</label>
-            <input type="text"  id="f-name"  name="name"  placeholder="· · ·" autocomplete="name">
+            <label for="f-name" data-i18n="inquire.name">Dein Name</label>
+            <input type="text"  id="f-name"  name="name"  placeholder="· · ·" autocomplete="name" data-i18n-placeholder="inquire.name.ph">
           </div>
 
           <div class="field">
-            <label for="f-email">eMAIL</label>
-            <input type="email" id="f-email" name="email" placeholder="· · ·" autocomplete="email">
+            <label for="f-email" data-i18n="inquire.email">E-Mail</label>
+            <input type="email" id="f-email" name="email" placeholder="· · ·" autocomplete="email" data-i18n-placeholder="inquire.email.ph">
           </div>
 
           <div class="field">
-            <label for="f-msg">mESSAGE</label>
-            <textarea id="f-msg" name="message" placeholder="I am interested in…"></textarea>
+            <label for="f-msg" data-i18n="inquire.msg">Nachricht</label>
+            <textarea id="f-msg" name="message" placeholder="Ich interessiere mich fuer..." data-i18n-placeholder="inquire.msg.ph"></textarea>
           </div>
 
           <p class="error-msg" id="err-msg"></p>
 
           <div class="submit-row">
-            <button type="submit" class="btn-send" id="btn-send">sEND iNQUIRY</button>
-            <a href="home.html" class="back-link">← bACK</a>
+            <button type="submit" class="btn-send" id="btn-send" data-i18n="inquire.send">Anfrage senden</button>
+            <a href="home.html" class="back-link" data-i18n="inquire.back">Zurueck</a>
           </div>
         </form>
       </div>
 
       <!-- ── Success state ── -->
       <div id="success">
-        <p class="section-label">sENT ✓</p>
-        <h1 class="form-title">mESSAGE<br>sENT</h1>
+        <p class="section-label" data-i18n="inquire.sent.label">gESENDET</p>
+        <h1 class="form-title" data-i18n-html="inquire.sent.title">nACHRICHT<br>gESENDET</h1>
         <div class="success-check">✓</div>
-        <p class="success-sub">
-          iNQUIRY dELIVERED tO [aRTS]<br>
-          cHECK yOUR iNBOX fOR cONFIRMATION<br>
-          wE'LL bE iN tOUCH sOON
+        <p class="success-sub" data-i18n-html="inquire.sent.msg">
+          Anfrage an [aRTS] zugestellt<br>
+          Pruefe deinen Posteingang fuer die Bestaetigung<br>
+          Wir melden uns bald
         </p>
         <div class="divider-thin"></div>
-        <a href="home.html" class="back-link">← bACK</a>
+        <a href="home.html" class="back-link" data-i18n="inquire.back">Zurueck</a>
       </div>
 
     </div>
 
     <!-- ── Flow steps (right column) ── -->
     <div class="flow-col">
-      <p class="flow-label">hOW iT wORKS</p>
+      <p class="flow-label" data-i18n="inquire.flow">sO fUNKTIONIERTS</p>
       <div class="flow-steps">
         <div class="flow-step">
           <p class="flow-num">01</p>
-          <p class="flow-title">wRITE</p>
-          <p class="flow-desc">fILL iN yOUR nAME, eMAIL, aNd mESSAGE. iF yOU cAME fROM a pIECE, iT'S aLREADY rEFERENCED.</p>
+          <p class="flow-title" data-i18n="inquire.f1.title">sCHREIBEN</p>
+          <p class="flow-desc" data-i18n="inquire.f1.desc">Fill in your name, email, and message. If you came from a piece, it's already referenced.</p>
         </div>
         <div class="flow-step">
           <p class="flow-num">02</p>
-          <p class="flow-title">sEND</p>
-          <p class="flow-desc">hIT sEND iNQUIRY. yOUR mESSAGE gOES dIRECTLY tO tHE aRTIST oR [aRTS] tEAM.</p>
+          <p class="flow-title" data-i18n="inquire.f2.title">sENDEN</p>
+          <p class="flow-desc" data-i18n="inquire.f2.desc">Hit send inquiry. Your message goes directly to the artist or [aRTS] team.</p>
         </div>
         <div class="flow-step">
           <p class="flow-num">03</p>
-          <p class="flow-title">cONNECT</p>
-          <p class="flow-desc">eXPECT a rEPLY iN yOUR iNBOX. fROM tHERE — nEGOTIATE, aSK qUESTIONS, oR sCHEDULE a vIEWING.</p>
+          <p class="flow-title" data-i18n="inquire.f3.title">vERBINDEN</p>
+          <p class="flow-desc" data-i18n="inquire.f3.desc">Expect a reply in your inbox. From there — negotiate, ask questions, or schedule a viewing.</p>
         </div>
       </div>
       <div class="flow-divider"></div>
-      <p class="flow-note">nO aCCOUNT nEEDED. nO fEES. jUST dIRECT cONVERSATION bETWEEN yOU aNd tHE cREATOR.</p>
+      <p class="flow-note" data-i18n="inquire.flow.note">Kein Konto noetig. Keine Gebuehren. Nur direktes Gespraech zwischen dir und dem Kuenstler.</p>
     </div>
 
     </div>
@@ -503,14 +504,14 @@
       var email = document.getElementById('f-email').value.trim();
       var msg   = document.getElementById('f-msg').value.trim();
 
-      if(!name)  { errEl.textContent = '— nAME rEQUIRED'; return; }
+      if(!name)  { errEl.textContent = '— Name required'; return; }
       if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-        errEl.textContent = '— vALID eMAIL rEQUIRED'; return;
+        errEl.textContent = '— Valid email required'; return;
       }
-      if(!msg)   { errEl.textContent = '— mESSAGE rEQUIRED'; return; }
+      if(!msg)   { errEl.textContent = '— Message required'; return; }
 
       btn.disabled    = true;
-      btn.textContent = 'sENDING…';
+      btn.textContent = 'Sending…';
       form.style.opacity = '0.4';
       form.style.pointerEvents = 'none';
 
@@ -536,16 +537,16 @@
             });
           }, 240);
         } else {
-          errEl.textContent = '— sEND fAILED · tRY aGAIN';
+          errEl.textContent = '— Send failed · try again';
           btn.disabled    = false;
-          btn.textContent = 'sEND iNQUIRY';
+          btn.textContent = 'Send inquiry';
           form.style.opacity = '1';
           form.style.pointerEvents = '';
         }
       } catch(err){
-        errEl.textContent = '— nETWORK eRROR · cHECK cONNECTION';
+        errEl.textContent = '— Network error · check connection';
         btn.disabled    = false;
-        btn.textContent = 'sEND iNQUIRY';
+        btn.textContent = 'Send inquiry';
         form.style.opacity = '1';
         form.style.pointerEvents = '';
       }
@@ -584,26 +585,6 @@
       }
       setTimeout(tick,1200+Math.random()*1800);
     })();
-
-    /* Logo [a] expand */
-    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){
-        clr();var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
-        clr();var from=state;
-        for(var i=0;i<from;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
-        })(i);
-      });
-    });
   })();
   </script>
 
@@ -655,6 +636,7 @@
 </script>
 
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script src="btn-fx.js"></script>

@@ -54,8 +54,10 @@
       'transition:transform 0.3s ease',
     ].join(';');
 
+    /* Default to German (site default), i18n.js applyDOM will fix once loaded */
     var text = document.createElement('span');
-    text.innerHTML = 'wE uSE bROWSER sTORAGE fOR yOUR eXPERIENCE. <a href="privacy.html#4-device-storage-ttdsg-25" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">lEARN mORE</a>';
+    text.setAttribute('data-i18n-html', '_consent.inner');
+    text.innerHTML = 'Wir nutzen Browser-Speicher. <a href="privacy.html#4-device-storage-ttdsg-25" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Mehr erfahren</a>';
     banner.appendChild(text);
 
     var btnWrap = document.createElement('span');
@@ -85,8 +87,10 @@
       return btn;
     }
 
-    var btnAccept = makeBtn('aCCEPT', true);
-    var btnDecline = makeBtn('dECLINE', false);
+    var btnAccept = makeBtn('Akzeptieren', true);
+    btnAccept.setAttribute('data-i18n', 'consent.accept');
+    var btnDecline = makeBtn('Ablehnen', false);
+    btnDecline.setAttribute('data-i18n', 'consent.decline');
 
     btnAccept.addEventListener('click', function () {
       try { localStorage.setItem(CONSENT_KEY, 'accepted'); } catch (e) {}

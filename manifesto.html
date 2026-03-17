@@ -155,7 +155,7 @@
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -185,7 +185,7 @@
   <main class="site-main">
     <div class="manifesto-wrap">
 
-      <a href="about.html" class="manifesto-back">&larr; aBOUT</a>
+      <a href="about.html" class="manifesto-back">&larr; About</a>
 
       <!-- Epigraph -->
       <div class="manifesto-epigraph">
@@ -290,26 +290,6 @@
       }
       setTimeout(tick,1200+Math.random()*1800);
     })();
-
-    /* Logo [a] expand */
-    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){
-        clr();var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
-        clr();var from=state;
-        for(var i=0;i<from;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
-        })(i);
-      });
-    });
   })();
   </script>
 

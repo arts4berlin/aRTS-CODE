@@ -37,7 +37,9 @@
       .then(function (r) { return r.json(); })
       .then(function (all) {
         // Get recently seen IDs (last 4 weeks)
-        var history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+        var history;
+        try { history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+        catch(e) { history = []; }
         var recentIds = {};
         var cutoff = history.length > 4 ? history.length - 4 : 0;
         for (var i = cutoff; i < history.length; i++) {
@@ -102,6 +104,11 @@
 
   /* ── Render cards ── */
   function renderCards() {
+    // Clean up document-level listeners from previous cards
+    var oldCards = stack.querySelectorAll('.taste-card');
+    for (var c = 0; c < oldCards.length; c++) {
+      if (oldCards[c]._cleanup) oldCards[c]._cleanup();
+    }
     stack.innerHTML = '';
     if (pieces.length === 0) return;
 
@@ -264,7 +271,9 @@
     var week = isoWeek(new Date());
 
     // Save to history
-    var history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    var history;
+    try { history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+    catch(e) { history = []; }
     history.push({
       week: week,
       date: new Date().toISOString(),
@@ -274,7 +283,31 @@
     localStorage.setItem(WEEK_KEY, week);
 
     // Build aggregated profile
-    buildProfile(history);
+    var profile = buildProfile(history);
+
+    // Upgrade 4: Cold-start fingerprinting — match to bot taste vectors
+    var likedIds = (profile.liked_ids || []).concat(profile.loved_ids || []);
+    if (likedIds.length > 0 && window.artsAuth) {
+      var token = artsAuth.getToken();
+      var base = artsAuth.PROXY_BASE || '';
+      fetch(base + '/api/taste-match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? 'Bearer ' + token : ''
+        },
+        body: JSON.stringify({ liked_piece_ids: likedIds.slice(0, 10) }),
+        keepalive: true
+      }).then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.recommendations) {
+            try {
+              localStorage.setItem('arts_taste_match_recs', JSON.stringify(data.recommendations));
+              localStorage.setItem('arts_taste_match_personas', JSON.stringify(data.matched_personas || []));
+            } catch(e) {}
+          }
+        }).catch(function() {});
+    }
 
     // Show results
     wrap.style.display = 'none';
@@ -327,7 +360,9 @@
 
   /* ── Render results ── */
   function showResults() {
-    var profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+    var profile;
+    try { profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); }
+    catch(e) { profile = {}; }
 
     // Styles pills
     renderPills('taste-pills-styles', profile.styles || {});
@@ -342,9 +377,10 @@
     var lovedIds = (profile.loved_ids || []);
     // Only show from this session
     var sessionLoved = results.filter(function (r) { return r.action === 'love'; });
-    if (sessionLoved.length > 0) {
-      document.getElementById('taste-r-loved').style.display = '';
-      var strip = document.getElementById('taste-loved-strip');
+    var lovedEl = document.getElementById('taste-r-loved');
+    var strip = document.getElementById('taste-loved-strip');
+    if (sessionLoved.length > 0 && lovedEl && strip) {
+      lovedEl.style.display = '';
       strip.innerHTML = '';
       sessionLoved.forEach(function (r) {
         var p = findPiece(r.id);

@@ -277,6 +277,13 @@
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
 
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .submit-row { flex-direction: column; gap: 1rem; }
+      .btn-send { width: 100%; }
+      .tier-pill { min-width: 0; }
+    }
+
     /* ── Day mode overrides ── */
     [data-theme="day"] body { background: #fff !important; color: #000 !important; }
     [data-theme="day"] html { background: #fff !important; }
@@ -321,7 +328,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -357,78 +364,78 @@
         <h1 class="form-title">lOOPHOLE?</h1>
 
         <p class="form-desc">
-          fOUND a gLITCH, eXPLOIT, oR bROKEN fLOW?<br>
-          rEPORT iT &amp; eARN bIG pOINTS wHEN cONFIRMED.
+          Found a glitch, exploit, or broken flow?<br>
+          Report it &amp; earn big points when confirmed.
         </p>
 
         <!-- Reward tiers -->
         <div class="bounty-tiers">
           <div class="tier-pill">
             <div class="tier-sev low">lOW</div>
-            <div class="tier-pts" id="tier-low-pts">500<span>pTS</span></div>
-            <div class="tier-what">uI gLITCH · mINOR</div>
+            <div class="tier-pts" id="tier-low-pts">500<span>pts</span></div>
+            <div class="tier-what">UI glitch · minor</div>
           </div>
           <div class="tier-pill">
             <div class="tier-sev medium">mEDIUM</div>
-            <div class="tier-pts" id="tier-med-pts">1,000<span>pTS</span></div>
-            <div class="tier-what">lOGIC eRROR · bROKEN fLOW</div>
+            <div class="tier-pts" id="tier-med-pts">1,000<span>pts</span></div>
+            <div class="tier-what">Logic error · broken flow</div>
           </div>
           <div class="tier-pill">
             <div class="tier-sev critical">cRITICaL</div>
-            <div class="tier-pts" id="tier-crit-pts">2,500<span>pTS</span></div>
-            <div class="tier-what">sECURITY · xP eXPLOIT</div>
+            <div class="tier-pts" id="tier-crit-pts">2,500<span>pts</span></div>
+            <div class="tier-what">Security · XP exploit</div>
           </div>
         </div>
 
         <form id="bounty-form" novalidate>
 
           <div class="field">
-            <label for="b-email">yOUR eMAIL</label>
+            <label for="b-email">Your email</label>
             <input type="email" id="b-email" name="email" placeholder="· · ·" autocomplete="email">
           </div>
 
           <div class="field">
-            <label for="b-severity">sEVERITY</label>
+            <label for="b-severity">Severity</label>
             <select id="b-severity" name="severity">
-              <option value="">— sELECT —</option>
-              <option value="lOW">lOW — uI gLITCH, mINOR bUG</option>
-              <option value="mEDIUM">mEDIUM — lOGIC eRROR, bROKEN fLOW</option>
-              <option value="cRITICaL">cRITICaL — sECURITY hOLE, xP eXPLOIT</option>
+              <option value="">— Select —</option>
+              <option value="lOW">Low — UI glitch, minor bug</option>
+              <option value="mEDIUM">Medium — logic error, broken flow</option>
+              <option value="cRITICaL">Critical — security hole, XP exploit</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="b-category">cATEGORY</label>
+            <label for="b-category">Category</label>
             <select id="b-category" name="category">
-              <option value="">— sELECT —</option>
-              <option value="pOINTS eXPLOIT">pOINTS eXPLOIT</option>
-              <option value="sECURITY">sECURITY</option>
-              <option value="uI/uX bUG">uI/uX bUG</option>
-              <option value="lOGIC eRROR">lOGIC eRROR</option>
-              <option value="oTHER">oTHER</option>
+              <option value="">— Select —</option>
+              <option value="pOINTS eXPLOIT">Points exploit</option>
+              <option value="sECURITY">Security</option>
+              <option value="uI/uX bUG">UI/UX bug</option>
+              <option value="lOGIC eRROR">Logic error</option>
+              <option value="oTHER">Other</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="b-title">tITLE</label>
+            <label for="b-title">Title</label>
             <input type="text" id="b-title" name="title" placeholder="Short description of the loophole">
           </div>
 
           <div class="field">
-            <label for="b-steps">sTEPS tO rEPRODUCE</label>
+            <label for="b-steps">Steps to reproduce</label>
             <textarea id="b-steps" name="steps" placeholder="1. Go to…  2. Click…  3. Observe…"></textarea>
           </div>
 
           <div class="field">
-            <label for="b-expected">eXPECTED vS aCTUAL</label>
+            <label for="b-expected">Expected vs actual</label>
             <textarea id="b-expected" name="expected" placeholder="Expected: …&#10;Actual: …"></textarea>
           </div>
 
           <p class="error-msg" id="err-msg"></p>
 
           <div class="submit-row">
-            <button type="submit" class="btn-send" id="btn-send">sUBMIT bOUNTY</button>
-            <a href="home.html" class="back-link">&larr; bACK</a>
+            <button type="submit" class="btn-send" id="btn-send">Submit bounty</button>
+            <a href="home.html" class="back-link">&larr; Back</a>
           </div>
         </form>
       </div>
@@ -438,11 +445,11 @@
         <h1 class="form-title">bOUNTY<br>sUBMITTED</h1>
         <div class="success-check">&#10003;</div>
         <p class="success-sub">
-          wE'LL rEVIEW yOUR rEPORT<br>
-          pOINTS aWARDED oN cONFIRMATION
+          We'll review your report<br>
+          Points awarded on confirmation
         </p>
         <div class="divider-thin"></div>
-        <a href="home.html" class="back-link">&larr; bACK tO hOME</a>
+        <a href="home.html" class="back-link">&larr; Back to home</a>
       </div>
 
     </div>
@@ -465,9 +472,9 @@
       var ptsCfg = JSON.parse(localStorage.getItem('arts_points_config'));
       if(ptsCfg && ptsCfg.events) {
         var ev = ptsCfg.events;
-        if(ev.bounty_low != null)      document.getElementById('tier-low-pts').innerHTML  = Number(ev.bounty_low).toLocaleString() + '<span>pTS</span>';
-        if(ev.bounty_medium != null)   document.getElementById('tier-med-pts').innerHTML  = Number(ev.bounty_medium).toLocaleString() + '<span>pTS</span>';
-        if(ev.bounty_critical != null) document.getElementById('tier-crit-pts').innerHTML = Number(ev.bounty_critical).toLocaleString() + '<span>pTS</span>';
+        if(ev.bounty_low != null)      document.getElementById('tier-low-pts').innerHTML  = Number(ev.bounty_low).toLocaleString() + '<span>pts</span>';
+        if(ev.bounty_medium != null)   document.getElementById('tier-med-pts').innerHTML  = Number(ev.bounty_medium).toLocaleString() + '<span>pts</span>';
+        if(ev.bounty_critical != null) document.getElementById('tier-crit-pts').innerHTML = Number(ev.bounty_critical).toLocaleString() + '<span>pts</span>';
       }
     } catch(e) {}
 
@@ -483,15 +490,15 @@
       var expected = document.getElementById('b-expected').value.trim();
 
       if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-        errEl.textContent = '— vALID eMAIL rEQUIRED'; return;
+        errEl.textContent = '— Valid email required'; return;
       }
-      if(!severity) { errEl.textContent = '— sELECT sEVERITY'; return; }
-      if(!category) { errEl.textContent = '— sELECT a cATEGORY'; return; }
-      if(!title)    { errEl.textContent = '— tITLE rEQUIRED'; return; }
-      if(!steps)    { errEl.textContent = '— dESCRIBE sTEPS tO rEPRODUCE'; return; }
+      if(!severity) { errEl.textContent = '— Select severity'; return; }
+      if(!category) { errEl.textContent = '— Select a category'; return; }
+      if(!title)    { errEl.textContent = '— Title required'; return; }
+      if(!steps)    { errEl.textContent = '— Describe steps to reproduce'; return; }
 
       btn.disabled    = true;
-      btn.textContent = 'sENDING\u2026';
+      btn.textContent = 'Sending\u2026';
       form.style.opacity = '0.4';
       form.style.pointerEvents = 'none';
 
@@ -569,16 +576,16 @@
             });
           }, 240);
         } else {
-          errEl.textContent = '— sEND fAILED \u00b7 tRY aGAIN';
+          errEl.textContent = '— Send failed \u00b7 try again';
           btn.disabled    = false;
-          btn.textContent = 'sUBMIT bOUNTY';
+          btn.textContent = 'Submit bounty';
           form.style.opacity = '1';
           form.style.pointerEvents = '';
         }
       } catch(err){
-        errEl.textContent = '— nETWORK eRROR \u00b7 cHECK cONNECTION';
+        errEl.textContent = '— Network error \u00b7 check connection';
         btn.disabled    = false;
-        btn.textContent = 'sUBMIT bOUNTY';
+        btn.textContent = 'Submit bounty';
         form.style.opacity = '1';
         form.style.pointerEvents = '';
       }
@@ -599,12 +606,7 @@
       el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
     document.querySelectorAll('nav a').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner,timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
-      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     });
   })();
   </script>

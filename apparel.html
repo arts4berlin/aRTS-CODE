@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -232,19 +232,19 @@
   </script>
 
   <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
-  <a href="about.html" class="nav-about">aBOUT</a>
+  <a href="about.html" class="nav-about" data-i18n="nav.about">iNFO</a>
 
   <div class="label-row">
-    <span class="label">aPPaREL</span>
+    <span class="label" data-i18n="apparel.label">aPPaREL</span>
   </div>
 
   <div class="bear-wrap">
     <img src="assets/logo.svg" alt="">
   </div>
 
-  <p class="hint">... Coming soon ...</p>
+  <p class="hint" data-i18n="apparel.hint">... Kommt bald ...</p>
 
-  <a href="assets.html" class="btn-back">Go back</a>
+  <a href="assets.html" class="btn-back" data-i18n="apparel.back">Zurueck</a>
 
   <!-- Smooth page transition (replaces CRT exit) -->
   <script>
@@ -298,6 +298,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script>if(artsAuth.isLoggedIn())artsAuth.syncSettings().then(function(){checkVoucherBanner();});</script>

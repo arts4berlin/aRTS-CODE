@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -25,23 +25,23 @@
 
   <!-- ── Header ── -->
   <header class="site-header">
-    <a class="site-logo" href="home.html">[aRTS]</a>
+    <a class="site-logo" href="home.html"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="home.html">hOME</a>
+      <a href="home.html" data-i18n="nav.home">sTaRT</a>
       <a href="assets.html">aSSETS</a>
-      <a href="about.html">aBOUT</a>
-      <a href="id.html">iD</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="id.html" data-i18n="nav.id">iD</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="Menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
     <div class="nav-overlay" id="nav-overlay">
       <nav>
-        <a href="home.html">hOME</a>
+        <a href="home.html" data-i18n="nav.home">sTaRT</a>
         <a href="assets.html">aSSETS</a>
-        <a href="about.html">aBOUT</a>
-        <a href="id.html">iD</a>
+        <a href="about.html" data-i18n="nav.about">iNFO</a>
+        <a href="id.html" data-i18n="nav.id">iD</a>
       </nav>
     </div>
   </header>
@@ -51,8 +51,8 @@
     <!-- ── Swipe UI ── -->
     <div class="taste-wrap" id="taste-wrap">
       <div class="taste-header">
-        <h1 class="taste-title">sTYLE tEST</h1>
-        <p class="taste-sub">sWIPE · tAP · lEARN</p>
+        <h1 class="taste-title" data-i18n="taste.title">sTIL-tEST</h1>
+        <p class="taste-sub" data-i18n="taste.sub">sWIPE · tIPPE · lERNE</p>
       </div>
 
       <div class="taste-progress" id="taste-progress"></div>
@@ -62,34 +62,34 @@
       </div>
 
       <div class="taste-actions">
-        <button class="taste-btn taste-btn-nope" id="taste-nope" aria-label="Dislike">✕</button>
-        <button class="taste-btn taste-btn-love" id="taste-love" aria-label="Love">♥</button>
-        <button class="taste-btn taste-btn-like" id="taste-like" aria-label="Like">✓</button>
+        <button class="taste-btn taste-btn-nope" id="taste-nope" aria-label="Gefaellt nicht" data-i18n-aria-label="taste.nope">✕</button>
+        <button class="taste-btn taste-btn-love" id="taste-love" aria-label="Liebe" data-i18n-aria-label="taste.love">♥</button>
+        <button class="taste-btn taste-btn-like" id="taste-like" aria-label="Gefaellt" data-i18n-aria-label="taste.like">✓</button>
       </div>
 
       <div class="taste-hints">
-        <span class="taste-hint">← nOPE</span>
-        <span class="taste-hint">↑ lOVE</span>
-        <span class="taste-hint">lIKE →</span>
+        <span class="taste-hint" data-i18n="taste.hint.nope">← nOPE</span>
+        <span class="taste-hint" data-i18n="taste.hint.love">↑ lOVE</span>
+        <span class="taste-hint" data-i18n="taste.hint.like">lIKE →</span>
       </div>
     </div>
 
     <!-- ── Results ── -->
     <div class="taste-results" id="taste-results">
-      <h2 class="taste-results-title">YOUR tASTE</h2>
+      <h2 class="taste-results-title" data-i18n="taste.result">dEIN gESCHMaCK</h2>
 
       <div id="taste-r-styles">
-        <p class="taste-section-label">tOP sTYLES</p>
+        <p class="taste-section-label" data-i18n="taste.styles">tOP sTILE</p>
         <div class="taste-pills" id="taste-pills-styles"></div>
       </div>
 
       <div id="taste-r-moods">
-        <p class="taste-section-label">mOOD</p>
+        <p class="taste-section-label" data-i18n="taste.mood">sTIMMUNG</p>
         <div id="taste-bars-moods"></div>
       </div>
 
       <div id="taste-r-periods">
-        <p class="taste-section-label">pERIOD</p>
+        <p class="taste-section-label" data-i18n="taste.period">ePOCHE</p>
         <div id="taste-bars-periods"></div>
       </div>
 
@@ -99,14 +99,15 @@
       </div>
 
       <div class="taste-result-actions">
-        <a href="home.html" class="btn btn-secondary">dONE</a>
-        <a href="art.html" class="btn btn-primary">bROWSE aRT →</a>
+        <a href="home.html" class="btn btn-secondary" data-i18n="taste.done">fERTIG</a>
+        <a href="art.html" class="btn btn-primary" data-i18n="taste.browse">Kunst ansehen</a>
       </div>
     </div>
 
   </main>
 
   <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
   <script src="auth.js"></script>
   <script src="btn-fx.js"></script>

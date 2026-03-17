@@ -290,17 +290,17 @@
   <p class="subtitle">— internal diagnostics · mock data · api endpoints</p>
 
   <div class="stats-row" id="stats-row">
-    <div class="stat-chip"><span id="stat-listings">—</span>lISTINGS lOADED</div>
-    <div class="stat-chip"><span id="stat-users">—</span>mOCK uSERS</div>
-    <div class="stat-chip"><span id="stat-proxy">—</span>pROXY sTATUS</div>
-    <div class="stat-chip"><span id="stat-sessions">—</span>sESSIONS lOGGED</div>
+    <div class="stat-chip"><span id="stat-listings">—</span>Listings loaded</div>
+    <div class="stat-chip"><span id="stat-users">—</span>Mock users</div>
+    <div class="stat-chip"><span id="stat-proxy">—</span>Proxy status</div>
+    <div class="stat-chip"><span id="stat-sessions">—</span>Sessions logged</div>
   </div>
 
   <div class="section-label">aLGORITHM eNDPOINTS</div>
 
   <div class="bot-active-sel">
     <select id="sel-bot-tester" style="max-width:400px">
-      <option value="">— nO bOT tESTER sELECTED —</option>
+      <option value="">— No bot tester selected —</option>
     </select>
   </div>
 
@@ -310,7 +310,7 @@
     <div class="panel">
       <div class="panel-title">01 · mARKET aNALYSIS</div>
       <p>Sends all listings + user profiles to Claude Haiku. Returns price bands, top media, demand signals and platform recommendations.</p>
-      <button class="run-btn" id="btn-analyze">rUN aNALYSIS</button>
+      <button class="run-btn" id="btn-analyze">RUN ANALYSIS</button>
       <div class="status" id="st-analyze"></div>
       <div class="result-box" id="res-analyze"></div>
     </div>
@@ -320,7 +320,7 @@
       <div class="panel-title">02 · pERSONALISED rECOMMENDATIONS</div>
       <p>Select a mock collector profile. Returns ranked listing IDs, rationale, budget fit and a discovery pick.</p>
       <select id="sel-user"></select>
-      <button class="run-btn" id="btn-recommend">rUN rECOMMENDATIONS</button>
+      <button class="run-btn" id="btn-recommend">RUN RECOMMENDATIONS</button>
       <div class="status" id="st-recommend"></div>
       <div class="result-box" id="res-recommend"></div>
     </div>
@@ -330,7 +330,7 @@
       <div class="panel-title">03 · pROVENANCE cHECK</div>
       <p>Select a listing. Returns credibility score, risk level, flags and recommended verification steps.</p>
       <select id="sel-listing"></select>
-      <button class="run-btn" id="btn-provenance">rUN pROVENANCE</button>
+      <button class="run-btn" id="btn-provenance">RUN PROVENANCE</button>
       <div class="status" id="st-provenance"></div>
       <div class="result-box" id="res-provenance"></div>
     </div>
@@ -341,7 +341,7 @@
   <div class="panel" style="max-width:600px">
     <div class="panel-title">sERVER-sIDE sESSION lOG</div>
     <p>Live stats from the VPS session log — unique devices, login events by tier and provider.</p>
-    <button class="run-btn" id="btn-stats">lOAD sTATS</button>
+    <button class="run-btn" id="btn-stats">LOAD STATS</button>
     <div class="status" id="st-stats"></div>
     <div class="result-box" id="res-stats"></div>
   </div>
@@ -355,13 +355,13 @@
       <div class="panel-title">rEGISTER nEW bOT</div>
       <p>Add a tester with their Claude API key. Key is stored locally and masked in the register.</p>
       <div class="bot-form-grid">
-        <input class="bot-input" id="bot-alias"  type="text"     placeholder="aLIAS" autocomplete="off">
-        <input class="bot-input" id="bot-email"  type="email"    placeholder="eMAIL" autocomplete="off">
+        <input class="bot-input" id="bot-alias"  type="text"     placeholder="Alias" autocomplete="off">
+        <input class="bot-input" id="bot-email"  type="email"    placeholder="Email" autocomplete="off">
       </div>
       <div class="bot-form-grid full">
         <input class="bot-input" id="bot-apikey" type="password" placeholder="sk-ant-api03-..." autocomplete="off">
       </div>
-      <button class="run-btn" id="btn-bot-register">rEGISTER bOT</button>
+      <button class="run-btn" id="btn-bot-register">REGISTER BOT</button>
       <div class="status" id="st-bot-register"></div>
     </div>
 
@@ -370,17 +370,17 @@
       <div class="panel-title">rEGISTERED tESTERS</div>
       <p>All bot testers with usage stats per endpoint. Select a tester above to track their runs.</p>
       <div id="bot-table-wrap">
-        <p class="bot-empty" id="bot-empty">nO bOT tESTERS rEGISTERED yET</p>
+        <p class="bot-empty" id="bot-empty">No bot testers registered yet</p>
         <table class="bot-table" id="bot-table" hidden>
           <thead>
             <tr>
-              <th>aLIAS</th>
-              <th>eMAIL</th>
-              <th>kEY</th>
-              <th>rEGISTERED</th>
-              <th>lAST aCTIVE</th>
-              <th>tESTS</th>
-              <th>rATE</th>
+              <th>Alias</th>
+              <th>Email</th>
+              <th>Key</th>
+              <th>Registered</th>
+              <th>Last active</th>
+              <th>Tests</th>
+              <th>Rate</th>
               <th></th>
             </tr>
           </thead>
@@ -400,12 +400,12 @@
       <div class="panel-title">mILESTONES</div>
       <p>Tier progression thresholds. Displayed on member iD card with progress bar.</p>
       <table class="xp-table">
-        <tr><th>tIER</th><th>mIN pOINTS</th></tr>
-        <tr><td>nOVICE</td><td>0</td></tr>
-        <tr><td>PaTRON</td><td>100</td></tr>
-        <tr><td>cOLLECTOR</td><td>500</td></tr>
-        <tr><td>aRCHIVIST</td><td>1,000</td></tr>
-        <tr><td>mAESTRO</td><td>2,500</td></tr>
+        <tr><th>Tier</th><th>Min points</th></tr>
+        <tr><td>Novice</td><td>0</td></tr>
+        <tr><td>Patron</td><td>100</td></tr>
+        <tr><td>Collector</td><td>500</td></tr>
+        <tr><td>Archivist</td><td>1,000</td></tr>
+        <tr><td>Maestro</td><td>2,500</td></tr>
       </table>
       <p class="xp-note">Defined in id.html · MILESTONES array</p>
     </div>
@@ -415,8 +415,8 @@
       <div class="panel-title">sTARTING xP · bY tIER</div>
       <p>Points granted at sign-up via OAuth. Stored in <span class="xp-key-tag">arts_points</span></p>
       <table class="xp-table">
-        <tr><th>sUBSCRIPTION</th><th>sTARTING xP</th></tr>
-        <tr><td>aUDIENCE <span class="xp-tag">fREE</span></td><td>50</td></tr>
+        <tr><th>Subscription</th><th>Starting XP</th></tr>
+        <tr><td>Audience <span class="xp-tag">Free</span></td><td>50</td></tr>
         <tr><td>aLLY <span class="xp-tag">€0.55</span></td><td>100</td></tr>
         <tr><td>BRIGaDIER <span class="xp-tag">€3.3</span></td><td>500</td></tr>
         <tr><td>CURaTOR <span class="xp-tag">€33</span></td><td>1,000</td></tr>
@@ -429,16 +429,16 @@
       <div class="panel-title">xP eVENTS · aWARD tABLE</div>
       <p>Actions that grant XP. Queued to <span class="xp-key-tag">arts_xp_pending</span> (sessionStorage) and displayed as toast on iD page.</p>
       <table class="xp-table">
-        <tr><th>eVENT</th><th>sOURCE</th><th>xP</th></tr>
-        <tr><td>dAILY lOGIN</td><td>home.html</td><td>+25</td></tr>
-        <tr><td>fAVOURITE (aRT)</td><td>art.html</td><td>+10</td></tr>
-        <tr><td>fAVOURITE (bOUTIQUE)</td><td>boutique.html</td><td>+10</td></tr>
-        <tr><td>sHARE (aRT)</td><td>art.html</td><td>+30</td></tr>
-        <tr><td>sHARE (bOUTIQUE)</td><td>boutique.html</td><td>+30</td></tr>
-        <tr><td>aRT uPLOAD</td><td>add.html</td><td>+50</td></tr>
-        <tr><td>mODERATION rEPORT</td><td>report.html</td><td>+50</td></tr>
-        <tr><td>aRTICLE pUBLISH</td><td>articles.html</td><td>+150</td></tr>
-        <tr><td>π uNLOCK</td><td>pi.html</td><td>+314</td></tr>
+        <tr><th>Event</th><th>Source</th><th>XP</th></tr>
+        <tr><td>Daily login</td><td>home.html</td><td>+25</td></tr>
+        <tr><td>Favourite (art)</td><td>art.html</td><td>+10</td></tr>
+        <tr><td>Favourite (boutique)</td><td>boutique.html</td><td>+10</td></tr>
+        <tr><td>Share (art)</td><td>art.html</td><td>+30</td></tr>
+        <tr><td>Share (boutique)</td><td>boutique.html</td><td>+30</td></tr>
+        <tr><td>Art upload</td><td>add.html</td><td>+50</td></tr>
+        <tr><td>Moderation report</td><td>report.html</td><td>+50</td></tr>
+        <tr><td>Article publish</td><td>articles.html</td><td>+150</td></tr>
+        <tr><td>Pi unlock</td><td>pi.html</td><td>+314</td></tr>
       </table>
       <p class="xp-note">Each event calls localStorage arts_points += N, then pushes {label, pts} to sessionStorage arts_xp_pending</p>
     </div>
@@ -448,7 +448,7 @@
       <div class="panel-title">lOCALsTORAGE kEYS</div>
       <p>All client-side XP-related storage keys.</p>
       <table class="xp-table">
-        <tr><th>kEY</th><th>tYPE</th><th>pURPOSE</th></tr>
+        <tr><th>Key</th><th>Type</th><th>Purpose</th></tr>
         <tr><td><span class="xp-key-tag">arts_points</span></td><td>localStorage</td><td>Total accumulated XP</td></tr>
         <tr><td><span class="xp-key-tag">arts_xp_pending</span></td><td>sessionStorage</td><td>Toast queue (JSON array)</td></tr>
         <tr><td><span class="xp-key-tag">arts_xp_daily</span></td><td>localStorage</td><td>Date of last daily login bonus</td></tr>
@@ -461,7 +461,7 @@
       <div class="panel-title">tOAST sYSTEM</div>
       <p>XP award notifications rendered on iD page load.</p>
       <table class="xp-table">
-        <tr><th>pROPERTY</th><th>vALUE</th></tr>
+        <tr><th>Property</th><th>Value</th></tr>
         <tr><td>Position</td><td>fixed · top-right (28px, 24px)</td></tr>
         <tr><td>Background</td><td>#FF5C00 (accent orange)</td></tr>
         <tr><td>Duration</td><td>2s visible · 0.35s slide-in/out</td></tr>
@@ -477,19 +477,19 @@
       <div class="panel-title">qUICK tEST · xP</div>
       <p>Award test XP to current browser session. Opens iD page to see toast.</p>
       <select id="sel-xp-event">
-        <option value="25|dAILY lOGIN">+25 · dAILY lOGIN</option>
-        <option value="10|fAVOURITE">+10 · fAVOURITE</option>
-        <option value="30|sHARE">+30 · sHARE</option>
-        <option value="50|aRT uPLOAD">+50 · aRT uPLOAD</option>
-        <option value="50|mODERATION">+50 · mODERATION</option>
-        <option value="150|aRTICLE">+150 · aRTICLE</option>
-        <option value="314|π uNLOCK">+314 · π uNLOCK</option>
+        <option value="25|Daily login">+25 · Daily login</option>
+        <option value="10|Favourite">+10 · Favourite</option>
+        <option value="30|Share">+30 · Share</option>
+        <option value="50|Art upload">+50 · Art upload</option>
+        <option value="50|Moderation">+50 · Moderation</option>
+        <option value="150|Article">+150 · Article</option>
+        <option value="314|Pi unlock">+314 · Pi unlock</option>
       </select>
-      <button class="run-btn" id="btn-xp-test">aWARD xP</button>
+      <button class="run-btn" id="btn-xp-test">AWARD XP</button>
       <div class="status" id="st-xp-test"></div>
       <div style="margin-top:0.75rem;">
-        <button class="run-btn" id="btn-xp-reset" style="background:transparent;border:1px solid var(--border);font-size:0.65rem;">rESET aLL xP</button>
-        <button class="run-btn" id="btn-xp-view" style="background:transparent;border:1px solid var(--border);font-size:0.65rem;margin-left:0.5rem;">vIEW cURRENT</button>
+        <button class="run-btn" id="btn-xp-reset" style="background:transparent;border:1px solid var(--border);font-size:0.65rem;">RESET ALL XP</button>
+        <button class="run-btn" id="btn-xp-view" style="background:transparent;border:1px solid var(--border);font-size:0.65rem;margin-left:0.5rem;">VIEW CURRENT</button>
       </div>
       <div class="result-box" id="res-xp-test"></div>
     </div>
@@ -628,13 +628,13 @@
       var email  = document.getElementById('bot-email').value.trim();
       var apiKey = document.getElementById('bot-apikey').value.trim();
 
-      if (!alias) { st.textContent = '— aLIAS rEQUIRED'; st.className = 'status err'; return; }
-      if (!apiKey) { st.textContent = '— aPi kEY rEQUIRED'; st.className = 'status err'; return; }
-      if (!/^sk-ant-/.test(apiKey)) { st.textContent = '— iNVALID kEY fORMAT (must start with sk-ant-)'; st.className = 'status err'; return; }
+      if (!alias) { st.textContent = '— Alias required'; st.className = 'status err'; return; }
+      if (!apiKey) { st.textContent = '— API key required'; st.className = 'status err'; return; }
+      if (!/^sk-ant-/.test(apiKey)) { st.textContent = '— Invalid key format (must start with sk-ant-)'; st.className = 'status err'; return; }
 
       var testers = getTesters();
       var dup = testers.some(function(t) { return t.apiKey === apiKey; });
-      if (dup) { st.textContent = '— kEY aLREADY rEGISTERED'; st.className = 'status err'; return; }
+      if (dup) { st.textContent = '— Key already registered'; st.className = 'status err'; return; }
 
       testers.push({
         id: 'bot_' + Date.now(),
@@ -652,7 +652,7 @@
       document.getElementById('bot-alias').value = '';
       document.getElementById('bot-email').value = '';
       document.getElementById('bot-apikey').value = '';
-      st.textContent = '— ✓ bOT tESTER rEGISTERED';
+      st.textContent = '— ✓ Bot tester registered';
       st.className = 'status ok';
     });
 
@@ -722,10 +722,10 @@
       box.innerHTML = syntaxHighlight(data);
       box.classList.add('visible');
       if (ok) {
-        st.textContent = '— ✓ rESPONSE rECEIVED';
+        st.textContent = '— ✓ Response received';
         st.className   = 'status ok';
       } else {
-        st.textContent = '— ✗ eRROR';
+        st.textContent = '— ✗ Error';
         st.className   = 'status err';
       }
     }
@@ -733,7 +733,7 @@
     function setBusy(stId, btnId) {
       var st  = document.getElementById(stId);
       var btn = document.getElementById(btnId);
-      st.textContent = '— rUNNING…';
+      st.textContent = '— Running…';
       st.className   = 'status busy';
       btn.disabled   = true;
     }
@@ -775,7 +775,7 @@
       if (!user) return;
       setBusy('st-recommend', 'btn-recommend');
       /* Pass only available listings for scoring */
-      var available = pieces.filter(function(p){ return p.status !== 'sOLD'; });
+      var available = pieces.filter(function(p){ return p.status !== 'SOLD'; });
       postProxy('/api/algorithm/recommend', {
         user:     user,
         listings: available,
@@ -845,21 +845,21 @@
       sessionStorage.removeItem('arts_xp_pending');
       sessionStorage.removeItem('arts_xp_prev');
       var st = document.getElementById('st-xp-test');
-      st.textContent = '— ✓ aLL xP dATA cLEARED';
+      st.textContent = '— ✓ All XP data cleared';
       st.className = 'status ok';
       document.getElementById('res-xp-test').classList.remove('visible');
     });
 
     document.getElementById('btn-xp-view').addEventListener('click', function() {
       var MILESTONES = [
-        { name: 'nOVICE', min: 0 },
-        { name: 'PaTRON', min: 100 },
-        { name: 'cOLLECTOR', min: 500 },
-        { name: 'aRCHIVIST', min: 1000 },
-        { name: 'mAESTRO', min: 2500 }
+        { name: 'Novice', min: 0 },
+        { name: 'Patron', min: 100 },
+        { name: 'Collector', min: 500 },
+        { name: 'Archivist', min: 1000 },
+        { name: 'Maestro', min: 2500 }
       ];
       var pts = parseInt(localStorage.getItem('arts_points') || '0', 10);
-      var tier = 'nOVICE';
+      var tier = 'Novice';
       for (var i = MILESTONES.length - 1; i >= 0; i--) {
         if (pts >= MILESTONES[i].min) { tier = MILESTONES[i].name; break; }
       }

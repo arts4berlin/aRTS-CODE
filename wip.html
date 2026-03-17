@@ -41,30 +41,12 @@
       justify-content: center;
     }
 
-    /* ── Label row: W.I.P. ── */
-    .label-row {
-      display: flex;
-      gap: clamp(0.6rem, 2vw, 1.2rem);
-      align-items: baseline;
-      margin-bottom: clamp(2rem, 5vh, 4rem);
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.1s forwards;
-    }
-
-    .label {
-      font-size: clamp(1.1rem, 3vw, 2rem);
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      color: #fff;
-    }
-
-    /* ── Bear grin ── */
+    /* ── Bear ── */
     .bear-wrap {
-      width: clamp(180px, 46vw, 420px);
+      width: clamp(140px, 36vw, 300px);
       opacity: 0;
-      animation: fadeUp 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s forwards;
+      animation: fadeUp 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
     }
-
     .bear-wrap img {
       width: 100%;
       height: auto;
@@ -72,56 +54,96 @@
       display: block;
     }
 
-    /* ── Hint ── */
-    .hint {
-      margin-top: clamp(1rem, 2.5vh, 2rem);
-      font-size: clamp(0.65rem, 1.5vw, 0.82rem);
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.28);
+    /* ── Text block ── */
+    .wip-text {
+      margin-top: clamp(24px, 4vh, 40px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(10px, 1.5vh, 16px);
       opacity: 0;
-      animation: fadeUp 0.6s ease 0.55s forwards;
+      animation: fadeUp 0.6s ease 0.45s forwards;
+    }
+    .wip-label {
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.32em;
+      color: rgba(255,255,255,0.28);
+      text-transform: uppercase;
+    }
+    .wip-title {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+    }
+    .wip-desc {
+      font-size: clamp(0.68rem, 1.4vw, 0.78rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.7;
+      max-width: 340px;
+    }
+
+    /* ── Progress dots ── */
+    .wip-dots {
+      display: flex;
+      gap: 6px;
+      margin-top: clamp(16px, 2.5vh, 28px);
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.7s forwards;
+    }
+    .wip-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+    }
+    .wip-dot.active {
+      background: #FF5C00;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
     }
 
     /* ── Back button ── */
     .btn-back {
-      margin-top: clamp(1.6rem, 3.5vh, 3rem);
+      margin-top: clamp(24px, 3.5vh, 40px);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: clamp(180px, 38vw, 300px);
-      height: clamp(48px, 8vh, 72px);
-      border: 2px solid #FF5C00;
-      border-radius: 4px;
+      padding: 0.7rem clamp(1.4rem, 4vw, 2.4rem);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 3px;
       background: transparent;
-      color: #fff;
+      color: rgba(255,255,255,0.55);
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.8rem, 2vw, 1rem);
-      font-weight: 700;
-      letter-spacing: 0.2em;
+      font-size: clamp(0.72rem, 1.6vw, 0.84rem);
+      font-weight: 300;
+      letter-spacing: 0.18em;
       text-decoration: none;
       cursor: pointer;
       touch-action: manipulation;
-      transition: background 0.18s, color 0.18s;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
       opacity: 0;
-      animation: fadeUp 0.6s ease 0.8s forwards;
+      animation: fadeUp 0.5s ease 0.9s forwards;
     }
-    .btn-back:hover { background: #FF5C00; color: #000; }
+    .btn-back:hover { border-color: #FF5C00; color: #fff; }
 
     @keyframes fadeUp {
       0%   { opacity: 0; transform: translateY(12px); }
       100% { opacity: 1; transform: translateY(0);    }
     }
 
-    /* ── dvh fix: excludes iOS Safari address bar ── */
     @supports (height: 100dvh) {
       body { height: 100dvh; }
     }
-    /* ── Mobile: safe area + text-size ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     .btn, button, a { touch-action: manipulation; }
-  
-    /* ── Global: no text selection; no double-tap zoom (pinch zoom kept) ── */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select, [contenteditable] { -webkit-user-select: text; user-select: text; }
     html { touch-action: manipulation; }
@@ -129,26 +151,33 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .label { color: #000; }
-    [data-theme="day"] .hint { color: rgba(0,0,0,0.48); }
-    [data-theme="day"] .btn-back { color: #000; }
-    [data-theme="day"] .btn-back:hover { background: #FF5C00; color: #fff; }
+    [data-theme="day"] .wip-label { color: rgba(0,0,0,0.38); }
+    [data-theme="day"] .wip-desc { color: rgba(0,0,0,0.50); }
+    [data-theme="day"] .wip-dot { background: rgba(0,0,0,0.14); }
+    [data-theme="day"] .btn-back { color: rgba(0,0,0,0.55); border-color: rgba(0,0,0,0.14); }
+    [data-theme="day"] .btn-back:hover { border-color: #FF5C00; color: #000; }
     [data-theme="day"] .bear-wrap img { filter: brightness(0); }
-</style>
+  </style>
 </head>
 <body>
-
-  <div class="label-row">
-    <span class="label">W.</span>
-    <span class="label">I.</span>
-    <span class="label">P.</span>
-  </div>
 
   <div class="bear-wrap">
     <img src="assets/bear.png" alt="">
   </div>
 
-  <p class="hint">... cOMING SOON ...</p>
+  <div class="wip-text">
+    <p class="wip-label">wORK iN pROGRESS</p>
+    <h1 class="wip-title">bUILDING tHIS.</h1>
+    <p class="wip-desc">This part of aRTS isn't ready yet. We'd rather ship it right than ship it fast.</p>
+  </div>
+
+  <div class="wip-dots">
+    <span class="wip-dot active"></span>
+    <span class="wip-dot"></span>
+    <span class="wip-dot"></span>
+    <span class="wip-dot"></span>
+    <span class="wip-dot"></span>
+  </div>
 
   <a href="home.html" class="btn-back">gO bACK</a>
 

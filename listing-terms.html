@@ -127,7 +127,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -197,7 +197,7 @@
       <p>Questions about these terms can be directed through the <a href="inquire.html" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">TaLK</a> page.</p>
 
       <div class="legal-divider"></div>
-      <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>
+      <a href="about.html" class="legal-back">&larr; Back to about</a>
     </div>
   </main>
 
@@ -251,21 +251,7 @@
       });
     }
     document.querySelectorAll('nav a').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

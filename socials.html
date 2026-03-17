@@ -23,7 +23,7 @@
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('tail.html');
+      window.location.replace('captcha.html');
     }
   </script>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -43,7 +43,7 @@
       justify-content: center;
     }
 
-    .logo {
+    .site-logo {
       position: fixed;
       top: 28px;
       left: 32px;
@@ -134,12 +134,12 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .logo { color: #000; }
+    [data-theme="day"] .site-logo { color: #000; }
     [data-theme="day"] .nav-about { color: #000; }
 </style>
 </head>
 <body>
-  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+  <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div id="qr"></div>
@@ -162,7 +162,7 @@
       height: 300,
       type: 'svg',
       data: 'https://www.instagram.com/rts.berlin/',
-      image: 'assets/bear.png',
+      image: 'assets/logo.svg',
       dotsOptions:          { color: _dotColor, type: 'dots' },
       backgroundOptions:    { color: _bgColor },
       cornersSquareOptions: { color: _dotColor, type: 'extra-rounded' },
@@ -261,21 +261,7 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

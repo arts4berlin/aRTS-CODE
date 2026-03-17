@@ -57,7 +57,6 @@
     if(token) headers['Authorization'] = 'Bearer ' + token;
 
     _incRate();
-
     return Promise.race([
       fetch(HF_API_BASE + model, {
         method: 'POST',
@@ -69,11 +68,10 @@
       })
     ]).then(function(res){
       if(res.status === 503){
-        /* Model loading — retry once after delay */
-        var est = 20000;
-        try { est = Math.min(res.json().estimated_time * 1000 || 20000, 60000); } catch(e){}
-        return new Promise(function(resolve){
-          setTimeout(resolve, est);
+        /* Model loading — parse estimated_time then retry once */
+        return res.json().catch(function(){ return {}; }).then(function(body){
+          var est = Math.min(((body && body.estimated_time) || 20) * 1000, 60000);
+          return new Promise(function(resolve){ setTimeout(resolve, est); });
         }).then(function(){
           return fetch(HF_API_BASE + model, {
             method: 'POST',
@@ -102,8 +100,6 @@
     var headers = {};
     if(token) headers['Authorization'] = 'Bearer ' + token;
 
-    _incRate();
-
     /* imageData can be a Blob or base64 data URL */
     var blobPromise;
     if(imageData instanceof Blob){
@@ -114,6 +110,7 @@
       return Promise.reject(new Error('Invalid image data'));
     }
 
+    _incRate();
     return blobPromise.then(function(blob){
       return Promise.race([
         fetch(HF_API_BASE + model, {

@@ -1,170 +1,1515 @@
 [
   {
-    "id": "mock_u001",
-    "alias": "vERONICA k",
+    "id": "bot_gal_001",
+    "alias": "nIKLAS d",
     "tier": "CURaTOR",
-    "since": "2024-03-01",
-    "points": 3840,
+    "role": "gallery",
+    "since": "2023-12-06",
+    "points": 7207,
+    "active": true,
+    "location": "hAMBURG, gERMANY",
+    "interests": [
+      "photography",
+      "video",
+      "digital",
+      "installation",
+      "contemporary"
+    ],
+    "budget_range": [
+      20000,
+      200000
+    ],
+    "favourites": [],
+    "transactions": 16,
+    "visit_count": 47
+  },
+  {
+    "id": "bot_gal_002",
+    "alias": "oLGA i",
+    "tier": "CURaTOR",
+    "role": "gallery",
+    "since": "2024-12-08",
+    "points": 6375,
+    "active": true,
+    "location": "sTUTTGART, gERMANY",
+    "interests": [
+      "painting",
+      "sculpture",
+      "large-format",
+      "museum-quality",
+      "investment"
+    ],
+    "budget_range": [
+      15000,
+      500000
+    ],
+    "favourites": [],
+    "transactions": 10,
+    "visit_count": 61
+  },
+  {
+    "id": "bot_deal_003",
+    "alias": "lENA u",
+    "tier": "CURaTOR",
+    "role": "dealer",
+    "since": "2023-11-27",
+    "points": 7608,
+    "active": false,
+    "location": "sTUTTGART, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "digital",
+      "affordable"
+    ],
+    "budget_range": [
+      15000,
+      500000
+    ],
+    "favourites": [],
+    "transactions": 29,
+    "visit_count": 101
+  },
+  {
+    "id": "bot_deal_004",
+    "alias": "aMARA b",
+    "tier": "CURaTOR",
+    "role": "dealer",
+    "since": "2023-03-07",
+    "points": 4193,
+    "active": true,
+    "location": "nÜRNBERG, gERMANY",
+    "interests": [
+      "sculpture",
+      "bronze",
+      "steel",
+      "ceramic"
+    ],
+    "budget_range": [
+      20000,
+      200000
+    ],
+    "favourites": [],
+    "transactions": 23,
+    "visit_count": 114
+  },
+  {
+    "id": "bot_deal_005",
+    "alias": "jONAS g",
+    "tier": "CURaTOR",
+    "role": "dealer",
+    "since": "2024-03-05",
+    "points": 7266,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "sculpture",
+      "bronze",
+      "steel",
+      "ceramic"
+    ],
+    "budget_range": [
+      20000,
+      200000
+    ],
+    "favourites": [],
+    "transactions": 13,
+    "visit_count": 19
+  },
+  {
+    "id": "bot_deal_006",
+    "alias": "gRETA r",
+    "tier": "BRIGaDIER",
+    "role": "dealer",
+    "since": "2023-12-08",
+    "points": 1217,
+    "active": true,
+    "location": "kÖLN, gERMANY",
+    "interests": [
+      "sculpture",
+      "bronze",
+      "steel",
+      "ceramic"
+    ],
+    "budget_range": [
+      1000,
+      25000
+    ],
+    "favourites": [],
+    "transactions": 9,
+    "visit_count": 67
+  },
+  {
+    "id": "bot_deal_007",
+    "alias": "aLI y",
+    "tier": "BRIGaDIER",
+    "role": "dealer",
+    "since": "2024-10-14",
+    "points": 727,
     "active": true,
     "location": "bERLIN, gERMANY",
-    "interests": ["painting", "large-format", "germany", "museum-quality"],
-    "budget_range": [10000, 100000],
-    "favourites": ["000", "006", "013", "016"],
-    "transactions": 6,
-    "visit_count": 42
+    "interests": [
+      "painting",
+      "mixed-media",
+      "works-on-paper",
+      "edition"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 24,
+    "visit_count": 10
   },
   {
-    "id": "mock_u002",
-    "alias": "dAVID m",
+    "id": "bot_deal_008",
+    "alias": "fRIEDA t",
     "tier": "BRIGaDIER",
-    "since": "2024-06-15",
-    "points": 780,
+    "role": "dealer",
+    "since": "2024-10-24",
+    "points": 423,
     "active": true,
-    "location": "lONDON, uK",
-    "interests": ["sculpture", "print", "edition", "uk"],
-    "budget_range": [500, 8000],
-    "favourites": ["008", "007", "020"],
-    "transactions": 2,
-    "visit_count": 18
+    "location": "hAMBURG, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "digital",
+      "affordable"
+    ],
+    "budget_range": [
+      800,
+      12000
+    ],
+    "favourites": [],
+    "transactions": 8,
+    "visit_count": 89
   },
   {
-    "id": "mock_u003",
-    "alias": "sUZI o",
-    "tier": "aLLY",
-    "since": "2024-09-22",
-    "points": 150,
+    "id": "bot_ind_009",
+    "alias": "jULIA y",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2024-02-06",
+    "points": 1001,
     "active": true,
-    "location": "pARIS, fRANCE",
-    "interests": ["photography", "works-on-paper", "affordable"],
-    "budget_range": [200, 3000],
-    "favourites": ["011", "015", "020"],
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      2000,
+      20000
+    ],
+    "favourites": [],
+    "transactions": 8,
+    "visit_count": 2
+  },
+  {
+    "id": "bot_ind_010",
+    "alias": "sABINE x",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2023-04-28",
+    "points": 1439,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 5,
+    "visit_count": 109
+  },
+  {
+    "id": "bot_ind_011",
+    "alias": "uDO t",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2024-06-25",
+    "points": 730,
+    "active": false,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "sculpture",
+      "small-format",
+      "craft"
+    ],
+    "budget_range": [
+      800,
+      12000
+    ],
+    "favourites": [],
+    "transactions": 9,
+    "visit_count": 119
+  },
+  {
+    "id": "bot_ind_012",
+    "alias": "mEI k",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2023-10-08",
+    "points": 1143,
+    "active": true,
+    "location": "kÖLN, gERMANY",
+    "interests": [
+      "painting",
+      "affordable",
+      "works-on-paper"
+    ],
+    "budget_range": [
+      2000,
+      20000
+    ],
+    "favourites": [],
     "transactions": 1,
+    "visit_count": 32
+  },
+  {
+    "id": "bot_ind_013",
+    "alias": "eMILIA c",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2023-05-05",
+    "points": 1490,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "digital",
+      "generative",
+      "affordable"
+    ],
+    "budget_range": [
+      2000,
+      20000
+    ],
+    "favourites": [],
+    "transactions": 8,
+    "visit_count": 72
+  },
+  {
+    "id": "bot_ind_014",
+    "alias": "mILA q",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2024-06-25",
+    "points": 833,
+    "active": true,
+    "location": "bREMEN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      1000,
+      25000
+    ],
+    "favourites": [],
+    "transactions": 4,
+    "visit_count": 93
+  },
+  {
+    "id": "bot_ind_015",
+    "alias": "sERGIO v",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2024-03-04",
+    "points": 1459,
+    "active": false,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      1000,
+      25000
+    ],
+    "favourites": [],
+    "transactions": 4,
+    "visit_count": 30
+  },
+  {
+    "id": "bot_ind_016",
+    "alias": "oSCAR a",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2023-01-03",
+    "points": 851,
+    "active": false,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 1,
+    "visit_count": 31
+  },
+  {
+    "id": "bot_ind_017",
+    "alias": "eMIL b",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2023-08-09",
+    "points": 1452,
+    "active": true,
+    "location": "bREMEN, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      2000,
+      20000
+    ],
+    "favourites": [],
+    "transactions": 8,
+    "visit_count": 29
+  },
+  {
+    "id": "bot_ind_018",
+    "alias": "oMAR x",
+    "tier": "BRIGaDIER",
+    "role": "individual",
+    "since": "2024-04-26",
+    "points": 897,
+    "active": false,
+    "location": "pOTSDAM, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      1000,
+      25000
+    ],
+    "favourites": [],
+    "transactions": 7,
+    "visit_count": 26
+  },
+  {
+    "id": "bot_ind_019",
+    "alias": "lEILA v",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2024-03-28",
+    "points": 260,
+    "active": true,
+    "location": "hAMBURG, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      400,
+      6000
+    ],
+    "favourites": [],
+    "transactions": 1,
+    "visit_count": 88
+  },
+  {
+    "id": "bot_ind_020",
+    "alias": "pETRA u",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-04-08",
+    "points": 223,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "painting",
+      "affordable",
+      "works-on-paper"
+    ],
+    "budget_range": [
+      400,
+      6000
+    ],
+    "favourites": [],
+    "transactions": 4,
+    "visit_count": 26
+  },
+  {
+    "id": "bot_ind_021",
+    "alias": "mARIE e",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-08-28",
+    "points": 286,
+    "active": true,
+    "location": "hAMBURG, gERMANY",
+    "interests": [
+      "sculpture",
+      "small-format",
+      "craft"
+    ],
+    "budget_range": [
+      100,
+      3000
+    ],
+    "favourites": [],
+    "transactions": 2,
+    "visit_count": 58
+  },
+  {
+    "id": "bot_ind_022",
+    "alias": "eLIAS r",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-08-06",
+    "points": 97,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "painting",
+      "affordable",
+      "works-on-paper"
+    ],
+    "budget_range": [
+      200,
+      5000
+    ],
+    "favourites": [],
+    "transactions": 7,
+    "visit_count": 64
+  },
+  {
+    "id": "bot_ind_023",
+    "alias": "fINN m",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-01-13",
+    "points": 244,
+    "active": true,
+    "location": "eSSEN, gERMANY",
+    "interests": [
+      "painting",
+      "affordable",
+      "works-on-paper"
+    ],
+    "budget_range": [
+      500,
+      8000
+    ],
+    "favourites": [],
+    "transactions": 5,
+    "visit_count": 120
+  },
+  {
+    "id": "bot_ind_024",
+    "alias": "lEON o",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-07-10",
+    "points": 129,
+    "active": true,
+    "location": "mÜNCHEN, gERMANY",
+    "interests": [
+      "digital",
+      "generative",
+      "affordable"
+    ],
+    "budget_range": [
+      400,
+      6000
+    ],
+    "favourites": [],
+    "transactions": 4,
     "visit_count": 9
   },
   {
-    "id": "mock_u004",
-    "alias": "tAKESHI r",
-    "tier": "CURaTOR",
-    "since": "2023-11-04",
-    "points": 5200,
-    "active": true,
-    "location": "tOKYO, jAPAN",
-    "interests": ["video", "digital", "japan", "installation"],
-    "budget_range": [2000, 50000],
-    "favourites": ["004", "009", "019"],
-    "transactions": 9,
-    "visit_count": 87
-  },
-  {
-    "id": "mock_u005",
-    "alias": "eLSA v",
-    "tier": "aUDIENCE",
-    "since": "2025-01-10",
-    "points": 50,
-    "active": true,
-    "location": "sTOCKHOLM, sWEDEN",
-    "interests": ["nordic", "ceramic", "craft", "affordable"],
-    "budget_range": [100, 1200],
-    "favourites": ["014", "020"],
-    "transactions": 0,
-    "visit_count": 4
-  },
-  {
-    "id": "mock_u006",
-    "alias": "mARCO b",
-    "tier": "BRIGaDIER",
-    "since": "2024-04-18",
-    "points": 620,
-    "active": true,
-    "location": "mILAN, iTALY",
-    "interests": ["painting", "mixed-media", "italy", "large-format"],
-    "budget_range": [3000, 20000],
-    "favourites": ["003", "013", "016"],
-    "transactions": 3,
-    "visit_count": 27
-  },
-  {
-    "id": "mock_u007",
-    "alias": "hELENA z",
-    "tier": "CURaTOR",
-    "since": "2023-07-30",
-    "points": 4100,
-    "active": true,
-    "location": "vIENNA, aUSTRIA",
-    "interests": ["sculpture", "bronze", "abstract", "museum-quality"],
-    "budget_range": [5000, 80000],
-    "favourites": ["000", "008", "018", "006"],
-    "transactions": 7,
-    "visit_count": 63
-  },
-  {
-    "id": "mock_u008",
-    "alias": "sAMUEL k",
+    "id": "bot_ind_025",
+    "alias": "eLENA r",
     "tier": "aLLY",
-    "since": "2024-12-01",
-    "points": 100,
+    "role": "individual",
+    "since": "2024-07-16",
+    "points": 75,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      200,
+      5000
+    ],
+    "favourites": [],
+    "transactions": 9,
+    "visit_count": 119
+  },
+  {
+    "id": "bot_ind_026",
+    "alias": "iNGRID f",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-03-20",
+    "points": 145,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      200,
+      5000
+    ],
+    "favourites": [],
+    "transactions": 2,
+    "visit_count": 88
+  },
+  {
+    "id": "bot_ind_027",
+    "alias": "uRSULA m",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2024-08-02",
+    "points": 346,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      500,
+      8000
+    ],
+    "favourites": [],
+    "transactions": 10,
+    "visit_count": 12
+  },
+  {
+    "id": "bot_ind_028",
+    "alias": "zARA s",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-07-22",
+    "points": 183,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      100,
+      3000
+    ],
+    "favourites": [],
+    "transactions": 6,
+    "visit_count": 32
+  },
+  {
+    "id": "bot_ind_029",
+    "alias": "cARMEN e",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-03-01",
+    "points": 211,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      400,
+      6000
+    ],
+    "favourites": [],
+    "transactions": 8,
+    "visit_count": 81
+  },
+  {
+    "id": "bot_ind_030",
+    "alias": "nORA d",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-09-05",
+    "points": 309,
     "active": false,
-    "location": "nAIROBI, kENYA",
-    "interests": ["photography", "africa", "diaspora", "print"],
-    "budget_range": [400, 5000],
-    "favourites": ["011"],
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      500,
+      8000
+    ],
+    "favourites": [],
+    "transactions": 6,
+    "visit_count": 114
+  },
+  {
+    "id": "bot_ind_031",
+    "alias": "yUKI h",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2024-06-23",
+    "points": 274,
+    "active": true,
+    "location": "mÜNCHEN, gERMANY",
+    "interests": [
+      "photography",
+      "print",
+      "edition"
+    ],
+    "budget_range": [
+      500,
+      8000
+    ],
+    "favourites": [],
+    "transactions": 5,
+    "visit_count": 80
+  },
+  {
+    "id": "bot_ind_032",
+    "alias": "wOLFGANG z",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2024-06-10",
+    "points": 391,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "mixed-media",
+      "textural",
+      "abstract"
+    ],
+    "budget_range": [
+      200,
+      5000
+    ],
+    "favourites": [],
+    "transactions": 2,
+    "visit_count": 114
+  },
+  {
+    "id": "bot_ind_033",
+    "alias": "pAUL d",
+    "tier": "aLLY",
+    "role": "individual",
+    "since": "2023-10-20",
+    "points": 189,
+    "active": true,
+    "location": "bREMEN, gERMANY",
+    "interests": [
+      "painting",
+      "affordable",
+      "works-on-paper"
+    ],
+    "budget_range": [
+      500,
+      8000
+    ],
+    "favourites": [],
+    "transactions": 4,
+    "visit_count": 93
+  },
+  {
+    "id": "bot_buy_034",
+    "alias": "hANS v",
+    "tier": "CURaTOR",
+    "role": "buyer",
+    "since": "2023-02-03",
+    "points": 4057,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "contemporary",
+      "minimalist",
+      "abstract"
+    ],
+    "budget_range": [
+      20000,
+      200000
+    ],
+    "favourites": [],
+    "transactions": 11,
+    "visit_count": 56
+  },
+  {
+    "id": "bot_buy_035",
+    "alias": "jAKOB b",
+    "tier": "CURaTOR",
+    "role": "buyer",
+    "since": "2023-09-06",
+    "points": 7219,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "contemporary",
+      "minimalist",
+      "abstract"
+    ],
+    "budget_range": [
+      15000,
+      500000
+    ],
+    "favourites": [],
+    "transactions": 12,
+    "visit_count": 58
+  },
+  {
+    "id": "bot_buy_036",
+    "alias": "dIETER n",
+    "tier": "CURaTOR",
+    "role": "buyer",
+    "since": "2024-11-05",
+    "points": 2616,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "painting",
+      "sculpture",
+      "investment"
+    ],
+    "budget_range": [
+      10000,
+      100000
+    ],
+    "favourites": [],
+    "transactions": 9,
+    "visit_count": 6
+  },
+  {
+    "id": "bot_buy_037",
+    "alias": "cLARA s",
+    "tier": "CURaTOR",
+    "role": "buyer",
+    "since": "2023-02-10",
+    "points": 3044,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "photography",
+      "affordable",
+      "edition"
+    ],
+    "budget_range": [
+      20000,
+      200000
+    ],
+    "favourites": [],
+    "transactions": 6,
+    "visit_count": 117
+  },
+  {
+    "id": "bot_buy_038",
+    "alias": "aNNA b",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2024-10-04",
+    "points": 911,
+    "active": true,
+    "location": "eSSEN, gERMANY",
+    "interests": [
+      "contemporary",
+      "minimalist",
+      "abstract"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 6,
+    "visit_count": 101
+  },
+  {
+    "id": "bot_buy_039",
+    "alias": "pIERRE n",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2023-06-14",
+    "points": 732,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "photography",
+      "affordable",
+      "edition"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 1,
+    "visit_count": 24
+  },
+  {
+    "id": "bot_buy_040",
+    "alias": "mARCO k",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2023-06-26",
+    "points": 946,
+    "active": true,
+    "location": "dRESDEN, gERMANY",
+    "interests": [
+      "large-format",
+      "museum-quality"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 12,
+    "visit_count": 15
+  },
+  {
+    "id": "bot_buy_041",
+    "alias": "cAMILLE b",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2024-03-12",
+    "points": 808,
+    "active": true,
+    "location": "hANNOVER, gERMANY",
+    "interests": [
+      "large-format",
+      "museum-quality"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 5,
+    "visit_count": 107
+  },
+  {
+    "id": "bot_buy_042",
+    "alias": "bRIGITTE h",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2023-11-09",
+    "points": 1216,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "painting",
+      "sculpture",
+      "investment"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 14,
+    "visit_count": 10
+  },
+  {
+    "id": "bot_buy_043",
+    "alias": "iDA i",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2023-04-09",
+    "points": 456,
+    "active": true,
+    "location": "mÜNCHEN, gERMANY",
+    "interests": [
+      "large-format",
+      "museum-quality"
+    ],
+    "budget_range": [
+      800,
+      12000
+    ],
+    "favourites": [],
+    "transactions": 3,
+    "visit_count": 76
+  },
+  {
+    "id": "bot_buy_044",
+    "alias": "sILKE i",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2024-12-26",
+    "points": 1107,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "painting",
+      "sculpture",
+      "investment"
+    ],
+    "budget_range": [
+      1000,
+      25000
+    ],
+    "favourites": [],
+    "transactions": 6,
+    "visit_count": 57
+  },
+  {
+    "id": "bot_buy_045",
+    "alias": "cHEN q",
+    "tier": "BRIGaDIER",
+    "role": "buyer",
+    "since": "2023-02-23",
+    "points": 921,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "large-format",
+      "museum-quality"
+    ],
+    "budget_range": [
+      3000,
+      15000
+    ],
+    "favourites": [],
+    "transactions": 7,
+    "visit_count": 2
+  },
+  {
+    "id": "bot_browse_046",
+    "alias": "sOREN z",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2023-03-22",
+    "points": 270,
+    "active": true,
+    "location": "kÖLN, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      100,
+      3000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 119
+  },
+  {
+    "id": "bot_browse_047",
+    "alias": "hELENA k",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2023-10-22",
+    "points": 309,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "painting",
+      "affordable"
+    ],
+    "budget_range": [
+      100,
+      3000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 54
+  },
+  {
+    "id": "bot_browse_048",
+    "alias": "aNDREI w",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2024-10-13",
+    "points": 265,
+    "active": true,
+    "location": "mÜNCHEN, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      500,
+      8000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 88
+  },
+  {
+    "id": "bot_browse_049",
+    "alias": "kLAUS f",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2023-01-10",
+    "points": 330,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "photography",
+      "digital"
+    ],
+    "budget_range": [
+      400,
+      6000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 38
+  },
+  {
+    "id": "bot_browse_050",
+    "alias": "fATIMA z",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2024-03-22",
+    "points": 276,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "photography",
+      "digital"
+    ],
+    "budget_range": [
+      400,
+      6000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 29
+  },
+  {
+    "id": "bot_browse_051",
+    "alias": "aISHA z",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2024-05-22",
+    "points": 195,
+    "active": true,
+    "location": "eSSEN, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      200,
+      5000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 83
+  },
+  {
+    "id": "bot_browse_052",
+    "alias": "iNES c",
+    "tier": "aLLY",
+    "role": "browser",
+    "since": "2023-07-05",
+    "points": 165,
+    "active": false,
+    "location": "nÜRNBERG, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      100,
+      3000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 5
+  },
+  {
+    "id": "bot_browse_053",
+    "alias": "vALENTINA p",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2024-09-19",
+    "points": 53,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "painting",
+      "affordable"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 26
+  },
+  {
+    "id": "bot_browse_054",
+    "alias": "rALF m",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2024-09-23",
+    "points": 18,
+    "active": true,
+    "location": "kÖLN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "abstract"
+    ],
+    "budget_range": [
+      100,
+      1200
+    ],
+    "favourites": [],
     "transactions": 0,
     "visit_count": 2
   },
   {
-    "id": "mock_u009",
-    "alias": "cARMEN r",
-    "tier": "BRIGaDIER",
-    "since": "2024-02-14",
-    "points": 1100,
+    "id": "bot_browse_055",
+    "alias": "lUKAS y",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2023-06-26",
+    "points": 28,
     "active": true,
-    "location": "bARCELONA, sPAIN",
-    "interests": ["painting", "drawing", "works-on-paper", "minimalist"],
-    "budget_range": [800, 12000],
-    "favourites": ["001", "015", "012"],
-    "transactions": 4,
-    "visit_count": 31
+    "location": "bREMEN, gERMANY",
+    "interests": [
+      "painting",
+      "affordable"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 91
   },
   {
-    "id": "mock_u010",
-    "alias": "pETER w",
-    "tier": "CURaTOR",
-    "since": "2023-03-10",
-    "points": 7800,
+    "id": "bot_browse_056",
+    "alias": "sOPHIE b",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2023-05-26",
+    "points": 58,
     "active": true,
-    "location": "zURICH, sWITZERLAND",
-    "interests": ["painting", "large-format", "museum-quality", "investment"],
-    "budget_range": [15000, 500000],
-    "favourites": ["000", "006", "013", "016", "019"],
-    "transactions": 14,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      100,
+      1200
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 61
+  },
+  {
+    "id": "bot_browse_057",
+    "alias": "tHEO r",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2024-12-17",
+    "points": 78,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "photography",
+      "digital"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 56
+  },
+  {
+    "id": "bot_browse_058",
+    "alias": "dIEGO r",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2024-03-09",
+    "points": 60,
+    "active": true,
+    "location": "hAMBURG, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      200,
+      1500
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 98
+  },
+  {
+    "id": "bot_browse_059",
+    "alias": "fELIX u",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2023-09-15",
+    "points": 30,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "abstract"
+    ],
+    "budget_range": [
+      200,
+      1500
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 11
+  },
+  {
+    "id": "bot_browse_060",
+    "alias": "pRIYA h",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2023-03-05",
+    "points": 69,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "photography",
+      "digital"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 21
+  },
+  {
+    "id": "bot_browse_061",
+    "alias": "mONIKA w",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2024-02-11",
+    "points": 53,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "sculpture",
+      "craft"
+    ],
+    "budget_range": [
+      100,
+      1200
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 71
+  },
+  {
+    "id": "bot_browse_062",
+    "alias": "lARS b",
+    "tier": "aUDIENCE",
+    "role": "browser",
+    "since": "2024-07-23",
+    "points": 98,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "mixed-media",
+      "abstract"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 4
+  },
+  {
+    "id": "bot_new_063",
+    "alias": "kWAME y",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2023-12-10",
+    "points": 0,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "digital"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 98
+  },
+  {
+    "id": "bot_new_064",
+    "alias": "mORITZ n",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2023-09-14",
+    "points": 28,
+    "active": false,
+    "location": "kÖLN, gERMANY",
+    "interests": [
+      "photography"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 64
+  },
+  {
+    "id": "bot_new_065",
+    "alias": "dAVID k",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2024-03-05",
+    "points": 21,
+    "active": true,
+    "location": "dÜSSELDORF, gERMANY",
+    "interests": [
+      "digital"
+    ],
+    "budget_range": [
+      200,
+      1500
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 81
+  },
+  {
+    "id": "bot_new_066",
+    "alias": "cHARLOTTE m",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2024-02-05",
+    "points": 82,
+    "active": true,
+    "location": "fRANKFURT, gERMANY",
+    "interests": [
+      "painting"
+    ],
+    "budget_range": [
+      100,
+      1200
+    ],
+    "favourites": [],
+    "transactions": 0,
     "visit_count": 112
   },
   {
-    "id": "mock_u011",
-    "alias": "aYA f",
-    "tier": "aLLY",
-    "since": "2025-02-05",
-    "points": 100,
+    "id": "bot_new_067",
+    "alias": "kENJI b",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2024-03-11",
+    "points": 27,
     "active": true,
-    "location": "dUBAI, uAE",
-    "interests": ["generative", "digital", "edition", "asia"],
-    "budget_range": [500, 5000],
-    "favourites": ["007", "009", "017"],
-    "transactions": 1,
-    "visit_count": 7
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "digital"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 45
   },
   {
-    "id": "mock_u012",
-    "alias": "kLAUS h",
-    "tier": "BRIGaDIER",
-    "since": "2024-01-22",
-    "points": 950,
+    "id": "bot_new_068",
+    "alias": "rAJ m",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2024-04-01",
+    "points": 10,
     "active": true,
-    "location": "mUNICH, gERMANY",
-    "interests": ["sculpture", "steel", "industrial", "germany"],
-    "budget_range": [2000, 15000],
-    "favourites": ["010", "008", "018"],
-    "transactions": 3,
-    "visit_count": 22
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "digital"
+    ],
+    "budget_range": [
+      50,
+      2000
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 97
+  },
+  {
+    "id": "bot_new_069",
+    "alias": "mAXIMILIAN l",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2023-01-08",
+    "points": 5,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "painting"
+    ],
+    "budget_range": [
+      200,
+      1500
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 27
+  },
+  {
+    "id": "bot_new_070",
+    "alias": "kATHARINA t",
+    "tier": "aUDIENCE",
+    "role": "new_user",
+    "since": "2024-10-04",
+    "points": 60,
+    "active": true,
+    "location": "bERLIN, gERMANY",
+    "interests": [
+      "photography"
+    ],
+    "budget_range": [
+      100,
+      1200
+    ],
+    "favourites": [],
+    "transactions": 0,
+    "visit_count": 74
   }
 ]

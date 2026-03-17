@@ -265,7 +265,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -301,39 +301,39 @@
         <h1 class="form-title">hELP</h1>
 
         <p class="form-desc">
-          sOMETHING nOT wORKING? lET uS kNOW.<br>
-          wE'LL lOOK iNTO iT aND gET bACK tO yOU.
+          Something not working? Let us know.<br>
+          We'll look into it and get back to you.
         </p>
 
         <form id="report-form" novalidate>
-          <input type="hidden" name="_subject" value="[aRTS] — pROBLEM rEPORT">
+          <input type="hidden" name="_subject" value="[aRTS] — Problem report">
 
           <div class="field">
-            <label for="r-email">yOUR eMAIL</label>
+            <label for="r-email">Your email</label>
             <input type="email" id="r-email" name="email" placeholder="· · ·" autocomplete="email">
           </div>
 
           <div class="field">
-            <label for="r-category">cATEGORY</label>
+            <label for="r-category">Category</label>
             <select id="r-category" name="category">
-              <option value="">— sELECT —</option>
-              <option value="bUG">bUG</option>
-              <option value="aCCOUNT iSSUE">aCCOUNT iSSUE</option>
-              <option value="fEEDBACK">fEEDBACK</option>
-              <option value="oTHER">oTHER</option>
+              <option value="">— Select —</option>
+              <option value="bUG">Bug</option>
+              <option value="aCCOUNT iSSUE">Account issue</option>
+              <option value="fEEDBACK">Feedback</option>
+              <option value="oTHER">Other</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="r-msg">dESCRIBE tHE iSSUE</label>
+            <label for="r-msg">Describe the issue</label>
             <textarea id="r-msg" name="message" placeholder="What happened…"></textarea>
           </div>
 
           <p class="error-msg" id="err-msg"></p>
 
           <div class="submit-row">
-            <button type="submit" class="btn-send" id="btn-send">sEND rEPORT</button>
-            <a href="home.html" class="back-link">&larr; bACK</a>
+            <button type="submit" class="btn-send" id="btn-send">Send report</button>
+            <a href="home.html" class="back-link">&larr; Back</a>
           </div>
         </form>
       </div>
@@ -343,11 +343,11 @@
         <h1 class="form-title">rEPORT<br>sENT</h1>
         <div class="success-check">&#10003;</div>
         <p class="success-sub">
-          wE rECEIVED yOUR rEPORT<br>
-          wE'LL lOOK iNTO iT sOON
+          We received your report<br>
+          We'll look into it soon
         </p>
         <div class="divider-thin"></div>
-        <a href="home.html" class="back-link">&larr; bACK tO hOME</a>
+        <a href="home.html" class="back-link">&larr; Back to home</a>
       </div>
 
     </div>
@@ -374,13 +374,13 @@
       var msg   = document.getElementById('r-msg').value.trim();
 
       if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-        errEl.textContent = '— vALID eMAIL rEQUIRED'; return;
+        errEl.textContent = '— Valid email required'; return;
       }
-      if(!cat)   { errEl.textContent = '— sELECT a cATEGORY'; return; }
-      if(!msg)   { errEl.textContent = '— dESCRIBE tHE iSSUE'; return; }
+      if(!cat)   { errEl.textContent = '— Select a category'; return; }
+      if(!msg)   { errEl.textContent = '— Describe the issue'; return; }
 
       btn.disabled    = true;
-      btn.textContent = 'sENDING\u2026';
+      btn.textContent = 'Sending\u2026';
       form.style.opacity = '0.4';
       form.style.pointerEvents = 'none';
 
@@ -417,16 +417,16 @@
             });
           }, 240);
         } else {
-          errEl.textContent = '— sEND fAILED \u00b7 tRY aGAIN';
+          errEl.textContent = '— Send failed \u00b7 try again';
           btn.disabled    = false;
-          btn.textContent = 'sEND rEPORT';
+          btn.textContent = 'Send report';
           form.style.opacity = '1';
           form.style.pointerEvents = '';
         }
       } catch(err){
-        errEl.textContent = '— nETWORK eRROR \u00b7 cHECK cONNECTION';
+        errEl.textContent = '— Network error \u00b7 check connection';
         btn.disabled    = false;
-        btn.textContent = 'sEND rEPORT';
+        btn.textContent = 'Send report';
         form.style.opacity = '1';
         form.style.pointerEvents = '';
       }
@@ -447,12 +447,7 @@
       el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
     document.querySelectorAll('nav a').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner,timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
-      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     });
   })();
   </script>

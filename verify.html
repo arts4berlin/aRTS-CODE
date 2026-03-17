@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png">
@@ -17,158 +17,234 @@
   <script>
     document.documentElement.style.background = '#000';
     if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
+  </script>
+  <script>
     if (!localStorage.getItem('captcha_passed')) {
-      window.location.replace('captcha.html');
+      window.location.replace('index.html');
     }
   </script>
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ══════════════════════════════════════════
+       VERIFY — Funnel Step 2
+       ══════════════════════════════════════════ */
 
-    body {
-      background: #000;
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
-    }
-
-
-    /* ── Main ── */
     main {
-      padding-top: clamp(90px, 14vh, 120px);
-      padding-bottom: clamp(80px, 10vh, 130px);
+      padding-top: clamp(90px, 13vh, 130px);
+      padding-bottom: clamp(80px, 10vh, 140px);
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
     }
 
-    .form-col {
-      width: min(92vw, 640px);
+    .page-col {
+      width: min(92vw, 680px);
       display: flex;
       flex-direction: column;
     }
 
-    .section-label {
-      font-size: 0.68rem;
-      font-weight: 300;
-      letter-spacing: 0.28em;
-      color: rgba(255,255,255,0.2);
-      text-transform: uppercase;
-      margin-bottom: clamp(8px, 1.5vh, 14px);
-    }
-
-    .form-title {
-      font-size: clamp(2rem, 6vw, 3.4rem);
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      line-height: 1;
-      color: #fff;
-      margin-bottom: clamp(28px, 4.5vh, 48px);
-    }
-
-    .form-sub {
-      font-size: 0.78rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.4);
-      margin-top: -20px;
-      margin-bottom: clamp(28px, 4vh, 44px);
-      line-height: 1.6;
-    }
-
-    .divider {
+    /* ── Funnel step tracker ── */
+    .funnel-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: clamp(40px, 6vh, 60px);
       width: 100%;
+    }
+    .fs-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+    .fs-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--c-border-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.58rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.04em;
+      color: var(--c-text-tertiary);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .fs-label {
+      font-size: 0.52rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.2em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: color 0.3s ease;
+    }
+    .fs-line {
+      flex: 1;
       height: 1px;
-      background: rgba(255,255,255,0.07);
-      margin: clamp(28px, 4vh, 44px) 0;
+      background: var(--c-border);
+      margin: 0 clamp(10px, 2vw, 18px);
+      position: relative;
+    }
+    .fs-line::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0%;
+      background: var(--c-accent);
+      transition: width 0.6s var(--ease-out);
+    }
+    .fs-step.active .fs-num {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+      background: rgba(255, 92, 0, 0.08);
+    }
+    .fs-step.active .fs-label { color: var(--c-text-secondary); }
+    .fs-step.done .fs-num {
+      border-color: var(--c-accent);
+      background: var(--c-accent);
+      color: #fff;
+    }
+    .fs-step.done .fs-num::after { content: '\2713'; font-size: 0.62rem; }
+    .fs-step.done .fs-num span { display: none; }
+    .fs-step.done .fs-label { color: var(--c-text-tertiary); }
+    .fs-line.done::after { width: 100%; }
+
+    /* ── Hero ── */
+    .verify-hero {
+      margin-bottom: clamp(32px, 4.5vh, 48px);
+    }
+    .verify-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.5rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.36em;
+      color: var(--c-accent-muted);
+      text-transform: uppercase;
+      margin-bottom: clamp(8px, 1.2vh, 12px);
+    }
+    .verify-eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--c-accent);
+      animation: dotPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.65); }
+    }
+    .verify-title {
+      font-size: clamp(2.4rem, 8vw, 4rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      line-height: 0.92;
+      color: var(--c-text);
+    }
+    .verify-sub {
+      font-size: clamp(0.68rem, 1.6vw, 0.82rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.1em;
+      color: var(--c-text-secondary);
+      line-height: 1.7;
+      margin-top: clamp(10px, 1.6vh, 16px);
+      max-width: 480px;
     }
 
     /* ── Form fields ── */
     .field-group {
       display: flex;
       flex-direction: column;
-      gap: 0.45rem;
+      gap: 0.4rem;
       margin-bottom: clamp(18px, 2.8vh, 28px);
     }
-
     .field-group label {
-      font-size: 0.62rem;
-      font-weight: 300;
-      letter-spacing: 0.26em;
-      color: rgba(255,255,255,0.32);
+      font-size: 0.56rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.24em;
+      color: var(--c-text-ghost);
       text-transform: uppercase;
     }
-
     .field-group input,
     .field-group textarea {
       background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.12);
-      color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1rem, 2.6vw, 1.3rem);
-      font-weight: 700;
+      border-bottom: 1px solid var(--c-border);
+      color: var(--c-text);
+      font-family: var(--font);
+      font-size: clamp(0.92rem, 2.4vw, 1.15rem);
+      font-weight: var(--fw-bold);
       letter-spacing: 0.04em;
-      padding: 0.55rem 0;
+      padding: 0.5rem 0;
       outline: none;
       transition: border-color 0.18s;
       width: 100%;
     }
     .field-group input::placeholder,
     .field-group textarea::placeholder {
-      color: rgba(255,255,255,0.12);
-      font-weight: 300;
+      color: var(--c-text-ghost);
+      font-weight: var(--fw-light);
     }
     .field-group input:focus,
     .field-group textarea:focus {
-      border-bottom-color: rgba(255,255,255,0.45);
+      border-bottom-color: var(--c-border-strong);
     }
     .field-group textarea {
       resize: none;
       height: 80px;
-      font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+      font-size: clamp(0.85rem, 2vw, 1rem);
     }
 
-    /* ── Account type selector ── */
+    /* ── Type selector ── */
     .type-selector {
       display: flex;
       gap: 10px;
-      margin-bottom: clamp(24px, 3.5vh, 38px);
+      margin-bottom: clamp(28px, 4vh, 40px);
     }
-
     .type-btn {
       flex: 1;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 4px;
-      color: rgba(255,255,255,0.45);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 300;
-      letter-spacing: 0.16em;
+      background: var(--c-bg-elevated);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      color: var(--c-text-secondary);
+      font-family: var(--font);
+      font-size: 0.74rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.14em;
       padding: 14px 10px;
-      cursor: pointer;
+      cursor: crosshair;
       transition: all 0.18s;
       text-align: center;
     }
     .type-btn:hover {
-      border-color: rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.7);
+      border-color: var(--c-border-hover);
+      color: var(--c-text);
     }
     .type-btn.active {
-      border-color: #FF5C00;
-      color: #FF5C00;
-      background: rgba(255,92,0,0.06);
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+      background: rgba(255, 92, 0, 0.05);
     }
-
     .type-label {
       display: block;
-      font-size: 0.55rem;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.2);
-      margin-top: 6px;
+      font-size: 0.48rem;
+      letter-spacing: 0.2em;
+      color: var(--c-text-ghost);
+      margin-top: 5px;
     }
-    .type-btn.active .type-label { color: rgba(255,92,0,0.5); }
+    .type-btn.active .type-label { color: var(--c-accent-muted); }
+
+    .form-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--c-border-hover), transparent);
+      margin: clamp(24px, 3.5vh, 36px) 0;
+    }
 
     /* ── Submit ── */
     .submit-row {
@@ -177,124 +253,52 @@
       justify-content: space-between;
       margin-top: clamp(10px, 2vh, 20px);
     }
-
     .btn-submit {
-      background: #FF5C00;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--c-accent);
       border: none;
       color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      padding: 14px 36px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .btn-submit:hover { opacity: 0.85; }
-    .btn-submit:disabled { opacity: 0.3; cursor: not-allowed; }
-
-    .submit-note {
-      font-size: 0.62rem;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.2);
-    }
-
-    /* ── Status cards ── */
-    .status-card {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 4px;
-      padding: clamp(24px, 4vh, 40px);
-      background: rgba(255,255,255,0.02);
-      text-align: center;
-    }
-
-    .status-icon {
-      font-size: 2.4rem;
-      font-weight: 300;
-      margin-bottom: 16px;
-      line-height: 1;
-    }
-
-    .status-title {
-      font-size: clamp(1.2rem, 3.5vw, 1.6rem);
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      margin-bottom: 12px;
-    }
-
-    .status-sub {
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.6;
-    }
-
-    .status-card.approved { border-color: rgba(110,230,110,0.3); }
-    .status-card.approved .status-icon { color: rgba(110,230,110,0.75); }
-    .status-card.approved .status-title { color: rgba(110,230,110,0.85); }
-
-    .status-card.pending { border-color: rgba(255,200,60,0.25); }
-    .status-card.pending .status-icon { color: rgba(255,200,60,0.6); }
-    .status-card.pending .status-title { color: rgba(255,200,60,0.75); }
-
-    .status-card.rejected { border-color: rgba(255,80,80,0.25); }
-    .status-card.rejected .status-icon { color: rgba(255,80,80,0.6); }
-
-    .btn-reapply {
-      display: inline-block;
-      margin-top: 20px;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(255,255,255,0.6);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 300;
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.16em;
-      padding: 10px 24px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
+      padding: 14px 32px;
+      border-radius: var(--r-md);
+      cursor: crosshair;
+      transition: background 0.15s, transform 0.15s;
     }
-    .btn-reapply:hover {
-      border-color: rgba(255,255,255,0.35);
-      color: #fff;
-    }
-
-    .admin-notes {
-      margin-top: 16px;
-      padding: 12px 16px;
-      background: rgba(255,80,80,0.06);
-      border: 1px solid rgba(255,80,80,0.15);
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.55);
-      text-align: left;
+    .btn-submit:hover { background: var(--c-accent-hover); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-submit svg { width: 13px; height: 13px; }
+    .submit-note {
+      font-size: 0.56rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.12em;
+      color: var(--c-text-ghost);
     }
 
+    /* ── ID notice ── */
     .id-notice {
       padding: 16px 20px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 4px;
+      background: var(--c-bg-elevated);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
       margin-bottom: clamp(18px, 2.8vh, 28px);
     }
     .id-notice-title {
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.35);
-      margin-bottom: 8px;
+      font-size: 0.56rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.2em;
+      color: var(--c-text-tertiary);
+      margin-bottom: 6px;
     }
     .id-notice-text {
-      font-size: 0.7rem;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.3);
+      font-size: 0.64rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.06em;
+      color: var(--c-text-ghost);
       line-height: 1.6;
     }
 
@@ -302,93 +306,102 @@
     .form-error {
       display: none;
       padding: 12px 16px;
-      background: rgba(255,80,80,0.08);
-      border: 1px solid rgba(255,80,80,0.2);
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      color: rgba(255,80,80,0.8);
+      background: rgba(255, 80, 80, 0.06);
+      border: 1px solid rgba(255, 80, 80, 0.18);
+      border-radius: var(--r-md);
+      font-size: 0.68rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.06em;
+      color: var(--c-error);
       margin-bottom: 20px;
     }
     .form-error.visible { display: block; }
 
-    /* ── Day mode ── */
-    html[data-theme="day"] body { background: #fff; color: #000; }
-    html[data-theme="day"] .section-label { color: #FF5C00; }
-    html[data-theme="day"] .form-title { color: #000; }
-    html[data-theme="day"] .form-sub { color: rgba(0,0,0,0.58); }
-    html[data-theme="day"] .divider { background: rgba(0,0,0,0.09); }
-    html[data-theme="day"] .field-group label { color: rgba(0,0,0,0.55); }
-    html[data-theme="day"] .field-group input,
-    html[data-theme="day"] .field-group textarea {
-      color: #000;
-      border-bottom-color: rgba(0,0,0,0.15);
+    /* ── Status cards ── */
+    .status-card {
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      padding: clamp(28px, 4.5vh, 44px);
+      background: var(--c-bg-elevated);
+      text-align: center;
     }
-    html[data-theme="day"] .field-group input::placeholder,
-    html[data-theme="day"] .field-group textarea::placeholder { color: rgba(0,0,0,0.30); }
-    html[data-theme="day"] .field-group input:focus,
-    html[data-theme="day"] .field-group textarea:focus { border-bottom-color: rgba(0,0,0,0.58); }
+    .status-icon { font-size: 2.2rem; font-weight: var(--fw-light); margin-bottom: 14px; line-height: 1; }
+    .status-title { font-size: clamp(1.1rem, 3.2vw, 1.5rem); font-weight: var(--fw-bold); letter-spacing: 0.1em; margin-bottom: 10px; }
+    .status-sub { font-size: 0.68rem; font-weight: var(--fw-light); letter-spacing: 0.1em; color: var(--c-text-secondary); line-height: 1.6; }
+    .status-card.approved { border-color: rgba(110, 230, 110, 0.25); }
+    .status-card.approved .status-icon { color: var(--c-success); }
+    .status-card.approved .status-title { color: var(--c-success); }
+    .status-card.pending { border-color: rgba(255, 200, 60, 0.2); }
+    .status-card.pending .status-icon { color: rgba(255, 200, 60, 0.6); }
+    .status-card.pending .status-title { color: rgba(255, 200, 60, 0.75); }
+    .status-card.rejected { border-color: rgba(255, 80, 80, 0.2); }
+    .status-card.rejected .status-icon { color: rgba(255, 80, 80, 0.6); }
 
-    html[data-theme="day"] .type-btn {
-      background: rgba(0,0,0,0.02);
-      border-color: rgba(0,0,0,0.12);
-      color: rgba(0,0,0,0.58);
+    .btn-reapply {
+      display: inline-block;
+      margin-top: 18px;
+      background: transparent;
+      border: 1px solid var(--c-border);
+      color: var(--c-text-secondary);
+      font-family: var(--font);
+      font-size: 0.68rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.14em;
+      padding: 10px 22px;
+      border-radius: var(--r-md);
+      cursor: crosshair;
+      transition: border-color 0.15s, color 0.15s;
     }
-    html[data-theme="day"] .type-btn:hover {
-      border-color: rgba(0,0,0,0.45);
-      color: rgba(0,0,0,0.72);
-    }
-    html[data-theme="day"] .type-btn.active {
-      border-color: #FF5C00;
-      color: #FF5C00;
-      background: rgba(255,92,0,0.05);
-    }
-    html[data-theme="day"] .type-label { color: rgba(0,0,0,0.40); }
-    html[data-theme="day"] .type-btn.active .type-label { color: rgba(255,92,0,0.5); }
+    .btn-reapply:hover { border-color: var(--c-border-hover); color: var(--c-text); }
 
-    html[data-theme="day"] .submit-note { color: rgba(0,0,0,0.45); }
-
-    html[data-theme="day"] .status-card {
-      border-color: rgba(0,0,0,0.10);
-      background: rgba(0,0,0,0.02);
-    }
-    html[data-theme="day"] .status-sub { color: rgba(0,0,0,0.58); }
-
-    html[data-theme="day"] .btn-reapply {
-      border-color: rgba(0,0,0,0.18);
-      color: rgba(0,0,0,0.65);
-    }
-    html[data-theme="day"] .btn-reapply:hover {
-      border-color: rgba(0,0,0,0.55);
-      color: #000;
-    }
-
-    html[data-theme="day"] .admin-notes {
-      background: rgba(255,80,80,0.04);
-      border-color: rgba(255,80,80,0.15);
-      color: rgba(0,0,0,0.68);
+    .admin-notes {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(255, 80, 80, 0.04);
+      border: 1px solid rgba(255, 80, 80, 0.12);
+      border-radius: var(--r-md);
+      font-size: 0.68rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.06em;
+      color: var(--c-text-secondary);
+      text-align: left;
     }
 
-    html[data-theme="day"] .id-notice {
-      background: rgba(0,0,0,0.02);
-      border-color: rgba(0,0,0,0.08);
+    .status-redirect {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: clamp(18px, 2.6vh, 28px);
+      font-size: 0.58rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.12em;
+      color: var(--c-accent);
     }
-    html[data-theme="day"] .id-notice-title { color: rgba(0,0,0,0.55); }
-    html[data-theme="day"] .id-notice-text { color: rgba(0,0,0,0.50); }
+    .status-redirect svg { width: 12px; height: 12px; }
 
-    html[data-theme="day"] .form-error {
-      background: rgba(255,80,80,0.06);
-      border-color: rgba(255,80,80,0.18);
+    /* ── Entrance ── */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
     }
+    .page-col > * { animation: pageIn 0.55s var(--ease-out) backwards; }
+    .page-col .funnel-steps { animation-delay: 0s; }
+    .page-col .verify-hero { animation-delay: 0.04s; }
+    .page-col #form-view { animation-delay: 0.10s; }
+    .page-col #status-view { animation-delay: 0.10s; }
 
+    @media (max-width: 640px) {
+      .type-selector { flex-direction: column; }
+      .submit-row { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .funnel-steps { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .fs-label { font-size: 0.44rem; }
+    }
   </style>
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -402,7 +415,6 @@
     </button>
   </header>
 
-  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
     <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[exit]</span>
@@ -416,81 +428,101 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
+  <div class="noise-overlay"></div>
+
   <main>
-    <div class="form-col">
-      <div class="section-label">iDENTITY</div>
-      <div class="form-title">vERiFY</div>
-      <div class="form-sub">
-        aPPLY fOR vERIFICATION aS aN aRTIST, sTUDIO, oR iNDIViDUAL.<br>
-        vERIFIED aCCOUNTS cAN LiST aND sELL oN [aRTS].
+    <div class="page-col">
+
+      <!-- ── Step tracker ── -->
+      <div class="funnel-steps">
+        <div class="fs-step done">
+          <div class="fs-num"><span>1</span></div>
+          <span class="fs-label">jOIN</span>
+        </div>
+        <div class="fs-line done"></div>
+        <div class="fs-step active">
+          <div class="fs-num"><span>2</span></div>
+          <span class="fs-label">vERIFY</span>
+        </div>
+        <div class="fs-line"></div>
+        <div class="fs-step">
+          <div class="fs-num"><span>3</span></div>
+          <span class="fs-label">lIST</span>
+        </div>
       </div>
 
-      <!-- Error banner -->
-      <div class="form-error" id="form-error"></div>
+      <!-- ── Hero ── -->
+      <div class="verify-hero">
+        <p class="verify-eyebrow">
+          <span class="verify-eyebrow-dot"></span>
+          Step 2 of 3
+        </p>
+        <h1 class="verify-title">vERiFY</h1>
+        <p class="verify-sub">Apply for verification as an artist, studio, or individual. Verified accounts can list and sell on [aRTS].</p>
+      </div>
 
-      <!-- Status view (shown if already applied) -->
+      <div class="form-error" id="form-error"></div>
       <div id="status-view" style="display:none;"></div>
 
-      <!-- Application form (hidden if already applied) -->
       <div id="form-view">
         <div class="field-group">
-          <label>aCCOUNT tYPE</label>
+          <label>Account type</label>
         </div>
         <div class="type-selector">
           <button class="type-btn active" data-type="artist">
             aRTIST
-            <span class="type-label">iNDIViDUAL cREATOR</span>
+            <span class="type-label">Individual creator</span>
           </button>
           <button class="type-btn" data-type="studio">
             sTUDIO
-            <span class="type-label">gALLERY / cOLLECTiVE</span>
+            <span class="type-label">Gallery / collective</span>
           </button>
           <button class="type-btn" data-type="individual">
             iNDIViDUAL
-            <span class="type-label">cOLLECTOR / oTHER</span>
+            <span class="type-label">Collector / other</span>
           </button>
         </div>
 
         <div class="field-group">
-          <label>dISPLAY nAME</label>
-          <input type="text" id="v-name" placeholder="yOUR aRTIST oR sTUDIO nAME" maxlength="120" required>
+          <label>Display name</label>
+          <input type="text" id="v-name" placeholder="Your artist or studio name" maxlength="120" required>
         </div>
 
         <div class="field-group">
           <label>bIO</label>
-          <textarea id="v-bio" placeholder="sHORT bIO — wHO yOU aRE, wHAT yOU dO" maxlength="1000"></textarea>
+          <textarea id="v-bio" placeholder="Short bio — who you are, what you do" maxlength="1000"></textarea>
         </div>
 
-        <div class="divider"></div>
+        <div class="form-divider"></div>
 
         <div class="field-group">
-          <label>pORTFOLIO / wEBSITE</label>
+          <label>Portfolio / website</label>
           <input type="url" id="v-portfolio" placeholder="https://">
         </div>
 
         <div class="field-group">
-          <label>sOCIAL mEDIA</label>
-          <input type="url" id="v-social" placeholder="iNSTAGRAM, x, eTc.">
+          <label>Social media</label>
+          <input type="url" id="v-social" placeholder="Instagram, X, etc.">
         </div>
 
-        <div class="divider"></div>
+        <div class="form-divider"></div>
 
         <div class="field-group">
-          <label>sTATEMENT</label>
-          <textarea id="v-statement" placeholder="wHY dO yOU wANT vERIFICATION? wHAT dO yOU pLAN tO LiST?" maxlength="2000" style="height:100px;"></textarea>
+          <label>Statement</label>
+          <textarea id="v-statement" placeholder="Why do you want verification? What do you plan to list?" maxlength="2000" style="height:100px;"></textarea>
         </div>
 
         <div class="id-notice">
           <div class="id-notice-title">iD vERIFICATION</div>
-          <div class="id-notice-text">
-            aUTOMATED iD vERIFICATION (pASSPORT / dRiVER'S LiCENSE + sELFIE) iS cOMING sOON viA sTRIPE iDENTiTY.
-            fOR nOW, yOUR aPPLICATION iS rEVIEWED mANUALLY bY oUR tEAM.
-          </div>
+          <div class="id-notice-text">Automated ID verification coming soon via Stripe Identity. For now, applications are reviewed manually.</div>
         </div>
 
         <div class="submit-row">
-          <button class="btn-submit" id="btn-submit">sUBMiT</button>
-          <span class="submit-note">rEVIEW tAKES 24–48h</span>
+          <button class="btn-submit" id="btn-submit">
+            Submit
+            <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="submit-note">Review takes 24–48h</span>
         </div>
       </div>
 
@@ -503,21 +535,15 @@
     var idHash = localStorage.getItem('arts_id_hash') || '';
     var selectedType = 'artist';
 
-    // ── Check existing status ──
     if (idHash) {
       fetch(API_BASE + '/api/verify/status?hash=' + encodeURIComponent(idHash))
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          if (data.status === 'approved') {
-            showStatus('approved', data);
-          } else if (data.status === 'pending') {
-            showStatus('pending', data);
-          } else if (data.status === 'rejected') {
-            showStatus('rejected', data);
-          }
-          // 'none' — show the form (default)
+          if (data.status === 'approved') showStatus('approved', data);
+          else if (data.status === 'pending') showStatus('pending', data);
+          else if (data.status === 'rejected') showStatus('rejected', data);
         })
-        .catch(function() { /* API down — show form */ });
+        .catch(function() {});
     }
 
     function showStatus(status, data) {
@@ -525,43 +551,42 @@
       var statusView = document.getElementById('status-view');
       formView.style.display = 'none';
       statusView.style.display = 'block';
-
-      // Sync localStorage
       localStorage.setItem('arts_verified', status);
 
       if (status === 'approved') {
+        var s2 = document.querySelector('.funnel-steps .fs-step:nth-child(3)');
+        if (s2) { s2.classList.remove('active'); s2.classList.add('done'); }
+        var line2 = document.querySelector('.funnel-steps .fs-line:nth-child(4)');
+        if (line2) line2.classList.add('done');
+        var s3 = document.querySelector('.funnel-steps .fs-step:nth-child(5)');
+        if (s3) s3.classList.add('active');
+
         statusView.innerHTML =
           '<div class="status-card approved">' +
             '<div class="status-icon">\u2713</div>' +
             '<div class="status-title">vERIFIED</div>' +
-            '<div class="status-sub">' +
-              'yOUR ' + (data.account_type || 'artist').toUpperCase() + ' aCCOUNT iS vERIFIED.<br>' +
-              'yOU cAN nOW LiST aND sELL oN [aRTS].' +
-            '</div>' +
+            '<div class="status-sub">Your ' + (data.account_type || 'artist').toUpperCase() + ' account is verified.<br>You can now list and sell on [aRTS].</div>' +
+            '<p class="status-redirect">Continuing to listing <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></p>' +
           '</div>';
+        setTimeout(function() { window.location.href = 'add.html'; }, 2500);
       } else if (status === 'pending') {
         statusView.innerHTML =
           '<div class="status-card pending">' +
             '<div class="status-icon">\u29D7</div>' +
             '<div class="status-title">uNDER rEVIEW</div>' +
-            '<div class="status-sub">' +
-              'yOUR aPPLICATION wAS sUBMITTED ' + formatDate(data.submitted_at) + '.<br>' +
-              'rEVIEW tYPICALLY tAKES 24\u201348 hOURS.' +
-            '</div>' +
+            '<div class="status-sub">Your application was submitted ' + formatDate(data.submitted_at) + '.<br>Review typically takes 24\u201348 hours.</div>' +
           '</div>';
       } else if (status === 'rejected') {
         var notesHtml = data.admin_notes
-          ? '<div class="admin-notes"><strong>rEASON:</strong> ' + escapeHtml(data.admin_notes) + '</div>'
+          ? '<div class="admin-notes"><strong>Reason:</strong> ' + escapeHtml(data.admin_notes) + '</div>'
           : '';
         statusView.innerHTML =
           '<div class="status-card rejected">' +
             '<div class="status-icon">\u2717</div>' +
             '<div class="status-title">nOT aPPROVED</div>' +
-            '<div class="status-sub">' +
-              'yOUR aPPLICATION wAS rEVIEWED oN ' + formatDate(data.reviewed_at) + '.' +
-            '</div>' +
+            '<div class="status-sub">Your application was reviewed on ' + formatDate(data.reviewed_at) + '.</div>' +
             notesHtml +
-            '<button class="btn-reapply" id="btn-reapply">rE-aPPLY</button>' +
+            '<button class="btn-reapply" id="btn-reapply">Re-apply</button>' +
           '</div>';
         var reapplyBtn = document.getElementById('btn-reapply');
         if (reapplyBtn) {
@@ -574,7 +599,6 @@
       }
     }
 
-    // ── Type selector ──
     var typeBtns = document.querySelectorAll('.type-btn');
     typeBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -584,25 +608,24 @@
       });
     });
 
-    // ── Submit ──
     var submitBtn = document.getElementById('btn-submit');
     submitBtn.addEventListener('click', function() {
       var errorEl = document.getElementById('form-error');
       errorEl.classList.remove('visible');
 
       if (!idHash) {
-        showError('yOU mUST bE sIGNED iN tO aPPLY. gO tO jOIN fIRST.');
+        showError('You must sign up first. Complete Step 1.');
         return;
       }
 
       var displayName = document.getElementById('v-name').value.trim();
       if (!displayName) {
-        showError('dISPLAY nAME iS rEQUIRED.');
+        showError('Display name is required.');
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'sUBMITTING...';
+      submitBtn.textContent = 'Submitting\u2026';
 
       fetch(API_BASE + '/api/verify/apply', {
         method: 'POST',
@@ -620,22 +643,19 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.error) {
-          showError(data.error.message || 'sOMETHING wENT wRONG');
+          showError(data.error.message || 'Something went wrong');
           submitBtn.disabled = false;
-          submitBtn.textContent = 'sUBMiT';
+          submitBtn.innerHTML = 'Submit <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
           return;
         }
-        if (data.already_verified) {
-          showStatus('approved', data);
-          return;
-        }
+        if (data.already_verified) { showStatus('approved', data); return; }
         localStorage.setItem('arts_verified', 'pending');
         showStatus('pending', { submitted_at: new Date().toISOString(), account_type: selectedType });
       })
       .catch(function() {
-        showError('nETWORK eRROR — tRY aGAIN lATER');
+        showError('Network error \u2014 try again later');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'sUBMiT';
+        submitBtn.innerHTML = 'Submit <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       });
     });
 
@@ -644,13 +664,11 @@
       el.textContent = msg;
       el.classList.add('visible');
     }
-
     function formatDate(iso) {
-      if (!iso) return '—';
+      if (!iso) return '\u2014';
       var d = new Date(iso);
       return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     }
-
     function escapeHtml(str) {
       var div = document.createElement('div');
       div.textContent = str;
@@ -659,63 +677,54 @@
   })();
   </script>
 
-  <!-- Nav hover animation -->
   <script>
   (function(){
-    var DELAY = 28;
+    var DELAY=40;
     function navHover(el){
-      var orig = el.textContent, timers = [], state = 0;
-      function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
-      function render(n){ el.textContent = orig.slice(0, n); }
-      el.addEventListener('mouseenter', function(){
-        clr(); var from = state;
-        for(var i = 0; i < orig.length - 1 - from; i++)(function(i){
-          timers.push(setTimeout(function(){ render(state = from + i + 1); }, i * DELAY));
-        })(i);
-      });
-      el.addEventListener('mouseleave', function(){
-        clr(); var from = state;
-        for(var i = 0; i < from; i++)(function(i){
-          timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
-        })(i);
-      });
+      var orig=el.textContent,timers=[],state=0;
+      function clr(){timers.forEach(clearTimeout);timers.length=0;}
+      function render(n){var s=orig[0];for(var i=1;i<orig.length;i++)s+=(i<=n?orig[i].toLowerCase():orig[i]);el.textContent=s;}
+      el.addEventListener('mouseenter',function(){clr();var from=state;for(var i=0;i<orig.length-1-from;i++)(function(i){timers.push(setTimeout(function(){render(state=from+i+1);},i*DELAY));})(i);});
+      el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
-    document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner = logo.dataset.inner;
-      var timers = [], state = 0;
-      function clr(){ timers.forEach(clearTimeout); timers.length = 0; }
-      function render(n){ logo.textContent = '[a' + inner.slice(0, n) + ']'; }
-      logo.addEventListener('mouseenter', function(){
-        clr(); var from = state;
-        for(var i = from; i < inner.length; i++)(function(i){
-          timers.push(setTimeout(function(){ render(state = i + 1); }, (i - from) * DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave', function(){
-        clr(); var from = state;
-        for(var i = 0; i < from; i++)(function(i){
-          timers.push(setTimeout(function(){ render(state = from - i - 1); }, i * DELAY));
-        })(i);
-      });
+    document.querySelectorAll('.site-nav a').forEach(navHover);
+logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     });
   })();
   </script>
 
-  <!-- Mobile burger menu -->
   <script>
   (function(){
-    var burger = document.getElementById('burger'), overlay = document.getElementById('nav-overlay'), close = document.getElementById('burger-close');
-    if(!burger || !overlay) return;
-    burger.addEventListener('click', function(){ overlay.classList.add('is-open'); });
-    close.addEventListener('click', function(){ overlay.classList.remove('is-open'); });
-    overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.classList.remove('is-open'); });
+    var burger=document.getElementById('burger'),overlay=document.getElementById('nav-overlay'),closer=document.getElementById('burger-close');
+    if(!burger||!overlay)return;
+    var oLinks=Array.from(overlay.querySelectorAll('a'));
+    var oLabels=oLinks.map(function(el){return el.textContent;});
+    function decapCascade(){oLinks.forEach(function(el,li){var target=oLabels[li];el.textContent=target.toLowerCase();var base=li*100+120;Array.from(target).forEach(function(ch,i){setTimeout(function(){if(!overlay.classList.contains('is-open'))return;var chars=el.textContent.split('');chars[i]=ch;el.textContent=chars.join('');},base+i*50);});});}
+    burger.addEventListener('click',function(){overlay.classList.add('is-open');burger.classList.add('is-open');decapCascade();});
+    closer.addEventListener('click',function(){oLinks.forEach(function(el,i){el.textContent=oLabels[i];});overlay.classList.remove('is-open');burger.classList.remove('is-open');});
+    overlay.addEventListener('click',function(e){if(e.target===overlay){oLinks.forEach(function(el,i){el.textContent=oLabels[i];});overlay.classList.remove('is-open');burger.classList.remove('is-open');}});
   })();
   </script>
-  <script src="theme.js?v=4"></script>
+
+  <script>
+  (function(){
+    document.addEventListener('click',function(ev){
+      var a=ev.target.closest('a[href]');if(!a)return;
+      var h=a.getAttribute('href');
+      if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|\/\/)/.test(h))return;
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
+      ev.preventDefault();
+      document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
+      document.body.style.opacity='0';document.body.style.transform='scale(0.99)';
+      setTimeout(function(){window.location.href=h;},220);
+    },true);
+  })();
+  </script>
+
+<script src="theme.js?v=4"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script src="funnel.js"></script>
-  <script>window.artsCornerAdd({ label: 'iD', href: 'id.html' });</script>
+<script>window.artsCornerAdd({ label: 'iD', href: 'id.html' });</script>
 </body>
 </html>

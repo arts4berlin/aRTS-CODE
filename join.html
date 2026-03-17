@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -635,34 +635,34 @@
   </style>
 </head>
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <a href="#main" class="skip-link" data-i18n="nav.skip">Zum Inhalt springen</a>
 
   <header class="site-header">
     <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="art.html">aRT</a>
-      <a href="boutique.html">bOUTIQUE</a>
-      <a href="about.html">aBOUT</a>
-      <a href="inquire.html">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="home.html">hOME</a>
-    <a href="art.html">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
   <div class="noise-overlay"></div>
@@ -695,10 +695,10 @@
         <div class="join-hero">
           <p class="join-eyebrow">
             <span class="join-eyebrow-dot"></span>
-            Step 1 of 3
+            <span data-i18n="join.eyebrow">Schritt 1 von 3</span>
           </p>
-          <h1 class="join-title">jOIN</h1>
-          <p class="join-sub">Pick a plan and sign up. Join an art collective connecting creators, collectors, and culture in Berlin.</p>
+          <h1 class="join-title" data-i18n="join.title">bEITRETEN</h1>
+          <p class="join-sub" data-i18n="join.sub">Waehle einen Plan und melde dich an. Tritt einem Kunstkollektiv bei, das Kuenstler, Sammler und Kultur in Berlin verbindet.</p>
         </div>
 
         <!-- Tier cards -->
@@ -708,14 +708,14 @@
             <div class="tc-check">
               <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <div class="tc-name">aUDIENCE</div>
+            <div class="tc-name" data-i18n="join.tier.audience">aUDIENCE</div>
             <div class="tc-price">
-              <span class="tc-price-free">fREE</span>
+              <span class="tc-price-free" data-i18n="join.tier.audience.price">kOSTENLOS</span>
             </div>
             <div class="tc-perks">
-              <span class="tc-perk">Community access</span>
-              <span class="tc-perk">Event alerts</span>
-              <span class="tc-perk">Newsletter</span>
+              <span class="tc-perk" data-i18n="join.tier.audience.p1">Community-Zugang</span>
+              <span class="tc-perk" data-i18n="join.tier.audience.p2">Event-Benachrichtigungen</span>
+              <span class="tc-perk" data-i18n="join.tier.audience.p3">Newsletter</span>
             </div>
           </div>
 
@@ -723,33 +723,33 @@
             <div class="tc-check">
               <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <div class="tc-name">aLLY</div>
+            <div class="tc-name" data-i18n="join.tier.ally">aLLY</div>
             <div class="tc-price">
               <span class="tc-price-val">&euro;0.55</span>
-              <span class="tc-price-unit">/ month</span>
+              <span class="tc-price-unit" data-i18n="join.tier.ally.unit">/ Monat</span>
             </div>
             <div class="tc-perks">
-              <span class="tc-perk">Member card</span>
-              <span class="tc-perk">Community</span>
-              <span class="tc-perk">Trading network</span>
-              <span class="tc-perk">Boutique</span>
+              <span class="tc-perk" data-i18n="join.tier.ally.p1">Mitgliedskarte</span>
+              <span class="tc-perk" data-i18n="join.tier.ally.p2">Community</span>
+              <span class="tc-perk" data-i18n="join.tier.ally.p3">Handelsnetzwerk</span>
+              <span class="tc-perk" data-i18n="join.tier.ally.p4">Boutique</span>
             </div>
           </div>
 
           <div class="tier-card" data-tier="BRIGaDIER">
-            <span class="tier-badge">Recommended</span>
+            <span class="tier-badge" data-i18n="join.tier.brigadier.badge">Empfohlen</span>
             <div class="tc-check">
               <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <div class="tc-name">BRIGaDIER</div>
+            <div class="tc-name" data-i18n="join.tier.brigadier">BRIGaDIER</div>
             <div class="tc-price">
               <span class="tc-price-val">&euro;3.3</span>
-              <span class="tc-price-unit">/ month</span>
+              <span class="tc-price-unit" data-i18n="join.tier.brigadier.unit">/ Monat</span>
             </div>
             <div class="tc-perks">
-              <span class="tc-perk">Everything in aLLY</span>
-              <span class="tc-perk">Submission slots</span>
-              <span class="tc-perk">2 guest invites</span>
+              <span class="tc-perk" data-i18n="join.tier.brigadier.p1">Alles aus aLLY</span>
+              <span class="tc-perk" data-i18n="join.tier.brigadier.p2">Einreichungsplaetze</span>
+              <span class="tc-perk" data-i18n="join.tier.brigadier.p3">2 Gaeste-Einladungen</span>
             </div>
           </div>
 
@@ -757,16 +757,16 @@
             <div class="tc-check">
               <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <div class="tc-name">CURaTOR</div>
+            <div class="tc-name" data-i18n="join.tier.curator">CURaTOR</div>
             <div class="tc-price">
               <span class="tc-price-val">&euro;33</span>
-              <span class="tc-price-unit">/ month</span>
+              <span class="tc-price-unit" data-i18n="join.tier.curator.unit">/ Monat</span>
             </div>
             <div class="tc-perks">
-              <span class="tc-perk">Everything in BRIGaDIER</span>
-              <span class="tc-perk">Editorial seat</span>
-              <span class="tc-perk">Private archive</span>
-              <span class="tc-perk">Patronage</span>
+              <span class="tc-perk" data-i18n="join.tier.curator.p1">Alles aus BRIGaDIER</span>
+              <span class="tc-perk" data-i18n="join.tier.curator.p2">Redaktionssitz</span>
+              <span class="tc-perk" data-i18n="join.tier.curator.p3">Privates Archiv</span>
+              <span class="tc-perk" data-i18n="join.tier.curator.p4">Patronat</span>
             </div>
           </div>
 
@@ -774,34 +774,34 @@
 
         <!-- Sign in -->
         <div class="signin-section">
-          <p class="signin-label">Create your account</p>
+          <p class="signin-label" data-i18n="join.create">Konto erstellen</p>
 
           <div class="signin-buttons">
             <button type="button" class="btn-oauth google" id="btn-google">
               <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A11.96 11.96 0 0 0 1 12c0 1.94.46 3.77 1.18 5.42l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-              Continue with Google
+              <span data-i18n="join.google">Mit Google fortfahren</span>
             </button>
 
             <button type="button" class="btn-oauth apple" disabled>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-              Continue with Apple
-              <span class="oauth-soon">coming soon</span>
+              <span data-i18n="join.apple">Mit Apple fortfahren</span>
+              <span class="oauth-soon" data-i18n="join.apple.soon">kommt bald</span>
             </button>
           </div>
 
-          <div class="signin-divider"><span>or continue with email</span></div>
+          <div class="signin-divider"><span data-i18n="join.or">oder mit E-Mail fortfahren</span></div>
 
           <div class="email-fallback">
             <div class="email-wrap">
-              <input type="email" id="wl-email" class="email-input" placeholder="you@example.com" autocomplete="email">
+              <input type="email" id="wl-email" class="email-input" placeholder="du@beispiel.de" data-i18n-placeholder="join.email.ph" autocomplete="email">
               <button type="button" class="email-btn" id="btn-email">
-                Sign up
+                <span data-i18n="join.email.btn">Anmelden</span>
                 <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
             </div>
           </div>
 
-          <p class="signin-note">No spam. Cancel anytime.</p>
+          <p class="signin-note" data-i18n="join.note">Kein Spam. Jederzeit kuendbar.</p>
         </div>
 
       </div>
@@ -1008,6 +1008,7 @@ logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i
   </script>
 
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="funnel.js"></script>
 <script>window.artsCornerAdd({ label: 'Report', href: 'report.html' });</script>

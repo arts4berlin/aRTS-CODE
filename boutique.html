@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -207,48 +207,49 @@
   </style>
 </head>
 <body>
-  <a href="#boutique-main" class="skip-link">Skip to content</a>
+  <a href="#boutique-main" class="skip-link" data-i18n="nav.skip">Zum Inhalt springen</a>
 
   <div class="noise-overlay"></div>
+  <div class="page-mesh"></div>
   <div class="ambient-orb ambient-orb--top"></div>
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
     <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="art.html">aRT</a>
-      <a href="boutique.html" aria-current="page">bOUTIQUE</a>
-      <a href="about.html">aBOUT</a>
-      <a href="inquire.html">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" aria-current="page" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="home.html">hOME</a>
-    <a href="art.html">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
   <main class="site-main" id="boutique-main">
-    <div class="vision-wrap">
+    <div class="vision-wrap page-enter">
 
       <!-- Hero -->
       <div class="vision-hero">
-        <p class="vision-eyebrow">bOUTIQUE — oUR vISION</p>
-        <h1 class="vision-title">hIGHER sTANDARDS.<br>nO sHORTCUTS.</h1>
-        <p class="vision-subtitle">We believe Berlin's art scene deserves a space where quality isn't negotiable. The boutique is where we raise the bar &mdash; curated pieces from artists who push boundaries, vetted by us, presented without compromise.</p>
+        <p class="vision-eyebrow" data-i18n="boutique.eye">bOUTIQUE — uNSERE vISION</p>
+        <h1 class="vision-title" data-i18n-html="boutique.title">hOEHERE sTANDARDS.<br>kEINE aBKUERZUNGEN.</h1>
+        <p class="vision-subtitle" data-i18n="boutique.sub">Wir glauben, Berlins Kunstszene verdient einen Raum, in dem Qualitaet nicht verhandelbar ist. Die Boutique ist unser Anspruch — kuratierte Werke von Kuenstlern, die Grenzen verschieben, von uns geprueft, ohne Kompromisse praesentiert.</p>
       </div>
 
       <div class="vision-rule"></div>
@@ -257,44 +258,44 @@
       <div class="vision-beliefs">
 
         <div class="belief">
-          <p class="belief-head">cURATION, nOT aGGREGATION.</p>
-          <p class="belief-body">Anyone can host a gallery. We're building something narrower. Every piece in the boutique is selected &mdash; not by algorithm, not by popularity, but by whether it moves the conversation forward.</p>
+          <p class="belief-head" data-i18n="boutique.b1.h">kURATION, kEINE aGGREGaTION.</p>
+          <p class="belief-body" data-i18n="boutique.b1.p">Jeder kann eine Galerie betreiben. Wir bauen etwas Engeres. Jedes Werk in der Boutique ist ausgewaehlt — nicht per Algorithmus, nicht nach Beliebtheit, sondern danach, ob es das Gespraech voranbringt.</p>
         </div>
 
         <div class="belief">
-          <p class="belief-head">tHE aRTIST sTILL oWNS tHE dECISION.</p>
-          <p class="belief-body">Curation doesn't mean control. Artists set their price, their terms, their vision. We choose what enters the room. They decide what happens inside it.</p>
+          <p class="belief-head" data-i18n="boutique.b2.h">dER kUENSTLER eNTSCHEIDET.</p>
+          <p class="belief-body" data-i18n="boutique.b2.p">Kuration bedeutet nicht Kontrolle. Kuenstler setzen ihren Preis, ihre Bedingungen, ihre Vision. Wir waehlen, was den Raum betritt. Sie entscheiden, was darin passiert.</p>
         </div>
 
         <div class="belief">
-          <p class="belief-head">pREMIUM mEANS aCCOUNTABILITY.</p>
-          <p class="belief-body">Higher-end art requires higher-end trust. Provenance checks, verified artists, transparent commissions. If we ask collectors to invest more, we owe them more in return.</p>
+          <p class="belief-head" data-i18n="boutique.b3.h">pREMIUM bEDEUTET vERANTWORTUNG.</p>
+          <p class="belief-body" data-i18n="boutique.b3.p">Hochwertige Kunst erfordert hochwertiges Vertrauen. Herkunftspruefungen, verifizierte Kuenstler, transparente Provisionen. Wenn wir Sammler bitten mehr zu investieren, schulden wir ihnen mehr zurueck.</p>
         </div>
 
         <div class="belief">
-          <p class="belief-head">wE'RE nOT rEADY yET. aNd tHAT'S tHE pOINT.</p>
-          <p class="belief-body">We could rush this. Open the doors, fill the walls, call it premium. But that would be exactly the kind of thing we built aRTS to stand against. When the boutique opens, it will be because we've earned it.</p>
+          <p class="belief-head" data-i18n="boutique.b4.h">wIR sIND nOCH nICHT bEREIT. uND gENaU dAS iST dER pUNKT.</p>
+          <p class="belief-body" data-i18n="boutique.b4.p">Wir koennten das ueberstuerzen. Tueren oeffnen, Waende fuellen, es Premium nennen. Aber genau das waere die Art von Sache, gegen die wir aRTS gegruendet haben. Wenn die Boutique oeffnet, dann weil wir es uns verdient haben.</p>
         </div>
 
       </div>
 
       <!-- Status -->
       <div class="vision-status">
-        <p class="status-label">sTATUS</p>
+        <p class="status-label" data-i18n="boutique.status">sTATUS</p>
         <div class="status-progress">
           <div class="status-fill" id="status-fill"></div>
         </div>
-        <p class="status-note">Building the verification pipeline, onboarding early artists, refining the curation criteria. Members will be first to know.</p>
+        <p class="status-note" data-i18n="boutique.status.note">Aufbau der Verifizierungspipeline, Einarbeitung fruehe Kuenstler, Verfeinerung der Kurationskriterien. Mitglieder erfahren es zuerst.</p>
       </div>
 
       <!-- CTA -->
       <div class="vision-cta">
-        <a href="join.html" class="btn-upgrade">gET nOTIFIED</a>
-        <p class="vision-fallback">or browse the <a href="art.html">open gallery</a></p>
+        <a href="join.html" class="btn-upgrade" data-i18n="boutique.notify">bENACHRICHTIGUNG</a>
+        <p class="vision-fallback"><span data-i18n="boutique.or">oder die </span><a href="art.html" data-i18n="boutique.gallery">offene Galerie</a></p>
       </div>
 
       <!-- Sign -->
-      <p class="vision-sign">&mdash; [aRTS], bERLIN 2026</p>
+      <p class="vision-sign" data-i18n="boutique.footer">&mdash; [aRTS], bERLIN 2026</p>
 
     </div>
   </main>
@@ -350,6 +351,7 @@ logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i
 </script>
 
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script src="btn-fx.js"></script>

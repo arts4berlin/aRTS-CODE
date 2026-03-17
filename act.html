@@ -93,7 +93,7 @@
     .btn-ghost { background: transparent; color: #fff; }
     .btn-ghost:hover { background: #fff; color: #000; }
 
-    .logo {
+    .site-logo {
       position: fixed;
       top: 28px; left: 32px;
       z-index: 100;
@@ -135,7 +135,7 @@
     /* ── Day mode ── */
     html[data-theme="day"] { background: #fff; }
     [data-theme="day"] body { background: #fff; color: #000; }
-    [data-theme="day"] .logo { color: #000; }
+    [data-theme="day"] .site-logo { color: #000; }
     [data-theme="day"] .nav-about { color: #000; }
     [data-theme="day"] .btn { border-color: #000; }
     [data-theme="day"] .btn-fill { background: #000; color: #fff; }
@@ -146,7 +146,7 @@
 </style>
 </head>
 <body>
-  <a href="home.html" class="logo" data-inner="RTS">[a]</a>
+  <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="question">
@@ -277,21 +277,7 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

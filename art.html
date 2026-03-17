@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -276,7 +276,7 @@
     .filter-search input {
       width: 100%;
       font-family: var(--font);
-      font-size: 0.62rem;
+      font-size: max(16px, 0.62rem); /* ≥16px prevents iOS auto-zoom */
       font-weight: var(--fw-light);
       letter-spacing: 0.18em;
       padding: 10px 14px 10px 32px;
@@ -456,44 +456,45 @@
   </style>
 </head>
 <body>
-  <a href="#art-main" class="skip-link">Skip to content</a>
+  <a href="#art-main" class="skip-link" data-i18n="nav.skip">Zum Inhalt springen</a>
 
   <header class="site-header">
     <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
-      <a href="art.html" aria-current="page">aRT</a>
-      <a href="boutique.html">bOUTIQUE</a>
-      <a href="about.html">aBOUT</a>
-      <a href="inquire.html">TaLK</a>
-      <a href="work.html">wORK</a>
+      <a href="art.html" aria-current="page" data-i18n="nav.art">kUNST</a>
+      <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+      <a href="about.html" data-i18n="nav.about">iNFO</a>
+      <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+      <a href="work.html" data-i18n="nav.work">wERKE</a>
     </nav>
-    <button class="site-burger" id="burger" aria-label="open menu">
+    <button class="site-burger" id="burger" aria-label="Menu oeffnen" data-i18n-aria-label="nav.open">
       <span></span><span></span><span></span>
-      <span class="burger-label">[aRTS]</span>
+      <span class="burger-label" data-i18n="nav.menu">[mENUE]</span>
     </button>
   </header>
 
   <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
-    <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
-      <span class="burger-label">[exit]</span>
+    <button class="site-burger overlay-close" id="burger-close" aria-label="Menu schliessen" data-i18n-aria-label="nav.close">
+      <span class="burger-label" data-i18n="nav.exit">[sCHLIESSEN]</span>
     </button>
-    <a href="home.html">hOME</a>
-    <a href="art.html" style="color:var(--c-accent)">aRT</a>
-    <a href="boutique.html">bOUTIQUE</a>
-    <a href="about.html">aBOUT</a>
-    <a href="inquire.html">TaLK</a>
-    <a href="work.html">wORK</a>
-    <a href="id.html" style="color:var(--c-accent)">[iD]</a>
+    <a href="home.html" data-i18n="nav.home">sTaRT</a>
+    <a href="art.html" style="color:var(--c-accent)" data-i18n="nav.art">kUNST</a>
+    <a href="boutique.html" data-i18n="nav.boutique">bOUTIQUE</a>
+    <a href="about.html" data-i18n="nav.about">iNFO</a>
+    <a href="inquire.html" data-i18n="nav.talk">kONTaKT</a>
+    <a href="work.html" data-i18n="nav.work">wERKE</a>
+    <a href="id.html" style="color:var(--c-accent)" data-i18n="nav.id">[iD]</a>
   </div>
 
   <!-- Ambient effects -->
   <div class="noise-overlay"></div>
+  <div class="page-mesh"></div>
   <div class="ambient-orb ambient-orb--top"></div>
   <div class="ambient-orb ambient-orb--bottom"></div>
 
-  <main class="site-main" id="art-main">
-    <p class="art-state" id="art-loading">Loading…</p>
+  <main class="site-main page-enter" id="art-main">
+    <p class="art-state" id="art-loading" data-i18n="art.loading">Laden...</p>
   </main>
 
   <script src="bot-data.js"></script>
@@ -529,14 +530,51 @@
       return { styles: topKeys(styles, 8), moods: topKeys(moods, 8), periods: topKeys(periods, 8) };
     }
 
+    /* ── Keyword → group expansion ── */
+    var KEYWORD_GROUPS = {
+      'painting':    ['painting', 'oil', 'acrylic', 'watercolor', 'tempera', 'canvas', 'fresco'],
+      'sculpture':   ['sculpture', 'bronze', 'marble', 'plaster', 'ceramic', 'carved', 'statue', 'bust', 'figurine', 'metalwork'],
+      'portrait':    ['portrait', 'portraiture', 'figurative', 'face', 'bust', 'self-portrait'],
+      'landscape':   ['landscape', 'nature', 'scenery', 'veduta', 'seascape', 'cityscape'],
+      'abstract':    ['abstract', 'geometric', 'minimalist', 'conceptual', 'non-figurative'],
+      'photography': ['photography', 'photograph', 'photo', 'daguerreotype', 'print'],
+      'print':       ['print', 'etching', 'engraving', 'lithograph', 'woodcut', 'woodblock', 'aquatint'],
+      'drawing':     ['drawing', 'sketch', 'pencil', 'charcoal', 'ink', 'graphite', 'pastel', 'works-on-paper'],
+      'textile':     ['textile', 'tapestry', 'embroidery', 'fabric', 'silk', 'weaving', 'woven'],
+      'ceramic':     ['ceramic', 'pottery', 'porcelain', 'stoneware', 'earthenware', 'faience', 'majolica', 'meissen'],
+      'modern':      ['modern', 'contemporary', 'expressionist', 'surrealist', 'art-deco', 'conceptual'],
+      'classical':   ['classical', 'neoclassical', 'renaissance', 'baroque', 'rococo', 'gothic', 'byzantine'],
+      'decorative':  ['decorative', 'ornamental', 'applied arts', 'functional', 'vessel', 'vase', 'furniture'],
+      'dark':        ['dark', 'dramatic', 'melancholic', 'mysterious', 'raw', 'provocative'],
+      'calm':        ['calm', 'serene', 'contemplative', 'ethereal', 'elegant', 'nostalgic'],
+      'jewellery':   ['jewellery', 'jewelry', 'gold', 'silver', 'gemstone', 'brooch', 'pendant', 'ring', 'necklace'],
+      'still life':  ['still-life', 'still life', 'nature morte', 'floral', 'flower', 'fruit']
+    };
+
+    function expandSearch(query) {
+      var terms = [query];
+      var keys = Object.keys(KEYWORD_GROUPS);
+      for (var i = 0; i < keys.length; i++) {
+        if (query.indexOf(keys[i]) >= 0) {
+          terms = terms.concat(KEYWORD_GROUPS[keys[i]]);
+        }
+      }
+      return terms;
+    }
+
     /* ── Filter logic ── */
     function applyFilters(pieces) {
       var q = _activeFilters.search.toLowerCase();
+      var searchTerms = q ? expandSearch(q) : [];
       return pieces.filter(function(p) {
         if (p.status === 'pENDING') return false;
         if (q) {
-          var hay = (p.title + ' ' + (p.artist||'') + ' ' + (p.media||'') + ' ' + (p.ai_style||'') + ' ' + (p.ai_mood||'') + ' ' + (p.ai_period||'') + ' ' + (p.tags||[]).join(' ')).toLowerCase();
-          if (hay.indexOf(q) < 0) return false;
+          var hay = (p.title + ' ' + (p.artist||'') + ' ' + (p.media||'') + ' ' + (p.ai_style||'') + ' ' + (p.ai_mood||'') + ' ' + (p.ai_period||'') + ' ' + (p.tags||[]).join(' ') + ' ' + (p.ai_subjects||[]).join(' ') + ' ' + (p.ai_description||'')).toLowerCase();
+          var matched = false;
+          for (var i = 0; i < searchTerms.length; i++) {
+            if (hay.indexOf(searchTerms[i]) >= 0) { matched = true; break; }
+          }
+          if (!matched) return false;
         }
         if (_activeFilters.style && (p.ai_style||'').toLowerCase() !== _activeFilters.style.toLowerCase()) return false;
         if (_activeFilters.mood && (p.ai_mood||'').toLowerCase() !== _activeFilters.mood.toLowerCase()) return false;
@@ -562,7 +600,7 @@
         '<div class="filter-bar" id="filter-bar">',
           '<div class="filter-search">',
             '<span class="filter-search-icon">⌕</span>',
-            '<input type="text" id="filter-search-input" placeholder="Search artist, style, medium…" value="' + esc(_activeFilters.search) + '">',
+            '<input type="search" id="filter-search-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search artist, style, medium… e.g. painting, portrait" value="' + esc(_activeFilters.search) + '">',
           '</div>',
           '<div class="filter-pills">',
             pills('style', opts.styles),
@@ -601,7 +639,7 @@
         : '';
 
       return [
-        '<div class="piece-card">',
+        '<div class="piece-card glass-card">',
           '<div class="card-img-wrap">'+ badgeHtml + seedBadge + botBadge + imgHtml +'</div>',
           '<div class="card-body">',
             '<p class="card-index">aRT #'+ esc(String(p.id).padStart(3,'0')) +' · '+ esc(p.year||'') +'</p>',
@@ -740,28 +778,47 @@
     function refreshGrid(keepScroll) {
       _filteredPieces = applyFilters(_allPieces);
       var main = document.getElementById('art-main');
-      var filterBar = document.getElementById('filter-bar');
+      var existingBar = document.getElementById('filter-bar');
+      var searchInput = document.getElementById('filter-search-input');
+      var isSearching = searchInput && document.activeElement === searchInput;
 
-      /* Rebuild filter pills (preserve active states) */
-      var filterHtml = renderFilterBar(_filterOpts);
-      var gridHtml = renderGrid(_filteredPieces);
+      if (isSearching && existingBar) {
+        /* ── Typing in search: only update pills + grid, keep input alive ── */
+        var pillsContainer = existingBar.querySelector('.filter-pills');
+        if (pillsContainer) {
+          var tempDiv = document.createElement('div');
+          tempDiv.innerHTML = renderFilterBar(_filterOpts);
+          var newPills = tempDiv.querySelector('.filter-pills');
+          if (newPills) pillsContainer.innerHTML = newPills.innerHTML;
+        }
+        /* Replace everything after the filter bar */
+        var gridHtml = renderGrid(_filteredPieces);
+        var afterBar = existingBar.nextSibling;
+        while (afterBar) { var next = afterBar.nextSibling; main.removeChild(afterBar); afterBar = next; }
+        var frag = document.createRange().createContextualFragment(gridHtml);
+        main.appendChild(frag);
+      } else {
+        /* ── Full rebuild (pill click, initial load, etc.) ── */
+        var filterHtml = renderFilterBar(_filterOpts);
+        var gridHtml = renderGrid(_filteredPieces);
+        main.innerHTML = filterHtml + gridHtml;
+        /* Restore search focus after full rebuild */
+        var newInput = document.getElementById('filter-search-input');
+        if (newInput && _activeFilters.search) {
+          newInput.value = _activeFilters.search;
+          newInput.focus();
+          newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+        }
+      }
 
-      main.innerHTML = filterHtml + gridHtml;
       bindEuroScramble(main);
       bindUserActions(main);
       bindCardClicks(main);
+      initSkipObserver(main);
       bindViewToggle(main);
       bindFilters();
 
-      /* Restore search focus */
-      var newInput = document.getElementById('filter-search-input');
-      if (newInput && _activeFilters.search) {
-        newInput.value = _activeFilters.search;
-        newInput.focus();
-        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-      }
-
-      if (!keepScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!keepScroll && !isSearching) window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     var FALLBACK = [{id:'000',title:'pIETRO',year:'2025',price:'88.888.888',currency:'€',status:'Available',image:'assets/pietro-front.jpg',media:'Plaster · mounted canvas · floating frame'}];
@@ -780,6 +837,7 @@
         bindEuroScramble(main);
         bindUserActions(main);
         bindCardClicks(main);
+        initSkipObserver(main);
         bindViewToggle(main);
 
         /* Then load seed collection (deferred, larger file) */
@@ -805,6 +863,7 @@
         bindEuroScramble(main);
         bindUserActions(main);
         bindCardClicks(main);
+        initSkipObserver(main);
         bindViewToggle(main);
         bindFilters();
 
@@ -830,6 +889,7 @@
             bindEuroScramble(main);
             bindUserActions(main);
             bindCardClicks(main);
+            initSkipObserver(main);
             bindViewToggle(main);
             bindFilters();
           });
@@ -1572,6 +1632,91 @@
         }, RATE);
       });
     }
+
+    /* ── Upgrade 1: Implicit negative — viewport skip tracking ── */
+    var _seenCards = {};  /* pieceId → timestamp first visible */
+    var _clickedCards = {};
+    var _skipObserver = null;
+
+    function initSkipObserver(container) {
+      if (!('IntersectionObserver' in window)) return;
+      if (_skipObserver) _skipObserver.disconnect();
+
+      _skipObserver = new IntersectionObserver(function(entries) {
+        var now = Date.now();
+        entries.forEach(function(entry) {
+          var card = entry.target;
+          var btn = card.querySelector('[data-view-id]');
+          if (!btn) return;
+          var pid = btn.dataset.viewId;
+
+          if (entry.isIntersecting) {
+            if (!_seenCards[pid]) _seenCards[pid] = now;
+          } else {
+            /* Card left viewport — check dwell without click */
+            if (_seenCards[pid] && !_clickedCards[pid]) {
+              var dwell = now - _seenCards[pid];
+              if (dwell >= 2000) {
+                _beacon('skip', pid);
+              }
+            }
+            delete _seenCards[pid];
+          }
+        });
+      }, { threshold: 0.5 });
+
+      var cards = container.querySelectorAll('.piece-card');
+      for (var i = 0; i < cards.length; i++) {
+        _skipObserver.observe(cards[i]);
+      }
+    }
+
+    /* Mark cards as clicked so they don't fire skip */
+    document.addEventListener('click', function(e) {
+      var card = e.target.closest('.piece-card');
+      if (!card) return;
+      var btn = card.querySelector('[data-view-id]');
+      if (btn) _clickedCards[btn.dataset.viewId] = true;
+    }, true);
+
+    /* ── Upgrade 3: Session intent tracker ── */
+    function trackSessionIntent(pieceId) {
+      try {
+        var p = null;
+        for (var i = 0; i < _allPieces.length; i++) {
+          if (_allPieces[i].id === pieceId) { p = _allPieces[i]; break; }
+        }
+        if (!p) return;
+        var views = JSON.parse(sessionStorage.getItem('arts_session_views') || '[]');
+        views.push({ id: pieceId, tags: p.tags || [], ts: Date.now() });
+        if (views.length > 10) views = views.slice(-10);
+        sessionStorage.setItem('arts_session_views', JSON.stringify(views));
+      } catch(e) {}
+    }
+
+    /* Hook into openDetail to track session intent */
+    var _origOpenDetail = openDetail;
+    openDetail = function(pieceId) {
+      trackSessionIntent(pieceId);
+      return _origOpenDetail(pieceId);
+    };
+
+    /* Get current session tags for recommendation API */
+    function getSessionTags() {
+      try {
+        var views = JSON.parse(sessionStorage.getItem('arts_session_views') || '[]');
+        var last3 = views.slice(-3);
+        var tagCounts = {};
+        last3.forEach(function(v) {
+          (v.tags || []).forEach(function(t) {
+            tagCounts[t] = (tagCounts[t] || 0) + 1;
+          });
+        });
+        var sorted = Object.keys(tagCounts).sort(function(a,b){ return tagCounts[b]-tagCounts[a]; });
+        return sorted.slice(0, 5).join(',');
+      } catch(e) { return ''; }
+    }
+
   })();
   </script>
 
@@ -1824,6 +1969,7 @@
 
 <script src="hf-utils.js"></script>
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 <script src="btn-fx.js"></script>

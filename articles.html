@@ -129,7 +129,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -161,7 +161,7 @@
     <p class="section-label">aRTICLES &amp; wRITINGS</p>
     <div class="article-list">
       <div class="article-item wip">
-        <span class="article-title">— cOMING SOON —</span>
+        <span class="article-title">— Coming soon —</span>
         <span class="article-meta">2026</span>
       </div>
     </div>
@@ -213,18 +213,7 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr(); var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr(); var from=state;
         for(var i=0;i<from;i++)(function(i){
           timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));

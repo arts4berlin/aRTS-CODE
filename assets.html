@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -183,27 +183,30 @@
 
   <!-- Ambient effects -->
   <div class="noise-overlay"></div>
+  <div class="page-mesh"></div>
   <div class="ambient-orb ambient-orb--top"></div>
 
-  <a href="home.html" class="site-logo" data-inner="RTS" style="position:fixed;top:28px;left:32px;z-index:100">[a]</a>
-  <a href="about.html" class="nav-about" style="position:fixed;top:28px;right:32px;z-index:100;text-decoration:none;color:var(--c-text);font-size:0.9rem;font-weight:300;letter-spacing:0.1em;opacity:0.7;transition:opacity 0.15s">aBOUT</a>
+  <a href="home.html" class="site-logo" style="position:fixed;top:28px;left:32px;z-index:100"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
+  <a href="about.html" class="nav-about" data-i18n="nav.about" style="position:fixed;top:28px;right:32px;z-index:100;text-decoration:none;color:var(--c-text);font-size:0.9rem;font-weight:300;letter-spacing:0.1em;opacity:0.7;transition:opacity 0.15s">iNFO</a>
 
+  <div class="page-enter" style="display:flex;flex-direction:column;align-items:center">
   <div class="question">
-    <span class="small">SELECT</span>
-    <span class="large">aSSETS:</span>
+    <span class="small" data-i18n="assets.select">wAEHLE</span>
+    <span class="large" data-i18n="assets.colon">aSSETS:</span>
   </div>
 
   <div class="choices">
     <a href="art.html" class="choice-card choice-art btn-art">
-      <span class="choice-eyebrow">01 — gALLERY</span>
-      <span class="choice-title">aRT</span>
-      <span class="choice-sub">paintings<br>prints · sculptures</span>
+      <span class="choice-eyebrow" data-i18n="assets.art.eye">01 — gALERIE</span>
+      <span class="choice-title" data-i18n="assets.art.title">kUNST</span>
+      <span class="choice-sub" data-i18n-html="assets.art.sub">Gemaelde<br>Drucke · Skulpturen</span>
     </a>
     <a href="apparel.html" class="choice-card choice-apparel btn-apparel">
-      <span class="choice-eyebrow">02 — wEaR</span>
-      <span class="choice-title">aPPaREL</span>
-      <span class="choice-sub">wEaR tHE<br>mOVEMENT</span>
+      <span class="choice-eyebrow" data-i18n="assets.app.eye">02 — kLEIDUNG</span>
+      <span class="choice-title" data-i18n="assets.app.title">aPPaREL</span>
+      <span class="choice-sub" data-i18n-html="assets.app.sub">tRaGE dIE<br>bEWEGUNG</span>
     </a>
+  </div>
   </div>
 
   <!-- Scrambler -->
@@ -240,8 +243,10 @@
         }
       }
 
-      makeScrambler(document.querySelector('.btn-art'),     'aRT');
-      makeScrambler(document.querySelector('.btn-apparel'), 'aPPaREL');
+      var artTitle = document.querySelector('.btn-art .choice-title');
+      var appTitle = document.querySelector('.btn-apparel .choice-title');
+      makeScrambler(document.querySelector('.btn-art'),     artTitle ? artTitle.textContent : 'kUNST');
+      makeScrambler(document.querySelector('.btn-apparel'), appTitle ? appTitle.textContent : 'aPPaREL');
     })();
   </script>
 
@@ -276,21 +281,7 @@
       });
     }
     document.querySelectorAll('a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute */
-    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){
@@ -301,6 +292,7 @@
   })();
   </script>
 <script src="theme.js?v=4"></script>
+<script src="i18n.js?v=1"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>
 </body>
