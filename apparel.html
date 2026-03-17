@@ -28,7 +28,7 @@
       window.location.replace('index.html');
     }
   </script>
-  <link rel="preload" as="image" href="assets/bear.png">
+  <link rel="preload" as="image" href="assets/logo.svg">
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
@@ -187,6 +187,7 @@
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <!-- Ambient effects -->
   <div class="noise-overlay"></div>
@@ -194,7 +195,7 @@
 
   <!-- Apparel voucher discount banner (shown if active voucher in localStorage) -->
   <div class="voucher-banner" id="voucher-banner" hidden>
-    <span>11% oFF — yOUR vOUCHER iS aCTIVE:</span>
+    <span>11% off — your voucher is active:</span>
     <span class="voucher-banner-code" id="voucher-banner-code">ARTS-11-APPAREL</span>
     <span id="voucher-banner-days"></span>
     <button class="voucher-banner-dismiss" id="voucher-banner-dismiss" aria-label="close">&times;</button>
@@ -213,7 +214,7 @@
           var banner = document.getElementById('voucher-banner');
           var daysEl = document.getElementById('voucher-banner-days');
           if (banner) { banner.hidden = false; }
-          if (daysEl) { daysEl.textContent = '(' + daysLeft + 'd rEMAINING)'; }
+          if (daysEl) { daysEl.textContent = '(' + daysLeft + 'd remaining)'; }
         }
       }
     } catch(e){}
@@ -230,7 +231,7 @@
   })();
   </script>
 
-  <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+  <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
   <div class="label-row">
@@ -238,12 +239,12 @@
   </div>
 
   <div class="bear-wrap">
-    <img src="assets/bear.png" alt="">
+    <img src="assets/logo.svg" alt="">
   </div>
 
-  <p class="hint">... cOMING sOON ...</p>
+  <p class="hint">... Coming soon ...</p>
 
-  <a href="assets.html" class="btn-back">gO bACK</a>
+  <a href="assets.html" class="btn-back">Go back</a>
 
   <!-- Smooth page transition (replaces CRT exit) -->
   <script>
@@ -294,25 +295,6 @@
       });
     }
     document.querySelectorAll('a.nav-about').forEach(navHover);
-
-    /* Logo [a] expand */
-    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner, timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr(); var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
-        clr(); var from=state;
-        for(var i=0;i<from;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
-        })(i);
-      });
-    });
   })();
   </script>
 <script src="theme.js?v=4"></script>

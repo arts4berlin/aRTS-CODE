@@ -126,8 +126,9 @@
 </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -155,10 +156,10 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <main>
+  <main id="main">
     <div class="legal">
       <p class="legal-title">pRIVACY pOLICY</p>
-      <p style="margin-bottom:clamp(36px,6vh,60px);font-size:0.68rem;color:var(--c-text-ghost,rgba(255,255,255,0.22));">Last updated: 15 March 2026 &nbsp;|&nbsp; <a href="legal/privacy-policy.pdf" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">dOWNLOAD PDF</a></p>
+      <p style="margin-bottom:clamp(36px,6vh,60px);font-size:0.68rem;color:var(--c-text-ghost,rgba(255,255,255,0.22));">Last updated: 15 March 2026 &nbsp;|&nbsp; <a href="legal/privacy-policy.pdf" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">Download PDF</a></p>
 
       <!-- 1. Controller -->
       <h2>1. cONTROLLER (GDPR aRT. 13(1)(a))</h2>
@@ -295,7 +296,7 @@
         <a href="listing-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">lISTING tERMS</a> &nbsp;|&nbsp;
         <a href="bot-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">bOT tERMS</a>
       </p>
-      <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>
+      <a href="about.html" class="legal-back">&larr; Back to about</a>
     </div>
   </main>
 
@@ -350,21 +351,7 @@
       });
     }
     document.querySelectorAll('nav a').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

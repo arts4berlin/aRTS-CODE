@@ -208,6 +208,7 @@
 </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
   <a href="connect.html" class="logo">[sEEK]</a>
   <a href="about.html" class="nav-about">aBOUT</a>
 
@@ -224,7 +225,7 @@
     <div class="send-row">
       <input class="field" type="email" placeholder="" data-ph="E-MaIL" name="email"      autocomplete="email">
       <button type="submit" class="bear-btn" aria-label="Send">
-        <img src="assets/bear.png" alt="">
+        <img src="assets/logo.svg" alt="">
         <span class="bear-check">✓</span>
       </button>
     </div>
@@ -350,21 +351,7 @@
       });
     }
     document.querySelectorAll('nav a, a.nav-about').forEach(navHover);
-
-    /* Logo [a] — expand on hover via data-inner attribute; avoids flash */
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

@@ -28,7 +28,7 @@
       window.location.replace('index.html');
     }
   </script>
-  <link rel="preload" as="image" href="assets/bear.png">
+  <link rel="preload" as="image" href="assets/logo.svg">
   <link rel="prefetch" href="about.html">
   <link rel="prefetch" href="audience.html">
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
@@ -47,9 +47,9 @@
     }
 
     .bear {
-      width: clamp(120px, 28vw, 220px);
+      width: clamp(180px, 38vw, 320px);
       height: auto;
-      margin-bottom: var(--s-8);
+      margin-bottom: var(--s-6);
       animation: float 4s ease-in-out infinite;
       will-change: transform;
     }
@@ -62,18 +62,18 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--s-2);
-      margin-bottom: var(--s-10);
+      gap: var(--s-1);
+      margin-bottom: var(--s-8);
     }
     .born {
-      font-size: 0.58rem;
+      font-size: 0.44rem;
       font-weight: var(--fw-light);
-      letter-spacing: 0.3em;
+      letter-spacing: 0.35em;
       color: var(--c-text-tertiary);
       text-transform: uppercase;
     }
     .berlin {
-      font-size: clamp(3.4rem, 12vw, 6.5rem);
+      font-size: clamp(2.6rem, 9vw, 4.8rem);
       font-weight: var(--fw-bold);
       letter-spacing: 0.06em;
       line-height: 0.95;
@@ -106,10 +106,10 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 16px 44px;
-      font-size: 0.92rem;
+      padding: 20px 60px;
+      font-size: 1.1rem;
       font-weight: var(--fw-bold);
-      letter-spacing: 0.28em;
+      letter-spacing: 0.3em;
       border: 1.5px solid var(--c-border-hover);
       border-radius: var(--r-md);
       color: var(--c-text-secondary);
@@ -175,6 +175,7 @@
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <!-- Ambient effects -->
   <div class="noise-overlay"></div>
@@ -182,7 +183,7 @@
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
-    <a href="id.html" class="site-logo home-mark" id="home-mark">[iD]</a>
+    <a href="id.html" class="site-logo home-mark" id="home-mark" style="margin-left:-6px;"><img src="assets/logo.svg" alt="aRTS" width="36" height="36" style="height:36px;width:auto;"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -209,14 +210,14 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <main class="hero">
-    <img src="assets/bear.png" alt="aRTS bear" class="bear" fetchpriority="high">
+  <main id="main" class="hero">
+    <img src="assets/logo.svg" alt="aRTS logo" class="bear" fetchpriority="high">
     <div class="tagline">
       <span class="born">born in</span>
       <span class="berlin">BERLIN</span>
     </div>
     <div class="access-badge" id="access-badge" hidden>
-      <span class="access-label">aCCESS gRaNTED</span>
+      <span class="access-label">Access granted</span>
     </div>
 
     <a href="assets.html" class="btn-assets" id="btn-assets"><span>aSSETS</span></a>
@@ -304,10 +305,10 @@
       var logo=document.createElement('span');logo.className='_ec-logo';logo.textContent='[aRTS]';
       var type=document.createElement('span');type.className='_ec-type';type.textContent='member pass';
       hdr.appendChild(logo);hdr.appendChild(type);
-      var pay=document.createElement('div');pay.className='_ec-pay';pay.textContent='pAY';
+      var pay=document.createElement('div');pay.className='_ec-pay';pay.textContent='Pay';
       var numEl=document.createElement('div');numEl.className='_ec-num';numEl.textContent='??';
       var rule=document.createElement('div');rule.className='_ec-rule';
-      var congrats=document.createElement('div');congrats.className='_ec-congrats';congrats.textContent='cONGRATULATIONS';
+      var congrats=document.createElement('div');congrats.className='_ec-congrats';congrats.textContent='Congratulations';
       var sub=document.createElement('div');sub.className='_ec-sub';sub.textContent='you found the easter egg';
       var clbl=document.createElement('div');clbl.className='_ec-codelabel';clbl.textContent='redemption code';
       var codeEl=document.createElement('div');codeEl.className='_ec-code';codeEl.textContent=codeStr;
@@ -328,7 +329,7 @@
         var txt=codeEl.textContent;
         if(navigator.clipboard){navigator.clipboard.writeText(txt);}
         else{var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(ee){}document.body.removeChild(ta);}
-        codeEl.textContent='cOPIED ✓';codeEl.style.color='var(--c-accent)';
+        codeEl.textContent='Copied ✓';codeEl.style.color='var(--c-accent)';
         setTimeout(function(){codeEl.textContent=txt;codeEl.style.color='';},1600);
       });
 
@@ -456,7 +457,7 @@
       if(loggedIn){
         mark.style.opacity='1';
         mark.style.color='var(--c-accent)';
-        mark.title='mEMBER iD';
+        mark.title='Member ID';
       }
     })();
 
@@ -501,26 +502,6 @@
       btn.addEventListener('mouseenter',function(){if(cycling)return;cycling=true;wordIdx=0;timer=setTimeout(nextWord,WORD_HOLD);});
       btn.addEventListener('mouseleave',stopCycle);
     })();
-
-    /* Logo [a] expand */
-    document.querySelectorAll('a.logo[data-inner], a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){
-        clr();var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
-        clr();var from=state;
-        for(var i=0;i<from;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
-        })(i);
-      });
-    });
   })();
   </script>
 
@@ -670,11 +651,11 @@
 
     var POOL='▒░▓█◆◇○●◎△▽▼►◄≡≈≠±×÷∞∑∏∆'.split('');
     var steps=[
-      {icon:'◆', title:'wELCOME tO [aRTS]',   desc:'a tRADING nETWORK fOR aRT cOLLECTORS aND cREATORS, bORN iN bERLIN.', highlight:null},
-      {icon:'▦', title:'bROWSE tHE gALLERY',   desc:'tAP "aRT" iN tHE nAV tO eXPLORE aVAILABLE pIECES fROM aRTISTS wORLDWIDE.', highlight:'.site-nav a[href="art.html"]'},
-      {icon:'◎', title:'vIEW dETAILS',          desc:'cLICK aNY pIECE tO sEE fULL dETAILS — iMAGES, dIMENSIONS, pROVENANCE, aND mORE.', highlight:null},
-      {icon:'◈', title:'iNQUIRE',               desc:'fOUND sOMETHING yOU lIKE? hIT "TaLK" tO sTART a cONVERSATION wITH tHE sELLER.', highlight:'.site-nav a[href="inquire.html"]'},
-      {icon:'△', title:'jOIN tHE nETWORK',      desc:'bECOME a mEMBER tO uNLOCK fAVOURITES, bOUTIQUE aCCESS, aND mORE. fREE tIER aVAILABLE.', highlight:'#home-mark'}
+      {icon:'◆', title:'wELCOME tO [aRTS]',   desc:'A trading network for art collectors and creators, born in Berlin.', highlight:null},
+      {icon:'▦', title:'bROWSE tHE gALLERY',   desc:'Tap "aRT" in the nav to explore available pieces from artists worldwide.', highlight:'.site-nav a[href="art.html"]'},
+      {icon:'◎', title:'vIEW dETAILS',          desc:'Click any piece to see full details — images, dimensions, provenance, and more.', highlight:null},
+      {icon:'◈', title:'iNQUIRE',               desc:'Found something you like? Hit "TaLK" to start a conversation with the seller.', highlight:'.site-nav a[href="inquire.html"]'},
+      {icon:'△', title:'jOIN tHE nETWORK',      desc:'Become a member to unlock favourites, boutique access, and more. Free tier available.', highlight:'#home-mark'}
     ];
     var cur=0, direction=1, prevHighlight=null;
 
@@ -695,8 +676,8 @@
           '</div>'+
           '<div class="guide-dots">'+dotsHTML+'</div>'+
           '<div class="guide-btns">'+
-            '<button class="guide-btn guide-btn-skip">sKIP</button>'+
-            '<button class="guide-btn guide-btn-next">nEXT</button>'+
+            '<button class="guide-btn guide-btn-skip">Skip</button>'+
+            '<button class="guide-btn guide-btn-next">Next</button>'+
           '</div>'+
         '</div>'+
       '</div>';
@@ -759,7 +740,7 @@
         if(i===cur) dots[i].classList.add('active');
         else if(i<cur) dots[i].classList.add('done');
       }
-      nextBtn.textContent=cur===steps.length-1?'gOT iT':'nEXT';
+      nextBtn.textContent=cur===steps.length-1?'Got it':'Next';
       setHighlight(s.highlight);
 
       if(animate){
@@ -835,11 +816,11 @@
   <div id="gdpr-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:color-mix(in srgb, var(--c-bg-elevated) 97%, transparent);backdrop-filter:blur(12px);border-top:1px solid var(--c-accent-subtle);padding:16px 24px;font-family:var(--font);">
     <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
       <p style="flex:1;min-width:200px;font-size:0.62rem;font-weight:300;letter-spacing:0.1em;color:var(--c-text-secondary);line-height:1.6;">
-        wE uSE lOCALsTORAGE tO sTORE yOUR sESSION dATA aND pREFERENCES. nO cOOKIES. <a href="privacy.html" style="color:var(--c-accent);text-decoration:none">pRIVACY pOLICY</a>
+        We use localStorage to store your session data and preferences. No cookies. <a href="privacy.html" style="color:var(--c-accent);text-decoration:none">Privacy policy</a>
       </p>
       <div style="display:flex;gap:8px;flex-shrink:0;">
-        <button id="gdpr-accept" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:var(--c-accent);color:#fff;border:none;border-radius:var(--r-sm);cursor:crosshair;">aCCEPT</button>
-        <button id="gdpr-decline" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:transparent;color:var(--c-text-tertiary);border:1px solid var(--c-border);border-radius:var(--r-sm);cursor:crosshair;">dECLINE</button>
+        <button id="gdpr-accept" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:var(--c-accent);color:#fff;border:none;border-radius:var(--r-sm);cursor:crosshair;">Accept</button>
+        <button id="gdpr-decline" style="font-family:var(--font);font-size:0.55rem;font-weight:700;letter-spacing:0.18em;padding:8px 18px;background:transparent;color:var(--c-text-tertiary);border:1px solid var(--c-border);border-radius:var(--r-sm);cursor:crosshair;">Decline</button>
       </div>
     </div>
   </div>
@@ -906,8 +887,8 @@
       var cur=parseInt(localStorage.getItem('arts_points')||'0',10);
       localStorage.setItem('arts_points',String(cur+dailyPts));
       var pending=JSON.parse(sessionStorage.getItem('arts_xp_pending')||'[]');
-      var lbl='dAILY lOGIN';
-      if(streakActive && mult>1) lbl='dAILY lOGIN ('+mult+'x sTREAK)';
+      var lbl='Daily login';
+      if(streakActive && mult>1) lbl='Daily login ('+mult+'x streak)';
       pending.push({label:lbl,pts:dailyPts});
       sessionStorage.setItem('arts_xp_pending',JSON.stringify(pending));
     }catch(e){}
@@ -934,10 +915,10 @@
     <div class="taste-prompt-card">
       <div class="taste-prompt-icon">◈</div>
       <div class="taste-prompt-title">sTYLE tEST rEaDY</div>
-      <p class="taste-prompt-desc">sWIPE tHROUGH 10 pIECES — hELP uS lEaRN wHaT yOU lOVE</p>
+      <p class="taste-prompt-desc">Swipe through 10 pieces — help us learn what you love</p>
       <div class="taste-prompt-actions">
-        <button class="btn btn-secondary" id="taste-prompt-later">lATER</button>
-        <a href="taste.html" class="btn btn-primary">tAKE tEST</a>
+        <button class="btn btn-secondary" id="taste-prompt-later">Later</button>
+        <a href="taste.html" class="btn btn-primary">Take test</a>
       </div>
     </div>
   </div>
@@ -970,12 +951,12 @@
       <div class="fb-handle-wrap" style="display:flex;justify-content:center;padding:10px 0 0;"><div class="fb-handle" style="width:34px;height:3px;border-radius:2px;"></div></div>
       <div class="fb-stripe" style="height:4px;"></div>
       <div class="fb-head" style="display:flex;justify-content:space-between;align-items:center;padding:18px 24px 0;">
-        <span class="fb-logo" style="font-size:0.9rem;font-weight:300;letter-spacing:0.06em;">[aRTS]</span>
+        <img src="assets/logo.svg" alt="aRTS" style="height:22px;width:auto;border-radius:3px;">
         <button class="fb-close" id="fb-close">[×]</button>
       </div>
       <div id="fb-form" class="fb-body" style="padding:14px 24px 0;">
         <div class="fb-stars-wrap" style="margin-bottom:20px;">
-          <p class="fb-stars-pre" style="font-size:0.42rem;letter-spacing:0.26em;margin-bottom:10px;text-transform:uppercase;font-weight:600;">— hOW dO yOU fEEL? —</p>
+          <p class="fb-stars-pre" style="font-size:0.42rem;letter-spacing:0.26em;margin-bottom:10px;text-transform:uppercase;font-weight:600;">— How do you feel? —</p>
           <div class="fb-stars" id="fb-stars" style="display:flex;gap:10px;">
             <button class="fb-star" data-v="1" aria-label="1 star" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">B</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
             <button class="fb-star" data-v="2" aria-label="2 stars" style="position:relative;width:2rem;height:2.4rem;cursor:crosshair;padding:0;"><span class="fb-letter" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">R</span><span class="fb-starmark" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:700;line-height:1;opacity:0;transform:scale(0.2) rotate(-30deg);transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),opacity 0.18s;">★</span></button>
@@ -985,14 +966,14 @@
           </div>
           <p class="fb-stars-label" id="fb-stars-label" style="font-size:0.44rem;letter-spacing:0.22em;text-transform:uppercase;margin-top:9px;min-height:1em;"></p>
         </div>
-        <textarea class="fb-text" id="fb-text" rows="3" maxlength="280" placeholder="wHaT dO yOU tHINK? — bE bRUTaL." style="width:100%;font-size:0.88rem;padding:6px 0;resize:none;"></textarea>
+        <textarea class="fb-text" id="fb-text" rows="3" maxlength="280" placeholder="What do you think? — Be brutal." style="width:100%;font-size:0.88rem;padding:6px 0;resize:none;"></textarea>
         <p class="fb-char-count" id="fb-char" style="font-size:0.42rem;font-weight:300;letter-spacing:0.18em;text-align:right;margin-top:4px;">0 / 280</p>
         <div class="fb-foot" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 0;gap:12px;">
-          <span class="fb-note" style="font-size:0.42rem;font-weight:300;letter-spacing:0.14em;flex:1;">sTORED LOCaLLY · hELPS iMPROVE tHE sITE</span>
-          <button class="fb-submit" id="fb-submit" disabled style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;padding:0.7rem 1.4rem;flex-shrink:0;">sUBMIT</button>
+          <span class="fb-note" style="font-size:0.42rem;font-weight:300;letter-spacing:0.14em;flex:1;">Stored locally · Helps improve the site</span>
+          <button class="fb-submit" id="fb-submit" disabled style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;padding:0.7rem 1.4rem;flex-shrink:0;">Submit</button>
         </div>
       </div>
-      <div id="fb-success" hidden class="fb-success" style="padding:28px 24px;text-align:center;font-size:0.72rem;font-weight:300;letter-spacing:0.18em;">tHaNKS — fEEDBaCK rECEIVED ✓</div>
+      <div id="fb-success" hidden class="fb-success" style="padding:28px 24px;text-align:center;font-size:0.72rem;font-weight:300;letter-spacing:0.18em;">Thanks — feedback received ✓</div>
     </div>
   </div>
   <style>
@@ -1016,7 +997,7 @@
     function closeSheet(){backdrop.classList.remove('open');}
     closeBtn.addEventListener('click',closeSheet);
     backdrop.addEventListener('click',function(e){if(e.target===backdrop)closeSheet();});
-    var STAR_LABELS=['','wEaK','mEH','gOOD','gREaT','bRAVO!'];
+    var STAR_LABELS=['','Weak','Meh','Good','Great','Bravo!'];
     var stars=Array.from(starsEl.querySelectorAll('.fb-star'));
     var labelEl=document.getElementById('fb-stars-label');
     stars.forEach(function(s){
@@ -1059,16 +1040,16 @@
       /* ── Toxicity pre-check (soft block) ── */
       if(window.artsHF && artsHF.enabled() && artsHF.rateCheck() && !submitEl._toxCleared){
         submitEl.disabled=true;
-        submitEl.textContent='cHECKING…';
+        submitEl.textContent='Checking…';
         artsHF.query('unitary/toxic-bert',{inputs:feedbackText}).then(function(r){
           var toxic=r&&r[0]&&r[0].find(function(l){return l.label==='toxic';});
           if(toxic&&toxic.score>0.7){
             var warnEl=document.createElement('p');
             warnEl.style.cssText='font-size:0.48rem;color:#FF5C00;letter-spacing:0.12em;margin-top:6px;';
-            warnEl.textContent='yOUR mESSaGE wAS fLaGGED — pLEaSE rEVISE';
+            warnEl.textContent='Your message was flagged — please revise';
             textEl.parentNode.appendChild(warnEl);
             submitEl.disabled=false;
-            submitEl.textContent='sEND';
+            submitEl.textContent='Send';
             return;
           }
           submitEl._toxCleared=true;
@@ -1101,7 +1082,7 @@
           .then(function(r){
             if(r&&r[0]){
               var best=r[0].reduce(function(a,b){return b.score>a.score?b:a;},{score:0});
-              entry.ai_sentiment={label:best.label==='POSITIVE'?'pOSITIVE':'nEGaTIVE',score:Math.round(best.score*100)/100};
+              entry.ai_sentiment={label:best.label==='POSITIVE'?'Positive':'Negative',score:Math.round(best.score*100)/100};
             }
           }).catch(function(){});
         var topicsP=artsHF.query('facebook/bart-large-mnli',{
@@ -1110,7 +1091,7 @@
         }).then(function(r){
             if(r&&r.labels){
               var found=[];
-              var TOPIC_MAP={design:'dESIGN',navigation:'nAVIGaTION',performance:'pERFORMANCE',content:'cONTENT',pricing:'pRICING',boutique:'bOTIQUE',account:'iD / lOGIN'};
+              var TOPIC_MAP={design:'Design',navigation:'Navigation',performance:'Performance',content:'Content',pricing:'Pricing',boutique:'Boutique',account:'ID / Login'};
               r.labels.forEach(function(l,i){if(r.scores[i]>0.3)found.push({topic:TOPIC_MAP[l]||l,score:Math.round(r.scores[i]*100)/100});});
               if(found.length) entry.ai_topics=found;
             }
@@ -1124,7 +1105,7 @@
 
       formEl.hidden=true;successEl.hidden=false;
       var fbCorner=document.getElementById('corner-feedback-item');
-      if(fbCorner){fbCorner.textContent='tHaNKS \u2713';fbCorner.classList.add('submitted');}
+      if(fbCorner){fbCorner.textContent='Thanks \u2713';fbCorner.classList.add('submitted');}
       setTimeout(closeSheet,1600);
     });
   })();

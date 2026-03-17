@@ -102,6 +102,12 @@
     }
     .legal-back:hover { color: rgba(255,255,255,0.5); }
 
+    .legal-placeholder {
+      color: rgba(255,255,255,0.2);
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: #000; }
     .logo, header { touch-action: manipulation; }
@@ -119,11 +125,13 @@
     [data-theme="day"] .legal-divider { background: rgba(0,0,0,0.06); }
     [data-theme="day"] .legal-back { color: rgba(0,0,0,0.42); }
     [data-theme="day"] .legal-back:hover { color: rgba(0,0,0,0.65); }
+    [data-theme="day"] .legal-placeholder { color: rgba(0,0,0,0.3); }
 </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -151,28 +159,28 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <main>
+  <main id="main">
     <div class="legal">
       <p class="legal-title">iMPRESSUM</p>
       <p style="margin-bottom:clamp(36px,6vh,60px);font-size:0.68rem;color:var(--c-text-ghost,rgba(255,255,255,0.22));">Angaben gem&auml;&szlig; &sect;5 TMG &amp; &sect;18 MStV</p>
 
       <!-- Provider identity (TMG §5) -->
       <h2>aNGABEN zUM dIENSTEANBIETER</h2>
-      <p>[TO BE FILLED: Full Legal Name]<br>
-      [TO BE FILLED: Street Address]<br>
-      [TO BE FILLED: Postal Code, City], Germany</p>
+      <p><span class="legal-placeholder">&#9679; Company / Legal Name</span><br>
+      <span class="legal-placeholder">&#9679; Street &amp; Number</span><br>
+      <span class="legal-placeholder">&#9679; Postal Code, City</span>, Germany</p>
 
       <h2>kONTAKT</h2>
       <p>Email: <a href="mailto:arts4berlin@outlook.com" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">arts4berlin@outlook.com</a><br>
-      Phone: [TO BE FILLED]</p>
+      Phone: <span class="legal-placeholder">&#9679; Phone Number</span></p>
 
       <h2>uMSATZSTEUER-iD</h2>
       <p>Umsatzsteuer-Identifikationsnummer gem&auml;&szlig; &sect;27a UStG:<br>
-      [TO BE FILLED — or remove this section if not applicable]</p>
+      <span class="legal-placeholder">&#9679; USt-IdNr. (pending company registration)</span></p>
 
       <h2>vERANTWORTLICH f&Uuml;R dEN iNHALT (&sect;18 mStV)</h2>
-      <p>[TO BE FILLED: Name of responsible person]<br>
-      [TO BE FILLED: Address]</p>
+      <p><span class="legal-placeholder">&#9679; Name of responsible person</span><br>
+      <span class="legal-placeholder">&#9679; Address</span></p>
 
       <h2>eU-sTREITBEILEGUNG</h2>
       <p>Die Europ&auml;ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener" style="color:var(--c-text-secondary);text-decoration:underline;text-underline-offset:3px;">https://ec.europa.eu/consumers/odr/</a>.<br>
@@ -190,7 +198,7 @@
         <a href="listing-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">lISTING tERMS</a> &nbsp;|&nbsp;
         <a href="bot-terms.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">bOT tERMS</a>
       </p>
-      <a href="about.html" class="legal-back">&larr; bACK tO aBOUT</a>
+      <a href="about.html" class="legal-back">&larr; Back to about</a>
     </div>
   </main>
 
@@ -242,20 +250,7 @@
       });
     }
     document.querySelectorAll('nav a').forEach(navHover);
-
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[], state=0;
-      function clr(){ timers.forEach(clearTimeout); timers.length=0; }
-      function render(n){ logo.textContent='[a'+inner.slice(0,n)+']'; }
-      logo.addEventListener('mouseenter',function(){
-        clr();
-        var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
+logo.addEventListener('mouseleave',function(){
         clr();
         var from=state;
         for(var i=0;i<from;i++)(function(i){

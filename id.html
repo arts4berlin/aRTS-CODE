@@ -19,6 +19,8 @@
   <meta name="twitter:image"       content="https://4-arts.com/assets/og-banner.png">
   <title>[aRTS] — mEMBER iD</title>
   <script>
+    document.documentElement.style.background = '#000';
+    if(localStorage.getItem('arts_theme')==='day'){document.documentElement.style.background='#fff';document.documentElement.setAttribute('data-theme','day');}
   </script>
   <script>
     if (!localStorage.getItem('captcha_passed')) {
@@ -39,7 +41,6 @@
       min-height: 100vh;
     }
 
-
     main {
       padding-top: clamp(90px, 14vh, 120px);
       padding-bottom: clamp(80px, 10vh, 130px);
@@ -49,9 +50,13 @@
     }
 
     .form-col {
-      width: min(92vw, 680px);
+      width: min(94vw, 900px);
       display: flex;
       flex-direction: column;
+      transition: width 0.3s ease;
+    }
+    #s1 {
+      max-width: 680px;
     }
 
     .section-label {
@@ -78,6 +83,85 @@
       letter-spacing: 0.14em;
       color: rgba(255,255,255,0.32);
       margin-bottom: clamp(16px, 2.5vh, 24px);
+    }
+
+    /* ── Funnel steps ── */
+    .funnel-steps {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vh, 20px);
+      margin-bottom: clamp(32px, 5vh, 48px);
+    }
+    .funnel-step {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(14px, 2.5vw, 22px);
+      padding: clamp(18px, 3vh, 28px) clamp(16px, 3vw, 24px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: crosshair;
+    }
+    .funnel-step:hover {
+      border-color: rgba(255,92,0,0.3);
+      background: rgba(255,92,0,0.02);
+    }
+    .funnel-num {
+      font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: rgba(255,92,0,0.25);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 2.2rem;
+    }
+    .funnel-step:hover .funnel-num { color: rgba(255,92,0,0.55); }
+    .funnel-body { flex: 1; min-width: 0; }
+    .funnel-name {
+      font-size: clamp(0.9rem, 2.4vw, 1.15rem);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--c-text, #fff);
+      margin-bottom: 4px;
+    }
+    .funnel-desc {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.32);
+      line-height: 1.6;
+    }
+    .funnel-arrow {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.12);
+      align-self: center;
+      flex-shrink: 0;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .funnel-step:hover .funnel-arrow { color: rgba(255,92,0,0.55); transform: translateX(3px); }
+
+    /* ── Returning member divider ── */
+    .returning-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: clamp(18px, 2.5vh, 26px);
+    }
+    .returning-divider::before,
+    .returning-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    .returning-divider span {
+      font-size: 0.48rem;
+      font-weight: 300;
+      letter-spacing: 0.26em;
+      color: rgba(255,255,255,0.18);
+      white-space: nowrap;
     }
 
     /* ── OAuth sign-in buttons ── */
@@ -271,20 +355,154 @@
       display: flex; align-items: center;
     }
 
-    /* ── Stage 2: entity cards ── */
+    /* ── Stage 2: entity cards — bento grid ── */
     .entity-cards {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(16px, 2.5vh, 24px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(12px, 2vh, 18px);
+    }
+    .vc-identity  { grid-column: 1; grid-row: 1 / 3; }
+    .vc-progress  { grid-column: 2; grid-row: 1; }
+    .vc-streak-card { grid-column: 2; grid-row: 2; }
+    .vc-rewards   { grid-column: 1 / -1; grid-row: 3; }
+    .vc-network   { grid-column: 1; grid-row: 4; }
+    .vc-seller    { grid-column: 2; grid-row: 4; }
+    .vc-collection { grid-column: 1 / -1; grid-row: 5; }
+    .vc-purchases  { grid-column: 1 / -1; grid-row: 6; }
+
+    /* ── pURCHaSES card ── */
+    .vc-purch-list { display:flex; flex-direction:column; gap:8px; }
+    .vc-purch-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+    .vc-purch-item:hover { border-color: rgba(255,255,255,0.08); }
+    .vc-purch-thumb {
+      width: 44px; height: 44px; border-radius: 3px;
+      background: rgba(255,255,255,0.04); object-fit: cover;
+      flex-shrink: 0;
+    }
+    .vc-purch-info { flex: 1; min-width: 0; }
+    .vc-purch-title {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.08em; color: var(--c-text, #fff);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .vc-purch-meta {
+      font-size: 0.48rem; font-weight: 300;
+      letter-spacing: 0.14em; color: rgba(255,255,255,0.32);
+      display: flex; gap: 8px; align-items: center; margin-top: 2px;
+    }
+    .vc-purch-price {
+      font-family: 'Courier New', monospace;
+      font-size: 0.55rem; color: rgba(255,255,255,0.48);
+    }
+    .vc-purch-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .btn-dispute {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.42rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 3px;
+      background: transparent;
+      border: 1px solid rgba(255,60,60,0.25);
+      color: rgba(255,60,60,0.65); cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-dispute:hover { background: rgba(255,60,60,0.08); color: rgba(255,60,60,0.85); }
+    .btn-dispute:disabled { opacity: 0.3; cursor: default; }
+    .badge-disputed {
+      font-size: 0.38rem; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; padding: 2px 7px; border-radius: 2px;
+      color: rgba(255,200,60,0.8); background: rgba(255,200,60,0.06);
+      border: 1px solid rgba(255,200,60,0.18);
+    }
+
+    /* ── Dispute modal ── */
+    .dispute-overlay {
+      position: fixed; inset: 0; z-index: 99990;
+      background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .dispute-overlay[hidden] { display: none; }
+    .dispute-modal {
+      width: min(480px, 100%); background: #0a0a0a;
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 6px;
+      padding: 28px 32px; position: relative;
+    }
+    .dispute-eyebrow {
+      font-size: 0.48rem; font-weight: 700; letter-spacing: 0.3em;
+      color: rgba(255,60,60,0.6); text-transform: uppercase; margin-bottom: 14px;
+    }
+    .dispute-reason-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .dispute-reason-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.55rem; font-weight: 600;
+      letter-spacing: 0.14em; padding: 8px 14px; border-radius: 4px;
+      background: transparent; border: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.4); cursor: pointer; text-align: left;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .dispute-reason-btn:hover { border-color: rgba(255,60,60,0.3); color: rgba(255,255,255,0.6); }
+    .dispute-reason-btn.selected { border-color: rgba(255,60,60,0.5); color: rgba(255,60,60,0.8); background: rgba(255,60,60,0.04); }
+    .dispute-textarea {
+      width: 100%; height: 80px; background: transparent;
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem;
+      padding: 10px; outline: none; resize: none; margin-bottom: 16px;
+    }
+    .dispute-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    .dispute-submit {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.5rem; font-weight: 700;
+      letter-spacing: 0.16em; padding: 6px 18px; border-radius: 3px;
+      background: rgba(255,60,60,0.12); border: 1px solid rgba(255,60,60,0.3);
+      color: rgba(255,60,60,0.85); cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dispute-submit:hover { background: rgba(255,60,60,0.18); }
+    .dispute-submit:disabled { opacity: 0.3; cursor: default; }
+
+    /* ── Red flag badge ── */
+    .red-flag-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.42rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 2px;
+      color: rgba(255,60,60,0.85); background: rgba(255,60,60,0.06);
+      border: 1px solid rgba(255,60,60,0.18);
+    }
+    .red-flag-badge::before { content: '\2691'; font-size: 0.5rem; }
+    .vc-status.banned { color: rgba(255,60,60,0.85) !important; }
+    @media (max-width: 680px) {
+      .entity-cards { grid-template-columns: 1fr; }
+      .entity-cards .verified-card { grid-column: 1 !important; grid-row: auto !important; }
     }
 
     .verified-card {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
       overflow: hidden;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                  transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                  border-color 0.25s ease,
+                  box-shadow 0.3s ease;
     }
-
-    .vc-stripe { height: 4px; background: #FF5C00; }
+    .verified-card.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .verified-card.revealed:hover {
+      border-color: rgba(255,255,255,0.10);
+      box-shadow: inset 0 0 30px rgba(255,92,0,0.03);
+      transform: translateY(-2px);
+    }
 
     .vc-body {
       padding: clamp(20px, 3.5vh, 36px) clamp(20px, 3.5vw, 32px);
@@ -300,6 +518,8 @@
       color: rgba(255,92,0,0.5);
       text-transform: uppercase;
       margin-bottom: 2px;
+      padding-left: 10px;
+      border-left: 3px solid rgba(255,92,0,0.45);
     }
 
 
@@ -616,22 +836,61 @@
       margin-top: 3px;
     }
 
-    .vc-progress-bg {
-      width: 100%;
-      height: 2px;
-      background: rgba(255,255,255,0.07);
-      border-radius: 2px;
-      margin-top: clamp(8px,1.2vh,12px);
-      overflow: hidden;
+    /* ── SVG Progress Ring ── */
+    .vc-ring-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 8px auto 4px;
+    }
+    .vc-ring { display: block; }
+    .vc-ring-fill {
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .vc-ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .vc-ring-center .vc-pts-num {
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+    }
+    .vc-ring-center .vc-pts-label {
+      font-size: 0.42rem;
+      margin-top: 2px;
     }
 
-    .vc-progress-fill {
-      height: 100%;
-      background: #FF5C00;
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    /* ── Reward Tabs ── */
+    .vc-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: clamp(10px, 1.5vh, 16px);
     }
+    .vc-tab {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.45rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.28);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .vc-tab:hover { color: rgba(255,255,255,0.55); }
+    .vc-tab.active { color: #FF5C00; border-bottom-color: #FF5C00; }
+    .vc-tab-panel { display: none; }
+    .vc-tab-panel.active { display: block; }
+
+    /* keep old progress bar hidden for compat refs in nukeAndSign/signout */
+    .vc-progress-bg { display: none; }
+    .vc-progress-fill { display: none; }
 
     /* ── Streak badge ── */
     .vc-streak-row {
@@ -803,7 +1062,8 @@
     html[data-theme="day"] #vc-bounty-submitted + span,
     html[data-theme="day"] #vc-bounty-confirmed + span { color: rgba(0,0,0,0.48) !important; }
     html[data-theme="day"] .vc-reward-item { border-color: rgba(0,0,0,0.04); }
-    html[data-theme="day"] .verified-card { border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .verified-card { border-color: rgba(0,0,0,0.08); background: rgba(0,0,0,0.02); backdrop-filter: blur(12px); }
+    html[data-theme="day"] .verified-card:hover { border-color: rgba(0,0,0,0.14); box-shadow: inset 0 0 30px rgba(255,92,0,0.02); }
     html[data-theme="day"] .card-eyebrow { color: rgba(255,92,0,0.55); }
     html[data-theme="day"] .vc-alias { color: #111; }
     html[data-theme="day"] .vc-alias.no-name { color: rgba(0,0,0,0.40); }
@@ -843,6 +1103,39 @@
     html[data-theme="day"] .btn-oauth.apple:hover { border-color: rgba(0,0,0,0.90); color: #111; background: rgba(0,0,0,0.09); }
     html[data-theme="day"] .no-rewards-msg { color: rgba(0,0,0,0.38); }
     html[data-theme="day"] .no-redemptions-msg { color: rgba(0,0,0,0.35); }
+    /* Day mode: ring */
+    html[data-theme="day"] .vc-ring-bg { stroke: rgba(0,0,0,0.07); }
+    html[data-theme="day"] .vc-ring-center .vc-pts-label { color: rgba(0,0,0,0.48); }
+    /* Day mode: tabs */
+    html[data-theme="day"] .vc-tabs { border-bottom-color: rgba(0,0,0,0.06); }
+    html[data-theme="day"] .vc-tab { color: rgba(0,0,0,0.38); }
+    html[data-theme="day"] .vc-tab:hover { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .vc-tab.active { color: #FF5C00; border-bottom-color: #FF5C00; }
+    /* Day mode: eyebrow bar */
+    html[data-theme="day"] .card-eyebrow { border-left-color: rgba(255,92,0,0.45); }
+    /* Day mode: horizontal scroll favourites */
+    html[data-theme="day"] .vc-favs-list.has-items { scrollbar-color: rgba(255,92,0,0.15) transparent; }
+    html[data-theme="day"] .vc-favs-list.has-items .vc-fav-item { border-color: rgba(0,0,0,0.06); }
+    /* Day mode: purchases + disputes */
+    html[data-theme="day"] .vc-purch-item { border-color: rgba(0,0,0,0.06); }
+    html[data-theme="day"] .vc-purch-item:hover { border-color: rgba(0,0,0,0.12); }
+    html[data-theme="day"] .vc-purch-title { color: #111; }
+    html[data-theme="day"] .vc-purch-meta { color: rgba(0,0,0,0.42); }
+    html[data-theme="day"] .vc-purch-price { color: rgba(0,0,0,0.55); }
+    html[data-theme="day"] .vc-purch-thumb { background: rgba(0,0,0,0.04); }
+    html[data-theme="day"] .btn-dispute { color: rgba(200,40,40,0.7); border-color: rgba(200,40,40,0.25); }
+    html[data-theme="day"] .btn-dispute:hover { background: rgba(200,40,40,0.06); color: rgba(200,40,40,0.85); }
+    html[data-theme="day"] .badge-disputed { color: rgba(180,140,20,0.8); background: rgba(180,140,20,0.06); border-color: rgba(180,140,20,0.18); }
+    html[data-theme="day"] .dispute-overlay { background: rgba(255,255,255,0.88); }
+    html[data-theme="day"] .dispute-modal { background: #f8f8f8; border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .dispute-eyebrow { color: rgba(200,40,40,0.6); }
+    html[data-theme="day"] .dispute-reason-btn { border-color: rgba(0,0,0,0.08); color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .dispute-reason-btn:hover { border-color: rgba(200,40,40,0.3); color: rgba(0,0,0,0.6); }
+    html[data-theme="day"] .dispute-reason-btn.selected { border-color: rgba(200,40,40,0.5); color: rgba(200,40,40,0.8); background: rgba(200,40,40,0.04); }
+    html[data-theme="day"] .dispute-textarea { color: #000; border-color: rgba(0,0,0,0.10); }
+    html[data-theme="day"] .dispute-textarea::placeholder { color: rgba(0,0,0,0.25); }
+    html[data-theme="day"] .dispute-submit { color: rgba(200,40,40,0.85); background: rgba(200,40,40,0.08); border-color: rgba(200,40,40,0.25); }
+    html[data-theme="day"] .red-flag-badge { color: rgba(200,40,40,0.85); background: rgba(200,40,40,0.06); border-color: rgba(200,40,40,0.18); }
 
     /* ── Day mode: page-level overrides ── */
     /* header day mode handled by global styles.css */
@@ -888,7 +1181,20 @@
     html[data-theme="day"] .destroy-input::placeholder { color: rgba(255,60,60,0.2); }
     html[data-theme="day"] .btn-destroy-cancel { color: rgba(0,0,0,0.40); border-color: rgba(0,0,0,0.12); }
     html[data-theme="day"] .btn-destroy-cancel:hover { color: rgba(0,0,0,0.65); border-color: rgba(0,0,0,0.25); }
-    html[data-theme="day"] html { background: #fff; }
+    html[data-theme="day"] { background: #fff; }
+
+    /* ── Day mode: funnel steps ── */
+    html[data-theme="day"] .funnel-step { border-color: rgba(0,0,0,0.08); }
+    html[data-theme="day"] .funnel-step:hover { border-color: rgba(255,92,0,0.3); background: rgba(255,92,0,0.02); }
+    html[data-theme="day"] .funnel-num { color: rgba(255,92,0,0.25); }
+    html[data-theme="day"] .funnel-step:hover .funnel-num { color: rgba(255,92,0,0.55); }
+    html[data-theme="day"] .funnel-name { color: #111; }
+    html[data-theme="day"] .funnel-desc { color: rgba(0,0,0,0.48); }
+    html[data-theme="day"] .funnel-arrow { color: rgba(0,0,0,0.15); }
+    html[data-theme="day"] .funnel-step:hover .funnel-arrow { color: rgba(255,92,0,0.55); }
+    html[data-theme="day"] .returning-divider::before,
+    html[data-theme="day"] .returning-divider::after { background: rgba(0,0,0,0.08); }
+    html[data-theme="day"] .returning-divider span { color: rgba(0,0,0,0.32); }
 
     /* ── XP Toast ── */
     .xp-toast-wrap {
@@ -1179,6 +1485,55 @@
     /* ── Stage fade transitions ── */
     #s1, #s2 { transition: opacity 0.22s ease; }
 
+    /* ── Micro-interactions ── */
+    .vc-voucher-btn:active,
+    .vc-redeem-btn:active,
+    .vc-referral-copy:active,
+    .vc-tab:active { transform: scale(0.97); }
+    .vc-voucher-btn:hover,
+    .vc-redeem-btn:hover:not(:disabled) { box-shadow: 0 0 12px rgba(255,92,0,0.12); }
+    .vc-referral-copy.copied-flash { color: rgba(110,230,110,0.75); border-color: rgba(110,230,110,0.3); }
+    @keyframes redeemPulse {
+      0%  { box-shadow: 0 0 0 0 rgba(110,230,110,0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(110,230,110,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(110,230,110,0); }
+    }
+    .vc-redeem-btn.redeemed-pulse { animation: redeemPulse 0.6s ease; }
+
+    /* ── Horizontal scroll favourites ── */
+    .vc-favs-list.has-items {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,92,0,0.2) transparent;
+    }
+    .vc-favs-list.has-items .vc-fav-item {
+      flex: 0 0 auto;
+      width: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      scroll-snap-align: start;
+      border-bottom: none;
+    }
+    .vc-favs-list.has-items .vc-fav-thumb {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 3px;
+    }
+    .vc-favs-list.has-items .vc-fav-remove {
+      align-self: flex-start;
+    }
+
     /* ── Mobile ── */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--c-bg, #000); }
     header, nav, a, button { touch-action: manipulation; }
@@ -1192,10 +1547,11 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
   <div class="xp-toast-wrap" id="xp-toast-wrap"></div>
 
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -1223,14 +1579,45 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <main>
+  <main id="main">
     <div class="form-col">
 
-      <!-- ── STAGE 1: OAuth sign-in ── -->
+      <!-- ── STAGE 1: Funnel landing + returning sign-in ── -->
       <div id="s1">
         <p class="section-label">mEMBER aCCESS</p>
-        <h1 class="form-title">sIGN iN</h1>
-        <p class="sub-label">continue with your connected account</p>
+        <h1 class="form-title">iD</h1>
+        <p class="sub-label">your membership hub — join, verify, or sign in</p>
+
+        <!-- Funnel: 3-step onboarding journey -->
+        <div class="funnel-steps">
+          <a href="join.html" class="funnel-step">
+            <span class="funnel-num">01</span>
+            <div class="funnel-body">
+              <p class="funnel-name">jOIN</p>
+              <p class="funnel-desc">Pick your tier — aLLY · BRIGaDIER · CURaTOR</p>
+            </div>
+            <span class="funnel-arrow">→</span>
+          </a>
+          <a href="verify.html" class="funnel-step">
+            <span class="funnel-num">02</span>
+            <div class="funnel-body">
+              <p class="funnel-name">vERIFY</p>
+              <p class="funnel-desc">confirm your identity to unlock seller tools</p>
+            </div>
+            <span class="funnel-arrow">→</span>
+          </a>
+          <a href="add.html" class="funnel-step">
+            <span class="funnel-num">03</span>
+            <div class="funnel-body">
+              <p class="funnel-name">aDD</p>
+              <p class="funnel-desc">list your first piece and start trading</p>
+            </div>
+            <span class="funnel-arrow">→</span>
+          </a>
+        </div>
+
+        <!-- Returning member sign-in -->
+        <div class="returning-divider"><span>Already a member?</span></div>
 
         <p class="error-msg" id="err-msg"></p>
 
@@ -1242,45 +1629,44 @@
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="rgba(251,188,5,0.75)"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="rgba(234,67,53,0.75)"/>
             </svg>
-            cONTINUE wITH gOOGLE
+            Continue with Google
           </button>
 
-          <p class="not-member" style="text-align:center;margin-top:6px;"><a href="join.html">not a member? →</a></p>
+          <!-- Apple sign-in (disabled until Apple Developer setup) -->
+          <button class="btn-oauth apple" id="btn-apple" disabled>
+            <svg width="15" height="18" viewBox="0 0 170 170" fill="currentColor" aria-hidden="true" style="flex-shrink:0">
+              <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.2-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.28 2.13-9.54 3.25-12.8 3.35-4.93.21-9.84-1.96-14.75-6.52-3.13-2.73-7.04-7.41-11.75-14.04-5.03-7.08-9.17-15.29-12.41-24.65-3.47-10.2-5.21-20.07-5.21-29.59 0-10.95 2.36-20.4 7.09-28.32 3.72-6.36 8.67-11.39 14.88-15.1 6.2-3.71 12.9-5.6 20.12-5.73 3.92 0 9.07 1.21 15.47 3.6 6.38 2.4 10.49 3.61 12.3 3.61 1.36 0 5.96-1.42 13.75-4.24 7.37-2.62 13.59-3.71 18.69-3.28 13.81 1.12 24.2 6.58 31.11 16.42-12.35 7.49-18.46 17.98-18.34 31.44.11 10.49 3.92 19.22 11.4 26.13 3.39 3.22 7.18 5.71 11.4 7.49-.91 2.65-1.88 5.19-2.89 7.63zM118.92 7.01c0 8.22-3 15.89-8.98 23-7.21 8.56-15.94 13.5-25.4 12.72a25.5 25.5 0 0 1-.19-3.1c0-7.9 3.43-16.35 9.52-23.26 3.04-3.49 6.91-6.39 11.61-8.71 4.69-2.29 9.12-3.55 13.31-3.78.12 1.05.13 2.1.13 3.13z"/>
+            </svg>
+            Apple — coming soon
+          </button>
 
-          <!-- email magic-link section (hidden until toggle) -->
-          <button id="btn-email-toggle" class="email-toggle-link">or use email →</button>
-          <div id="email-section" class="email-section" hidden>
-            <p class="oauth-divider" style="margin:2px 0">— cONTINUE wITH eMaIL —</p>
-            <div class="email-input-row">
-              <input type="email" id="email-input" placeholder="your@email.com" autocomplete="email" spellcheck="false" />
-              <button class="btn-oauth email-send" id="btn-email-send">sEND</button>
-            </div>
-            <p id="email-sent-msg" class="email-sent-msg" hidden>
-              cHECK yOUR eMaIL — tap the link to sign in<br>
-              <span style="color:var(--c-text-tertiary);font-size:0.6rem">link expires in 1 hour · same browser preferred</span>
-            </p>
-          </div>
+          <p class="not-member" style="display:none;"></p>
 
-          <!-- email + password login -->
-          <button id="btn-pw-toggle" class="email-toggle-link" style="margin-top:4px;">or sign in with password →</button>
-          <div id="pw-section" hidden>
-            <p class="oauth-divider" style="margin:2px 0">— sIGN iN wITH pASSWORD —</p>
-            <div style="margin-bottom:8px;">
-              <input type="email" id="pw-email" class="pw-field" placeholder="your@email.com" autocomplete="email" spellcheck="false">
+          <!-- email/password sections: hidden, kept for JS compatibility -->
+          <div hidden>
+            <button id="btn-email-toggle" class="email-toggle-link"></button>
+            <div id="email-section" class="email-section">
+              <div class="email-input-row">
+                <input type="email" id="email-input" />
+                <button class="btn-oauth email-send" id="btn-email-send"></button>
+              </div>
+              <p id="email-sent-msg" class="email-sent-msg"></p>
             </div>
-            <div style="margin-bottom:8px;">
-              <input type="password" id="pw-pass" class="pw-field" placeholder="password" autocomplete="current-password">
+            <button id="btn-pw-toggle" class="email-toggle-link"></button>
+            <div id="pw-section">
+              <input type="email" id="pw-email" class="pw-field">
+              <input type="password" id="pw-pass" class="pw-field">
+              <button class="btn-oauth btn-pw-submit" id="btn-pw-login"></button>
+              <p id="pw-error" class="pw-error"></p>
+              <p class="pw-forgot-row"><a href="#" id="btn-forgot" class="pw-forgot-link"></a></p>
             </div>
-            <button class="btn-oauth btn-pw-submit" id="btn-pw-login">sIGN iN</button>
-            <p id="pw-error" class="pw-error"></p>
-            <p class="pw-forgot-row"><a href="#" id="btn-forgot" class="pw-forgot-link">fORGOT pASSWORD? →</a></p>
           </div>
         </div>
 
         <div class="stealth-row">
           <button class="stealth-toggle-btn" id="btn-stealth-toggle" role="switch" aria-checked="false">
             <span class="stealth-pill"></span>
-            <span class="stealth-toggle-label">sTEaLTH mODE</span>
+            <span class="stealth-toggle-label">Stealth mode</span>
           </button>
           <p class="stealth-notice" id="stealth-notice" hidden>
             session-only — nothing stored after tab closes
@@ -1296,45 +1682,61 @@
         <div class="entity-cards">
 
           <!-- ── Card 1: iDENTITY ── -->
-          <div class="verified-card">
-            <div class="vc-stripe"></div>
+          <div class="verified-card vc-identity">
             <div class="vc-body">
               <p class="card-eyebrow">iDENTITY</p>
               <div class="vc-top-row">
-                <span class="vc-remembered" id="vc-remembered" hidden>rEMEMBERED</span>
-                <span class="vc-stealth"   id="vc-stealth"   hidden>sTEaLTH mODE</span>
+                <span class="vc-remembered" id="vc-remembered" hidden>Remembered</span>
+                <span class="vc-stealth"   id="vc-stealth"   hidden>Stealth mode</span>
               </div>
               <div class="privacy-row">
                 <button class="stealth-toggle-btn active" id="btn-privacy-toggle-s2" role="switch" aria-checked="true">
                   <span class="stealth-pill"></span>
-                  <span class="stealth-toggle-label">pRIVaCY mODE</span>
+                  <span class="stealth-toggle-label">Privacy mode</span>
                 </button>
               </div>
               <p class="vc-alias" id="vc-alias">—</p>
               <div class="vc-tier-row">
                 <p class="vc-tier" id="vc-tier">—</p>
-                <a href="join.html" class="vc-tier-change">cHANGE →</a>
+                <a href="join.html" class="vc-tier-change">Change →</a>
               </div>
-              <p class="vc-status" id="vc-status">aCTIVE</p>
+              <p class="vc-status" id="vc-status">Active</p>
               <p class="vc-since" id="vc-since"></p>
             </div>
           </div>
 
           <!-- ── Card 2: pROGRESS ── -->
-          <div class="verified-card">
-            <div class="vc-stripe"></div>
+          <div class="verified-card vc-progress">
             <div class="vc-body">
               <p class="card-eyebrow">pROGRESS</p>
-              <div class="vc-points-row">
-                <span class="vc-pts-num" id="vc-pts-num">—</span>
-                <span class="vc-pts-label">pOINTS</span>
+              <div class="vc-ring-wrap">
+                <svg class="vc-ring" viewBox="0 0 120 120" width="120" height="120">
+                  <circle class="vc-ring-bg" cx="60" cy="60" r="52"
+                          fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="6"/>
+                  <circle class="vc-ring-fill" id="vc-ring-fill" cx="60" cy="60" r="52"
+                          fill="none" stroke="#FF5C00" stroke-width="6"
+                          stroke-linecap="round"
+                          stroke-dasharray="326.73"
+                          stroke-dashoffset="326.73"
+                          transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="vc-ring-center">
+                  <span class="vc-pts-num" id="vc-pts-num">—</span>
+                  <span class="vc-pts-label">Points</span>
+                </div>
               </div>
               <p class="vc-milestone" id="vc-milestone">—</p>
-              <div class="vc-progress-bg">
-                <div class="vc-progress-fill" id="vc-progress-fill"></div>
-              </div>
               <p class="vc-progress-label" id="vc-progress-label"></p>
-              <div class="vc-streak-row" id="vc-streak-row" hidden>
+              <!-- hidden compat element for sign-out / destroy references -->
+              <div class="vc-progress-bg" hidden><div class="vc-progress-fill" id="vc-progress-fill"></div></div>
+            </div>
+          </div>
+
+          <!-- ── Card 2b: sTREAK ── -->
+          <div class="verified-card vc-streak-card" id="vc-streak-card" hidden>
+            <div class="vc-body">
+              <p class="card-eyebrow">sTREAK</p>
+              <div class="vc-streak-row" id="vc-streak-row" style="margin-top:0;">
                 <span class="vc-streak-count" id="vc-streak-count"></span>
                 <span class="vc-streak-mult" id="vc-streak-mult"></span>
               </div>
@@ -1342,101 +1744,117 @@
           </div>
 
           <!-- ── Card 3: rEWaRDS ── -->
-          <div class="verified-card">
-            <div class="vc-stripe"></div>
+          <div class="verified-card vc-rewards">
             <div class="vc-body">
               <p class="card-eyebrow">rEWaRDS</p>
-              <div class="vc-benefit-row" id="vc-benefit-row">
-                <span class="vc-benefit-dot"></span>
-                <span class="vc-benefit-label">11% aPPaREL vOUCHER</span>
-                <button class="vc-voucher-btn" id="vc-voucher-btn">cLAIM</button>
+              <div class="vc-tabs">
+                <button class="vc-tab active" data-tab="voucher">Voucher</button>
+                <button class="vc-tab" data-tab="redeem">Redeem</button>
+                <button class="vc-tab" data-tab="history">History</button>
+                <button class="vc-tab" data-tab="bounty">Bounty</button>
               </div>
-              <div class="vc-voucher-reveal" id="vc-voucher-reveal" hidden>
-                <p class="vc-voucher-code" id="vc-voucher-code">ARTS-11-APPAREL</p>
-                <p class="vc-voucher-desc">11% off your next aPPaREL order</p>
-                <p class="vc-voucher-timer" id="vc-voucher-timer"></p>
-                <a href="apparel.html" class="vc-voucher-link">sHOP aPPaREL →</a>
+              <div class="vc-tab-panel active" id="tab-voucher">
+                <div class="vc-benefit-row" id="vc-benefit-row">
+                  <span class="vc-benefit-dot"></span>
+                  <span class="vc-benefit-label">11% apparel voucher</span>
+                  <button class="vc-voucher-btn" id="vc-voucher-btn">Claim</button>
+                </div>
+                <div class="vc-voucher-reveal" id="vc-voucher-reveal" hidden>
+                  <p class="vc-voucher-code" id="vc-voucher-code">ARTS-11-APPAREL</p>
+                  <p class="vc-voucher-desc">11% off your next apparel order</p>
+                  <p class="vc-voucher-timer" id="vc-voucher-timer"></p>
+                  <a href="apparel.html" class="vc-voucher-link">Shop apparel →</a>
+                </div>
               </div>
-              <div id="vc-redeem-section">
-                <p class="vc-redeem-title">rEDEEM rEWaRDS</p>
-                <div id="vc-rewards-list"></div>
+              <div class="vc-tab-panel" id="tab-redeem">
+                <div id="vc-redeem-section">
+                  <p class="vc-redeem-title">Redeem rewards</p>
+                  <div id="vc-rewards-list"></div>
+                </div>
               </div>
-              <div id="vc-history-section">
-                <button class="vc-history-toggle" id="vc-history-toggle" onclick="toggleHistory()">rEDEMPTION hISTORY ▸</button>
-                <div class="vc-history-list" id="vc-history-list" hidden></div>
+              <div class="vc-tab-panel" id="tab-history">
+                <div id="vc-history-section">
+                  <button class="vc-history-toggle" id="vc-history-toggle" onclick="toggleHistory()">Redemption history ▸</button>
+                  <div class="vc-history-list" id="vc-history-list" hidden></div>
+                </div>
               </div>
-
-              <!-- Bounty Hunter -->
-              <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.04);">
-                <p class="vc-redeem-title">bOUNTY hUNTER</p>
+              <div class="vc-tab-panel" id="tab-bounty">
+                <p class="vc-redeem-title">Bounty hunter</p>
                 <div style="display:flex;gap:18px;align-items:baseline;margin-bottom:10px;">
                   <div>
                     <span id="vc-bounty-submitted" style="font-size:1.2rem;font-weight:700;color:var(--c-accent,#FF5C00);">0</span>
-                    <span style="font-size:0.48rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.28);margin-left:3px;">sUBMITTED</span>
+                    <span style="font-size:0.48rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.28);margin-left:3px;">Submitted</span>
                   </div>
                   <div>
                     <span id="vc-bounty-confirmed" style="font-size:1.2rem;font-weight:700;color:rgba(110,230,110,0.75);">0</span>
-                    <span style="font-size:0.48rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.28);margin-left:3px;">cONFIRMED</span>
+                    <span style="font-size:0.48rem;font-weight:300;letter-spacing:0.14em;color:rgba(255,255,255,0.28);margin-left:3px;">Confirmed</span>
                   </div>
                 </div>
                 <a href="bounty.html" style="font-size:0.55rem;font-weight:600;letter-spacing:0.14em;color:var(--c-accent,#FF5C00);text-decoration:none;transition:opacity 0.15s;"
-                   onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='1'">rEPORT a lOOPHOLE →</a>
+                   onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='1'">Report a loophole →</a>
               </div>
             </div>
           </div>
 
           <!-- ── Card 4: nETWORK ── -->
-          <div class="verified-card">
-            <div class="vc-stripe"></div>
+          <div class="verified-card vc-network">
             <div class="vc-body">
               <p class="card-eyebrow">nETWORK</p>
               <div id="vc-referral-section">
                 <div style="display:flex;align-items:center;gap:8px;">
                   <span class="vc-referral-code" id="vc-referral-code">—</span>
-                  <button class="vc-referral-copy" id="vc-referral-copy" onclick="copyReferralCode()">cOPY</button>
+                  <button class="vc-referral-copy" id="vc-referral-copy" onclick="copyReferralCode()">Copy</button>
                 </div>
-                <p class="vc-referral-count" id="vc-referral-count">0 rEFERRALS</p>
-                <p class="vc-referral-hint">sHARE yOUR cODE — bOTH gET bONUS pOINTS</p>
+                <p class="vc-referral-count" id="vc-referral-count">0 referrals</p>
+                <p class="vc-referral-hint">Share your code — both get bonus points</p>
               </div>
             </div>
           </div>
 
           <!-- ── Card 5: sELLER ── -->
-          <div class="verified-card">
-            <div class="vc-stripe"></div>
+          <div class="verified-card vc-seller">
             <div class="vc-body">
               <p class="card-eyebrow">sELLER</p>
               <div class="vc-seller-section" id="vc-seller-section">
                 <div class="vc-seller-row">
                   <span class="vc-seller-dot not-connected" id="vc-seller-dot"></span>
-                  <span class="vc-seller-label" id="vc-seller-commission">cOMMISSION: <strong>—</strong></span>
+                  <span class="vc-seller-label" id="vc-seller-commission">Commission: <strong>—</strong></span>
                 </div>
                 <div class="vc-seller-row">
                   <span class="vc-seller-dot not-connected" id="vc-stripe-dot"></span>
-                  <span class="vc-seller-label" id="vc-stripe-status">sTRIPE: nOT cONNECTED</span>
+                  <span class="vc-seller-label" id="vc-stripe-status">Stripe: not connected</span>
                 </div>
-                <a href="listing-terms.html" class="vc-seller-terms">lISTING tERMS →</a>
+                <a href="listing-terms.html" class="vc-seller-terms">Listing terms →</a>
               </div>
               <div class="vc-verify-section" id="vc-verify-section" style="margin-top:6px;">
-                <p class="vc-seller-title">vERIFICATION</p>
+                <p class="vc-seller-title">Verification</p>
                 <div class="vc-seller-row">
                   <span class="vc-seller-dot not-connected" id="vc-verify-dot"></span>
-                  <span class="vc-seller-label" id="vc-verify-status">nOT vERIFIED</span>
+                  <span class="vc-seller-label" id="vc-verify-status">Not verified</span>
                 </div>
-                <a href="verify.html" class="vc-seller-terms" id="vc-verify-link">aPPLY fOR vERIFICATION →</a>
+                <a href="verify.html" class="vc-seller-terms" id="vc-verify-link">Apply for verification →</a>
               </div>
             </div>
           </div>
 
           <!-- ── Card 6: cOLLECTION ── -->
-          <div class="verified-card">
-            <div class="vc-stripe"></div>
+          <div class="verified-card vc-collection">
             <div class="vc-body">
               <p class="card-eyebrow">cOLLECTION</p>
               <div class="vc-favs-section" id="vc-favs-section">
                 <div class="vc-favs-list" id="vc-favs-list">
-                  <p class="vc-favs-empty" id="vc-favs-empty">nO fAVOURITES yET — bROWSE <a href="art.html" style="color:#FF5C00;text-decoration:none">aRT</a> oR <a href="boutique.html" style="color:#FF5C00;text-decoration:none">bOUTIQUE</a></p>
+                  <p class="vc-favs-empty" id="vc-favs-empty">No favourites yet — browse <a href="art.html" style="color:#FF5C00;text-decoration:none">art</a> or <a href="boutique.html" style="color:#FF5C00;text-decoration:none">boutique</a></p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 7: pURCHaSES ── -->
+          <div class="verified-card vc-purchases">
+            <div class="vc-body">
+              <p class="card-eyebrow">pURCHaSES</p>
+              <div class="vc-purch-list" id="vc-purch-list">
+                <p class="vc-purch-empty" id="vc-purch-empty" style="font-size:0.55rem;font-weight:300;letter-spacing:0.12em;color:rgba(255,255,255,0.22);">No purchases yet</p>
               </div>
             </div>
           </div>
@@ -1445,7 +1863,7 @@
 
         <!-- Tier picker shown only on new device -->
         <div class="tier-confirm" id="tier-confirm" hidden>
-          <p>wHICH tIER aRE yOU?</p>
+          <p>Which tier are you?</p>
           <div class="tier-btns">
             <button class="btn-tier" data-tier="aLLY">aLLY</button>
             <button class="btn-tier" data-tier="BRIGaDIER">BRIGaDIER</button>
@@ -1454,12 +1872,12 @@
         </div>
 
         <div class="activate-row" id="activate-row">
-          <a href="join.html" class="btn-activate-pay" id="btn-activate-pay">wANT tO pRESTIGE? →</a>
+          <a href="join.html" class="btn-activate-pay" id="btn-activate-pay">Want to prestige? →</a>
         </div>
 
         <div class="signout-row">
-          <button class="btn-signout" id="btn-signout">sIGN OuT</button>
-          <button class="btn-destroy" id="btn-destroy">dELETE aCCOUNT</button>
+          <button class="btn-signout" id="btn-signout">Sign out</button>
+          <button class="btn-destroy" id="btn-destroy">Delete account</button>
         </div>
       </div>
 
@@ -1471,25 +1889,46 @@
     <div class="destroy-modal">
       <!-- Step 1 -->
       <div id="destroy-step1">
-        <p class="destroy-eyebrow">⚠ iRREVERSIBLE</p>
-        <p class="destroy-heading">dELETE aCCOUNT?</p>
-        <p class="destroy-sub">tHIS wILL pERMANENTLY rEMOVE yOUR pROFILE, pREFERENCES, fAVORITES, vOUCHERS, fEEDBACK, aND aLL sERVER dATA. tHIS cANNOT bE uNDONE.</p>
-        <p class="destroy-sub" style="margin-top:8px;font-size:0.52rem;color:var(--c-text-ghost);">yOUR dATA wILL bE dELETED iMMEDIATELY. tRANSACTION rECORDS aRE rETAINED iN pSEUDONYMISED fORM fOR 10 yEARS pER gERMAN tAX lAW (AO §147).</p>
+        <p class="destroy-eyebrow">⚠ Irreversible</p>
+        <p class="destroy-heading">Delete account?</p>
+        <p class="destroy-sub">This will permanently remove your profile, preferences, favorites, vouchers, feedback, and all server data. This cannot be undone.</p>
+        <p class="destroy-sub" style="margin-top:8px;font-size:0.52rem;color:var(--c-text-ghost);">Your data will be deleted immediately. Transaction records are retained in pseudonymised form for 10 years per German tax law (AO §147).</p>
         <div class="destroy-btns">
-          <button class="btn-destroy-cancel" id="destroy-cancel-1">cANCEL</button>
-          <button class="btn-destroy-confirm" id="destroy-next">cONFIRM →</button>
+          <button class="btn-destroy-cancel" id="destroy-cancel-1">Cancel</button>
+          <button class="btn-destroy-confirm" id="destroy-next">Confirm →</button>
         </div>
       </div>
       <!-- Step 2 -->
       <div id="destroy-step2" hidden>
-        <p class="destroy-eyebrow">fINAL wARNING</p>
-        <p class="destroy-heading">cONFIRM dELETION</p>
-        <p class="destroy-sub">tYPE <strong>DELETE</strong> tO cONFIRM.</p>
+        <p class="destroy-eyebrow">Final warning</p>
+        <p class="destroy-heading">Confirm deletion</p>
+        <p class="destroy-sub">Type <strong>DELETE</strong> to confirm.</p>
         <input type="text" class="destroy-input" id="destroy-input" placeholder="DELETE" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         <div class="destroy-btns">
-          <button class="btn-destroy-cancel" id="destroy-cancel-2">cANCEL</button>
-          <button class="btn-destroy-execute" id="destroy-execute" disabled>dELETE</button>
+          <button class="btn-destroy-cancel" id="destroy-cancel-2">Cancel</button>
+          <button class="btn-destroy-execute" id="destroy-execute" disabled>Delete</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Dispute modal ── -->
+  <div class="dispute-overlay" id="dispute-overlay" hidden>
+    <div class="dispute-modal">
+      <button id="dispute-close" style="position:absolute;top:12px;right:14px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.5);font-size:0.62rem;font-weight:300;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:0.1em;">[×]</button>
+      <p class="dispute-eyebrow">oPEN dISPUTE</p>
+      <p id="dispute-art-title" style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;margin-bottom:4px;"></p>
+      <p id="dispute-seller-name" style="font-size:0.48rem;font-weight:300;letter-spacing:0.16em;color:rgba(255,255,255,0.32);margin-bottom:18px;"></p>
+      <p style="font-size:0.46rem;font-weight:300;letter-spacing:0.22em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px;">Reason</p>
+      <div class="dispute-reason-group" id="dispute-reasons">
+        <button class="dispute-reason-btn" data-reason="charlatan">Charlatan — seller misrepresented the work</button>
+        <button class="dispute-reason-btn" data-reason="overpriced">Overpriced — price far exceeded fair value</button>
+        <button class="dispute-reason-btn" data-reason="bad_quality">Bad quality — work arrived damaged or subpar</button>
+      </div>
+      <textarea class="dispute-textarea" id="dispute-desc" placeholder="Describe the issue..."></textarea>
+      <div style="display:flex;gap:10px;">
+        <button class="dispute-submit" id="dispute-submit" disabled>Submit dispute</button>
+        <button style="font-family:'Space Grotesk',sans-serif;font-size:0.5rem;font-weight:300;letter-spacing:0.12em;padding:6px 14px;border:1px solid rgba(255,255,255,0.10);border-radius:3px;background:transparent;color:rgba(255,255,255,0.38);cursor:pointer;" id="dispute-cancel">Cancel</button>
       </div>
     </div>
   </div>
@@ -1714,7 +2153,7 @@
         return;
       }
       /* No alias — show hoverable prompt */
-      el.textContent = 'aNONYMOUS';
+      el.textContent = 'Anonymous';
       el.classList.add('no-name');
       el.onclick = function() {
         el.onclick = null;
@@ -1722,7 +2161,7 @@
         var inp = document.createElement('input');
         inp.type = 'text';
         inp.className = 'vc-alias-input';
-        inp.placeholder = 'yOUR nAME / aLIAS';
+        inp.placeholder = 'Your name / alias';
         inp.maxLength = 40;
         inp.autocomplete = 'off';
         el.textContent = '';
@@ -1745,14 +2184,16 @@
     }
 
     /* ── XP Toast system ── */
+    window.copyReferralCode = copyReferralCode;
     function copyReferralCode() {
       var code = document.getElementById('vc-referral-code').textContent;
       if (!code || code === '—') return;
       var btn = document.getElementById('vc-referral-copy');
       if (navigator.clipboard) {
         navigator.clipboard.writeText(code).then(function() {
-          btn.textContent = 'cOPIED';
-          setTimeout(function() { btn.textContent = 'cOPY'; }, 1500);
+          btn.textContent = 'Copied';
+          btn.classList.add('copied-flash');
+          setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied-flash'); }, 1500);
         });
       } else {
         var ta = document.createElement('textarea');
@@ -1762,20 +2203,22 @@
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        btn.textContent = 'cOPIED';
-        setTimeout(function() { btn.textContent = 'cOPY'; }, 1500);
+        btn.textContent = 'Copied';
+        btn.classList.add('copied-flash');
+        setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied-flash'); }, 1500);
       }
     }
 
+    window.toggleHistory = toggleHistory;
     function toggleHistory() {
       var list = document.getElementById('vc-history-list');
       var btn = document.getElementById('vc-history-toggle');
       if (list.hidden) {
         list.hidden = false;
-        btn.textContent = 'rEDEMPTION hISTORY \u25BE';
+        btn.textContent = 'Redemption history \u25BE';
       } else {
         list.hidden = true;
-        btn.textContent = 'rEDEMPTION hISTORY \u25B8';
+        btn.textContent = 'Redemption history \u25B8';
       }
     }
 
@@ -1840,14 +2283,17 @@
         ptsEl.textContent = pts;
       }
 
-      /* Animate bar after short delay for visual effect */
-      setTimeout(function(){
-        document.getElementById('vc-progress-fill').style.width = pct + '%';
-      }, 120);
+      /* Animate SVG ring after short delay for visual effect */
+      var circumference = 2 * Math.PI * 52; /* 326.73 */
+      var ringEl = document.getElementById('vc-ring-fill');
+      if (ringEl) {
+        var offset = circumference - (pct / 100) * circumference;
+        setTimeout(function(){ ringEl.style.strokeDashoffset = offset; }, 300);
+      }
       document.getElementById('vc-progress-label').textContent = next
-        ? ((next.min - pts) + ' pTS tO ' + next.name)
-        : '— mAESTRO — mAX TIER';
-      if (since) document.getElementById('vc-since').textContent = 'mEMBER sINCE ' + since;
+        ? ((next.min - pts) + ' pts to ' + next.name)
+        : '— Maestro — max tier';
+      if (since) document.getElementById('vc-since').textContent = 'Member since ' + since;
       if (remembered) document.getElementById('vc-remembered').hidden = false;
 
       /* Play queued XP toasts */
@@ -1866,14 +2312,14 @@
         if (claimedAt && now - claimedAt < VOUCHER_DURATION) {
           /* Active voucher */
           var daysLeft = Math.ceil((VOUCHER_DURATION - (now - claimedAt)) / (24 * 60 * 60 * 1000));
-          vBtn.textContent = 'cLAIMED';
+          vBtn.textContent = 'Claimed';
           vBtn.classList.add('claimed');
           if (vReveal) vReveal.hidden = false;
-          if (vTimer)  vTimer.textContent = daysLeft + ' dAY' + (daysLeft !== 1 ? 'S' : '') + ' rEMAINING';
+          if (vTimer)  vTimer.textContent = daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + ' remaining';
         } else {
           /* Expired or never claimed */
           var isRenew = claimedAt > 0;
-          vBtn.textContent = isRenew ? 'rENEW' : 'cLAIM';
+          vBtn.textContent = isRenew ? 'Renew' : 'Claim';
           vBtn.classList.remove('claimed');
           if (vReveal) vReveal.hidden = true;
           vBtn.onclick = function() {
@@ -1895,7 +2341,9 @@
           var multEl = document.getElementById('vc-streak-mult');
           if (!sd.count || sd.count < 2) return;
           row.hidden = false;
-          countEl.textContent = sd.count + ' dAY sTREAK';
+          var streakCard = document.getElementById('vc-streak-card');
+          if (streakCard) streakCard.hidden = false;
+          countEl.textContent = sd.count + ' day streak';
           var skCfg = null;
           try { skCfg = JSON.parse(localStorage.getItem('arts_streak_config')); } catch(e){}
           var streakActive = !skCfg || skCfg.active !== false;
@@ -1920,18 +2368,18 @@
         try { var r = JSON.parse(localStorage.getItem('arts_rewards_config')); if(r && r.length) rwCfg = r; } catch(e){}
         if (!rwCfg.length) {
           rwCfg = [
-            { id:'coupon_10', label:'10% aPPaREL cOUPON', cost:500, type:'coupon', detail:'10%, 30d, ARTS-10-REWARD', active:true },
-            { id:'coupon_20', label:'20% aPPaREL cOUPON', cost:1000, type:'coupon', detail:'20%, 30d, ARTS-20-REWARD', active:true },
-            { id:'mem_brig',  label:'fREE BRIGaDIER (1 mO)', cost:2000, type:'membership', detail:'BRIGaDIER, 30d', active:true },
-            { id:'mem_cur',   label:'fREE CURaTOR (1 mO)', cost:5000, type:'membership', detail:'CURaTOR, 30d', active:true },
-            { id:'badge_patron', label:'pROFILE bADGE: pATRON', cost:300, type:'badge', detail:'patron_badge', active:true },
-            { id:'feat_spot', label:'fEATURED aRTIST sPOT', cost:1500, type:'perk', detail:'7d featured', active:true }
+            { id:'coupon_10', label:'10% apparel coupon', cost:500, type:'coupon', detail:'10%, 30d, ARTS-10-REWARD', active:true },
+            { id:'coupon_20', label:'20% apparel coupon', cost:1000, type:'coupon', detail:'20%, 30d, ARTS-20-REWARD', active:true },
+            { id:'mem_brig',  label:'Free BRIGaDIER (1 mo)', cost:2000, type:'membership', detail:'BRIGaDIER, 30d', active:true },
+            { id:'mem_cur',   label:'Free CURaTOR (1 mo)', cost:5000, type:'membership', detail:'CURaTOR, 30d', active:true },
+            { id:'badge_patron', label:'Profile badge: Patron', cost:300, type:'badge', detail:'patron_badge', active:true },
+            { id:'feat_spot', label:'Featured artist spot', cost:1500, type:'perk', detail:'7d featured', active:true }
           ];
         }
         var list = document.getElementById('vc-rewards-list');
         var activeRewards = rwCfg.filter(function(r){ return r.active; });
         if (!activeRewards.length) {
-          list.innerHTML = '<p class="no-rewards-msg" style="font-size:0.52rem;letter-spacing:0.12em;">nO rEWaRDS aVAILABLE</p>';
+          list.innerHTML = '<p class="no-rewards-msg" style="font-size:0.52rem;letter-spacing:0.12em;">No rewards available</p>';
           return;
         }
         activeRewards.forEach(function(rw){
@@ -1946,10 +2394,10 @@
                 '<span class="vc-reward-type" style="color:' + tc + ';border:1px solid ' + tc + '33;">' + rw.type + '</span>' +
                 '<span class="vc-reward-label">' + rw.label + '</span>' +
               '</div>' +
-              '<span class="vc-reward-cost">' + rw.cost + ' pTS</span>' +
+              '<span class="vc-reward-cost">' + rw.cost + ' pts</span>' +
             '</div>' +
             '<button class="vc-redeem-btn" data-rw-id="' + rw.id + '" data-rw-cost="' + rw.cost + '" data-rw-label="' + rw.label + '" data-rw-type="' + rw.type + '" data-rw-detail="' + (rw.detail||'') + '"' +
-              (canAfford ? '' : ' disabled') + '>rEDEEM</button>';
+              (canAfford ? '' : ' disabled') + '>Redeem</button>';
           list.appendChild(item);
         });
 
@@ -2008,10 +2456,11 @@
           sessionStorage.setItem('arts_xp_pending', JSON.stringify(pending));
 
           /* Visual feedback */
-          btn.textContent = '\u2713 rEDEEMED';
+          btn.textContent = '\u2713 Redeemed';
           btn.disabled = true;
           btn.style.color = 'rgba(110,230,110,0.75)';
           btn.style.borderColor = 'rgba(110,230,110,0.3)';
+          btn.classList.add('redeemed-pulse');
 
           /* Update points display */
           var ptsEl = document.getElementById('vc-pts-num');
@@ -2048,7 +2497,7 @@
         if (codeEl && refCode) codeEl.textContent = refCode;
         var countEl = document.getElementById('vc-referral-count');
         var count = parseInt(store.get('arts_referral_count') || '0', 10);
-        if (countEl) countEl.textContent = count + ' rEFERRAL' + (count !== 1 ? 'S' : '');
+        if (countEl) countEl.textContent = count + ' referral' + (count !== 1 ? 's' : '');
 
         /* Check referral config active */
         var refCfg = null;
@@ -2065,7 +2514,7 @@
         try { entries = JSON.parse(store.get('arts_redemptions') || '[]'); } catch(e){}
         list.innerHTML = '';
         if (!entries.length) {
-          list.innerHTML = '<p class="no-redemptions-msg" style="font-size:0.48rem;letter-spacing:0.12em;margin-top:4px;">nO rEDEMPTIONS yET</p>';
+          list.innerHTML = '<p class="no-redemptions-msg" style="font-size:0.48rem;letter-spacing:0.12em;margin-top:4px;">No redemptions yet</p>';
           return;
         }
         entries.slice(-5).reverse().forEach(function(e){
@@ -2087,19 +2536,30 @@
         document.getElementById('vc-bounty-confirmed').textContent = bConf;
       } catch(e) {}
 
+      /* ── Tab switching for rEWaRDS card ── */
+      document.querySelectorAll('.vc-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.vc-tab').forEach(function(t){ t.classList.remove('active'); });
+          document.querySelectorAll('.vc-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+          tab.classList.add('active');
+          var panel = document.getElementById('tab-' + tab.dataset.tab);
+          if (panel) panel.classList.add('active');
+        });
+      });
+
       /* Seller info: commission rate + Stripe Connect status */
       var COMM_RATES = { 'aUDIENCE': 20, 'aLLY': 15, 'BRIGaDIER': 10, 'CURaTOR': 7 };
       var rate = COMM_RATES[tier] || COMM_RATES['aUDIENCE'];
       var payout = 100 - rate;
       document.getElementById('vc-seller-commission').innerHTML =
-        'cOMMISSION: <strong>' + rate + '%</strong> — yOU kEEP <strong>' + payout + '%</strong>';
+        'Commission: <strong>' + rate + '%</strong> — you keep <strong>' + payout + '%</strong>';
 
       var stripeDot = document.getElementById('vc-stripe-dot');
       var stripeLabel = document.getElementById('vc-stripe-status');
       var sellerDot = document.getElementById('vc-seller-dot');
       if (store.get('arts_stripe_connected') === '1') {
         stripeDot.className = 'vc-seller-dot connected';
-        stripeLabel.textContent = 'sTRIPE: cONNECTED';
+        stripeLabel.textContent = 'Stripe: connected';
         sellerDot.className = 'vc-seller-dot connected';
       } else {
         /* Check API as fallback */
@@ -2111,7 +2571,7 @@
               if (d.connected) {
                 store.set('arts_stripe_connected', '1');
                 stripeDot.className = 'vc-seller-dot connected';
-                stripeLabel.textContent = 'sTRIPE: cONNECTED';
+                stripeLabel.textContent = 'Stripe: connected';
                 sellerDot.className = 'vc-seller-dot connected';
               }
             }).catch(function(){});
@@ -2127,16 +2587,16 @@
       function updateVerifyUI(status) {
         if (status === 'approved') {
           verifyDot.className = 'vc-seller-dot connected';
-          verifyLabel.textContent = 'vERIFIED';
-          verifyLink.textContent = 'vIEW vERIFICATION →';
+          verifyLabel.textContent = 'Verified';
+          verifyLink.textContent = 'View verification →';
         } else if (status === 'pending') {
           verifyDot.style.background = 'rgba(255,200,60,0.5)';
-          verifyLabel.textContent = 'uNDER rEVIEW';
-          verifyLink.textContent = 'cHECK sTATUS →';
+          verifyLabel.textContent = 'Under review';
+          verifyLink.textContent = 'Check status →';
         } else if (status === 'rejected') {
           verifyDot.style.background = 'rgba(255,80,80,0.5)';
-          verifyLabel.textContent = 'nOT aPPROVED';
-          verifyLink.textContent = 'rE-aPPLY →';
+          verifyLabel.textContent = 'Not approved';
+          verifyLink.textContent = 'Re-apply →';
         }
       }
 
@@ -2158,6 +2618,9 @@
 
       /* Render favourites list */
       renderFavourites();
+
+      /* Render purchases + red flag checks (deferred — script loads later) */
+      setTimeout(function(){ if(typeof loadPurchases==='function') loadPurchases(store); }, 50);
     }
 
     /* ── Favourites rendering ── */
@@ -2189,8 +2652,9 @@
       var empty = document.getElementById('vc-favs-empty');
       if (!list) return;
       var data = await _favDecrypt();
-      if (!data.items.length) { if (empty) empty.hidden = false; return; }
+      if (!data.items.length) { if (empty) empty.hidden = false; list.classList.remove('has-items'); return; }
       if (empty) empty.hidden = true;
+      list.classList.add('has-items');
 
       /* Load pieces.json to get piece info */
       var pieces = [];
@@ -2211,7 +2675,7 @@
         if (thumb) html += '<img class="vc-fav-thumb" src="' + _esc(thumb) + '" alt="">';
         html += '<div class="vc-fav-info"><p class="vc-fav-title">' + _esc(p.title) + '</p>';
         html += '<p class="vc-fav-price">' + _esc(p.price || '\u2014') + ' ' + _esc(p.currency || '\u20ac') + '</p></div>';
-        html += '<button class="vc-fav-remove" data-remove-id="' + _esc(fav.id) + '">rEMOVE</button>';
+        html += '<button class="vc-fav-remove" data-remove-id="' + _esc(fav.id) + '">Remove</button>';
         html += '</div>';
       });
       list.innerHTML = html + (empty ? empty.outerHTML : '');
@@ -2232,6 +2696,19 @@
     async function sha256(str) {
       var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
       return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+    }
+
+    /* ── Staggered card entrance animation ── */
+    function staggerRevealCards() {
+      var cards = document.querySelectorAll('#s2 .verified-card');
+      var delay = 0;
+      cards.forEach(function(card) {
+        if (card.hidden) return;
+        setTimeout(function() {
+          card.classList.add('revealed');
+        }, delay);
+        delay += 100;
+      });
     }
 
     /* ════════════════════════════════════════════
@@ -2270,7 +2747,7 @@
             user_id:   hash,
             email:     oauthEmail || store.get('arts_email') || '',
             name:      oauthName || store.get('arts_oauth_name') || '',
-            alias:     store.get('arts_alias') || 'mEMBER',
+            alias:     store.get('arts_alias') || 'Member',
             tier:      store.get('arts_tier') || '',
             provider:  provider,
             oauth_sub: sub,
@@ -2287,9 +2764,10 @@
         var s2 = document.getElementById('s2');
         s2.style.opacity = '0';
         s2.hidden = false;
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() { s2.style.opacity = '1'; });
-        });
+        setTimeout(function() {
+          s2.style.opacity = '1';
+          staggerRevealCards();
+        }, 20);
       }, 230);
 
       document.getElementById('vc-stealth').hidden = !stealthMode;
@@ -2304,12 +2782,12 @@
       store.set('arts_visit_count', _vc2);
 
       if (wasSub === sub && tier) {
-        document.getElementById('vc-status').textContent = 'rETURNING mEMBER';
+        document.getElementById('vc-status').textContent = 'Returning member';
         renderPoints(pts || 0, alias, tier, since, false);
         setWelcomeHeading(_vc2, MILESTONES[getMilestoneIdx(parseInt(pts,10)||0)].name);
       } else {
-        document.getElementById('vc-status').textContent = 'vERIFIED';
-        renderPoints(pts || 0, alias || oauthName, 'mEMBER', since, false);
+        document.getElementById('vc-status').textContent = 'Verified';
+        renderPoints(pts || 0, alias || oauthName, 'Member', since, false);
         document.getElementById('tier-confirm').hidden = false;
         document.querySelectorAll('.btn-tier').forEach(function(btn) {
           btn.addEventListener('click', function() {
@@ -2377,11 +2855,11 @@
       errEl.textContent = '';
       var email = (document.getElementById('pw-email').value || '').trim().toLowerCase();
       var pw = document.getElementById('pw-pass').value;
-      if (!email || !pw) { errEl.textContent = 'eMail aNd pASSWORD rEQUIRED'; return; }
+      if (!email || !pw) { errEl.textContent = 'Email and password required'; return; }
 
       var btn = this;
       btn.disabled = true;
-      btn.textContent = 'sIGNING iN...';
+      btn.textContent = 'Signing in...';
 
       try {
         var res = await fetch(PROXY_BASE + '/api/auth/login', {
@@ -2391,9 +2869,9 @@
         });
         var data = await res.json();
         if (!res.ok || !data.ok) {
-          errEl.textContent = (data.error && data.error.message) || 'iNVALID eMail oR pASSWORD';
+          errEl.textContent = (data.error && data.error.message) || 'Invalid email or password';
           btn.disabled = false;
-          btn.textContent = 'sIGN iN';
+          btn.textContent = 'Sign in';
           return;
         }
         // Store session
@@ -2401,7 +2879,7 @@
           artsAuth.login(data.session_token);
           store.set('arts_id_hash', data.user_id_hash);
           store.set('arts_email', data.email);
-          store.set('arts_alias', data.alias || 'mEMBER');
+          store.set('arts_alias', data.alias || 'Member');
           store.set('arts_tier', data.tier || '');
           store.set('arts_oauth_provider', 'email');
           store.set('arts_since', data.since || new Date().toISOString().split('T')[0]);
@@ -2410,9 +2888,9 @@
         // Show logged-in state
         window.location.reload();
       } catch(e) {
-        errEl.textContent = 'cONNECTION eRROR';
+        errEl.textContent = 'Connection error';
         btn.disabled = false;
-        btn.textContent = 'sIGN iN';
+        btn.textContent = 'Sign in';
       }
     });
 
@@ -2425,7 +2903,7 @@
       e.preventDefault();
       var email = (document.getElementById('pw-email').value || '').trim().toLowerCase();
       var errEl = document.getElementById('pw-error');
-      if (!email) { errEl.textContent = 'eNTER yOUR eMail fIRST'; return; }
+      if (!email) { errEl.textContent = 'Enter your email first'; return; }
       try {
         var res = await fetch(PROXY_BASE + '/api/auth/reset-request', {
           method: 'POST',
@@ -2433,10 +2911,10 @@
           body: JSON.stringify({ email: email }),
         });
         errEl.style.color = 'rgba(110,230,110,0.75)';
-        errEl.textContent = 'iF tHAT eMail eXISTS, a rESET lINK wAS sENT';
+        errEl.textContent = 'If that email exists, a reset link was sent';
         setTimeout(function() { errEl.style.color = ''; }, 5000);
       } catch(e) {
-        errEl.textContent = 'cONNECTION eRROR';
+        errEl.textContent = 'Connection error';
       }
     });
 
@@ -2460,7 +2938,7 @@
         /* Store email so we can complete sign-in on return */
         try { (stealthMode ? sessionStorage : localStorage).setItem('arts_email_signin', email); } catch(e) {}
         if (sentEl) sentEl.hidden = false;
-        btn.textContent = 'sENT ✓';
+        btn.textContent = 'Sent ✓';
       }).catch(function(err) {
         btn.disabled = false;
         if (errEl) errEl.textContent = '— ' + err.message;
@@ -2543,15 +3021,16 @@
           var s1Back = document.getElementById('s1');
           s1Back.style.opacity = '0';
           s1Back.hidden = false;
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
-              s1Back.style.opacity = '1';
-              if (typeof scrambleLoginText === 'function') scrambleLoginText();
-            });
-          });
+          setTimeout(function() {
+            s1Back.style.opacity = '1';
+            if (typeof scrambleLoginText === 'function') scrambleLoginText();
+          }, 20);
         }, 230);
         document.getElementById('vc-remembered').hidden = true;
         document.getElementById('vc-progress-fill').style.width = '0%';
+        var ringReset = document.getElementById('vc-ring-fill');
+        if (ringReset) ringReset.style.strokeDashoffset = '326.73';
+        document.querySelectorAll('#s2 .verified-card').forEach(function(c){ c.classList.remove('revealed'); });
         document.getElementById('activate-row').hidden = true;
         document.getElementById('tier-confirm').hidden = true;
       });
@@ -2594,15 +3073,16 @@
         var s1Back = document.getElementById('s1');
         s1Back.style.opacity = '0';
         s1Back.hidden = false;
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() {
-            s1Back.style.opacity = '1';
-            if (typeof scrambleLoginText === 'function') scrambleLoginText();
-          });
-        });
+        setTimeout(function() {
+          s1Back.style.opacity = '1';
+          if (typeof scrambleLoginText === 'function') scrambleLoginText();
+        }, 20);
       }, 230);
       document.getElementById('vc-remembered').hidden = true;
       document.getElementById('vc-progress-fill').style.width = '0%';
+      var ringReset2 = document.getElementById('vc-ring-fill');
+      if (ringReset2) ringReset2.style.strokeDashoffset = '326.73';
+      document.querySelectorAll('#s2 .verified-card').forEach(function(c){ c.classList.remove('revealed'); });
       document.getElementById('activate-row').hidden = true;
       document.getElementById('tier-confirm').hidden = true;
     });
@@ -2660,19 +3140,18 @@
       var a = store.get('arts_alias');
       var s = store.get('arts_since');
       var p = store.get('arts_points');
-      /* Auto-login cross-fade */
+      /* Auto-login — instant swap, no cross-fade needed */
       var s1El = document.getElementById('s1');
-      s1El.style.opacity = '0';
-      setTimeout(function() { s1El.hidden = true; }, 180);
+      s1El.hidden = true;
       var s2El = document.getElementById('s2');
-      s2El.style.opacity = '0';
       s2El.hidden = false;
+      s2El.style.transition = 'none';
+      s2El.style.opacity = '1';
       setTimeout(function() {
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() { s2El.style.opacity = '1'; });
-        });
-      }, 200);
-      document.getElementById('vc-status').textContent  = 'rETURNING mEMBER';
+        s2El.style.transition = '';
+        staggerRevealCards();
+      }, 60);
+      document.getElementById('vc-status').textContent  = 'Returning member';
       document.getElementById('vc-stealth').hidden      = !stealthMode;
       applyS2Privacy();
       var _vc = store.get('arts_visit_count') || 0;
@@ -2680,6 +3159,7 @@
       store.set('arts_visit_count', _vc);
       renderPoints(p || 0, a, t, s, true);
       setWelcomeHeading(_vc, getMilestoneIdx(parseInt(p,10)||0) >= 0 ? MILESTONES[getMilestoneIdx(parseInt(p,10)||0)].name : 'mEMBER');
+      setTimeout(function(){ if(typeof loadPurchases==='function') loadPurchases(store); }, 50);
     })();
   })();
   </script>
@@ -2688,7 +3168,7 @@
     (function () {
       function reveal() {
         var c = document.createElement('div');
-        c.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99998;pointer-events:none;opacity:1;';
+        c.style.cssText = 'position:fixed;inset:0;background:var(--c-bg,#000);z-index:99998;pointer-events:none;opacity:1;';
         document.body.appendChild(c);
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
@@ -2714,12 +3194,7 @@
       el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
     document.querySelectorAll('nav a').forEach(navHover);
-    document.querySelectorAll('a.logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner,timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
-      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     });
   })();
   </script>
@@ -2733,6 +3208,227 @@
     overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.classList.remove('is-open');});
   })();
   </script>
+<!-- ── Purchases + Disputes + Red Flags ── -->
+<script>
+(function(){
+  /* ═══ DEV SEED — remove for production ═══ */
+  function seedPurchases() {
+    if (localStorage.getItem('arts_purchases')) return;
+    var mock = [
+      { id:'purch_001', buyerId:'SELF', buyerName:'You', sellerId:'uid_s1', sellerName:'Studio Kreuz', artId:'art_042', artTitle:'Untitled No. 7', artThumb:'', price:220, currency:'EUR', purchasedAt:'2026-02-18T14:30:00Z', status:'completed' },
+      { id:'purch_002', buyerId:'SELF', buyerName:'You', sellerId:'uid_s2', sellerName:'KARA Berlin', artId:'art_088', artTitle:'Fragments III', artThumb:'', price:85, currency:'EUR', purchasedAt:'2026-01-25T11:00:00Z', status:'completed' },
+      { id:'purch_003', buyerId:'SELF', buyerName:'You', sellerId:'uid_s3', sellerName:'anon_collector', artId:'art_103', artTitle:'Object 9', artThumb:'', price:340, currency:'EUR', purchasedAt:'2026-03-05T16:45:00Z', status:'completed' }
+    ];
+    localStorage.setItem('arts_purchases', JSON.stringify(mock));
+  }
+  seedPurchases();
+  /* ═══ END DEV SEED ═══ */
+
+  /* ── Helpers ── */
+  function _getJSON(key) {
+    try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; }
+  }
+  function _setJSON(key, arr) {
+    localStorage.setItem(key, JSON.stringify(arr));
+  }
+  function _fmtDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  /* ── Red flag checks ── */
+  function getRecentFlags(userId) {
+    var flags = _getJSON('arts_red_flags');
+    var cutoff = Date.now() - (60 * 24 * 60 * 60 * 1000); // 60 days
+    return flags.filter(function(f) { return f.userId === userId && new Date(f.flaggedAt).getTime() > cutoff; });
+  }
+
+  function getActiveBan(userId) {
+    var bans = _getJSON('arts_bans');
+    var now = Date.now();
+    for (var i = 0; i < bans.length; i++) {
+      if (bans[i].userId === userId && new Date(bans[i].expiresAt).getTime() > now) return bans[i];
+    }
+    return null;
+  }
+
+  /* ── Check own ban/flag status ── */
+  function checkOwnStatus() {
+    var hash = localStorage.getItem('arts_id_hash');
+    if (!hash) return;
+    var ban = getActiveBan(hash);
+    var statusEl = document.getElementById('vc-status');
+    if (ban && statusEl) {
+      statusEl.textContent = 'BANNED — ' + _fmtDate(ban.expiresAt);
+      statusEl.classList.add('banned');
+    }
+    var flags = getRecentFlags(hash);
+    if (flags.length > 0) {
+      var sellerCard = document.querySelector('.vc-seller .vc-body');
+      if (sellerCard && !sellerCard.querySelector('.red-flag-badge')) {
+        var badge = document.createElement('span');
+        badge.className = 'red-flag-badge';
+        badge.textContent = flags.length + ' flag' + (flags.length > 1 ? 's' : '');
+        badge.style.marginTop = '8px';
+        sellerCard.appendChild(badge);
+      }
+    }
+  }
+
+  /* ── Load purchases into card ── */
+  window.loadPurchases = function(store) {
+    var list = document.getElementById('vc-purch-list');
+    var empty = document.getElementById('vc-purch-empty');
+    if (!list) return;
+
+    var purchases = _getJSON('arts_purchases');
+    var disputes = _getJSON('arts_disputes');
+    var disputedPurchIds = {};
+    disputes.forEach(function(d) { disputedPurchIds[d.purchaseId] = d.status; });
+
+    if (purchases.length === 0) {
+      if (empty) empty.style.display = '';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+
+    // Clear old rendered items
+    var old = list.querySelectorAll('.vc-purch-item');
+    old.forEach(function(el) { el.remove(); });
+
+    purchases.forEach(function(p) {
+      var item = document.createElement('div');
+      item.className = 'vc-purch-item';
+
+      var thumbHtml = p.artThumb
+        ? '<img class="vc-purch-thumb" src="' + p.artThumb + '" alt="">'
+        : '<div class="vc-purch-thumb" style="display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:rgba(255,255,255,0.12);font-weight:700;">ART</div>';
+
+      var sellerFlags = getRecentFlags(p.sellerId);
+      var flagHtml = sellerFlags.length > 0 ? ' <span class="red-flag-badge" style="font-size:0.36rem;padding:1px 5px;">' + sellerFlags.length + '</span>' : '';
+
+      var disputeStatus = disputedPurchIds[p.id];
+      var actionHtml;
+      if (disputeStatus) {
+        actionHtml = '<span class="badge-disputed">Disputed</span>';
+      } else {
+        actionHtml = '<button class="btn-dispute" data-purchase-id="' + p.id + '">Dispute</button>';
+      }
+
+      item.innerHTML = thumbHtml +
+        '<div class="vc-purch-info">' +
+          '<p class="vc-purch-title">' + p.artTitle + '</p>' +
+          '<div class="vc-purch-meta"><span>' + p.sellerName + flagHtml + '</span><span>·</span><span>' + _fmtDate(p.purchasedAt) + '</span></div>' +
+        '</div>' +
+        '<div class="vc-purch-actions">' +
+          '<span class="vc-purch-price">' + (p.price ? '€' + p.price : '') + '</span>' +
+          actionHtml +
+        '</div>';
+
+      list.appendChild(item);
+    });
+
+    // Wire dispute buttons
+    list.querySelectorAll('.btn-dispute').forEach(function(btn) {
+      btn.addEventListener('click', function() { openDispute(btn.dataset.purchaseId); });
+    });
+
+    checkOwnStatus();
+  };
+
+  /* ── Dispute modal logic ── */
+  var _disputePurchaseId = null;
+  var _disputeReason = null;
+
+  function openDispute(purchaseId) {
+    var purchases = _getJSON('arts_purchases');
+    var p = null;
+    for (var i = 0; i < purchases.length; i++) {
+      if (purchases[i].id === purchaseId) { p = purchases[i]; break; }
+    }
+    if (!p) return;
+
+    _disputePurchaseId = purchaseId;
+    _disputeReason = null;
+
+    document.getElementById('dispute-art-title').textContent = p.artTitle;
+    document.getElementById('dispute-seller-name').textContent = 'Seller: ' + p.sellerName + '  ·  €' + p.price;
+    document.getElementById('dispute-desc').value = '';
+    document.getElementById('dispute-submit').disabled = true;
+    document.querySelectorAll('.dispute-reason-btn').forEach(function(b) { b.classList.remove('selected'); });
+    document.getElementById('dispute-overlay').hidden = false;
+  }
+
+  function closeDispute() {
+    document.getElementById('dispute-overlay').hidden = true;
+    _disputePurchaseId = null;
+    _disputeReason = null;
+  }
+
+  function updateSubmitState() {
+    var desc = (document.getElementById('dispute-desc').value || '').trim();
+    document.getElementById('dispute-submit').disabled = !(_disputeReason && desc.length > 0);
+  }
+
+  // Reason selection
+  document.querySelectorAll('.dispute-reason-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.dispute-reason-btn').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      _disputeReason = btn.dataset.reason;
+      updateSubmitState();
+    });
+  });
+
+  document.getElementById('dispute-desc').addEventListener('input', updateSubmitState);
+  document.getElementById('dispute-close').addEventListener('click', closeDispute);
+  document.getElementById('dispute-cancel').addEventListener('click', closeDispute);
+  document.getElementById('dispute-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeDispute();
+  });
+
+  document.getElementById('dispute-submit').addEventListener('click', function() {
+    if (!_disputePurchaseId || !_disputeReason) return;
+    var desc = (document.getElementById('dispute-desc').value || '').trim();
+    if (!desc) return;
+
+    var purchases = _getJSON('arts_purchases');
+    var p = null;
+    for (var i = 0; i < purchases.length; i++) {
+      if (purchases[i].id === _disputePurchaseId) { p = purchases[i]; break; }
+    }
+    if (!p) return;
+
+    var disputes = _getJSON('arts_disputes');
+    var dispute = {
+      id: 'disp_' + Date.now(),
+      purchaseId: p.id,
+      buyerId: p.buyerId,
+      buyerName: localStorage.getItem('arts_alias') || 'Member',
+      sellerId: p.sellerId,
+      sellerName: p.sellerName,
+      artTitle: p.artTitle,
+      price: p.price,
+      reason: _disputeReason,
+      description: desc,
+      submittedAt: new Date().toISOString(),
+      status: 'open',
+      adminNotes: '',
+      resolvedAt: null
+    };
+    disputes.push(dispute);
+    _setJSON('arts_disputes', disputes);
+
+    closeDispute();
+
+    // Re-render purchases to show "Disputed" badge
+    var store = { get: function(k){ return localStorage.getItem(k); }, set: function(k,v){ localStorage.setItem(k,v); } };
+    loadPurchases(store);
+  });
+})();
+</script>
+
 <script src="theme.js?v=4"></script>
 <script src="consent.js"></script>
 <script src="auth.js"></script>

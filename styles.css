@@ -115,6 +115,7 @@ body {
   font-family: var(--font);
   font-weight: var(--fw-light);
   min-height: 100vh;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0.02em;
@@ -127,6 +128,39 @@ img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 button { font-family: var(--font); cursor: crosshair; border: none; background: none; padding: 0; }
 
+/* ── Accessibility: focus styles ── */
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Skip-to-content link (add <a href="#main" class="skip-link">Skip to content</a> as first child of body) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: var(--s-2);
+  z-index: 99999;
+  padding: var(--s-2) var(--s-4);
+  background: var(--c-accent);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.1em;
+  border-radius: var(--r-sm);
+}
+.skip-link:focus { left: var(--s-2); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--c-bg); }
@@ -138,30 +172,11 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
    TYPOGRAPHY
    ══════════════════════════════════════════════════════ */
 
-.t-display {
-  font-size: clamp(3rem, 10vw, 6rem);
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.04em;
-  line-height: 0.95;
-}
-.t-heading {
-  font-size: clamp(1.8rem, 5vw, 3.2rem);
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.06em;
-  line-height: 1.1;
-}
 .t-title {
   font-size: clamp(1.2rem, 3vw, 1.6rem);
   font-weight: var(--fw-bold);
   letter-spacing: 0.08em;
   line-height: 1.2;
-}
-.t-body {
-  font-size: 0.95rem;
-  font-weight: var(--fw-light);
-  letter-spacing: 0.02em;
-  line-height: 1.65;
-  color: var(--c-text-secondary);
 }
 .t-label {
   font-size: 0.58rem;
@@ -169,12 +184,6 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--c-text-tertiary);
-}
-.t-micro {
-  font-size: 0.44rem;
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
 }
 
 
@@ -190,8 +199,6 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
 }
 
 .container       { max-width: var(--content-max); margin: 0 auto; }
-.container-narrow { max-width: var(--content-narrow); margin: 0 auto; }
-.container-tight { max-width: var(--content-tight); margin: 0 auto; }
 
 
 /* ══════════════════════════════════════════════════════
@@ -215,10 +222,8 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
 }
 
 .site-logo {
-  font-size: 1rem;
-  font-weight: var(--fw-light);
-  letter-spacing: 0.05em;
-  color: var(--c-text);
+  display: flex;
+  align-items: center;
   opacity: 0.88;
   transition: opacity var(--dur-fast);
   cursor: crosshair;
@@ -226,6 +231,12 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
   line-height: 1;
 }
 .site-logo:hover { opacity: 1; }
+.site-logo img {
+  height: 28px;
+  width: auto;
+  display: block;
+  border-radius: 4px;
+}
 
 .site-nav {
   display: flex;
@@ -434,8 +445,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
 }
 
 /* Sizes */
-.btn-lg { padding: 16px 36px; font-size: 0.95rem; }
-.btn-sm { padding: 6px 14px; font-size: 0.72rem; }
+/* (Removed: .btn-lg, .btn-sm — unused) */
 
 /* Fill sweep animation (optional utility) */
 .btn-fill::before {
@@ -616,7 +626,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
 }
 .btn-inq:first-child { border-radius: var(--r-md) 0 0 var(--r-md); border-right: none; }
 .btn-inq:last-child  { border-radius: 0 var(--r-md) var(--r-md) 0; }
-.btn-inq:only-child  { border-radius: var(--r-md); }
+.btn-inq:only-child  { border-radius: var(--r-md); border-right: 1.5px solid var(--c-border-hover); }
 .btn-inq-fill {
   background: var(--c-accent);
   border-color: var(--c-accent);
@@ -1175,78 +1185,8 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
 }
 
 
-/* ══════════════════════════════════════════════════════
-   TIER SELECTION (join.html)
-   ══════════════════════════════════════════════════════ */
-
+/* (Removed: .tier-pick/.tp-* and .co-* — unused checkout/tier picker selectors) */
 .tiers { display: flex; flex-direction: column; }
-.tier-pick {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: clamp(16px, 2.4vh, 24px) 0;
-  border-bottom: 1px solid var(--c-border);
-  cursor: pointer;
-  transition: opacity var(--dur-fast);
-}
-.tier-pick:first-child { border-top: 1px solid var(--c-border); }
-.tier-pick:hover { opacity: 0.75; }
-.tier-pick.selected { opacity: 1; }
-
-.tp-info { display: flex; flex-direction: column; gap: 0.2rem; }
-.tp-name {
-  font-size: clamp(1.1rem, 3vw, 1.6rem);
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.08em;
-  color: var(--c-text);
-  line-height: 1;
-  transition: color var(--dur-fast);
-}
-.tier-pick.selected .tp-name { color: var(--c-accent); }
-.tp-price {
-  font-size: 0.62rem;
-  font-weight: var(--fw-light);
-  letter-spacing: 0.2em;
-  color: var(--c-accent);
-}
-.tp-perks {
-  font-size: 0.5rem;
-  font-weight: var(--fw-light);
-  letter-spacing: 0.15em;
-  color: var(--c-text-secondary);
-  margin-top: var(--s-1);
-  line-height: 1.5;
-}
-.tier-pick.selected .tp-perks { color: var(--c-text-secondary); }
-
-.tp-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  border: 1.5px solid var(--c-border-hover);
-  flex-shrink: 0;
-  transition: background var(--dur-fast), border-color var(--dur-fast);
-}
-.tier-pick.selected .tp-dot {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-}
-
-/* Checkout sheet */
-.co-sheet {
-  background: var(--c-bg-elevated);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-xl) var(--r-xl) 0 0;
-}
-.co-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--c-border-hover); margin: var(--s-3) auto; }
-.co-stripe { height: 4px; background: var(--c-accent); }
-.co-logo { color: var(--c-text); }
-.co-tag { color: var(--c-text-ghost); }
-.co-tier-name-el { color: var(--c-accent); }
-.co-tier-price-el { color: var(--c-text-tertiary); }
-.co-tier-perks-el { color: var(--c-text-secondary); }
-.co-promo-toggle { color: var(--c-text-tertiary); border-color: var(--c-border); }
-.co-promo-apply { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
 .oauth-divider { color: var(--c-text-ghost); }
 
 
@@ -1356,22 +1296,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
    FEEDBACK WIDGET
    ══════════════════════════════════════════════════════ */
 
-#fb-trigger {
-  position: fixed;
-  bottom: var(--s-6); left: var(--s-4);
-  z-index: 99999;
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-sm);
-  padding: 8px 6px;
-  font-size: 0.42rem;
-  font-weight: var(--fw-bold);
-  letter-spacing: 0.22em;
-  color: var(--c-text-tertiary);
-  writing-mode: vertical-rl;
-  cursor: crosshair;
-  transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
-}
-#fb-trigger:hover { color: var(--c-text-secondary); border-color: var(--c-border-hover); background: var(--c-accent-subtle); }
+/* (Removed: #fb-trigger — unused) */
 
 #fb-backdrop {
   position: fixed;
@@ -1402,7 +1327,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
 
 .fb-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--c-border-hover); margin: var(--s-3) auto; }
 .fb-stripe { height: 4px; background: var(--c-accent); }
-.fb-logo { color: var(--c-text); }
+/* (Removed: .fb-logo — unused) */
 .fb-close {
   background: transparent;
   border: 1px solid var(--c-border);
@@ -1416,8 +1341,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
   transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 .fb-close:hover { color: var(--c-text); border-color: var(--c-border-hover); }
-.fb-eyebrow { color: var(--c-accent-muted); }
-.fb-title { color: var(--c-text); }
+/* (Removed: .fb-eyebrow, .fb-title — unused) */
 .fb-stars-pre { color: var(--c-text-secondary); }
 .fb-letter { color: var(--c-text-secondary); }
 .fb-starmark { color: var(--c-accent); }
@@ -1704,10 +1628,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
    ══════════════════════════════════════════════════════ */
 
 .gate-label { color: var(--c-text-tertiary); }
-.gate-desc { color: var(--c-text-tertiary); }
-.gate-login { color: var(--c-text-tertiary); }
-.gate-login a { color: var(--c-text-secondary); }
-.gate-tier { color: var(--c-text-secondary); border-color: var(--c-border); }
+/* (Removed: .gate-desc, .gate-login, .gate-tier — unused) */
 
 
 /* ══════════════════════════════════════════════════════
@@ -1726,7 +1647,7 @@ button { font-family: var(--font); cursor: crosshair; border: none; background: 
    MISC UTILITIES
    ══════════════════════════════════════════════════════ */
 
-.accent { color: var(--c-accent); }
+/* (Removed: .accent — unused utility) */
 .muted { color: var(--c-text-secondary); }
 
 /* ── Day Mode — explicit component overrides ── */
@@ -1736,13 +1657,11 @@ html[data-theme="day"] .site-header {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom-color: rgba(0, 0, 0, 0.08);
 }
-html[data-theme="day"] .site-logo { color: #000; }
+html[data-theme="day"] .site-logo img,
+html[data-theme="day"] .bear { filter: brightness(0); }
 html[data-theme="day"] .site-nav a { color: rgba(0, 0, 0, 0.55); }
 html[data-theme="day"] .site-nav a:hover { color: #000; }
 html[data-theme="day"] .site-nav a[aria-current="page"] { color: #000; }
-
-/* Bear mascot — invert in day mode */
-html[data-theme="day"] .bear { filter: invert(1); }
 
 /* XP toast */
 .xp-toast { background: var(--c-accent); color: #fff; }
@@ -1962,11 +1881,7 @@ html[data-theme="day"] .bear { filter: invert(1); }
     right: var(--s-3);
   }
 
-  /* Feedback trigger: smaller on mobile */
-  #fb-trigger {
-    bottom: var(--s-4);
-    left: var(--s-3);
-  }
+  /* (Removed: #fb-trigger mobile override — unused) */
 }
 
 /* Tablet: detail modal tweaks */

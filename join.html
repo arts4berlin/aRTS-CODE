@@ -30,459 +30,615 @@
   <link href="assets/fonts/space-grotesk.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* ── Page-specific: join layout ── */
+    /* ══════════════════════════════════════════
+       JOIN — Funnel Step 1
+       ══════════════════════════════════════════ */
+
     main {
-      padding-top: clamp(90px, 14vh, 120px);
-      padding-bottom: clamp(80px, 10vh, 130px);
+      padding-top: clamp(90px, 13vh, 130px);
+      padding-bottom: clamp(80px, 10vh, 140px);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-left: var(--gutter);
       padding-right: var(--gutter);
+      position: relative;
     }
 
-    .form-col {
-      width: min(92vw, 680px);
+    /* ── Gradient mesh backdrop ── */
+    .join-mesh {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .join-mesh::before,
+    .join-mesh::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(130px);
+      opacity: 0.08;
+      animation: meshDrift 22s ease-in-out infinite alternate;
+    }
+    .join-mesh::before {
+      width: 550px; height: 550px;
+      background: var(--c-accent);
+      top: -12%; left: -8%;
+    }
+    .join-mesh::after {
+      width: 450px; height: 450px;
+      background: var(--c-accent);
+      bottom: -10%; right: -5%;
+      animation-delay: -11s;
+      animation-direction: alternate-reverse;
+    }
+    @keyframes meshDrift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 30px) scale(1.1); }
+    }
+    html[data-theme="day"] .join-mesh::before,
+    html[data-theme="day"] .join-mesh::after { opacity: 0.04; }
+
+    .page-col {
+      width: min(92vw, 780px);
       display: flex;
       flex-direction: column;
+      position: relative;
+      z-index: 1;
     }
 
-    .section-label {
-      font-size: 0.55rem;
+    /* ══════════════════════════════════════════
+       FUNNEL STEP TRACKER
+       ══════════════════════════════════════════ */
+    .funnel-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: clamp(40px, 6vh, 60px);
+      width: 100%;
+    }
+
+    .fs-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+    .fs-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--c-border-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.58rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.04em;
+      color: var(--c-text-tertiary);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .fs-label {
+      font-size: 0.52rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.2em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: color 0.3s ease;
+    }
+
+    .fs-line {
+      flex: 1;
+      height: 1px;
+      background: var(--c-border);
+      margin: 0 clamp(10px, 2vw, 18px);
+      position: relative;
+    }
+    .fs-line::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0%;
+      background: var(--c-accent);
+      transition: width 0.6s var(--ease-out);
+    }
+
+    /* Active step */
+    .fs-step.active .fs-num {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+      background: rgba(255, 92, 0, 0.08);
+    }
+    .fs-step.active .fs-label { color: var(--c-text-secondary); }
+
+    /* Done step */
+    .fs-step.done .fs-num {
+      border-color: var(--c-accent);
+      background: var(--c-accent);
+      color: #fff;
+    }
+    .fs-step.done .fs-num::after {
+      content: '\2713';
+      font-size: 0.62rem;
+    }
+    .fs-step.done .fs-num span { display: none; }
+    .fs-step.done .fs-label { color: var(--c-text-tertiary); }
+    .fs-line.done::after { width: 100%; }
+
+    /* ══════════════════════════════════════════
+       HERO
+       ══════════════════════════════════════════ */
+    .join-hero {
+      margin-bottom: clamp(36px, 5vh, 52px);
+    }
+    .join-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.5rem;
       font-weight: var(--fw-light);
       letter-spacing: 0.36em;
       color: var(--c-accent-muted);
       text-transform: uppercase;
-      margin-bottom: clamp(6px, 1vh, 10px);
+      margin-bottom: clamp(8px, 1.2vh, 12px);
     }
-
-    .form-title {
-      font-size: clamp(3.4rem, 12vw, 6.5rem);
-      font-weight: var(--fw-bold);
-      letter-spacing: 0.06em;
-      line-height: 0.95;
-      color: var(--c-text);
-      margin-bottom: clamp(28px, 4.5vh, 48px);
+    .join-eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--c-accent);
+      animation: dotPulse 2.4s ease-in-out infinite;
     }
-
-    /* ── Tier perks visibility on select ── */
-    .tier-pick.selected .tp-perks { color: var(--c-text-tertiary); }
-
-    /* ── Already paid link ── */
-    .btn-already-paid {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: var(--fw-bold);
-      letter-spacing: 0.16em;
-      padding: 0.6rem 1.2rem;
-      margin-top: clamp(12px, 1.8vh, 18px);
-      color: var(--c-text-tertiary);
-      border: 1px solid var(--c-border);
-      border-radius: var(--r-sm);
-      transition: color var(--dur-fast), border-color var(--dur-fast);
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.65); }
     }
-    .btn-already-paid:hover { color: var(--c-text); border-color: var(--c-border-hover); }
-
-    /* ── Email field ── */
-    .field-group { margin-top: clamp(24px, 3.5vh, 36px); }
-    .field-group input {
-      font-size: clamp(1rem, 2.6vw, 1.3rem);
+    .join-title {
+      font-size: clamp(3rem, 10vw, 5.5rem);
       font-weight: var(--fw-bold);
       letter-spacing: 0.04em;
-      padding: 0.55rem 0;
+      line-height: 0.92;
+      color: var(--c-text);
+    }
+    .join-sub {
+      font-size: clamp(0.68rem, 1.6vw, 0.82rem);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.1em;
+      color: var(--c-text-secondary);
+      line-height: 1.7;
+      margin-top: clamp(10px, 1.6vh, 16px);
+      max-width: 440px;
     }
 
-    /* ── OAuth sign-in ── */
-    .oauth-row {
-      margin-top: clamp(22px, 3.2vh, 36px);
+    /* ══════════════════════════════════════════
+       TIER CARDS — 2×2 GRID
+       ══════════════════════════════════════════ */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(10px, 1.4vw, 16px);
+      margin-bottom: clamp(36px, 5vh, 52px);
+    }
+
+    .tier-card {
+      position: relative;
+      padding: clamp(20px, 2.6vw, 28px);
+      border-radius: var(--r-xl);
+      cursor: crosshair;
+      background: var(--c-bg-elevated);
+      border: 1px solid var(--c-border);
+      transition:
+        transform 0.35s var(--ease-out),
+        border-color 0.3s ease,
+        box-shadow 0.35s ease;
       display: flex;
       flex-direction: column;
-      gap: clamp(8px, 1.2vh, 12px);
     }
-    .btn-oauth.google:not(:disabled):hover { border-color: rgba(255,92,0,0.7); color: var(--c-text); background: rgba(255,92,0,0.1); }
-    .btn-oauth.apple:not(:disabled):hover  { border-color: var(--c-border-strong); color: var(--c-text); background: var(--c-accent-subtle); }
-    .btn-oauth:disabled { opacity: 0.25; cursor: default; }
+    .tier-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: var(--r-xl);
+      padding: 1px;
+      background: linear-gradient(135deg, transparent, transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      transition: background 0.4s ease;
+      z-index: 1;
+    }
+    .tier-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--c-border-hover);
+    }
+    .tier-card:hover::before {
+      background: linear-gradient(135deg, rgba(255,92,0,0.2) 0%, rgba(255,92,0,0.04) 50%, rgba(255,92,0,0.15) 100%);
+    }
+    .tier-card.selected {
+      border-color: var(--c-accent-muted);
+      box-shadow: 0 0 0 1px rgba(255,92,0,0.2), 0 8px 28px rgba(255,92,0,0.06);
+    }
+    .tier-card.selected::before {
+      background: linear-gradient(135deg, rgba(255,92,0,0.4) 0%, rgba(255,92,0,0.08) 50%, rgba(255,92,0,0.3) 100%);
+    }
 
-    .oauth-divider {
-      font-size: 0.48rem;
-      font-weight: var(--fw-light);
+    /* Recommended badge */
+    .tier-badge {
+      position: absolute;
+      top: clamp(12px, 1.8vw, 18px);
+      right: clamp(12px, 1.8vw, 18px);
+      font-size: 0.38rem;
+      font-weight: var(--fw-bold);
       letter-spacing: 0.26em;
-      color: var(--c-text-ghost);
-      text-align: center;
-      padding: 2px 0;
+      color: var(--c-accent);
+      border: 1px solid var(--c-accent-subtle);
+      border-radius: var(--r-pill);
+      padding: 3px 9px;
+      text-transform: uppercase;
+      z-index: 2;
     }
 
-    .already-member {
-      font-size: 0.62rem;
+    /* Selection check */
+    .tc-check {
+      position: absolute;
+      bottom: clamp(16px, 2.2vw, 24px);
+      right: clamp(16px, 2.2vw, 24px);
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--c-border-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+      z-index: 2;
+    }
+    .tc-check svg {
+      width: 10px; height: 10px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.15s, transform 0.25s var(--ease-spring);
+    }
+    .tier-card.selected .tc-check {
+      background: var(--c-accent);
+      border-color: var(--c-accent);
+    }
+    .tier-card.selected .tc-check svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Card content */
+    .tc-name {
+      font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.06em;
+      color: var(--c-text);
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .tier-card.selected .tc-name { color: var(--c-accent); }
+
+    .tc-price {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-top: clamp(8px, 1.2vh, 12px);
+    }
+    .tc-price-val {
+      font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.02em;
+      color: var(--c-text);
+      line-height: 1;
+    }
+    .tc-price-unit {
+      font-size: 0.5rem;
       font-weight: var(--fw-light);
       letter-spacing: 0.14em;
       color: var(--c-text-tertiary);
-      text-align: center;
     }
-    .already-member a { transition: color var(--dur-fast); }
-    .already-member a:hover { color: var(--c-text-secondary); }
-
-    /* ── OAuth confirmation (stage 2) ── */
-    .oauth-confirm-badge {
-      font-size: 0.62rem;
+    .tc-price-free {
+      font-size: clamp(1.1rem, 2.6vw, 1.4rem);
       font-weight: var(--fw-bold);
-      letter-spacing: 0.2em;
-      color: var(--c-success);
-      margin-bottom: clamp(12px,1.8vh,18px);
-    }
-
-    /* ── Continue link ── */
-    .btn-continue {
-      display: inline-block;
-      margin-top: clamp(20px, 3vh, 32px);
-      font-size: 0.62rem;
-      font-weight: var(--fw-semi);
-      letter-spacing: 0.18em;
+      letter-spacing: 0.08em;
       color: var(--c-accent);
-      background: none;
-      border: none;
-      border-bottom: 1px solid var(--c-accent-subtle);
-      padding-bottom: 2px;
-      cursor: crosshair;
-      transition: color var(--dur-fast), border-color var(--dur-fast);
-    }
-    .btn-continue:hover { color: var(--c-text); border-color: var(--c-border-hover); }
-
-    /* ── Pay button ── */
-    .pay-trigger-wrap { position: relative; display: inline-block; cursor: pointer; }
-    .btn-access {
-      display: inline-flex;
-      align-items: center;
-      font-size: clamp(0.82rem, 2vw, 0.96rem);
-      font-weight: var(--fw-bold);
-      letter-spacing: 0.18em;
-      padding: 0.85rem clamp(1.6rem, 4vw, 2.8rem);
-      background: var(--c-accent);
-      color: #fff;
-      border: 2px solid var(--c-accent);
-      border-radius: var(--r-sm);
-      cursor: crosshair;
-      transition:
-        background 0.22s cubic-bezier(.4,0,.2,1),
-        color 0.22s cubic-bezier(.4,0,.2,1),
-        border-color 0.22s cubic-bezier(.4,0,.2,1),
-        box-shadow 0.32s ease-out;
-    }
-    .btn-access:hover, .pay-trigger-wrap:hover .btn-access {
-      background: var(--c-bg);
-      color: var(--c-accent);
-      border-color: var(--c-accent);
-      box-shadow: 0 0 20px rgba(255,92,0,0.12), inset 0 0 20px rgba(255,92,0,0.04);
     }
 
-    .payment-note {
-      margin-top: clamp(16px, 2vh, 24px);
-      font-size: 0.6rem;
+    .tc-perks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: clamp(14px, 2vh, 20px);
+    }
+    .tc-perk {
+      font-size: 0.42rem;
       font-weight: var(--fw-light);
-      letter-spacing: 0.12em;
-      color: var(--c-text-ghost);
-      line-height: 1.7;
-    }
-
-    /* ── 12-word reveal toggle ── */
-    .btn-words-toggle {
-      font-size: 0.6rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.2em;
-      color: var(--c-text-tertiary);
-      border: 1px solid var(--c-border);
-      border-radius: var(--r-sm);
-      padding: 0.45rem 0.9rem;
-      cursor: crosshair;
-      transition: color var(--dur-fast), border-color var(--dur-fast);
-      margin-bottom: clamp(10px, 1.6vh, 16px);
-      display: block;
-    }
-    .btn-words-toggle:hover { color: var(--c-text-secondary); border-color: var(--c-border-hover); }
-    .words-grid.words-hidden .word-val {
-      filter: blur(7px);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ── Returning member status pill ── */
-    .rm-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.52rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.2em;
-      color: var(--c-text-tertiary);
+      letter-spacing: 0.08em;
+      color: var(--c-text-secondary);
+      background: var(--c-bg-surface);
       border: 1px solid var(--c-border);
       border-radius: var(--r-pill);
-      padding: 0.32rem 0.85rem;
-      margin-bottom: clamp(20px, 3vh, 32px);
+      padding: 3px 9px;
+      white-space: nowrap;
+      transition: border-color 0.2s;
     }
-    .rm-status .rm-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--c-text-ghost);
-      flex-shrink: 0;
+    .tier-card.selected .tc-perk {
+      border-color: rgba(255, 92, 0, 0.12);
     }
-    .rm-status.active { color: var(--c-success); border-color: rgba(110,227,110,0.16); }
-    .rm-status.active .rm-dot { background: #6ee36e; }
 
-    /* ── Upgrade plan label ── */
-    .upgrade-label {
-      font-size: 0.58rem;
+    /* ══════════════════════════════════════════
+       SIGN-IN SECTION
+       ══════════════════════════════════════════ */
+    .signin-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .signin-label {
+      font-size: 0.5rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.3em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+      margin-bottom: clamp(18px, 2.4vh, 26px);
+    }
+    .signin-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.4vh, 14px);
+      width: min(100%, 380px);
+    }
+    .btn-oauth {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: clamp(13px, 1.8vh, 16px) 24px;
+      border-radius: var(--r-lg);
+      font-family: var(--font);
+      font-size: 0.76rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: 0.08em;
+      cursor: crosshair;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--c-border);
+      text-decoration: none;
+    }
+    .btn-oauth svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .btn-oauth:hover { transform: translateY(-1px); }
+
+    /* Google button */
+    .btn-oauth.google {
+      background: var(--c-bg-elevated);
+      color: var(--c-text);
+    }
+    .btn-oauth.google:hover {
+      border-color: var(--c-accent-muted);
+      box-shadow: 0 4px 16px rgba(255, 92, 0, 0.06);
+    }
+
+    /* Apple button */
+    .btn-oauth.apple {
+      background: var(--c-bg-elevated);
+      color: var(--c-text-tertiary);
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
+    }
+    .btn-oauth.apple .oauth-soon {
+      font-size: 0.46rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.18em;
+      color: var(--c-text-ghost);
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    .signin-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: min(100%, 380px);
+      margin: clamp(14px, 2vh, 20px) 0;
+    }
+    .signin-divider::before,
+    .signin-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--c-border);
+    }
+    .signin-divider span {
+      font-size: 0.42rem;
       font-weight: var(--fw-light);
       letter-spacing: 0.24em;
       color: var(--c-text-ghost);
-      margin-top: clamp(30px, 4vh, 46px);
       text-transform: uppercase;
     }
 
-    /* ── Free tier ── */
-    .tp-free {
-      font-size: 0.58rem;
-      font-weight: var(--fw-bold);
-      letter-spacing: 0.16em;
-      color: var(--c-accent);
+    /* Email fallback (below OAuth) */
+    .email-fallback {
+      width: min(100%, 380px);
     }
-    .tier-pick.tier-free .tp-dot { border-color: var(--c-accent-subtle); }
-    .tier-pick.tier-free.selected .tp-dot { background: var(--c-accent-muted); border-color: var(--c-accent-muted); }
-
-    /* ── aUDIENCE register button ── */
-    .btn-audience { background: transparent !important; color: var(--c-accent) !important; border-color: var(--c-accent) !important; }
-    .btn-audience:hover { background: var(--c-accent-subtle) !important; }
-    .btn-audience.done { color: var(--c-success) !important; border-color: rgba(110,227,110,0.22) !important; pointer-events: none; }
-
-    /* ══════════════════════════════════════════
-       CHECKOUT SHEET
-       ══════════════════════════════════════════ */
-    #co-backdrop {
-      position: fixed;
-      inset: 0;
-      background: var(--c-bg-overlay);
-      z-index: 9000;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.28s ease, visibility 0s 0.28s;
-    }
-    #co-backdrop.open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transition: opacity 0.28s ease;
-    }
-
-    #co-sheet {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%) translateY(110%);
-      width: min(480px, 100vw);
+    .email-wrap {
+      display: flex;
+      align-items: center;
       background: var(--c-bg-elevated);
       border: 1px solid var(--c-border);
-      border-bottom: none;
-      border-radius: var(--r-2xl) var(--r-2xl) 0 0;
-      padding-bottom: max(env(safe-area-inset-bottom), 28px);
-      z-index: 9001;
-      overflow: hidden;
-      transition: transform 0.46s var(--ease-spring);
+      border-radius: var(--r-lg);
+      padding: 5px;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    #co-backdrop.open #co-sheet {
-      transform: translateX(-50%) translateY(0);
+    .email-wrap:focus-within {
+      border-color: var(--c-accent-muted);
+      box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.05);
     }
-
-    .co-handle-wrap { display: flex; justify-content: center; padding: 10px 0 0; }
-    .co-handle { width: 36px; height: 4px; background: var(--c-border-hover); border-radius: 2px; }
-    .co-stripe { height: 4px; background: var(--c-accent); }
-
-    .co-hdr {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 18px 26px 0;
-    }
-    .co-logo { font-size: 0.95rem; font-weight: var(--fw-light); letter-spacing: 0.06em; color: var(--c-text); }
-    .co-tag { font-size: 0.46rem; font-weight: var(--fw-light); letter-spacing: 0.28em; color: var(--c-text-ghost); text-transform: uppercase; }
-
-    .co-body { padding: 16px 26px 0; }
-    .co-tier-name-el {
-      font-size: clamp(1.9rem, 7vw, 2.6rem);
-      font-weight: var(--fw-bold);
-      letter-spacing: 0.06em;
-      color: var(--c-accent);
-      line-height: 1;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.4s ease 0.18s, transform 0.4s var(--ease-out) 0.18s;
-    }
-    #co-backdrop.open .co-tier-name-el { opacity: 1; transform: translateY(0); }
-    .co-tier-price-el {
-      font-size: 0.66rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.22em;
-      color: var(--c-text-tertiary);
-      margin-top: 6px;
-    }
-    .co-tier-perks-el {
-      font-size: 0.48rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.13em;
-      color: var(--c-text-ghost);
-      margin-top: 6px;
-      line-height: 1.8;
-    }
-
-    .co-rule { height: 1px; background: var(--c-border); margin: 16px 26px; }
-
-    .co-email-row { padding: 0 26px; }
-    .co-email-label {
-      font-size: 0.46rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.26em;
-      color: var(--c-text-ghost);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .co-email-val-el {
-      font-size: 0.86rem;
-      font-weight: var(--fw-bold);
+    .email-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: clamp(0.82rem, 2vw, 0.94rem);
+      font-weight: var(--fw-semi);
       letter-spacing: 0.03em;
-      color: var(--c-text-secondary);
-      word-break: break-all;
+      color: var(--c-text);
+      padding: clamp(8px, 1.2vh, 12px) clamp(10px, 1.6vw, 14px);
+      min-width: 0;
     }
-
-    .co-pay-row { padding: 0 26px; margin-top: 14px; }
-    .co-btn-pay {
-      width: 100%;
-      height: 56px;
+    .email-input::placeholder {
+      color: var(--c-text-ghost);
+      font-weight: var(--fw-light);
+      letter-spacing: 0.06em;
+    }
+    .email-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       background: var(--c-accent);
       color: #fff;
       border: none;
-      border-radius: var(--r-lg);
+      border-radius: var(--r-md);
       font-family: var(--font);
-      font-size: 0.9rem;
+      font-size: 0.64rem;
       font-weight: var(--fw-bold);
-      letter-spacing: 0.18em;
+      letter-spacing: 0.1em;
+      padding: clamp(8px, 1.2vh, 12px) clamp(14px, 2.2vw, 20px);
       cursor: crosshair;
-      transition: background var(--dur-fast), color var(--dur-fast);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.15s;
     }
-    .co-btn-pay:hover { background: var(--c-accent-hover); }
+    .email-btn:hover { background: var(--c-accent-hover); transform: translateY(-1px); }
+    .email-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+    .email-btn svg { width: 12px; height: 12px; }
 
-    .co-foot {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 26px 0;
-    }
-    .co-secure {
+    .signin-note {
       font-size: 0.44rem;
       font-weight: var(--fw-light);
-      letter-spacing: 0.22em;
+      letter-spacing: 0.1em;
       color: var(--c-text-ghost);
-      text-transform: uppercase;
+      margin-top: clamp(12px, 1.6vh, 18px);
+      line-height: 1.6;
     }
-    .co-cancel-btn {
-      font-size: 0.5rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.16em;
-      color: var(--c-text-tertiary);
-      cursor: crosshair;
-      transition: color var(--dur-fast);
-    }
-    .co-cancel-btn:hover { color: var(--c-text-secondary); }
+    .signin-note a { color: var(--c-text-tertiary); transition: color var(--dur-fast); }
+    .signin-note a:hover { color: var(--c-text-secondary); }
 
-    /* ── Promo code ── */
-    .co-promo-row { margin-top: clamp(14px,2vh,22px); }
-    .co-promo-toggle {
-      font-size: 0.58rem;
-      font-weight: var(--fw-light);
-      letter-spacing: 0.18em;
-      color: var(--c-text-tertiary);
-      cursor: crosshair;
-      padding: 0;
-      transition: color var(--dur-fast);
+    /* ══════════════════════════════════════════
+       SUCCESS STATE
+       ══════════════════════════════════════════ */
+    .success-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-top: clamp(40px, 8vh, 80px);
     }
-    .co-promo-toggle:hover { color: var(--c-text-secondary); }
-    .co-promo-fields { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
-    .co-promo-inp {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid var(--c-border);
-      color: var(--c-text);
-      font-family: var(--font);
-      font-size: 0.9rem;
+    .success-icon {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(255, 92, 0, 0.1);
+      border: 1px solid rgba(255, 92, 0, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: clamp(14px, 2vh, 22px);
+      animation: sPop 0.45s var(--ease-spring) backwards 0.1s;
+    }
+    .success-icon svg { width: 22px; height: 22px; color: var(--c-accent); }
+    @keyframes sPop {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .success-title {
+      font-size: clamp(1.6rem, 4.5vw, 2.4rem);
       font-weight: var(--fw-bold);
-      letter-spacing: 0.08em;
-      padding: 0.3rem 0;
-      outline: none;
-      flex: 1;
-      min-width: 0;
-      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--c-text);
+      animation: sUp 0.45s var(--ease-out) backwards 0.2s;
     }
-    .co-promo-inp:focus { border-bottom-color: var(--c-border-strong); }
-    .co-promo-apply {
+    .success-sub {
+      font-size: 0.68rem;
+      font-weight: var(--fw-light);
+      letter-spacing: 0.1em;
+      color: var(--c-text-secondary);
+      margin-top: 10px;
+      line-height: 1.7;
+      animation: sUp 0.45s var(--ease-out) backwards 0.3s;
+    }
+    .success-redirect {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: clamp(24px, 3.5vh, 36px);
       font-size: 0.62rem;
       font-weight: var(--fw-bold);
-      letter-spacing: 0.16em;
-      cursor: crosshair;
-      color: var(--c-text-tertiary);
-      border: 1px solid var(--c-border);
-      border-radius: var(--r-sm);
-      padding: 0.35rem 0.75rem;
-      flex-shrink: 0;
-      transition: color var(--dur-fast), border-color var(--dur-fast);
-    }
-    .co-promo-apply:hover { color: var(--c-text); border-color: var(--c-border-hover); }
-    .co-promo-msg {
-      font-size: 0.58rem;
-      font-weight: var(--fw-light);
       letter-spacing: 0.14em;
-      margin-top: 6px;
-      min-height: 1em;
+      color: var(--c-accent);
+      animation: sUp 0.45s var(--ease-out) backwards 0.4s;
     }
-    .co-promo-msg.ok   { color: var(--c-success); }
-    .co-promo-msg.warn { color: rgba(255,200,60,0.75); }
-    .co-promo-msg.err  { color: var(--c-error); }
-
-    /* ── Page entrance ── */
-    @keyframes pageIn {
-      from { opacity: 0; transform: translateY(12px); }
+    .success-redirect svg { width: 13px; height: 13px; }
+    @keyframes sUp {
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .form-col > * {
-      animation: pageIn 0.5s var(--ease-out) backwards;
-    }
-    .form-col .section-label { animation-delay: 0.02s; }
-    .form-col .form-title { animation-delay: 0.06s; }
-    .form-col .tiers { animation-delay: 0.1s; }
-    .form-col .field-group { animation-delay: 0.14s; }
-    .form-col .oauth-row { animation-delay: 0.18s; }
 
-    /* ── Day mode ── */
-    html[data-theme="day"] .rm-status.active {
-      color: rgba(0, 120, 50, 0.8);
-      border-color: rgba(0, 120, 50, 0.18);
+    /* ══════════════════════════════════════════
+       PAGE ENTRANCE
+       ══════════════════════════════════════════ */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    html[data-theme="day"] .rm-status.active .rm-dot {
-      background: rgba(0, 120, 50, 0.7);
+    .page-col > * { animation: pageIn 0.55s var(--ease-out) backwards; }
+    .page-col .funnel-steps  { animation-delay: 0s; }
+    .page-col .join-hero     { animation-delay: 0.04s; }
+    .page-col .tier-grid     { animation-delay: 0.10s; }
+    .page-col .capture-section { animation-delay: 0.18s; }
+
+    .tier-card { animation: cardIn 0.5s var(--ease-out) backwards; }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    html[data-theme="day"] .btn-audience.done {
-      color: rgba(0, 120, 50, 0.8) !important;
-      border-color: rgba(0, 120, 50, 0.22) !important;
+    .tier-card:nth-child(1) { animation-delay: 0.12s; }
+    .tier-card:nth-child(2) { animation-delay: 0.17s; }
+    .tier-card:nth-child(3) { animation-delay: 0.22s; }
+    .tier-card:nth-child(4) { animation-delay: 0.27s; }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .tier-grid { grid-template-columns: 1fr; }
+      .capture-wrap {
+        flex-direction: column;
+        padding: 4px;
+      }
+      .capture-input { width: 100%; text-align: center; }
+      .capture-btn { width: 100%; justify-content: center; }
+      .funnel-steps { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .fs-label { font-size: 0.44rem; }
     }
-    html[data-theme="day"] .co-promo-msg.warn {
-      color: rgba(180, 130, 0, 0.85);
-    }
-    html[data-theme="day"] .btn-oauth.google:not(:disabled):hover {
-      background: rgba(255, 92, 0, 0.06);
+
+    /* ══════════════════════════════════════════
+       DAY MODE
+       ══════════════════════════════════════════ */
+    html[data-theme="day"] .tier-card.selected {
+      box-shadow: 0 0 0 1px rgba(255,92,0,0.2), 0 6px 24px rgba(255,92,0,0.06);
     }
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -496,7 +652,6 @@
     </button>
   </header>
 
-  <!-- Mobile overlay menu -->
   <div class="nav-overlay" id="nav-overlay">
     <button class="site-burger overlay-close" id="burger-close" aria-label="close menu">
       <span class="burger-label">[exit]</span>
@@ -510,124 +665,287 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <!-- Ambient effects -->
   <div class="noise-overlay"></div>
-  <div class="ambient-orb ambient-orb--top"></div>
-  <div class="ambient-orb ambient-orb--bottom"></div>
+  <div class="join-mesh"></div>
 
-  <main>
-    <div class="form-col">
+  <main id="main">
+    <div class="page-col">
 
-      <!-- ── Waitlist: tier preview + email capture ── -->
+      <!-- ── Step tracker ── -->
+      <div class="funnel-steps">
+        <div class="fs-step active">
+          <div class="fs-num"><span>1</span></div>
+          <span class="fs-label">jOIN</span>
+        </div>
+        <div class="fs-line"></div>
+        <div class="fs-step">
+          <div class="fs-num"><span>2</span></div>
+          <span class="fs-label">vERIFY</span>
+        </div>
+        <div class="fs-line"></div>
+        <div class="fs-step">
+          <div class="fs-num"><span>3</span></div>
+          <span class="fs-label">lIST</span>
+        </div>
+      </div>
+
+      <!-- ── Step 1 content ── -->
       <div id="s1">
-        <p class="section-label">lAUNCHING sOON</p>
-        <h1 class="form-title">jOIN</h1>
 
-        <div class="tiers">
-          <div class="tier-pick" data-tier="aLLY">
-            <div class="tp-info">
-              <span class="tp-name">aLLY</span>
-              <span class="tp-price"><span class="euro">&euro;</span>0.55 / month</span>
-              <span class="tp-perks">member card · community access · trading network · bOUTIQUE aCCESS</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-          <div class="tier-pick" data-tier="BRIGaDIER">
-            <div class="tp-info">
-              <span class="tp-name">BRIGaDIER</span>
-              <span class="tp-price"><span class="euro">&euro;</span>3.3 / month</span>
-              <span class="tp-perks">all above · bOUTIQUE aCCESS · submission slots · 2 guest invites</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-          <div class="tier-pick" data-tier="CURaTOR">
-            <div class="tp-info">
-              <span class="tp-name">CURaTOR</span>
-              <span class="tp-price"><span class="euro">&euro;</span>33 / month</span>
-              <span class="tp-perks">all above · bOUTIQUE aCCESS · editorial seat · private archive · patronage</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
-          <div class="tier-pick tier-free" data-tier="aUDIENCE">
-            <div class="tp-info">
-              <span class="tp-name">aUDIENCE</span>
-              <span class="tp-free">fREE</span>
-              <span class="tp-perks">cOMMUNITY aCCESS · eVENT aLERTS · nEWSLETTER</span>
-            </div>
-            <div class="tp-dot"></div>
-          </div>
+        <div class="join-hero">
+          <p class="join-eyebrow">
+            <span class="join-eyebrow-dot"></span>
+            Step 1 of 3
+          </p>
+          <h1 class="join-title">jOIN</h1>
+          <p class="join-sub">Pick a plan and sign up. Join an art collective connecting creators, collectors, and culture in Berlin.</p>
         </div>
 
-        <form id="waitlist-form" action="https://formspree.io/f/xaqpqzea" method="POST">
-          <input type="hidden" name="_subject" value="wAITLIST sIGNUP">
-          <input type="hidden" name="interest" id="wl-interest" value="">
+        <!-- Tier cards -->
+        <div class="tier-grid">
 
-          <div class="field-group">
-            <label for="wl-email">yOUR eMaIL</label>
-            <input type="email" name="email" id="wl-email" class="field" placeholder="you@example.com" autocomplete="email" required>
+          <div class="tier-card" data-tier="aUDIENCE">
+            <div class="tc-check">
+              <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="tc-name">aUDIENCE</div>
+            <div class="tc-price">
+              <span class="tc-price-free">fREE</span>
+            </div>
+            <div class="tc-perks">
+              <span class="tc-perk">Community access</span>
+              <span class="tc-perk">Event alerts</span>
+              <span class="tc-perk">Newsletter</span>
+            </div>
           </div>
 
-          <div class="field-group" style="margin-top:clamp(16px,2.2vh,24px);">
-            <button type="submit" class="btn-access" id="btn-notify">nOTIFY mE</button>
+          <div class="tier-card" data-tier="aLLY">
+            <div class="tc-check">
+              <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="tc-name">aLLY</div>
+            <div class="tc-price">
+              <span class="tc-price-val">&euro;0.55</span>
+              <span class="tc-price-unit">/ month</span>
+            </div>
+            <div class="tc-perks">
+              <span class="tc-perk">Member card</span>
+              <span class="tc-perk">Community</span>
+              <span class="tc-perk">Trading network</span>
+              <span class="tc-perk">Boutique</span>
+            </div>
           </div>
-        </form>
 
-        <p class="already-member" style="margin-top:clamp(24px,3vh,36px);"><a href="art.html">bROWSE tHE gALLERY →</a></p>
+          <div class="tier-card" data-tier="BRIGaDIER">
+            <span class="tier-badge">Recommended</span>
+            <div class="tc-check">
+              <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="tc-name">BRIGaDIER</div>
+            <div class="tc-price">
+              <span class="tc-price-val">&euro;3.3</span>
+              <span class="tc-price-unit">/ month</span>
+            </div>
+            <div class="tc-perks">
+              <span class="tc-perk">Everything in aLLY</span>
+              <span class="tc-perk">Submission slots</span>
+              <span class="tc-perk">2 guest invites</span>
+            </div>
+          </div>
 
-        <!-- Success state (hidden until submit) -->
-        <div id="wl-success" hidden style="text-align:center;margin-top:clamp(32px,5vh,56px);">
-          <p style="font-size:clamp(1.6rem,5vw,2.6rem);font-weight:var(--fw-bold);letter-spacing:0.08em;color:var(--c-text);">yOU'RE oN tHE lIST</p>
-          <p style="font-size:0.68rem;font-weight:var(--fw-light);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:12px;line-height:1.8;">wE'LL lET yOU kNOW wHEN mEMBERSHIPS oPEN.<br>iN tHE mEANTIME, <a href="art.html" style="color:var(--c-accent);">eXPLORE tHE gALLERY</a>.</p>
+          <div class="tier-card" data-tier="CURaTOR">
+            <div class="tc-check">
+              <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="tc-name">CURaTOR</div>
+            <div class="tc-price">
+              <span class="tc-price-val">&euro;33</span>
+              <span class="tc-price-unit">/ month</span>
+            </div>
+            <div class="tc-perks">
+              <span class="tc-perk">Everything in BRIGaDIER</span>
+              <span class="tc-perk">Editorial seat</span>
+              <span class="tc-perk">Private archive</span>
+              <span class="tc-perk">Patronage</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Sign in -->
+        <div class="signin-section">
+          <p class="signin-label">Create your account</p>
+
+          <div class="signin-buttons">
+            <button type="button" class="btn-oauth google" id="btn-google">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A11.96 11.96 0 0 0 1 12c0 1.94.46 3.77 1.18 5.42l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Continue with Google
+            </button>
+
+            <button type="button" class="btn-oauth apple" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              Continue with Apple
+              <span class="oauth-soon">coming soon</span>
+            </button>
+          </div>
+
+          <div class="signin-divider"><span>or continue with email</span></div>
+
+          <div class="email-fallback">
+            <div class="email-wrap">
+              <input type="email" id="wl-email" class="email-input" placeholder="you@example.com" autocomplete="email">
+              <button type="button" class="email-btn" id="btn-email">
+                Sign up
+                <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <p class="signin-note">No spam. Cancel anytime.</p>
+        </div>
+
+      </div>
+
+      <!-- Success → auto-redirect to Step 2 -->
+      <div id="wl-success" hidden>
+        <div class="success-view">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p class="success-title">You're in</p>
+          <p class="success-sub">Account created. Let's verify your identity next.</p>
+          <p class="success-redirect">
+            Continuing to verification
+            <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </p>
         </div>
       </div>
 
     </div>
   </main>
-  <!-- Waitlist form handler -->
+
   <script>
   (function(){
-    /* Tier selection — track interest */
-    document.querySelectorAll('#s1 .tier-pick').forEach(function(card) {
+    /* ── Tier selection ── */
+    var cards = document.querySelectorAll('#s1 .tier-card');
+    var selectedTier = '';
+    cards.forEach(function(card) {
       card.addEventListener('click', function() {
-        document.querySelectorAll('#s1 .tier-pick').forEach(function(c) { c.classList.remove('selected'); });
+        cards.forEach(function(c) { c.classList.remove('selected'); });
         card.classList.add('selected');
-        document.getElementById('wl-interest').value = card.dataset.tier;
+        selectedTier = card.dataset.tier;
       });
     });
 
-    /* Waitlist form submission */
-    var form = document.getElementById('waitlist-form');
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var btn = document.getElementById('btn-notify');
-      var email = document.getElementById('wl-email').value.trim();
-      if (!email) return;
+    /* ── Shared: complete sign-up step ── */
+    function completeStep1(method, identifier) {
+      /* Store auth info */
+      localStorage.setItem('arts_auth_method', method);
+      localStorage.setItem('arts_auth_id', identifier);
+      if (selectedTier) localStorage.setItem('arts_tier', selectedTier);
 
-      btn.textContent = 'sENDING...';
+      /* Generate a simple hash for arts_id_hash */
+      var hash = '';
+      for (var i = 0; i < identifier.length; i++) {
+        hash += identifier.charCodeAt(i).toString(16);
+      }
+      localStorage.setItem('arts_id_hash', hash.slice(0, 16));
+
+      /* Mark step 1 done in tracker */
+      var s1el = document.querySelector('.funnel-steps .fs-step:nth-child(1)');
+      if (s1el) { s1el.classList.remove('active'); s1el.classList.add('done'); }
+      var line1 = document.querySelector('.funnel-steps .fs-line:nth-child(2)');
+      if (line1) line1.classList.add('done');
+      var s2el = document.querySelector('.funnel-steps .fs-step:nth-child(3)');
+      if (s2el) s2el.classList.add('active');
+
+      document.getElementById('s1').hidden = true;
+      document.getElementById('wl-success').hidden = false;
+
+      /* Auto-redirect to Step 2 after 2.5s */
+      setTimeout(function() {
+        window.location.href = 'verify.html';
+      }, 2500);
+    }
+
+    /* ── Google Sign-In ── */
+    document.getElementById('btn-google').addEventListener('click', function() {
+      var btn = this;
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+
+      /* Google Identity Services — load the library */
+      if (!window.google || !window.google.accounts) {
+        var script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.onload = function() { initGoogleSignIn(btn); };
+        script.onerror = function() {
+          btn.disabled = false;
+          btn.style.opacity = '';
+          alert('Could not load Google sign-in. Please try email instead.');
+        };
+        document.head.appendChild(script);
+      } else {
+        initGoogleSignIn(btn);
+      }
+    });
+
+    function initGoogleSignIn(btn) {
+      /* NOTE: Replace this client ID with your actual Google OAuth client ID */
+      var CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+      google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: function(response) {
+          /* Decode JWT to get user info */
+          var payload = JSON.parse(atob(response.credential.split('.')[1]));
+          completeStep1('google', payload.email);
+        },
+        auto_select: false
+      });
+
+      google.accounts.id.prompt(function(notification) {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          /* Fallback: use popup mode */
+          google.accounts.id.renderButton(
+            document.createElement('div'),
+            { type: 'standard' }
+          );
+          /* Re-enable button if prompt dismissed */
+          btn.disabled = false;
+          btn.style.opacity = '';
+        }
+      });
+    }
+
+    /* ── Email sign-up ── */
+    document.getElementById('btn-email').addEventListener('click', function() {
+      var btn = this;
+      var email = document.getElementById('wl-email').value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('wl-email').focus();
+        return;
+      }
+
+      btn.textContent = 'Creating\u2026';
       btn.disabled = true;
 
-      var data = new FormData(form);
-      fetch(form.action, {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
-      }).then(function(res) {
-        if (res.ok) {
-          document.getElementById('s1').querySelector('.tiers').hidden = true;
-          form.hidden = true;
-          document.getElementById('s1').querySelector('.already-member').hidden = true;
-          document.getElementById('wl-success').hidden = false;
-        } else {
-          btn.textContent = 'nOTIFY mE';
-          btn.disabled = false;
-        }
-      }).catch(function() {
-        btn.textContent = 'nOTIFY mE';
-        btn.disabled = false;
-      });
+      /* Simulate account creation (replace with real API call) */
+      setTimeout(function() {
+        completeStep1('email', email);
+      }, 800);
+    });
+
+    /* Enter key on email input */
+    document.getElementById('wl-email').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('btn-email').click();
+      }
     });
   })();
   </script>
+
   <!-- Nav hover + logo expand + idle glitch -->
   <script>
   (function(){
@@ -640,73 +958,40 @@
       el.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     }
     document.querySelectorAll('.site-nav a').forEach(navHover);
-
-    /* Idle static glitch */
     (function(){
       var links=Array.from(document.querySelectorAll('.site-nav a'));
       var origTxt=links.map(function(el){return el.textContent;});
       var glyphs='▓░▒│╌·×÷¬±';
       function tick(){
         var li=Math.floor(Math.random()*links.length);
-        var el=links[li];
-        var txt=origTxt[li];
+        var el=links[li],txt=origTxt[li];
         var ci=1+Math.floor(Math.random()*(txt.length-1));
-        var arr=txt.split('');
-        arr[ci]=glyphs[Math.floor(Math.random()*glyphs.length)];
+        var arr=txt.split('');arr[ci]=glyphs[Math.floor(Math.random()*glyphs.length)];
         el.textContent=arr.join('');
         setTimeout(function(){el.textContent=txt;},90);
         setTimeout(tick,2600+Math.random()*3800);
       }
       setTimeout(tick,1200+Math.random()*1800);
     })();
-
-    /* Logo [a] expand */
-    document.querySelectorAll('a.logo[data-inner], a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){clr();var from=state;for(var i=from;i<inner.length;i++)(function(i){timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));})(i);});
-      logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
+logo.addEventListener('mouseleave',function(){clr();var from=state;for(var i=0;i<from;i++)(function(i){timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));})(i);});
     });
   })();
   </script>
 
-  <!-- Hamburger toggle with decap cascade -->
   <script>
   (function(){
-    var burger=document.getElementById('burger');
-    var overlay=document.getElementById('nav-overlay');
-    var closer=document.getElementById('burger-close');
+    var burger=document.getElementById('burger'),overlay=document.getElementById('nav-overlay'),closer=document.getElementById('burger-close');
     if(!burger||!overlay)return;
     var oLinks=Array.from(overlay.querySelectorAll('a'));
     var oLabels=oLinks.map(function(el){return el.textContent;});
-
-    function decapCascade(){
-      oLinks.forEach(function(el,li){
-        var target=oLabels[li];
-        el.textContent=target.toLowerCase();
-        var base=li*100+120;
-        Array.from(target).forEach(function(ch,i){
-          setTimeout(function(){
-            if(!overlay.classList.contains('is-open'))return;
-            var chars=el.textContent.split('');
-            chars[i]=ch;
-            el.textContent=chars.join('');
-          },base+i*50);
-        });
-      });
-    }
-
+    function decapCascade(){oLinks.forEach(function(el,li){var target=oLabels[li];el.textContent=target.toLowerCase();var base=li*100+120;Array.from(target).forEach(function(ch,i){setTimeout(function(){if(!overlay.classList.contains('is-open'))return;var chars=el.textContent.split('');chars[i]=ch;el.textContent=chars.join('');},base+i*50);});});}
     function openMenu(){overlay.classList.add('is-open');burger.classList.add('is-open');decapCascade();}
     function closeMenu(){oLinks.forEach(function(el,i){el.textContent=oLabels[i];});overlay.classList.remove('is-open');burger.classList.remove('is-open');}
-    burger.addEventListener('click',openMenu);
-    closer.addEventListener('click',closeMenu);
+    burger.addEventListener('click',openMenu);closer.addEventListener('click',closeMenu);
     overlay.addEventListener('click',function(e){if(e.target===overlay)closeMenu();});
   })();
   </script>
 
-  <!-- Page transition (replaces CRT) -->
   <script>
   (function(){
     document.addEventListener('click',function(ev){
@@ -716,9 +1001,8 @@
       if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
       ev.preventDefault();
       document.body.style.transition='opacity 0.2s ease, transform 0.2s ease';
-      document.body.style.opacity='0';
-      document.body.style.transform='scale(0.99)';
-      setTimeout(function(){ window.location.href=h; },220);
+      document.body.style.opacity='0';document.body.style.transform='scale(0.99)';
+      setTimeout(function(){window.location.href=h;},220);
     },true);
   })();
   </script>
@@ -726,6 +1010,6 @@
 <script src="theme.js?v=4"></script>
 <script src="consent.js"></script>
 <script src="funnel.js"></script>
-<script>window.artsCornerAdd({ label: 'rEPORT', href: 'report.html' });</script>
+<script>window.artsCornerAdd({ label: 'Report', href: 'report.html' });</script>
 </body>
 </html>

@@ -195,13 +195,14 @@
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <div class="noise-overlay"></div>
   <div class="ambient-orb ambient-orb--top"></div>
   <div class="ambient-orb ambient-orb--bottom"></div>
 
   <header class="site-header">
-    <a href="home.html" class="site-logo" data-inner="RTS">[a]</a>
+    <a href="home.html" class="site-logo"><img src="assets/logo.svg" alt="aRTS" width="28" height="28"></a>
     <nav class="site-nav">
       <a href="art.html">aRT</a>
       <a href="boutique.html">bOUTIQUE</a>
@@ -228,7 +229,7 @@
     <a href="id.html" style="color:var(--c-accent)">[iD]</a>
   </div>
 
-  <main class="site-main">
+  <main id="main" class="site-main">
     <img class="photo" src="assets/about-2.jpg" alt="" fetchpriority="high">
     <img class="photo" src="assets/about-1.jpg" alt="" loading="lazy">
 
@@ -239,17 +240,17 @@
         <div style="flex:1;min-width:200px;">
           <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">01</p>
           <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">bROWSE</p>
-          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">eXPLORE aRT fROM eMERGING bERLIN aRTISTS. nO sIGN-uP rEQUIRED.</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">Explore art from emerging Berlin artists. No sign-up required.</p>
         </div>
         <div style="flex:1;min-width:200px;">
           <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">02</p>
           <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">iNQUIRE</p>
-          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">cONNECT dIRECTLY wITH aRTISTS. aSK qUESTIONS, nEGOTIATE, oR rEQUEST dETAILS.</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">Connect directly with artists. Ask questions, negotiate, or request details.</p>
         </div>
         <div style="flex:1;min-width:200px;">
           <p style="font-size:clamp(1.8rem,5vw,2.4rem);font-weight:var(--fw-bold);letter-spacing:0.06em;color:var(--c-text);line-height:1.1;">03</p>
           <p style="font-size:0.82rem;font-weight:var(--fw-bold);letter-spacing:0.14em;color:var(--c-text-secondary);margin-top:8px;">cOLLECT</p>
-          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">sECURE yOUR pIECE. pAYMENTS & vERIFICATION cOMING sOON.</p>
+          <p style="font-size:0.65rem;font-weight:var(--fw-light);letter-spacing:0.1em;color:var(--c-text-tertiary);margin-top:6px;line-height:1.7;">Secure your piece. Payments & verification coming soon.</p>
         </div>
       </div>
     </div>
@@ -363,26 +364,6 @@
       }
       setTimeout(tick,1200+Math.random()*1800);
     })();
-
-    /* Logo [a] expand */
-    document.querySelectorAll('a.site-logo[data-inner]').forEach(function(logo){
-      var inner=logo.dataset.inner;
-      var timers=[],state=0;
-      function clr(){timers.forEach(clearTimeout);timers.length=0;}
-      function render(n){logo.textContent='[a'+inner.slice(0,n)+']';}
-      logo.addEventListener('mouseenter',function(){
-        clr();var from=state;
-        for(var i=from;i<inner.length;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=i+1);},(i-from)*DELAY));
-        })(i);
-      });
-      logo.addEventListener('mouseleave',function(){
-        clr();var from=state;
-        for(var i=0;i<from;i++)(function(i){
-          timers.push(setTimeout(function(){render(state=from-i-1);},i*DELAY));
-        })(i);
-      });
-    });
   })();
   </script>
 
