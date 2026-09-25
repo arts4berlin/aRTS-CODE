@@ -43,3 +43,34 @@ Effect parameters use the form `name:key=value,key=value`.
 `radial`, `bands`, `noise` and `luma` all run on the same engine
 (`modulated_mosaic`): any 0–1 map picks a block size per pixel, from `fine`
 to `coarse`. To make a new effect, write a function that builds a map.
+
+## Colour sets: recolour without losing the painting
+
+`recolor`, `clusters` and `clusterfx` group pixels into `k` colour sets
+(k-means in CIE Lab, a perceptual colour space), then transform whole sets.
+
+To keep the artist's work intact:
+- **lightness is never touched** by default (`keep_l=1`), so drawing, modelling
+  and chiaroscuro stay exactly as painted: only hue and saturation change;
+- each pixel moves by its set's offset instead of being flattened to one
+  colour, so the variation inside every brushstroke, and even the cracks in
+  the paint, survives;
+- set borders are soft (`soft=6`), so there are no cut-out edges.
+
+Workflow:
+
+```bash
+# 1. see the sets and their numbers (0 = darkest)
+python pixelfx.py input/de-hooch.jpg --fx clusters
+
+# 2. transform them
+python pixelfx.py input/de-hooch.jpg --fx "recolor:palette=input/toorop.jpg"   # borrow another painting's colours
+python pixelfx.py input/eelkema.jpg  --fx "recolor:shuffle=1,seed=4"           # sets swap colours
+python pixelfx.py input/de-hooch.jpg --fx "recolor:map=5:1f6fb5;3:b0402a"      # set 5 -> blue, set 3 -> red
+python pixelfx.py input/de-hooch.jpg --fx "recolor:pick=5,rest=1,shuffle=0"    # spot colour: only set 5 keeps colour
+python pixelfx.py input/de-hooch.jpg --fx "recolor:pick=2;4,hue=140"           # rotate hue of two sets
+python pixelfx.py input/de-hooch.jpg --fx "clusterfx:pick=0;1;2,fx=quadtree"   # dissolve only the dark sets
+```
+
+`clusterfx` runs any other effect only inside the chosen sets; pass settings
+to that effect with a `sub_` prefix, e.g. `fx=pixelate,sub_block=40`.

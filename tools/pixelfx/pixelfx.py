@@ -213,6 +213,179 @@ def fx_halftone(img, cell=14, gap=1.0):
     return out
 
 
+# ---------------------------------------------------------------- colour sets
+#
+# Pixels are grouped into k colour sets with k-means in CIE Lab space (a
+# perceptual space: L = lightness, a/b = colour). A transformation moves each
+# set's *centre* to a new colour, and every pixel moves by the same offset as
+# its set, so the variation inside each brushstroke survives. By default the
+# lightness (L) is untouched: the value structure — drawing, chiaroscuro,
+# modelling — stays exactly as the painter left it; only colour changes.
+
+_M = np.array([[0.4124564, 0.3575761, 0.1804375],
+               [0.2126729, 0.7151522, 0.0721750],
+               [0.0193339, 0.1191920, 0.9503041]], dtype=np.float32)
+_M_INV = np.linalg.inv(_M).astype(np.float32)
+_WHITE = np.array([0.95047, 1.0, 1.08883], dtype=np.float32)
+_EPS, _KAPPA = 216 / 24389, 24389 / 27
+
+
+def rgb_to_lab(a):
+    c = a.astype(np.float32) / 255
+    c = np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+    xyz = c @ _M.T / _WHITE
+    f = np.where(xyz > _EPS, np.cbrt(xyz), (_KAPPA * xyz + 16) / 116)
+    return np.stack([116 * f[..., 1] - 16,
+                     500 * (f[..., 0] - f[..., 1]),
+                     200 * (f[..., 1] - f[..., 2])], -1)
+
+
+def lab_to_rgb(lab):
+    fy = (lab[..., 0] + 16) / 116
+    f = np.stack([fy + lab[..., 1] / 500, fy, fy - lab[..., 2] / 200], -1)
+    xyz = np.where(f ** 3 > _EPS, f ** 3, (116 * f - 16) / _KAPPA) * _WHITE
+    c = np.clip(xyz @ _M_INV.T, 0, 1)
+    c = np.where(c <= 0.0031308, 12.92 * c, 1.055 * c ** (1 / 2.4) - 0.055)
+    return (np.clip(c, 0, 1) * 255 + 0.5).astype(np.uint8)
+
+
+def hex_to_lab(h):
+    h = h.lstrip("#")
+    return rgb_to_lab(np.array([[int(h[i:i + 2], 16) for i in (0, 2, 4)]]))[0]
+
+
+def lab_to_hex(lab):
+    return "#" + "".join(f"{v:02x}" for v in lab_to_rgb(lab[None])[0])
+
+
+def kmeans(x, k, seed=1, iters=30):
+    """Plain k-means (k-means++ seeding). Centres are sorted dark -> light."""
+    rng = np.random.default_rng(seed)
+    c = [x[rng.integers(len(x))]]
+    for _ in range(1, k):
+        d = ((x[:, None] - np.array(c)[None]) ** 2).sum(-1).min(1)
+        c.append(x[rng.choice(len(x), p=d / d.sum())])
+    c = np.array(c)
+    for _ in range(iters):
+        lbl = ((x[:, None] - c[None]) ** 2).sum(-1).argmin(1)
+        new = np.array([x[lbl == i].mean(0) if np.any(lbl == i) else c[i] for i in range(k)])
+        done = np.allclose(new, c, atol=0.05)
+        c = new
+        if done:
+            break
+    return c[np.argsort(c[:, 0])]
+
+
+def colour_sets(lab, k, seed=1, samples=60000):
+    flat = lab.reshape(-1, 3)
+    rng = np.random.default_rng(seed)
+    pick = rng.choice(len(flat), min(samples, len(flat)), replace=False)
+    return kmeans(flat[pick], int(k), seed)
+
+
+def set_weights(lab, centres, soft):
+    """HxWxk membership. soft=0: hard sets; soft>0 (Lab units): smooth edges."""
+    d2 = np.stack([((lab - c) ** 2).sum(-1) for c in centres], -1)
+    if soft <= 0:
+        return (d2 == d2.min(-1, keepdims=True)).astype(np.float32)
+    w = np.exp(-(d2 - d2.min(-1, keepdims=True)) / (2 * soft ** 2))
+    return w / w.sum(-1, keepdims=True)
+
+
+def parse_sets(spec, k):
+    """'0;3;5' -> [0, 3, 5];  '' or 'all' -> every set."""
+    spec = str(spec).strip()
+    if spec in ("", "all"):
+        return list(range(int(k)))
+    return [int(v) for v in spec.split(";") if v != ""]
+
+
+def fx_recolor(img, k=8, shuffle=1, seed=1, palette="", map="", pick="all",
+               rest=0.0, hue=0.0, sat=1.0, keep_l=1.0, soft=6.0, amount=1.0):
+    """Group pixels into k colour sets and recolour them; lightness/brushwork kept.
+
+    shuffle=1        sets swap colours with each other (seed picks the swap)
+    palette=path     take the k colours of another image (matched dark->light)
+    map=2:c83a2a;5:1f4e79   send set 2 and set 5 to those exact colours
+    hue=deg, sat=x   rotate / scale the colour of the picked sets
+    pick=0;3         only these sets change (see the `clusters` effect for numbers)
+    rest=0..1        desaturate every set that is NOT picked (1 = greyscale)
+    keep_l=0..1      how much of the original lightness to keep (1 = all)
+    soft             edge softness between sets (0 = hard borders)
+    """
+    lab = rgb_to_lab(np.asarray(img))
+    centres = colour_sets(lab, k, int(seed))
+    k = len(centres)
+    picked = parse_sets(pick, k)
+    targets = centres.copy()
+
+    if palette:
+        ref = rgb_to_lab(np.asarray(load(Path(palette), 900)))
+        targets = colour_sets(ref, k, int(seed))
+    elif map:
+        pass
+    elif int(shuffle):
+        perm = np.random.default_rng(int(seed) + 101).permutation(picked)
+        targets[picked, 1:] = centres[perm, 1:]
+    for pair in filter(None, str(map).split(";")):
+        i, _, h = pair.partition(":")
+        targets[int(i)] = hex_to_lab(h)
+    if hue or sat != 1:
+        t = np.radians(hue)
+        a, b = targets[:, 1].copy(), targets[:, 2].copy()
+        targets[:, 1] = (a * np.cos(t) - b * np.sin(t)) * sat
+        targets[:, 2] = (a * np.sin(t) + b * np.cos(t)) * sat
+
+    unpicked = [i for i in range(k) if i not in picked]
+    targets[unpicked] = centres[unpicked]
+    delta = targets - centres
+    delta[:, 0] *= 1 - keep_l
+
+    w = set_weights(lab, centres, soft)
+    out = lab + amount * (w @ delta)
+    if rest and unpicked:
+        out[..., 1:] *= 1 - rest * w[..., unpicked].sum(-1, keepdims=True)
+    return Image.fromarray(lab_to_rgb(out))
+
+
+def fx_clusters(img, k=8, seed=1):
+    """Diagnostic: the k colour sets as flat areas, with a numbered swatch bar."""
+    lab = rgb_to_lab(np.asarray(img))
+    centres = colour_sets(lab, k, int(seed))
+    lbl = set_weights(lab, centres, 0).argmax(-1)
+    flat = Image.fromarray(lab_to_rgb(centres[lbl]))
+    w, h = img.size
+    bar = max(60, h // 12)
+    out = Image.new("RGB", (w, h + bar), (18, 18, 18))
+    out.paste(flat, (0, 0))
+    d = ImageDraw.Draw(out)
+    font = ImageFont.load_default(size=max(12, bar // 4))
+    sw = w / len(centres)
+    for i, c in enumerate(centres):
+        share = (lbl == i).mean() * 100
+        x0 = int(i * sw)
+        d.rectangle((x0, h, int((i + 1) * sw), h + bar), fill=lab_to_hex(c))
+        ink = (0, 0, 0) if c[0] > 55 else (255, 255, 255)
+        d.text((x0 + 8, h + 6), f"{i}  {lab_to_hex(c)}\n{share:.0f}%", fill=ink, font=font)
+    return out
+
+
+def fx_clusterfx(img, k=8, pick="0", fx="pixelate", invert=0, soft=6.0, seed=1, **sub):
+    """Apply another effect only inside chosen colour sets (sub_<param> passes params).
+
+    e.g. clusterfx:pick=0;1,fx=quadtree,sub_coarse=64  -> only the darkest sets dissolve
+    """
+    lab = rgb_to_lab(np.asarray(img))
+    centres = colour_sets(lab, k, int(seed))
+    mask = set_weights(lab, centres, soft)[..., parse_sets(pick, len(centres))].sum(-1)
+    if int(invert):
+        mask = 1 - mask
+    params = {key[4:]: v for key, v in sub.items() if key.startswith("sub_")}
+    other = np.asarray(EFFECTS[fx](img, **params), dtype=np.float32)
+    base = np.asarray(img, dtype=np.float32)
+    return Image.fromarray((base + (other - base) * mask[..., None]).astype(np.uint8))
+
+
 EFFECTS = {
     "pixelate": fx_pixelate,
     "quadtree": fx_quadtree,
@@ -224,10 +397,24 @@ EFFECTS = {
     "rgbshift": fx_rgbshift,
     "dither": fx_dither,
     "halftone": fx_halftone,
+    "recolor": fx_recolor,
+    "clusters": fx_clusters,
+    "clusterfx": fx_clusterfx,
 }
+
+SHEET_SKIP = {"clusters"}  # diagnostics: different output size
 
 
 # ---------------------------------------------------------------- CLI
+
+def number(v):
+    for cast in (int, float):
+        try:
+            return cast(v)
+        except ValueError:
+            pass
+    return v  # paths, colour maps, set lists stay strings
+
 
 def parse_fx(spec):
     """'radial:cx=0.3,coarse=128' -> ('radial', {'cx': 0.3, 'coarse': 128})"""
@@ -237,7 +424,7 @@ def parse_fx(spec):
     params = {}
     for pair in filter(None, args.split(",")):
         k, _, v = pair.partition("=")
-        params[k.strip()] = float(v) if "." in v else int(v)
+        params[k.strip()] = number(v.strip())
     return name, params
 
 
@@ -268,7 +455,8 @@ def load(path, max_side):
 
 def contact_sheet(img, title, thumb=420):
     """One tile per effect (default params) so you can pick a direction."""
-    tiles = [("original", img)] + [(n, f(img)) for n, f in EFFECTS.items()]
+    tiles = [("original", img)] + [(n, f(img)) for n, f in EFFECTS.items()
+                                  if n not in SHEET_SKIP]
     ratio = img.height / img.width
     tw, th = thumb, int(thumb * ratio)
     cols = 4
@@ -301,7 +489,9 @@ def main():
     if args.list:
         import inspect
         for n, f in EFFECTS.items():
-            sig = ", ".join(f"{p.name}={p.default}" for p in list(inspect.signature(f).parameters.values())[1:])
+            params = list(inspect.signature(f).parameters.values())[1:]
+            sig = ", ".join(f"{p.name}={p.default!r}" for p in params
+                            if p.kind is not p.VAR_KEYWORD)
             print(f"  {n:<10} {sig}\n  {'':<10} {f.__doc__.splitlines()[0]}\n")
         return
     if not args.inputs:
